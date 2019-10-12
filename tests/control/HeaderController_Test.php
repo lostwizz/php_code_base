@@ -2,14 +2,13 @@
 
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-use \whitehorse\MikesCommandAndControl2\Control;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Control;
+use \php_base\control\HeaderController as HeaderController;
 
-use whitehorse\MikesCommandAndControl2\control\HeaderController as HeaderController;
-
-//use \whitehorse\MikesCommandAndControl2\utils\AMessage as AMessage;
-//use \whitehorse\MikesCommandAndControl2\utils\MessageLog as MessageLog;
+//use \php_base\utils\AMessage as AMessage;
+//use \php_base\utils\MessageLog as MessageLog;
 
 //include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 

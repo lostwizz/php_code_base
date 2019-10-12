@@ -1,8 +1,8 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\Utils\myUtils;
+namespace php_base\Utils\myUtils;
 
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Dump\Dump as Dump;
 
 abstract Class myUtils {
 

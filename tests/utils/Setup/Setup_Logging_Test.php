@@ -3,7 +3,7 @@
 namespace Tests\Test;
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
+use \php_base\Utils\Settings\Settings as Settings;
 use Monolog\Logger;
 
 
@@ -16,7 +16,7 @@ class Logging_SetupTest extends TestCase{
 		require_once( DIR . '_config' . DS . '_Settings-Database.php');
 		require_once( DIR . '_config' . DS . '_Settings-protected.php');
 
-        require_once('P:\Projects\MikesCommandAndControl2\src\utils\setup\setup_Logging.php');
+        require_once('P:\Projects\php_base\src\utils\setup\setup_Logging.php');
     }
 
 
@@ -43,10 +43,10 @@ class Logging_SetupTest extends TestCase{
 		//$this->assertTrue(extension_loaded('sqlsrv'),'Sql Server extention not available');
 		//$this->assertTrue(extension_loaded('pdo_sqlsrv'),'PDO Sql Server extention not available');
 
-		$this->assertEquals(Settings::GetPublic('Log_file' ), 'P:\Projects\MikesCommandAndControl2\src\logs\TestApp_app.log');;
+		$this->assertEquals(Settings::GetPublic('Log_file' ), 'P:\Projects\php_base\src\logs\TestApp_app.log');;
 
-		$this->assertDirectoryIsWritable('P:\Projects\MikesCommandAndControl2\src\logs');
-		$this->assertFileIsWritable('P:\Projects\MikesCommandAndControl2\src\logs\TestApp_app.log');
+		$this->assertDirectoryIsWritable('P:\Projects\php_base\src\logs');
+		$this->assertFileIsWritable('P:\Projects\php_base\src\logs\TestApp_app.log');
 	}
 
 	public function testLogging() : void {

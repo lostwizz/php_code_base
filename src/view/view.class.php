@@ -1,6 +1,6 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\View;
+namespace php_base\View;
 
 
 //***********************************************************************************************

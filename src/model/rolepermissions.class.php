@@ -1,7 +1,7 @@
 <?php
 
 
-namespace whitehorse\MikesCommandAndControl2\model;
+namespace php_base\model;
 
 
 //***********************************************************************************************

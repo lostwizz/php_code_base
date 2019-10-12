@@ -3,7 +3,7 @@
 namespace Tests\Test;
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
+use \php_base\Utils\Settings\Settings as Settings;
 
 class SettingsTest extends TestCase{
 //
@@ -34,10 +34,10 @@ class SettingsTest extends TestCase{
 		$x1 = Settings::GetPublic('App Name');
 		$this->assertEquals('TestApp', $x1 );
 
-		$x2 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetPublic('App Version');
+		$x2 = \php_base\Utils\Settings\Settings::GetPublic('App Version');
 		$this->assertEquals( '2.0.0', $x2 );
 
-		$x3 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetPublic('App Server');
+		$x3 = \php_base\Utils\Settings\Settings::GetPublic('App Server');
 		$this->assertEquals('localhost', $x3);
 	}
 
@@ -62,10 +62,10 @@ class SettingsTest extends TestCase{
 	*
 	*/
 	public function testProtectedSettings() : void {
-		$x1 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Critical_email_TO_ADDR');
+		$x1 = Settings::GetProtected('Critical_email_TO_ADDR');
 		$this->assertEquals( $x1 ,'mike.merrett@whitehorse.ca');
 
-		$x2 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Critical_email_Subject');
+		$x2 =  Settings::GetProtected('Critical_email_Subject');
 		$this->assertEquals( $x2 ,'TestApp@localhost');
 
 	}
@@ -73,30 +73,30 @@ class SettingsTest extends TestCase{
 
 
 	public function testLogDatabaseSettings() : void {
-		$x1 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Logging_Server');
+		$x1 = Settings::GetProtected('Logging_Server');
 		$this->assertEquals( $x1 ,'vm-db-prd4');
 
-		$x2 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Logging_Database');
+		$x2 = Settings::GetProtected('Logging_Database');
 		$this->assertEquals( $x2 ,'Mikes_Application_Store');
 
-		$x3 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Logging_DB_Username');
+		$x3 = Settings::GetProtected('Logging_DB_Username');
 		$this->assertEquals( $x3 ,'Mikes_DBLogging_User');
 
-		$x4 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Logging_DB_Table');
+		$x4 = Settings::GetProtected('Logging_DB_Table');
 		$this->assertEquals( $x4 ,'Application_Log');
 	}
 
 	public function testDataLogDatabaseSettings() : void {
-		$x1 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Data_Logging_Server');
+		$x1 = Settings::GetProtected('Data_Logging_Server');
 		$this->assertEquals( $x1 ,'vm-db-prd4');
 
-		$x2 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Data_Logging_Database');
+		$x2 = Settings::GetProtected('Data_Logging_Database');
 		$this->assertEquals( $x2 ,'Mikes_Application_Store');
 
-		$x3 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Data_Logging_DB_Username');
+		$x3 = Settings::GetProtected('Data_Logging_DB_Username');
 		$this->assertEquals( $x3 ,'Mikes_DBLogging_User');
 
-		$x4 = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Data_Logging_DB_Table');
+		$x4 = Settings::GetProtected('Data_Logging_DB_Table');
 		$this->assertEquals( $x4 ,'Application_Data_Log');
 
 	}

@@ -2,11 +2,11 @@
 
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-use \whitehorse\MikesCommandAndControl2\utils;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\utils;
 
-use \whitehorse\MikesCommandAndControl2\utils\AMessage as AMessage;
+use \php_base\utils\AMessage as AMessage;
 
 include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 
@@ -90,7 +90,7 @@ class AMessageTest extends TestCase {
 		$o = new anExtendedMessage();
 		$nowIsh =  date( 'g:i:');
 		$this->assertInstanceOf( 'anExtendedMessage', $o);
-		$this->assertInstanceOf('\whitehorse\MikesCommandAndControl2\utils\AMessage', $o);
+		$this->assertInstanceOf('\php_base\utils\AMessage', $o);
 
 		$t = $o->ExtendedGetText();
 		$ts = $o->ExtendedGetTimeStamp();
@@ -262,7 +262,7 @@ class AMessageTest extends TestCase {
 
 	//-----------------------------------------------------------------------------------------------
 	function test_get(){
-		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage('Hello'); // anExtendedMessage();
+		$o = new AMessage('Hello'); // anExtendedMessage();
 		$nowIsh =  date( 'g:i:');
 
 		$x  = $o->get();
@@ -380,7 +380,7 @@ class AMessageTest extends TestCase {
 
 //***********************************************************************************************
 //***********************************************************************************************
-class anExtendedMessage extends \whitehorse\MikesCommandAndControl2\utils\AMessage {
+class anExtendedMessage extends AMessage {
 
 	public function __construct( $textOrArray=null, $timestamp=null, $level=null) {
 		parent::__construct( $textOrArray, $timestamp, $level);

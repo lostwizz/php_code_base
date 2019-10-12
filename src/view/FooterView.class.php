@@ -1,10 +1,10 @@
 <?php
 
 
-namespace whitehorse\MikesCommandAndControl2\View;
+namespace php_base\View;
 
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
+use \php_base\Settings\Settings as Settings;
 
 
 //***********************************************************************************************

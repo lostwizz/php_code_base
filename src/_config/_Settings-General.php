@@ -1,6 +1,6 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\Settings;
+namespace php_base\Utils\Settings;
 
 
 Settings::SetPublic('IS_DEBUGGING', true);

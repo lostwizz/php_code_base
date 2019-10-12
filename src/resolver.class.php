@@ -1,10 +1,10 @@
 <?php
 
 //namespace whitehorse\MikesCommandAndControl2\Resolver;
-namespace whitehorse\MikesCommandAndControl2;
+namespace php_base;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 //include_once( DIR . 'dispatcher.class.php');
 
@@ -53,7 +53,7 @@ class Resolver {
 	protected function doLoginWork(){
 				// always start with logged on check
 
-		$arRequiredPayload = \whitehorse\MikesCommandAndControl2\Control\AuthenticateController::checkLoginRequiredVars();
+		$arRequiredPayload = \php_base\Control\AuthenticateController::checkLoginRequiredVars();
 		$requiredVars = $this->getRequiredPayload( $arRequiredPayload);
 		$isLoggedOn = $this->dispatcher->addProcess( 'control.AuthenticateController.CheckLogin', $requiredVars);
 

@@ -3,7 +3,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use whitehorse\MikesCommandAndControl2\View\HeaderView as HeaderView;
+use php_base\View\HeaderView as HeaderView;
 
 
 class HeaderView_Test extends TestCase {

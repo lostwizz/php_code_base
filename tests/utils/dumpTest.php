@@ -5,9 +5,9 @@ use PHPUnit\Framework\TestCase;
 
 
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-////use \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
+////use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
 
 class DumpTest extends TestCase{
@@ -15,7 +15,7 @@ class DumpTest extends TestCase{
 
 	public function testDumpData() {
 
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 		$dumpData = $data->ToArray();
 
 		$expectedData =array(
@@ -41,7 +41,7 @@ class DumpTest extends TestCase{
 	}
 
 	public function testDumpData1() {
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 		$t ='-This is a Title-';
 
 		DumpExtendedClass::ExtendSetTitle($data, $t);
@@ -53,7 +53,7 @@ class DumpTest extends TestCase{
 	}
 
 	public function testDumpData2() {
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 		//$data->variable ='-this is a single line variable output-';
 		$v  ='-this is a single line variable output-';
 		DumpExtendedClass::ExtendSetVariableValue( $data, $v);
@@ -101,7 +101,7 @@ class DumpTest extends TestCase{
 	}
 
 	public function testDumpData3() {
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 		$data->variableName = '-This is a variable Name-';
 
 
@@ -111,7 +111,7 @@ class DumpTest extends TestCase{
 	}
 
 	public function testDumpData4() {
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 		$data->variableName = '-This is a variable Name-';
 
 		$dumpData = DumpExtendedClass::ExtendBeautifyVariableName($data);
@@ -121,7 +121,7 @@ class DumpTest extends TestCase{
 	}
 
 	public function testDumpData5() {
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 		$data->serverName = '-This is a Server Name-';
 		$data->fileName= '-this is a filename-';
 		$data->lineNum = 9999;
@@ -137,10 +137,10 @@ class DumpTest extends TestCase{
 	public function testSetBackTrace()   :void {
 		// this is very hard totest - the back trace is dependant on where you run it from
 		$bt = array( 0=> array (
-				    'file' => 'P:\\Projects\\MikesCommandAndControl2\\src\\index.php',
+				    'file' => 'P:\\Projects\\php_base\\src\\index.php',
 				    'line' => 45,
 				    'function' => 'dump',
-				    'class' => 'whitehorse\\MikesCommandAndControl2\\Utils\\Dump\\Dump',
+				    'class' => 'whitehorse\\php_base\\Utils\\Dump\\Dump',
 				    'type' => '::',
 				    'args' =>
 				    array (
@@ -151,21 +151,21 @@ class DumpTest extends TestCase{
 				  )
 			);
 
-		$data = new \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpData();
+		$data = new \php_base\Utils\Dump\DumpData();
 
 		DumpExtendedClass::ExtendSetBackTrace($data, $bt);
 		$dumpData = $data->backTrace;
-		$expectedData = 'P:\\Projects\\MikesCommandAndControl2\\src\\index.php:45(dump)45, -This is a Title-, -True-' . "\n";
+		$expectedData = 'P:\\Projects\\php_base\\src\\index.php:45(dump)45, -This is a Title-, -True-' . "\n";
 		$this->assertEquals($expectedData, $dumpData);
 
 		$dumpData = DumpExtendedClass::ExtendBeautifyBackTrace($data);
-		$expectedData= '<font color=#0000FF>P:\\Projects\\MikesCommandAndControl2\\src\\index.php:45(dump)45, -This is a Title-, -True-' ."\n". '</font>' ."\n";
+		$expectedData= '<font color=#0000FF>P:\\Projects\\php_base\\src\\index.php:45(dump)45, -This is a Title-, -True-' ."\n". '</font>' ."\n";
 
 		$this->assertEquals($expectedData, $dumpData);
 
 		$o = __Line__;
 		DumpExtendedClass::ExtendSetVariableName( $data, $o, $bt);
-		$this->assertEquals( 'P:\\Projects\\MikesCommandAndControl2\\src\\index.php', $data->fileName );
+		$this->assertEquals( 'P:\\Projects\\php_base\\src\\index.php', $data->fileName );
 
 		$this->assertEquals(45, $data->lineNum);
 
@@ -243,7 +243,7 @@ class DumpExtendedClass extends Dump {
 
 
 //***********************************************************************************************************
-class BackTraceExtendedClass extends \whitehorse\MikesCommandAndControl2\Utils\Dump\BackTraceProcessor {
+class BackTraceExtendedClass extends \php_base\Utils\Dump\BackTraceProcessor {
 	public static function ExtendProcessBTFunc($data){
 		return parent::ProcessBTFunc($data);
 	}

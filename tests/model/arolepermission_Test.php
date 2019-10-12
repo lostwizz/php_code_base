@@ -3,7 +3,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\model\ARolePermission as ARolePermission;
+use \php_base\model\ARolePermission as ARolePermission;
 
 class ARolePermission_Test extends TestCase {
 

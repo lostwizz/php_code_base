@@ -4,7 +4,7 @@
 use PHPUnit\Framework\TestCase;
 
 
-use whitehorse\MikesCommandAndControl2\View\FooterView as FooterView;
+use php_base\View\FooterView as FooterView;
 
 class FooterView_Test extends TestCase {
 

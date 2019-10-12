@@ -1,13 +1,13 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\Control;
+namespace php_base\Control;
 
-use whitehorse\MikesCommandAndControl2\Model;
-use whitehorse\MikesCommandAndControl2\Data;
-use whitehorse\MikesCommandAndControl2\View;
+use php_base\Model;
+use php_base\Data;
+use php_base\View;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 
 //***********************************************************************************************

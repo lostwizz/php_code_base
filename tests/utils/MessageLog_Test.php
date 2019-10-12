@@ -2,12 +2,12 @@
 
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-use \whitehorse\MikesCommandAndControl2\utils;
+use \php_base\Settings\Utils\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\utils;
 
-//use \whitehorse\MikesCommandAndControl2\utils\AMessage as AMessage;
-use \whitehorse\MikesCommandAndControl2\utils\MessageLog as MessageLog;
+use \php_base\utils\MessageLog as MessageLog;
+use \php_base\utils\AMessage as AMessage;
 
 include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 
@@ -16,7 +16,7 @@ include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 
 //***********************************************************************************************
 //***********************************************************************************************
-class MessageLogTest extends TestCase {
+class MessageLog_Test extends TestCase {
 
 
 	//-----------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class MessageLogTest extends TestCase {
 		$x = $o->extendedMessageQueue();
 		$this->assertNotNull($x);
 
-		$this->assertInstanceOf('\whitehorse\MikesCommandAndControl2\utils\MessageLog', $o);
+		$this->assertInstanceOf('\php_base\utils\MessageLog', $o);
 
 		$c = $x->count();
 		$this->assertEquals( 0, $c);

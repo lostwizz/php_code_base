@@ -4,10 +4,10 @@ namespace Tests\Test;
 use PHPUnit\Framework\TestCase;
 
 
-use \whitehorse\MikesCommandAndControl2\Utils\HTML\HTML as HTML;
-//use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-//use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-////use \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
+use \php_base\Utils\HTML\HTML as HTML;
+//use \php_base\Settings\Settings as Settings;
+//use \php_base\Utils\Dump\Dump as Dump;
+//use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
 
 class HTML_Test extends TestCase{
@@ -274,7 +274,7 @@ class HTML_Test extends TestCase{
 
 	function test_1_FormOpen(){
 		$this->expectException(\TypeError::class);
-		$this->expectExceptionMessage('Argument 1 passed to whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::FormOpen() must be of the type string, null given, called ' );
+		$this->expectExceptionMessage('Argument 1 passed to php_base\Utils\HTML\HTML::FormOpen() must be of the type string, null given, called ' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/must be of the type string/');
 
@@ -284,7 +284,7 @@ class HTML_Test extends TestCase{
 
 	function test_2_FormOpen(){
 		$this->expectException(\TypeError::class);
-		$this->expectExceptionMessage('Argument 2 passed to whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::FormOpen() must be of the type string or null, object given,' );
+		$this->expectExceptionMessage('Argument 2 passed to php_base\Utils\HTML\HTML::FormOpen() must be of the type string or null, object given,' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/must be of the type string/');
 
@@ -295,7 +295,7 @@ class HTML_Test extends TestCase{
 
 	function test_3_FormOpen(){
 		$this->expectException(\TypeError::class);
-		$this->expectExceptionMessage('Argument 2 passed to whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::FormOpen() must be of the type string or null, array given,' );
+		$this->expectExceptionMessage('Argument 2 passed to php_base\Utils\HTML\HTML::FormOpen() must be of the type string or null, array given,' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/must be of the type string/');
 
@@ -304,7 +304,7 @@ class HTML_Test extends TestCase{
 
 //	function test_4_FormOpen(){
 //		$this->expectException(\TypeError::class);
-//		$this->expectExceptionMessage('Argument 2 passed to whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::FormOpen() must be of the type string or null, array given,' );
+//		$this->expectExceptionMessage('Argument 2 passed to php_base\Utils\HTML\HTML::FormOpen() must be of the type string or null, array given,' );
 //		$this->expectExceptionCode(0);
 //		$this->expectExceptionMessageRegExp('/must be of the type string/');
 //
@@ -381,7 +381,7 @@ class HTML_Test extends TestCase{
 
 	function test_1_Hidden() {
 		$this->expectException(\ArgumentCountError::class);
-		$this->expectExceptionMessage('Too few arguments to function whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::Hidden(), 0 passed' );
+		$this->expectExceptionMessage('Too few arguments to function php_base\Utils\HTML\HTML::Hidden(), 0 passed' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/0 passed/');
 
@@ -390,7 +390,7 @@ class HTML_Test extends TestCase{
 
 	function test_2_Hidden() {
 		$this->expectException(\ArgumentCountError::class);
-		$this->expectExceptionMessage('Too few arguments to function whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::Hidden(), 1 passed' );
+		$this->expectExceptionMessage('Too few arguments to function php_base\Utils\HTML\HTML::Hidden(), 1 passed' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/at least 2 expected/');
 
@@ -430,7 +430,7 @@ class HTML_Test extends TestCase{
 
 	function test_1_Open(){
 		$this->expectException(\ArgumentCountError::class);
-		$this->expectExceptionMessage('Too few arguments to function whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::Open(), 0 passed' );
+		$this->expectExceptionMessage('Too few arguments to function php_base\Utils\HTML\HTML::Open(), 0 passed' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/0 passed/');
 
@@ -465,7 +465,7 @@ class HTML_Test extends TestCase{
 
 	function test_1_Close(){
 		$this->expectException(\ArgumentCountError::class);
-		$this->expectExceptionMessage('Too few arguments to function whitehorse\MikesCommandAndControl2\Utils\HTML\HTML::Close(), 0 passed' );
+		$this->expectExceptionMessage('Too few arguments to function php_base\Utils\HTML\HTML::Close(), 0 passed' );
 		$this->expectExceptionCode(0);
 		$this->expectExceptionMessageRegExp('/0 passed/');
 

@@ -10,7 +10,7 @@
 
 
 
-namespace whitehorse\MikesCommandAndControl2\utils\myCryption;
+namespace php_base\utils\myCryption;
 
 
 Class myCryption{

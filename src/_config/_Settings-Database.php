@@ -1,6 +1,6 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\Settings;
+namespace php_base\Utils\Settings;
 
 Settings::SetProtected('test', 'test_val');
 //\whitehorse\MikesCommandAndControl2\Settings\Settings\Settings::SetProtected('test', 'test_val');

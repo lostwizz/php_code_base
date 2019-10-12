@@ -16,15 +16,15 @@ if ( strripos (realpath('.'), 'src' ) <1 ){
 include_once( DIR . 'autoload.php');
 
 // set some usefull usings
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-use \whitehorse\MikesCommandAndControl2\Utils\MessageLog as MessageLog;
-use \whitehorse\MikesCommandAndControl2\Authenticate as Authenticate;
-use \whitehorse\MikesCommandAndControl2\Resolver as Resolver;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\MessageLog as MessageLog;
+use \php_base\Authenticate as Authenticate;
+use \php_base\Resolver as Resolver;
 
-use \whitehorse\MikesCommandAndControl2\utils\myCryption\myCryption as myCryption;
-use \whitehorse\MikesCommandAndControl2\Utils\HTML\HTML as HTML;
-use \whitehorse\MikesCommandAndControl2\Utils\myUtils\myUtils as myUtils;
+use \php_base\utils\myCryption\myCryption as myCryption;
+use \php_base\Utils\HTML\HTML as HTML;
+use \php_base\Utils\myUtils\myUtils as myUtils;
 
 include_once(DIR . 'utils' . DS. 'myCryption.class.php');
 //Dump::dumpClasses();

@@ -4,7 +4,7 @@
  *
  */
 
-namespace whitehorse\MikesCommandAndControl2\Settings\Logger;
+namespace php_base\Utils\Settings\Logger;
 
 //echo DIR . 'vendor/autoload.php';
 require_once(DIR . 'vendor/autoload.php');
@@ -26,8 +26,8 @@ use Monolog\Processor\ProcessIdProcessor;
 //use Monolog\Formatter\HtmlFormatter;
 use Monolog\Formatter\EmailHtmlFormatter;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 // get the log file name
 $log_fn = Settings::GetPublic('Log_file' );

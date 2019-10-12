@@ -5,11 +5,11 @@ use PHPUnit\Framework\TestCase;
 
 
 
-//use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-//use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-////use \whitehorse\MikesCommandAndControl2\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
+//use \php_base\Settings\Settings as Settings;
+//use \php_base\Utils\Dump\Dump as Dump;
+//use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
-use \whitehorse\MikesCommandAndControl2\utils\myCryption\myCryption as myCryption;
+use \php_base\utils\myCryption\myCryption as myCryption;
 
 class myCryption_Test extends TestCase{
 

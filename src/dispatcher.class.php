@@ -1,11 +1,11 @@
 <?php
 
 //namespace whitehorse\MikesCommandAndControl2\Dispatcher;
-namespace whitehorse\MikesCommandAndControl2;
+namespacephp_base;
 
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 //use \whitehorse\MikesCommandAndControl2\Authenticate as Authenticate;
 
@@ -162,7 +162,7 @@ Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!',
 
 	//-----------------------------------------------------------------------------------------------
 	private function doExecute( string $dir, string $class, string $method, $process){
-		$class = '\\whitehorse\\MikesCommandAndControl2\\' .$dir . '\\' . $class;
+		$class = '\\php_base\\' .$dir . '\\' . $class;
 
 		$pname = $this->decodeProcessFromFullDescriptor($process);   //figure out the base process name
 		$payload = $this->decodePayload($pname);       //send the base process the payload

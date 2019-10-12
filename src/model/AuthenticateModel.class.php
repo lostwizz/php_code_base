@@ -19,11 +19,11 @@
 //***********************************************************************************************************
 
 
-namespace whitehorse\MikesCommandAndControl2\Model;
+namespace php_base\Model;
 
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 //***********************************************************************************************
 //***********************************************************************************************

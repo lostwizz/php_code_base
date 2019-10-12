@@ -74,10 +74,10 @@
 
 		<testsuite name="headerAndFooter">
 			<file>Tests/control/HeaderController_Test.php</file>
-  			   <file>Tests/view/HeaderView_Test.php</file>
+			<file>Tests/view/HeaderView_Test.php</file>
 
 			<file>Tests/control/FooterController_Test.php</file>
-			   <file>Tests/view/FooterView_Test.php</file>
+			<file>Tests/view/FooterView_Test.php</file>
 		</testsuite>
 
 

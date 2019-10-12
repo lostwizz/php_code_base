@@ -1,6 +1,6 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\Settings;
+namespace php_base\Settings;
 
 date_default_timezone_set('Canada/Yukon');
 

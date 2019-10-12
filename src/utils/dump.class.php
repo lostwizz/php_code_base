@@ -18,7 +18,7 @@
 	//	echo '<pre>fff-'; var_export($bt); echo '-gg</pre>';
 
 
-namespace whitehorse\MikesCommandAndControl2\Utils\Dump;
+namespace php_base\Utils\Dump;
 
 
 

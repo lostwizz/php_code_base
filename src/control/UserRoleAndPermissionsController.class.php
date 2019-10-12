@@ -1,6 +1,6 @@
 <?php
 
-namespace whitehorse\MikesCommandAndControl2\control;
+namespace php_base\control;
 
 
 public class UserRoleAndPermissionsController {

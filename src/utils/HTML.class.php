@@ -2,10 +2,10 @@
 
 //  from:
 /// https://github.com/queued/HTML-Helper/blob/master/class.html.php
-namespace whitehorse\MikesCommandAndControl2\Utils\HTML;
+namespace php_base\Utils\HTML;
 
 
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Dump\Dump as Dump;
 
 abstract Class HTML {
 

@@ -24,13 +24,13 @@
 
 
 
-namespace whitehorse\MikesCommandAndControl2\Settings;
+namespace php_base\Utils\Settings;
 //namespace whitehorse\MikesCommandAndControl2;
 //namespace whitehorse\MikesCommandAndControl2\Settings;
 
-use \whitehorse\MikesCommandAndControl2\utils\myCryption\myCryption as myCryption;
+use \php_base\Utils\myCryption\myCryption as myCryption;
 
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Dump\Dump as Dump;
 
 ///echo 'xxxxx"', __NAMESPACE__, '"'; // outputs "MyProject"
 
