@@ -5,3 +5,5 @@ $database = array(
     "username" => "user",
     "password" => "pass",
     "database" => "new_project");
+
+// mike was here
