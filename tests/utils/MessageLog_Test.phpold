@@ -1,0 +1,577 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+
+use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
+use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \whitehorse\MikesCommandAndControl2\utils;
+
+use \whitehorse\MikesCommandAndControl2\utils\AMessage as AMessage;
+
+include_once ('P:\Projects\MikesCommandAndControl2\src\utils\messagelog.class.php');
+
+
+
+//***********************************************************************************************
+//***********************************************************************************************
+class AMessageTest extends TestCase {
+
+
+	//-----------------------------------------------------------------------------------------------
+	public function test_levels() {
+		$o = new anExtendedMessage();
+		$a = $o->ExtendedGetLevels();
+		$this->assertEquals('DEBUG', $a[100]);
+
+		$expected =  array(
+	        100     => 'DEBUG',
+	        200      => 'INFO',
+	        250    => 'NOTICE',
+	        300   => 'WARNING',
+	        400     => 'ERROR',
+	        500  => 'CRITICAL',
+	        550     => 'ALERT',
+	        600 => 'EMERGENCY'
+        );
+
+        $this->assertEquals($expected, $a);
+
+		$expected =  array(
+	        anExtendedMessage::DEBUG     => 'DEBUG',
+	        anExtendedMessage::INFO      => 'INFO',
+	        anExtendedMessage::NOTICE    => 'NOTICE',
+	        anExtendedMessage::WARNING   => 'WARNING',
+	        anExtendedMessage::ERROR     => 'ERROR',
+	        anExtendedMessage::CRITICAL  => 'CRITICAL',
+	        anExtendedMessage::ALERT     => 'ALERT',
+	        anExtendedMessage::EMERGENCY => 'EMERGENCY',
+    	);
+
+		$this->assertEquals($expected, $a);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function test_constants() {
+		$this->assertEquals(100 , anExtendedMessage::DEBUG);
+		$this->assertEquals(200 , anExtendedMessage::INFO);
+		$this->assertEquals(250 , anExtendedMessage::NOTICE);
+		$this->assertEquals(300 , anExtendedMessage::WARNING);
+		$this->assertEquals(400 , anExtendedMessage::ERROR);
+		$this->assertEquals(500 , anExtendedMessage::CRITICAL);
+		$this->assertEquals(550 , anExtendedMessage::ALERT);
+		$this->assertEquals(600 , anExtendedMessage::EMERGENCY);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+//	public function test_constructorWhenArray() {
+//
+//		//---------------------------------------
+//		$o = new anExtendedMessage(array(null,null,null));
+//		$nowIsh =  date( 'g:i:');
+//		$t = $o->ExtendedGetText();
+//		$ts = $o->ExtendedGetTimeStamp();
+//		$l = $o->ExtendedGetLevel();
+//
+//		$this->assertEmpty($t); // no text set yet
+//		$this->assertNotNull($ts);
+//		$this->assertNotNull($l);
+//
+//		$this->assertStringContainsString($nowIsh, $ts);
+//		$this->assertEquals('', $t);
+//		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+//
+//		//---------------------------------------
+//		$o = new anExtendedMessage(array('Hello World!!!',null,null));
+//		$nowIsh =  date( 'g:i:');
+//		$t = $o->ExtendedGetText();
+//		$ts = $o->ExtendedGetTimeStamp();
+//		$l = $o->ExtendedGetLevel();
+//
+//		$this->assertNotEmpty($t); // no text set yet
+//		$this->assertNotNull($ts);
+//		$this->assertNotNull($l);
+//
+//		$this->assertStringContainsString($nowIsh, $ts);
+//		$this->assertEquals('Hello World!!!', $t);
+//		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+//
+//		//---------------------------------------
+//		$o = new anExtendedMessage(array('Hello World!!!','sometextforTimeStamp',null));
+//		$nowIsh =  date( 'g:i:');
+//		$t = $o->ExtendedGetText();
+//		$ts = $o->ExtendedGetTimeStamp();
+//		$l = $o->ExtendedGetLevel();
+//
+//		$this->assertNotEmpty($t); // no text set yet
+//		$this->assertNotNull($ts);
+//		$this->assertNotNull($l);
+//
+//		//$this->assertStringContainsString($nowIsh, $ts);
+//		$this->assertEquals( 'sometextforTimeStamp', $ts);
+//		$this->assertEquals('Hello World!!!', $t);
+//		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+//
+//		//---------------------------------------
+//		$o = new anExtendedMessage(array('Hello World!!!','sometextforTimeStamp',anExtendedMessage::EMERGENCY));
+//		$nowIsh =  date( 'g:i:');
+//		$t = $o->ExtendedGetText();
+//		$ts = $o->ExtendedGetTimeStamp();
+//		$l = $o->ExtendedGetLevel();
+//
+//		$this->assertNotEmpty($t); // no text set yet
+//		$this->assertNotNull($ts);
+//		$this->assertNotNull($l);
+//
+//		//$this->assertStringContainsString($nowIsh, $ts);
+//		$this->assertEquals( 'sometextforTimeStamp', $ts);
+//		$this->assertEquals('Hello World!!!', $t);
+//		$this->assertEquals( anExtendedMessage::EMERGENCY, $l );
+//
+//
+//		//---------------------------------------
+//		$o = new anExtendedMessage(array());
+//		$nowIsh =  date( 'g:i:');
+//		$t = $o->ExtendedGetText();
+//		$ts = $o->ExtendedGetTimeStamp();
+//		$l = $o->ExtendedGetLevel();
+//
+//		$this->assertEmpty($t); // no text set yet
+//		$this->assertNotNull($ts);
+//		$this->assertNotNull($l);
+//
+//		$this->assertStringContainsString($nowIsh, $ts);
+//		$this->assertEquals('', $t);
+//		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+//	}
+
+	//-----------------------------------------------------------------------------------------------
+	function test_ConstructWhenNotArray(){
+
+		//---------------------------------------
+		$o = new anExtendedMessage();
+		$nowIsh =  date( 'g:i:');
+		$this->assertInstanceOf( 'anExtendedMessage', $o);
+		$this->assertInstanceOf('\whitehorse\MikesCommandAndControl2\utils\AMessage', $o);
+
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertStringContainsString($nowIsh, $ts);
+		$this->assertEquals('', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+		//---------------------------------------
+		$o = new anExtendedMessage('Hello World');
+		$nowIsh =  date( 'g:i:');
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertStringContainsString($nowIsh, $ts);
+		$this->assertEquals('Hello World', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+		//---------------------------------------
+		$o = new anExtendedMessage('Hello World', '11:99');
+		$nowIsh =  date( 'g:i:');
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		//$this->assertStringContainsString($nowIsh, $ts);
+		$this->assertEquals('11:99', $ts);
+		$this->assertEquals('Hello World', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+		//---------------------------------------
+		$o = new anExtendedMessage('Hello World', 'now-timestamp');
+		$nowIsh =  date( 'g:i:');
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		//$this->assertStringContainsString($nowIsh, $ts);
+		$this->assertEquals('now-timestamp', $ts);
+		$this->assertEquals('Hello World', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+
+
+		//---------------------------------------
+		$o = new anExtendedMessage('Hello World',null,anExtendedMessage::EMERGENCY);
+		$nowIsh =  date( 'g:i:');
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertStringContainsString($nowIsh, $ts);
+		$this->assertEquals('Hello World', $t);
+		$this->assertEquals( anExtendedMessage::EMERGENCY, $l );
+
+		//---------------------------------------
+		$o = new anExtendedMessage(null,'someFakeTextTimeStamp',null);
+		//$nowIsh =  date( 'g:i:');
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('someFakeTextTimeStamp', $ts);
+		$this->assertEquals('', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+		//---------------------------------------
+		$o = new anExtendedMessage(null,'someFakeTextTimeStamp',8888888);         // test not valid level
+		$nowIsh =  date( 'g:i:');
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('someFakeTextTimeStamp', $ts);
+		$this->assertEquals('', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	function test_toString(){
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage('Hello World',null,anExtendedMessage::EMERGENCY);
+		$nowIsh =  date( 'g:i:');
+		$x = $o->__toString();
+
+		$this->assertStringContainsString( 'Hello World', $x);
+		$this->assertStringContainsString( $nowIsh, $x);
+		$this->assertStringContainsString( 'Level: EMERGENCY', $x);
+
+		//---------------------------------------
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage('Hello World',null,null);
+		$nowIsh =  date( 'g:i:');
+		$x = $o->__toString();
+
+		$this->assertStringContainsString( 'Hello World', $x);
+		$this->assertStringContainsString( $nowIsh, $x);
+		$this->assertStringContainsString( 'Level: NOTICE', $x);
+
+		//---------------------------------------
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage('Hello World','someFakeTextTimeStamp',null);
+		$nowIsh =  date( 'g:i:');
+		$x = $o->__toString();
+
+		$this->assertStringContainsString( 'Hello World', $x);
+		$this->assertStringContainsString( 'someFakeTextTimeStamp (Level: ', $x);
+		$this->assertStringContainsString( 'Level: NOTICE', $x);
+
+		//---------------------------------------
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage();
+		$nowIsh =  date( 'g:i:');
+		$x = $o->__toString();
+
+		//$this->assertStringContainsString( 'Hello', $x);
+		$this->assertStringContainsString( $nowIsh, $x);
+		$this->assertStringContainsString( 'Level: NOTICE', $x);
+
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
+	function test_messagedump_NoParams(){
+
+		//---------------------------------------
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage( );
+		$nowIsh =  date( 'g:i:s');
+
+		$this->expectOutputString('msg= time=' . $nowIsh . ' level=NOTICE<Br>');
+		$x = $o->dump();
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	function test_messagedump_fakemessageTimeStamp(){
+		//---------------------------------------
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage( 'Hello','someFakeTextTimeStamp');
+		$nowIsh =  date( 'g:i:');
+
+		$this->expectOutputString('msg=Hello time=someFakeTextTimeStamp level=NOTICE<Br>');
+		$x = $o->dump();
+	}
+
+	function test_messagedump_fakeTimeStampAndLevel(){
+		//---------------------------------------
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage( 'Hello','someFakeTextTimeStamp', anExtendedMessage::EMERGENCY);
+		$nowIsh =  date( 'g:i:');
+
+		$this->expectOutputString('msg=Hello time=someFakeTextTimeStamp level=EMERGENCY<Br>');
+		$x = $o->dump();
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
+	function test_MessageSet(){
+		//$this->markTestIncomplete('This test has not been implemented yet' );
+
+		//---------------------------------------
+		$o = new anExtendedMessage('Hello World','someFakeTextTimeStamp',anExtendedMessage::EMERGENCY);
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('someFakeTextTimeStamp', $ts);
+		$this->assertEquals('Hello World', $t);
+		$this->assertEquals( anExtendedMessage::EMERGENCY, $l );
+
+		//---------------------------------------
+		$o->set( 'New Message');
+
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('someFakeTextTimeStamp', $ts);
+		$this->assertEquals('New Message', $t);
+		$this->assertEquals( anExtendedMessage::EMERGENCY, $l );
+
+		//---------------------------------------
+		$o->set( ['Newer Message 1']);
+
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('someFakeTextTimeStamp', $ts);
+		$this->assertEquals('Newer Message 1', $t);
+		$this->assertEquals( anExtendedMessage::EMERGENCY, $l );
+
+		//---------------------------------------
+		$o->set( ['Newest Message 2', 'aNewFakeTS']);
+
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('aNewFakeTS', $ts);
+		$this->assertEquals('Newest Message 2', $t);
+		$this->assertEquals( anExtendedMessage::EMERGENCY, $l );
+
+		//---------------------------------------
+		$o->set( ['Newest Message 3', 'aNewFakeTS2', anExtendedMessage::DEBUG]);
+
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertNotEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertEquals('aNewFakeTS2', $ts);
+		$this->assertEquals('Newest Message 3', $t);
+		$this->assertEquals( anExtendedMessage::DEBUG, $l );
+
+
+		//---------------------------------------
+		$o->set( []);
+		$nowIsh =  date( 'g:i:');
+
+		$t = $o->ExtendedGetText();
+		$ts = $o->ExtendedGetTimeStamp();
+		$l = $o->ExtendedGetLevel();
+
+		$this->assertEmpty($t); // no text set yet
+		$this->assertNotNull($ts);
+		$this->assertNotNull($l);
+
+		$this->assertStringContainsString($nowIsh, $ts);
+		$this->assertEquals('', $t);
+		$this->assertEquals( anExtendedMessage::NOTICE, $l );
+
+
+	}
+
+
+
+	//-----------------------------------------------------------------------------------------------
+	function test_get(){
+		//$this->markTestIncomplete('This test has not been implemented yet' );
+		$o = new \whitehorse\MikesCommandAndControl2\utils\AMessage('Hello'); // anExtendedMessage();
+		$nowIsh =  date( 'g:i:');
+
+		$x  = $o->get();
+
+		$this->assertIsArray($x);
+		$this->assertEquals( 3, count($x) );
+		$this->assertEquals( 'Hello', $x[0]);
+		$this->assertEquals( AMessage::NOTICE, $x[2]);
+	}
+
+	public function styleDataProvider(){
+		return [
+				[ anExtendedMessage::DEBUG, 'msg_style_DEBUG' ],
+				[ anExtendedMessage::INFO, 'msg_style_INFO' ],
+				[ anExtendedMessage::NOTICE, 'msg_style_NOTICE' ],
+				[ anExtendedMessage::WARNING, 'msg_style_WARNING' ],
+				[ anExtendedMessage::ERROR, 'msg_style_ERROR' ],
+				[ anExtendedMessage::CRITICAL, 'msg_style_CRITICAL' ],
+				[ anExtendedMessage::ALERT, 'msg_style_ALERT' ],
+				[ anExtendedMessage::EMERGENCY, 'msg_style_EMERGENCY' ],
+				[ 10, 'msg_style_UNKNOWN' ],
+
+			];
+	}
+
+	/**
+	* @dataProvider styleDataProvider
+	*/
+	function test_getShowStyle($test, $expected){
+		$o = new anExtendedMessage();
+		$x = $o->ExtendedGetShowStyle($test);
+
+		$this->assertSame ($expected, $x);
+	}
+
+
+	public function textLeaderDataProvider(){
+		return [
+				[ anExtendedMessage::DEBUG, 'DEBUG ' ],
+				[ anExtendedMessage::INFO, 'INFO ' ],
+				[ anExtendedMessage::NOTICE, 'NOTICE ' ],
+				[ anExtendedMessage::WARNING, 'WARNING ' ],
+				[ anExtendedMessage::ERROR, 'ERROR ' ],
+				[ anExtendedMessage::CRITICAL, 'CRITICAL ' ],
+				[ anExtendedMessage::ALERT, 'ALERT ' ],
+				[ anExtendedMessage::EMERGENCY, 'EMERGENCY ' ],
+				[ 10, 'UNKNOWN ' ],
+			];
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	/**
+	* @dataProvider textLeaderDataProvider
+	*/
+	function test_textLeader ($test, $expected){
+		$o = new anExtendedMessage();
+		$x =$o->ExtendedgetShowTextLeader( $test);
+		$this->assertEquals( $expected, $x);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	function test_showALine(){
+		//$this->markTestIncomplete('This test has not been implemented yet' );
+	}
+
+}
+
+
+//***********************************************************************************************
+//***********************************************************************************************
+class anExtendedMessage extends \whitehorse\MikesCommandAndControl2\utils\AMessage {
+
+	public function __construct( $textOrArray=null, $timestamp=null, $level=null) {
+		parent::__construct( $textOrArray, $timestamp, $level);
+	}
+
+	public function ExtendedgetShowTextLeader($z){
+		return parent::getShowTextLeader($z );
+	}
+
+	public function ExtendedGetLevels(){
+		return parent::$levels;
+	}
+
+	public static function XXXExtendedGetLevels(){
+		return parent::$levels;
+	}
+
+	public function ExtendedGetText(){
+		return $this->text;
+	}
+	public function ExtendedGetTimeStamp(){
+		return $this->timeStamp;
+	}
+	public function ExtendedGetLevel(){
+		return $this->level;
+	}
+	public function ExtendedGetShowStyle($lv){
+		return $this->getShowStyle($lv);
+	}
+}
+
+/*
+
+//***********************************************************************************************
+//***********************************************************************************************
+class MessageLog_Test extends TestCase {
+
+	public function test_constructor(){
+		//$this->markTestIncomplete('This test has not been implemented yet' );
+		$o = new anExtededMessageLog();
+		$x = $o->giveMessageQue();
+		$this->assertNotNull($x);
+
+		$this->assertInstanceOf('\whitehorse\MikesCommandAndControl2\utils\MessageLog', $o);
+
+		$c = $x->count();
+		$this->assertEquals( 0, $c);
+
+		$x->enqueue('fred was here');
+		$c = $x->count();
+		$this->assertEquals( 1, $c);
+
+		$y = $x->dequeue();
+		$this->assertEquals( 'fred was here', $y);
+
+		$c = $x->count();
+		$this->assertEquals( 0, $c);
+	}
+
+}
+
+class anExtededMessageLog extends \whitehorse\MikesCommandAndControl2\utils\MessageLog {
+
+	public function giveMessageQue(){
+		return parent::$messageQueue;
+	}
+}
+*/
