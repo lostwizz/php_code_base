@@ -1,0 +1,21 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /index.php
+
+
+
+converted  to iis gives:
+
+<rewrite>
+  <rules>
+    <rule name="Imported Rule 1">
+      <match url="^(.*)$" ignoreCase="false" />
+      <conditions>
+        <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true" />
+        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true" />
+      </conditions>
+      <action type="Rewrite" url="/index.php" />
+    </rule>
+  </rules>
+</rewrite>
