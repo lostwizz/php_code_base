@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         executionOrder="depends,defects"
+         forceCoversAnnotation="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         colors="true"
+         verbose="true"
+         bootstrap="src\autoload.php"
+         stopOnIncomplete="false"
+         stopOnFailure="true"
+	>
+
+<!--
+		 report-useless-tests="true"
+         convertErrorsToExceptions="true"
+         beStrictAboutOutputDuringTests="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+		 stopOnFailure="true"
+-->
+
+
+	<php>
+		<const name="IS_PHPUNIT_TESTING" value="true"/>
+
+        <server name='HTTP_HOST' value='http://localhost' />
+        <server name="SERVER_NAME" value="localhost"/>
+        <server name="SERVER_PORT" value="80"/>
+        <server name="REMOTE_ADDR" value="127.1.2.3"/>
+    </php>
+
+	<testsuites>
+
+		<!--
+		<testsuite name="Wild_card_all_tests">
+			        <directory>Tests</directory>
+		</testsuite>
+		-->
+
+		<!--
+		<testsuite name="Vendor_Test_Suite">
+			<directory>Vendor</directory>
+		</testsuite>
+		-->
+
+
+		<testsuite name="Utils">
+			<file>Tests/utils/Setup/SettingsClassTest.php</file>
+			<file>Tests/utils/Setup/Setup_Logging_Test.php</file>
+			<!-- <file>Tests/utils/log/LoggingToDBTest.php</file>   -->
+			<file>Tests/utils/dumpTest.php</file>
+
+			<file>Tests/utils/Message_Test.php</file>
+			<file>Tests/utils/MessageLog_Test.php</file>
+
+			<file>Tests/utils/HTML_Test.php</file>
+			<file>Tests/utils/myCryption_Test.php</file>
+			<file>Tests/utils/myUtils_Test.php</file>
+
+		</testsuite>
+
+
+
+		<testsuite name="base_structure">
+			<file>Tests/DirectoryStructureTest.php</file>
+			<file>Tests/Resolver_Test.php</file>
+
+		</testsuite>
+
+
+		<testsuite name="headerAndFooter">
+			<file>Tests/control/HeaderController_Test.php</file>
+  			   <file>Tests/view/HeaderView_Test.php</file>
+
+			<file>Tests/control/FooterController_Test.php</file>
+			   <file>Tests/view/FooterView_Test.php</file>
+		</testsuite>
+
+
+		<!--
+		<testsuite name="module_Authenticate">
+			<file>Tests/control/AuthenticateController_Test.php</file>
+			  <file>Tests/model/AuthenticateModel_Test.php</file>
+ 			   <file>Tests/data/AuthenticateData_Test.php</file>
+			   <file>Tests/view/AuthenticateView_Test.php</file>
+
+			<file>Tests/model/arolepermission_Test.php</file>
+		</testsuite>
+		-->
+
+		<!--
+		<testsuite name="Other_files">
+
+			<file>Tests/extra/FirstTest.php</file>
+			<file>Tests/extra/SecondTest.php</file>
+			<file>Tests/extra/ThirdTest.php</file>
+			<file>Tests/extra/EmailTest.php</file>
+		</testsuite>
+		-->
+
+	</testsuites>
+
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+
+</phpunit>
