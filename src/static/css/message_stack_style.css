@@ -1,0 +1,63 @@
+/*
+$Id: message_stack_style.css 1048 2018-10-05 17:21:26Z mike $
+$Rev: 1048 $
+$Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
+*/
+
+
+.msg_fieldset {
+	color: DarkCyan;   /* Olive */
+	background: Gray;  /* LightGray */
+	  padding:10px;
+	    border:2px solid green;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+    border-radius:8px;
+	}
+
+.msg_legend {
+	color: Olive;
+	 margin-bottom:0px;
+  margin-left:16px;
+  background: White;
+	}
+
+.msg_style_DEBUG {
+	color: #804040;
+	}
+
+.msg_style_INFO {
+	color: #D3D3D3;
+	}
+
+.msg_style_NOTICE {
+	color: #84308F;
+}
+.msg_style_WARNING {
+	 color: orange;
+	 }
+
+.msg_style_ERROR {
+	color: red;
+	}
+
+.msg_style_CRITICAL {
+	color: #FFD700;
+	}
+
+.msg_style_ALERT {
+	color: DarkRed;
+	background: Yellow;
+	}
+
+.msg_style_EMERGENCY {
+	color: YellowGreen;
+	background: Red
+	}
+.msg_style_UNKNOWN {
+	color: black;
+	}
+
+.msg_style_default {
+	color: black;
+	}

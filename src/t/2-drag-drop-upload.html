@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Simple Drag-and-drop upload Demo
+    </title>
+    <style>
+      #uploader {
+        width: 300px;
+        height: 200px;
+        background: #f4b342;
+        padding: 10px;
+      }
+      #uploader.highlight {
+        background:#ff0;
+      }
+      #uploader.disabled {
+        background:#aaa;
+      }
+    </style>
+    <script src="2-drag-drop-upload.js"></script>
+  </head>
+  <body>
+    <!-- DROP ZONE -->
+    <div id="uploader">
+      Drop Files Here
+    </div>
+
+    <!-- STATUS -->
+    <div id="upstat"></div>
+
+    <!-- FALLBACK -->
+    <form action="simple-upload.php" method="post" enctype="multipart/form-data">
+
+      <input type="file" name="file-upload" id="file-upload" accept="image/*">
+
+      <input type="submit" value="Upload File" name="submit">
+
+    </form>
+  </body>
+</html>
