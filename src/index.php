@@ -26,7 +26,7 @@ use \php_base\utils\myCryption\myCryption as myCryption;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\myUtils\myUtils as myUtils;
 
-include_once(DIR . 'utils' . DS. 'myCryption.class.php');
+//include_once(DIR . 'utils' . DS. 'myCryption.class.php');
 //Dump::dumpClasses();
 //include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 //

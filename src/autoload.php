@@ -54,7 +54,7 @@ function myAutoLoader($class){
 
 //********************************************************************************
 function runTheChecks($base){
-			//echo "Looking for:". $base . '<BR>' . PHP_EOL;
+			echo "Looking for:". $base . '<BR>' . PHP_EOL;
 			//fwrite(STDERR, "\n\rLooking for:". print_r($base, TRUE));
 
 	if (  tryFile( DIR . 'model'  . DS .  $base ))  				return true;
@@ -75,7 +75,7 @@ function runTheChecks($base){
 //********************************************************************************
 function tryFile( $fn){
 	if ( file_exists( $fn) ) {
-			//echo "<font color=magenta>FOUND:". $fn . ')</font><BR>' . PHP_EOL;
+			echo "<font color=magenta>FOUND:". $fn . ')</font><BR>' . PHP_EOL;
 			//fwrite(STDERR, "\n\rFOUND:". print_r(  $fn , TRUE));
 		$x = include_once( $fn);
 		return $x;
