@@ -88,7 +88,8 @@ class AMessageTest extends TestCase {
 	function test_ConstructWhenNotArray(){
 		//---------------------------------------
 		$o = new anExtendedMessage();
-		$nowIsh =  date( 'g:i:');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$this->assertInstanceOf( 'anExtendedMessage', $o);
 		$this->assertInstanceOf('\php_base\utils\AMessage', $o);
 
@@ -141,7 +142,8 @@ class AMessageTest extends TestCase {
 	*/
 	function test_toString($input, $expected){
 		$o = new AMessage($input[0], $input[1], $input[2]);
-		$nowIsh =  date( 'g:i:');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$x = $o->__toString();
 
 		$this->assertStringContainsString( $expected[0], $x);
@@ -176,7 +178,8 @@ class AMessageTest extends TestCase {
 	*/
 	function test_messagedump($input, $expected){
 		$o = new AMessage( $input[0], $input[1], $input[2]);
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 
 		//$this->expectOutputString('msg= time=' . $nowIsh . ' level=NOTICE<Br>');
 		if ( $expected[2] == 'NeedTime') {
@@ -237,7 +240,10 @@ class AMessageTest extends TestCase {
 
 		$o->set($setting[0], $setting[1], $setting[2]);
 
-		$nowIsh =  date( 'g:i:');
+		//$nowIsh =  date( 'g:i:');
+				//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
+
 
 		$t = $o->ExtendedGetText();
 		$ts = $o->ExtendedGetTimeStamp();
@@ -263,7 +269,9 @@ class AMessageTest extends TestCase {
 	//-----------------------------------------------------------------------------------------------
 	function test_get(){
 		$o = new AMessage('Hello'); // anExtendedMessage();
-		$nowIsh =  date( 'g:i:');
+		//$nowIsh =  date( 'g:i:');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 
 		$x  = $o->get();
 
@@ -324,7 +332,8 @@ class AMessageTest extends TestCase {
 
 	//-----------------------------------------------------------------------------------------------
 	function getPrettyLine_Dataprovider() {
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 
 		return [
 	            [['Hello World', null, null ],
@@ -357,7 +366,8 @@ class AMessageTest extends TestCase {
 	*/
 	function test_getPrettyLine($input, $expected){
 		$o = new anExtendedMessage($input[0], $input[1], $input[2]);
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 
 		$r = $o->ExtededGetPrettyLine();
 		$this->assertEquals($expected, $r , '!!!if it is the time try running the test again (should only be 1sec diff)!!!');
@@ -366,7 +376,8 @@ class AMessageTest extends TestCase {
 	//-----------------------------------------------------------------------------------------------
 	function test_show() {
 		$o = new AMessage('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 
 		$expected ='<span class="msg_style_NOTICE">[' . $nowIsh . '] NOTICE Hello World</span>';
 		$this->expectOutputString( $expected);

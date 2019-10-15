@@ -54,7 +54,10 @@ class MessageLog_Test extends TestCase {
 
 	//-----------------------------------------------------------------------------------------------
 	public function toString_DataProvider() {
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:30');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
+
 		return [
 			[[null], $nowIsh . ' (Level: NOTICE) '],
 			[['fred'], $nowIsh . ' (Level: NOTICE) fred'],
@@ -112,7 +115,8 @@ class MessageLog_Test extends TestCase {
 
 	//-----------------------------------------------------------------------------------------------
 	public function add_DataProvider(){
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		return [
 			[[null], $nowIsh . ' (Level: NOTICE) '],
 			[['fred'], $nowIsh . ' (Level: NOTICE) fred'],
@@ -152,7 +156,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addDebug();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -160,7 +165,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addDebug('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -181,7 +187,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addInfo();
-		$nowIsh =  date( 'g:i:s');
+				//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -189,7 +196,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addInfo('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -210,7 +218,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addNotice();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -218,7 +227,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addNotice('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -240,7 +250,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addWarning();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -248,7 +259,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addWarning('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -270,7 +282,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addError();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -278,7 +291,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addError('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -300,7 +314,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addCritical();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -308,7 +323,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addCritical('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -329,7 +345,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addAlert();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -337,7 +354,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addAlert('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -359,7 +377,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addEmergency();
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 
@@ -367,7 +386,8 @@ class MessageLog_Test extends TestCase {
 		$this->assertEquals( $expected, $r, 'if it is a time diff of 1sec then just rerun the tests it should work');
 
 		$ML->addEmergency('Hello World');
-		$nowIsh =  date( 'g:i:s');
+		//$nowIsh =  date( 'g:i:s');
+		$nowIsh = '23:55:30';
 		$msg  = $ML->extendedMessageQueue()->dequeue();
 		$r = $msg->__toString();
 

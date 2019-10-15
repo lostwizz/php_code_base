@@ -16,7 +16,9 @@ class Logging_SetupTest extends TestCase{
 		require_once( DIR . '_config' . DS . '_Settings-Database.php');
 		require_once( DIR . '_config' . DS . '_Settings-protected.php');
 
-        require_once('P:\Projects\php_base\src\utils\setup\setup_Logging.php');
+		require_once( 'P:\Projects\_Private_Settings.php');
+
+        require_once(DIR . 'utils\setup_Logging.php');
     }
 
 
@@ -26,6 +28,8 @@ class Logging_SetupTest extends TestCase{
 		require_once( DIR . '_config' . DS . '_Settings-General.php');
 		require_once( DIR . '_config' . DS . '_Settings-Database.php');
 		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+
+		require_once( 'P:\Projects\_Private_Settings.php');
 	}
 
 

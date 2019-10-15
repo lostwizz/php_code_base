@@ -3,17 +3,19 @@
 namespace Tests\Test;
 use PHPUnit\Framework\TestCase;
 
-use \php_base\Utils\Settings\Settings as Settings;
+//use \php_base\Utils\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 
 class SettingsTest extends TestCase{
 //
 
 	protected function setUp() :void {
 
-		include_once( DIR . 'utils' . DS . 'Setup' . DS . 'settings.class.php');
+		include_once( DIR . 'utils' . DS . 'settings.class.php');
 		require_once( DIR . '_config' . DS . '_Settings-General.php');
 		require_once( DIR . '_config' . DS . '_Settings-Database.php');
 		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+		require_once( 'P:\Projects\_Private_Settings.php');
 	}
 
 
@@ -25,19 +27,21 @@ class SettingsTest extends TestCase{
 		$this->assertFileExists('src\_config\_Settings-Database.php', 'missing file: _config\_Settings-Database.php');
 		$this->assertFileExists('src\_config\_Settings-protected.php', 'missing file: _config\_Settings-protected.php');
 
-		$this->assertFileExists('src\utils\Setup\settings.class.php', 'missing file: _config\settings.class.php');
-		$this->assertFileExists('src\utils\Setup\Setup.php', 'missing file: _config\Setup.php');
-		$this->assertFileExists('src\utils\Setup\Setup_Logging.php', 'missing file: _config\Setup_Logging.php');
+		$this->assertFileExists('P:\Projects\_Private_Settings.php' ,'missing file: P:\Projects\_Private_Settings.php');
+
+		$this->assertFileExists('src\utils\settings.class.php', 'missing file: _config\settings.class.php');
+		///$this->assertFileExists('src\utils\Setup\Setup.php', 'missing file: _config\Setup.php');
+		$this->assertFileExists('src\utils\Setup_Logging.php', 'missing file: _config\Setup_Logging.php');
 	}
 
 	public function testGlobalSettings() : void{
 		$x1 = Settings::GetPublic('App Name');
 		$this->assertEquals('TestApp', $x1 );
 
-		$x2 = \php_base\Utils\Settings\Settings::GetPublic('App Version');
+		$x2 = Settings::GetPublic('App Version');
 		$this->assertEquals( '2.0.0', $x2 );
 
-		$x3 = \php_base\Utils\Settings\Settings::GetPublic('App Server');
+		$x3 = Settings::GetPublic('App Server');
 		$this->assertEquals('localhost', $x3);
 	}
 

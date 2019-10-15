@@ -75,7 +75,7 @@ abstract class MessageBase {
 //***********************************************************************************************
 class AMessage extends MessageBase {
 
-
+	public $timestamp;
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct( $text=null, $timestamp=null, $level=null) {
@@ -137,10 +137,14 @@ class AMessage extends MessageBase {
 
 	//-----------------------------------------------------------------------------------------------
 	protected function setTimeStamp(string $timeStamp = null){
-		if ( empty($timeStamp)) {
-			$this->timeStamp = date( 'g:i:s');    // current timestamp
-		} else {
-			$this->timeStamp = $timeStamp;
+		if (  defined( "IS_PHPUNIT_TESTING")){
+			$this->timeStamp = '23:55:30';
+		}  else {
+			if ( empty($timeStamp)) {
+				$this->timeStamp = date( 'g:i:s');    // current timestamp
+			} else {
+				$this->timeStamp = $timeStamp;
+			}
 		}
 	}
 

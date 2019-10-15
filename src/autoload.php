@@ -18,6 +18,10 @@
 //***********************************************************************************************************
 //***********************************************************************************************************
 
+//********************************************************************************
+spl_autoload_register ('myAutoLoader');
+
+
 
 if (!defined('DIR')){
 	define ('DS', DIRECTORY_SEPARATOR);
@@ -63,7 +67,7 @@ function runTheChecks($base){
 	if (  tryFile( DIR . 'data'   . DS .  $base ))					return true;
 	if (  tryFile( DIR . 'utils'  . DS .  $base ))					return true;
 	////if (  tryFile( DIR . 'utils'  . DS . 'setup' . DS . $base ))	return true;
-	if (  tryFile( DIR . 'utils'  . DS . 'log'   . DS . $base ))	return true;
+	////if (  tryFile( DIR . 'utils'  . DS . 'log'   . DS . $base ))	return true;
 	if (  tryFile( DIR . $base ))									return true;
 	if (  tryFile( DIR . 'static' . DS .  $base ))					return true;
 	return false;
@@ -75,7 +79,7 @@ function runTheChecks($base){
 //********************************************************************************
 function tryFile( $fn){
 	if ( file_exists( $fn) ) {
-			echo "<font color=magenta>FOUND:". $fn . ')</font><BR>' . PHP_EOL;
+			//echo "<font color=magenta>FOUND:". $fn . ')</font><BR>' . PHP_EOL;
 			//fwrite(STDERR, "\n\rFOUND:". print_r(  $fn , TRUE));
 		$x = include_once( $fn);
 		return $x;
@@ -87,8 +91,6 @@ function tryFile( $fn){
 	}
 }
 
-//********************************************************************************
-spl_autoload_register ('myAutoLoader');
 
 
 
