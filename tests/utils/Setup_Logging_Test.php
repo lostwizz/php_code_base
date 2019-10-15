@@ -3,7 +3,7 @@
 namespace Tests\Test;
 use PHPUnit\Framework\TestCase;
 
-use \php_base\Utils\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use Monolog\Logger;
 
 
@@ -11,7 +11,7 @@ use Monolog\Logger;
 class Logging_SetupTest extends TestCase{
 
 	public static function setUpBeforeClass(): void   {
-		include_once( DIR . 'utils' . DS . 'Setup' . DS . 'settings.class.php');
+		include_once( DIR . 'utils' . DS . 'settings.class.php');
 		require_once( DIR . '_config' . DS . '_Settings-General.php');
 		require_once( DIR . '_config' . DS . '_Settings-Database.php');
 		require_once( DIR . '_config' . DS . '_Settings-protected.php');
@@ -38,8 +38,8 @@ class Logging_SetupTest extends TestCase{
 
 	public function testPrerequisites() :void {
 		$this->assertFileExists('src/vendor/autoload.php' );
-		$this->assertFileExists('src/utils\log\PDOHandler.php');
-		$this->assertFileExists('src/utils\log\PDOdataHandler.php');
+		$this->assertFileExists('src/utils\PDOHandler.php');
+		$this->assertFileExists('src/utils\PDOdataHandler.php');
 
 		$this->assertFileExists('src/Vendor\monolog\monolog\src\Monolog\Logger.php');
 
@@ -47,10 +47,10 @@ class Logging_SetupTest extends TestCase{
 		//$this->assertTrue(extension_loaded('sqlsrv'),'Sql Server extention not available');
 		//$this->assertTrue(extension_loaded('pdo_sqlsrv'),'PDO Sql Server extention not available');
 
-		$this->assertEquals(Settings::GetPublic('Log_file' ), 'P:\Projects\php_base\src\logs\TestApp_app.log');;
+		$this->assertEquals(Settings::GetPublic('Log_file' ), DIR . 'logs\TestApp_app.log');
 
-		$this->assertDirectoryIsWritable('P:\Projects\php_base\src\logs');
-		$this->assertFileIsWritable('P:\Projects\php_base\src\logs\TestApp_app.log');
+		$this->assertDirectoryIsWritable(DIR . 'logs');
+		$this->assertFileIsWritable(DIR . 'logs\TestApp_app.log');
 	}
 
 	public function testLogging() : void {
@@ -59,12 +59,12 @@ class Logging_SetupTest extends TestCase{
 
 		Settings::SetPublic('Log_file',DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log' );
 		//$this->assertEquals( 'P:\Projects\MikesCommandAndControl2\src\logs\TestApp_app.log', Settings::GetPublic( 'FileLog'));
-		$this->assertIsObject(Settings::GetPublic( 'FileLog'));
+		$this->assertIsObject(Settings::GetRuntime( 'FileLog'));
 
-		$this->assertInstanceOf('Monolog\Logger', Settings::GetPublic( 'FileLog') );
+		$this->assertInstanceOf('Monolog\Logger', Settings::GetRuntime( 'FileLog') );
 
 		$s = '-------------#$# Logging Test #$#--------------';
-		Settings::GetPublic( 'FileLog')->addRecord( Logger::ALERT, $s);
+		Settings::GetRuntime( 'FileLog')->addRecord( Logger::ALERT, $s);
 
 
 		$file = Settings::GetPublic('Log_file' );
@@ -82,7 +82,7 @@ class Logging_SetupTest extends TestCase{
 	}
 
 	public function testMyLogging() :void {
-		$o = Settings::GetPublic('FileLog');
+		$o = Settings::GetRuntime('FileLog');
 		$o->addNotice( '-------------UNIT TEST------------');
 
 		$file = Settings::GetPublic('Log_file' );
@@ -117,7 +117,7 @@ class Logging_SetupTest extends TestCase{
 	}
 
 	public function testMySecurityLogging() :void {
-		$o = Settings::GetPublic('SecurityLog');
+		$o = Settings::GetRuntime('SecurityLog');
 
 		$expected = '-------------Security UNIT TEST------------';
 		$o->addNotice( $expected );

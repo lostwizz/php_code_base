@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 use \php_base\Settings\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Dump\DumpData as DumpData;
 ////use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
 
@@ -15,7 +16,8 @@ class DumpTest extends TestCase{
 
 	public function testDumpData() {
 
-		$data = new \php_base\Utils\Dump\DumpData();
+		// \php_base\Utils\Dump
+		$data = new DumpData();
 		$dumpData = $data->ToArray();
 
 		$expectedData =array(
@@ -137,7 +139,7 @@ class DumpTest extends TestCase{
 	public function testSetBackTrace()   :void {
 		// this is very hard totest - the back trace is dependant on where you run it from
 		$bt = array( 0=> array (
-				    'file' => 'P:\\Projects\\php_base\\src\\index.php',
+				    'file' => DIR .'index.php',
 				    'line' => 45,
 				    'function' => 'dump',
 				    'class' => 'whitehorse\\php_base\\Utils\\Dump\\Dump',
@@ -155,17 +157,17 @@ class DumpTest extends TestCase{
 
 		DumpExtendedClass::ExtendSetBackTrace($data, $bt);
 		$dumpData = $data->backTrace;
-		$expectedData = 'P:\\Projects\\php_base\\src\\index.php:45(dump)45, -This is a Title-, -True-' . "\n";
+		$expectedData = DIR . 'index.php:45(dump)45, -This is a Title-, -True-' . "\n";
 		$this->assertEquals($expectedData, $dumpData);
 
 		$dumpData = DumpExtendedClass::ExtendBeautifyBackTrace($data);
-		$expectedData= '<font color=#0000FF>P:\\Projects\\php_base\\src\\index.php:45(dump)45, -This is a Title-, -True-' ."\n". '</font>' ."\n";
+		$expectedData= '<font color=#0000FF>' . DIR . 'index.php:45(dump)45, -This is a Title-, -True-' ."\n". '</font>' ."\n";
 
 		$this->assertEquals($expectedData, $dumpData);
 
 		$o = __Line__;
 		DumpExtendedClass::ExtendSetVariableName( $data, $o, $bt);
-		$this->assertEquals( 'P:\\Projects\\php_base\\src\\index.php', $data->fileName );
+		$this->assertEquals( DIR . 'index.php', $data->fileName );
 
 		$this->assertEquals(45, $data->lineNum);
 

@@ -103,7 +103,7 @@ Settings::GetRuntime('FileLog')->addRecord( Logger::ALERT, '-------------Startin
 $securityLog = new Logger('Security');
 $security_log_fn =Settings::GetPublic('Security_Log_file');
 
-Dump::dump($security_log_fn);
+//Dump::dump($security_log_fn);
 
 $securityLog->pushHandler( new StreamHandler( $security_log_fn, Logger::DEBUG));
 Settings::SetRuntime('SecurityLog' , $securityLog);

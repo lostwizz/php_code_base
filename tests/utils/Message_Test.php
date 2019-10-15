@@ -148,7 +148,7 @@ class AMessageTest extends TestCase {
 
 		$this->assertStringContainsString( $expected[0], $x);
 		if (  $expected[4]== 'NeedTime'){
-			$this->assertStringContainsString( $nowIsh, $x);
+			$this->assertStringContainsString( $nowIsh, $x );
 		} else {
 			$this->assertStringContainsString( $expected[1], $x);
 		}

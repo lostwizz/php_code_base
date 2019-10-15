@@ -60,7 +60,7 @@
 			<file>Tests/utils/HTML_Test.php</file>
 			<file>Tests/utils/myCryption_Test.php</file>
 			<file>Tests/utils/myUtils_Test.php</file>
-
+			<file>Tests/utils/ErrorHandlerTest.php</file>
 		</testsuite>
 
 

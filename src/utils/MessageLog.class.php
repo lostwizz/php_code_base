@@ -139,6 +139,11 @@ class AMessage extends MessageBase {
 	protected function setTimeStamp(string $timeStamp = null){
 		if (  defined( "IS_PHPUNIT_TESTING")){
 			$this->timeStamp = '23:55:30';
+			if ( empty($timeStamp)) {
+				$this->timeStamp = '23:55:30';
+			} else {
+				$this->timeStamp = $timeStamp;
+			}
 		}  else {
 			if ( empty($timeStamp)) {
 				$this->timeStamp = date( 'g:i:s');    // current timestamp

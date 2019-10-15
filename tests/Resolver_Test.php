@@ -5,11 +5,11 @@ use PHPUnit\Framework\TestCase;
 
 
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 
-use \whitehorse\MikesCommandAndControl2\Resolver as Resolver;
+use \php_base\Resolver as Resolver;
 
 
 
@@ -26,7 +26,7 @@ class request_test extends TestCase{
 	//-----------------------------------------------------------------------------------------------
 
 	public function test_1() {
-		$this->markTestIncomplete('This test has not been implemented yet' );
+//		$this->markTestIncomplete('This test has not been implemented yet' );
 		//$this->assertTrue(false);
 	}
 }
