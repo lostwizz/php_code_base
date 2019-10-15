@@ -1,0 +1,29 @@
+[Project ID]
+Signature=UE Proj: v.1
+Unicode=2
+[Project Information]
+Compilable=0
+Use Relative Directory=1
+Relative to Project File=1
+Include Sub Directories=1
+Project TagfileU=
+Project WordfileU=
+Project TpFileU=
+FilterU=
+Using VCS=1
+Save Account=0
+Create Tagfile=0
+CTags Legacy Support=0
+[FilesU]
+0=src+AFw-autoload.php
+1=.+AFw-
+[uemakeXp]
+ReleaseMode=0
+[Debug Settings]
+Program Arguments=
+Symbol Paths=
+Working Directory=
+Selected Debugger=2
+Source Paths=
+[Group FilterU]
+.+AFw-=+ACo-.php
