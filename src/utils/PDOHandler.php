@@ -2,6 +2,9 @@
 
 namespace Monolog\Handler;
 
+use \php_base\Utils\Settings as Settings;
+
+
 use	\PDO;
 
 use	Monolog\Logger;
@@ -13,7 +16,7 @@ class PDOHandler extends AbstractProcessingHandler
 	private	$pdo;
 	private	$statement;
 	private $tableName;
-	
+
 
 	public function	__construct(PDO	$pdo, $level = Logger::DEBUG, bool $bubble = true, string $tableName ='')
 	{
@@ -45,7 +48,7 @@ class PDOHandler extends AbstractProcessingHandler
 		$machine = $record['extra']['ip'] ?? '';
 		$this->statement->bindParam('machine_id', $machine);
 
-		$app = \whitehorse\MikesCommandAndControl2\Settings\Settings::GetPublic('App Name') ??	'';
+		$app = Settings::GetPublic('App Name') ??	'';
 		$this->statement->bindParam('app', $app);
 
 		$this->statement->bindParam('level', $record['level']);
@@ -71,14 +74,14 @@ class PDOHandler extends AbstractProcessingHandler
 		$this->statement->bindParam('call_caller',	$call_caller);
 
 		$thread = $record['extra']['process_id'] ??	'';
-		$this->statement->bindParam('thread', $thread);		
-		
+		$this->statement->bindParam('thread', $thread);
+
 		$msg =  $record['message'] ??'';
 		$this->statement->bindParam('message',$msg);
 
 		$tracer	= $record['extra']['tracer'] ??	'';
 		$this->statement->bindParam('tracer', $tracer);
-		
+
 		$this->statement->execute();
 	}
 

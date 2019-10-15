@@ -2,6 +2,10 @@
 
 namespace Monolog\Handler;
 
+
+use \php_base\Utils\Settings as Settings;
+
+
 use \PDO;
 
 use Monolog\Logger;
@@ -42,7 +46,7 @@ class PDOdataHandler extends AbstractProcessingHandler
 		$machine = $record['extra']['ip'] ?? '';
 		$this->statement->bindParam ('machine_id', $machine);
 
-		$app =  \whitehorse\MikesCommandAndControl2\Settings\Settings::GetPublic('App Name') ?? '';
+		$app =  Settings::GetPublic('App Name') ?? '';
 		$this->statement->bindParam('app', $app);
 
 		$this->statement->bindParam('level', $record['level']);

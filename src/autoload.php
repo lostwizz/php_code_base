@@ -54,7 +54,7 @@ function myAutoLoader($class){
 
 //********************************************************************************
 function runTheChecks($base){
-			echo "Looking for:". $base . '<BR>' . PHP_EOL;
+			//echo "Looking for:". $base . '<BR>' . PHP_EOL;
 			//fwrite(STDERR, "\n\rLooking for:". print_r($base, TRUE));
 
 	if (  tryFile( DIR . 'model'  . DS .  $base ))  				return true;

@@ -8,9 +8,9 @@ namespace php_base\Utils;
 
 //echo DIR . 'vendor/autoload.php';
 require_once(DIR . 'vendor/autoload.php');
-require_once(DIR . 'utils' . DS . 'log' . DS . 'PDOHandler.php');
-require_once(DIR . 'utils' . DS . 'log' . DS . 'PDOdataHandler.php');
-require_once(DIR . 'utils' . DS . 'log' . DS . 'EmailHtmlFormatter.php');
+require_once(DIR . 'utils' . DS . 'PDOHandler.php');
+require_once(DIR . 'utils' . DS . 'PDOdataHandler.php');
+require_once(DIR . 'utils' . DS . 'EmailHtmlFormatter.php');
 
 use \PDO;
 

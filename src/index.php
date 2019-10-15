@@ -55,11 +55,43 @@ use \php_base\Utils\myUtils\myUtils as myUtils;
 
 
 /// setup everything  (doesnt autoload)
-include_once( DIR . 'utils' . DS .  'setup.php');
+//include_once( DIR . 'utils' . DS .  'setup.php');
 
 // setup.php doesnt get autoloaded so include it manually then
 //          autoload should be able to handle everything else
+
+
+//************************************************************************************
+// setup everything
+//************************************************************************************
 include_once( DIR . 'autoload.php');
+date_default_timezone_set('Canada/Yukon');
+
+include_once( DIR . 'utils' . DS . 'dump.class.php');
+
+include_once( DIR . 'utils' . DS . 'settings.class.php');
+
+Settings::SetPublic( 'TEST that All is well', 'YES');
+
+require_once( DIR . '_config' . DS . '_Settings-General.php');
+require_once( DIR . '_config' . DS . '_Settings-Database.php');
+require_once( DIR . '_config' . DS . '_Settings-protected.php');
+
+require_once( 'P:\Projects\_Private_Settings.php');
+
+
+include_once( DIR . 'utils' . DS . 'Setup_Logging.php');
+
+include_once( DIR . 'utils' . DS . 'ErrorHandler.php');
+
+//Settings::GetPublic('FileLog')->addInfo("hellow world");
+
+
+
+
+
+
+
 //include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 
 
