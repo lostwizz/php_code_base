@@ -1,6 +1,6 @@
 <?php
 
-namespace php_base\Utils\Settings;
+namespace php_base\Utils;
 
 
 Settings::SetPublic('IS_DEBUGGING', true);

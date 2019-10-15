@@ -49,8 +49,8 @@
 
 
 		<testsuite name="Utils">
-			<file>Tests/utils/Setup/SettingsClassTest.php</file>
-			<file>Tests/utils/Setup/Setup_Logging_Test.php</file>
+			<file>Tests/utils/SettingsClassTest.php</file>
+			<file>Tests/utils/Setup_Logging_Test.php</file>
 			<!-- <file>Tests/utils/log/LoggingToDBTest.php</file>   -->
 			<file>Tests/utils/dumpTest.php</file>
 

@@ -1,10 +1,10 @@
 <?php
 
 //namespace whitehorse\MikesCommandAndControl2\Dispatcher;
-namespacephp_base;
+namespace php_base;
 
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
 //use \whitehorse\MikesCommandAndControl2\Authenticate as Authenticate;

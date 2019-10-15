@@ -4,7 +4,7 @@
  *
  */
 
-namespace php_base\Utils\Settings\Logger;
+namespace php_base\Utils;
 
 //echo DIR . 'vendor/autoload.php';
 require_once(DIR . 'vendor/autoload.php');
@@ -26,7 +26,7 @@ use Monolog\Processor\ProcessIdProcessor;
 //use Monolog\Formatter\HtmlFormatter;
 use Monolog\Formatter\EmailHtmlFormatter;
 
-use \php_base\Utils\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
 // get the log file name

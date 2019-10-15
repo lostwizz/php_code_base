@@ -7,7 +7,7 @@
 //
 //////////////////////////////////////////////////////////////
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
 

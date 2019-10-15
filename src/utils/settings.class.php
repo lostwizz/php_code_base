@@ -1,22 +1,4 @@
 <?php
-//**********************************************************************************************
-//* settings.class
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-08-30 11:55:45 -0700 (Fri, 30 Aug 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 30-Aug-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 //echo '<pre> getPublic-->';
 //print_r($key);
 //print_r(self::$public);
@@ -24,9 +6,7 @@
 
 
 
-namespace php_base\Utils\Settings;
-//namespace whitehorse\MikesCommandAndControl2;
-//namespace whitehorse\MikesCommandAndControl2\Settings;
+namespace php_base\Utils;
 
 use \php_base\Utils\myCryption\myCryption as myCryption;
 
@@ -224,8 +204,9 @@ abstract class Settings
 				$b[$key] = $s;
 			}
 			$a['PROTECTED'] = $b;
+			return $a;
 		}
-		return $a;
+		return false;
 	}
 
 //	protected static function decode_encrypted(){

@@ -16,7 +16,7 @@ if ( strripos (realpath('.'), 'src' ) <1 ){
 include_once( DIR . 'autoload.php');
 
 // set some usefull usings
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\MessageLog as MessageLog;
 use \php_base\Authenticate as Authenticate;
@@ -55,7 +55,7 @@ include_once(DIR . 'utils' . DS. 'myCryption.class.php');
 
 
 /// setup everything  (doesnt autoload)
-include_once( DIR . 'utils' . DS . 'setup' . DS . 'setup.php');
+include_once( DIR . 'utils' . DS .  'setup.php');
 
 // setup.php doesnt get autoloaded so include it manually then
 //          autoload should be able to handle everything else
