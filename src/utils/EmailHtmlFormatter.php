@@ -10,8 +10,8 @@
 
 namespace Monolog\Formatter;
 
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
 
 use Monolog\Logger;
 use Monolog\Formatter\NormalizerFormatter;
@@ -98,7 +98,7 @@ class EmailHtmlFormatter extends NormalizerFormatter
         if ($record['context']) {
             $embeddedTable = '<table cellspacing="1" width="100%">';
             foreach ($record['context'] as $key => $value) {
-            	if ($key != Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD')){
+            	if ($key != Settings::GetProtected( 'CRITICAL_EMAIL_PAYLOAD')){
 	                $embeddedTable .= $this->addRow($key, $this->convertToString($value));
 	            }
             }

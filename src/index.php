@@ -2,7 +2,8 @@
 <?php
 
 
-
+//***********************************************************************************
+// setup the Directory Root
 define ('DS', DIRECTORY_SEPARATOR);
                //define ('DIR', 'p:' . DS . 'Projects' . DS . 'MikesCommandAndControl2' . DS . 'src' . DS );
 if ( strripos (realpath('.'), 'src' ) <1 ){
@@ -40,25 +41,9 @@ use \php_base\Utils\myUtils\myUtils as myUtils;
 
 
 
-
-////////!!!!!!!!!!!!!this line #27 must alwaygs be this for the unit tests to work
+////////!!!!!!!!!!!!!this line #45 must alwaygs be this for the unit tests to work
 //Dump::dump(__LINE__, '-This is a Title-',true);
-////////!!!!!!!!!!!!!this line #27 must alwaygs be this for the unit tests to work
-
-//
-//echo '<pre>';
-//print_r( get_declared_classes());
-//echo '++++++++++++++++++++++++++++++++++';
-//echo '</pre>';
-//
-
-
-
-/// setup everything  (doesnt autoload)
-//include_once( DIR . 'utils' . DS .  'setup.php');
-
-// setup.php doesnt get autoloaded so include it manually then
-//          autoload should be able to handle everything else
+////////!!!!!!!!!!!!!this line #45 must alwaygs be this for the unit tests to work
 
 
 //************************************************************************************
@@ -67,12 +52,9 @@ use \php_base\Utils\myUtils\myUtils as myUtils;
 //************************************************************************************
 include_once( DIR . 'autoload.php');
 date_default_timezone_set('Canada/Yukon');
-
-include_once( DIR . 'utils' . DS . 'dump.class.php');
-
+//include_once( DIR . 'utils' . DS . 'dump.class.php');
 include_once( DIR . 'utils' . DS . 'settings.class.php');
-
-Settings::SetPublic( 'TEST that All is well', 'YES');
+include_once( DIR . 'utils' . DS . 'ErrorHandler.php');
 
 require_once( DIR . '_config' . DS . '_Settings-General.php');
 require_once( DIR . '_config' . DS . '_Settings-Database.php');
@@ -81,44 +63,28 @@ require_once( DIR . '_config' . DS . '_Settings-protected.php');
 require_once( 'P:\Projects\_Private_Settings.php');
 
 
+Settings::SetPublic('Log_file', DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log' );
 include_once( DIR . 'utils' . DS . 'Setup_Logging.php');
 
-include_once( DIR . 'utils' . DS . 'ErrorHandler.php');
-
-//Settings::GetPublic('FileLog')->addInfo("hellow world");
-
-
-
-
-
-
-
-//include_once (DIR . 'utils' . DS . 'messagelog.class.php');
+Settings::SetPublic( 'TEST that All is well', 'YES');
 
 
 // check that setup.php worked properly
 if ( Settings::GetPublic( 'TEST that All is well') != 'YES') {
 	throw new exception('it seems that setup (or settings.class.php did not run properly');
 }
+if (Settings::GetRuntime('FileLog') ==null) {
+	throw new exception('it seems that setup (or settings.class.php did not run properly');
+}
 
-//Dump::dump(DIR);
-Settings::SetPublic('Log_file', DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log' );
 
 
-//session_name('SESSID_' . str_replace( ' ','_',Settings::GetPublic('App Name') ));
-//session_start();
+session_name('SESSID_' . str_replace( ' ','_',Settings::GetPublic('App Name') ));
+session_start();
 
-//Dump::dumpClasses();
 
 $mLog = new MessageLog();
 Settings::SetRunTime('MessageLog', $mLog);
-
-//echo Settings::dumpBR(true, true);
-//echo Settings::dumpCR(true, true);
-
-
-//Dump::dump( Settings::GetPublic( 'App Name'));
-//Dump::dump( Settings::GetPublic( 'App Version'));
 
 
 Settings::SetRunTime('Benchmarks.start.executionTime',  microtime(true));
@@ -139,18 +105,25 @@ if ( Settings::GetPublic('IS_DEBUGGING')) {
 
 Settings::GetRunTime('MessageLog')->addNotice( 'Starting ....');
 
-if (Settings::GetRuntime('FileLog') ==null) {
-	throw new exception('it seems that setup (or settings.class.php did not run properly');
-}
 Settings::GetRuntime('FileLog')->addInfo('Staring...');
 
-if ( extension_loaded('pdo_sqlsrv')) {
+if ( extension_loaded('pdo_sqlsrvXXXXXXXXXX')) {
 	Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
 	Settings::GetRuntime('SecurityLog')->addInfo('Starting...');
+} else {
+	echo '<font color=white style="background-color:red;font-size:160%;" >', 'PDO_SQLSRV is not available!!- exiting ','</font>';
+	throw new exception('PDO_SQLSRV is not available!!', 256);
 }
 
-//Settings::GetRuntime('EmailLog')->addCritical( ' it blew up!', $_SERVER);
-//Settings::GetRuntime('EmailLog')->addCritical('Hey, a critical log entry!', array( 'bt' => debug_backtrace(true), 'server' =>$_SERVER));
+
+
+
+
+// this is for testing the crash email
+if (false) {
+	Settings::GetRuntime('EmailLog')->addCritical( ' it blew up!', $_SERVER);
+	Settings::GetRuntime('EmailLog')->addCritical('Hey, a critical log entry!', array( 'bt' => debug_backtrace(true), 'server' =>$_SERVER));
+}
 
 
 Settings::GetRunTime('MessageLog')->addNotice( 'Starting ..session..');
@@ -164,7 +137,7 @@ Settings::GetRunTime('MessageLog')->addNotice( 'Starting ..session..');
 //echo 'does have right 2', $a->checkRights( 'fred', 'sam', 'john', Authenticate::READ_RIGHT)? 'yes':'no';
 
 
-$_SESSION['username'] = 'merrem';
+//$_SESSION['username'] = 'merrem';
 
 // now start everything running
 //include_once( DIR . 'resolver.class.php');

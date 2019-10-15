@@ -1,9 +1,11 @@
 <?php
 
+
 namespace php_base\Utils;
 
-
 Settings::SetPublic('IS_DEBUGGING', true);
+
+
 
 //Settings::SetPublic( 'App Name', 'MikesCommandAndControl2');
 Settings::SetPublic( 'App Name', 'TestApp');

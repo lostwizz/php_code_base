@@ -5,7 +5,7 @@ use PHPUnit\Framework\TestCase;
 
 
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 ////use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 

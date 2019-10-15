@@ -9,6 +9,7 @@
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+//use \php_base\Utils\Dump\BackTraceProcessor as BackTraceProcessor;
 
 
 if ( Settings::GetPublic('IS_DEBUGGING')) {
@@ -21,28 +22,35 @@ if ( Settings::GetPublic('IS_DEBUGGING')) {
 }
 
 
-if ( ! Settings::GetPublic('IS_DEBUGGING')) {
-	set_error_handler('UserErrorHandler');
-	set_error_handler('UserErrorHandler');
-	set_exception_handler('exception_handler');
-}
+echo 'HHII';
+Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
+Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
+
+Dump::dump(set_exception_handler( 'myException_handler'));
+Dump::dump(set_exception_handler( 'myException_handler'));
+
 
 //***********************************************************************************************
 //***********************************************************************************************
-function exception_handler($e) {
+function myException_handler($exception)  {
 
-	UserErrorHandler( $e->getCode(),
-							$e->getMessage() . '(Error Code:' . $e->getCode . ')',
-							$e->getFile(),
-							$e->getLine(),
-							$e->getTrace()
+echo '++here++';
+
+
+	UserErrorHandler( $exception->getCode(),
+							$exception->getMessage() ,
+								//. '(Error Code:' . $exception->getCode . ')',
+							$exception->getFile(),
+							$exception->getLine(),
+							$exception->getTrace()
 						);
 }
 
 
 //***********************************************************************************************
 //***********************************************************************************************
-function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt=null) {
+//$alternate_bt=null
+function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt) {
 
 	if (! Settings::GetPublic('IS_DEBUGGING')) {
 		echo '</span>';
@@ -50,10 +58,67 @@ function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt=nul
 		echo '<script>document.getElementById("screen").style.display ="inline";</script>';
 	}
 
+
+	$errLines = getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt);
+
+
+
+
+	if ( Settings::GetPublic('DBLog')) {
+		Settings::GetPublic('DBLog')->addCritical($logMsg1);
+		Settings::GetPublic('DBLog')->addCritical($logMsg2);
+		Settings::GetPublic('DBLog')->addCritical($logMsg3);
+	}
+
+	if (Settings::GetPublic('FileLog')){
+		Settings::GetPublic('FileLog')->addCritical($logMsg1);
+		Settings::GetPublic('FileLog')->addCritical($logMsg2);
+		Settings::GetPublic('FileLog')->addCritical($logMsg3);
+	}
+
+
+	$error_text = $errLines[0] . PHP_EOL;
+	$error_text .= $errLines[1]. PHP_EOL;
+	$error_text .= $errLines[2]. PHP_EOL;
+
+
+	$error_text .= " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n\n" ;
+	$error_text .= '<hr size=3><Br>';
+			$error_text .= "\n\n[[Back Trace==>\n" ;
+
+	$bt = debug_backtrace();
+	foreach( $bt as $bt_func) {
+		if ( ! empty(  $bt_func['file'] )) {
+			$error_text  .=  "<b>" . $bt_func['file'] . "</b>"
+								. ":" . $bt_func['line']
+								. "&nbsp;&nbsp;&nbsp;("
+								;
+		}
+		$error_text  .= $bt_func['function']
+							. ')'
+							. "\n"
+							;
+	}
+	$to_be_exported= print_r( $bt, true);
+	$x = str_replace( ' ',  "&nbsp;",$to_be_exported);
+	$error_text .= $x . "]]\n";
+	$error_text .= " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n\n" ;
+
+ 	echo "\n" . '<fieldset style="background-color: LightGray; border-style: dashed; border-width: 1px; border-color: #950095;">' . "\n";
+ 	echo '<legend><font color=yellow style="background-color:red;font-size:160%;">Error BackTrace</font></legend>';
+	//echo '<font color=navyblue style="background-color:LightGray;" >';
+	echo nl2br($error_text);
+	echo '</fieldset>';
+
+}
+
+
+function getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt) {
+
 	// define an assoc array of error string
 	// in reality the only entries we should
 	// consider are 2,8,256,512 and 1024
-	$errortype = array (
+	$errortype = array (0    =>  "Unknown",
 						1    =>  "Error",
 						2    =>  "Warning",
 						4    =>  "Parsing Error",
@@ -72,27 +137,11 @@ function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt=nul
 						32767=>  "ALL",
 						);
 
-	$logMsg1 = '-----------ERROR-----------';
-	$logMsg2  = 'ErrorNo:';
-	$logMsg2 .= empty($errno) ? '' : $errno;
-	$logMsg2 .= ' - ';
-	$logMsg2 .= empty( $errortype[$errno]) ? '' : $errortype[$errno];
-	$logMsg3  = 'ErrorStr:'. $errstr;
-	$logMsg3 .= '(Line:' . $errline . ') ' . $errfile;
-
-	if ( Settings::GetPublic('DBLog')) {
-		Settings::GetPublic('DBLog')->addCritical($logMsg1);
-		Settings::GetPublic('DBLog')->addCritical($logMsg2);
-		Settings::GetPublic('DBLog')->addCritical($logMsg3);
+	$line1 = " -*-*-*- A error has been caught. -*-*-*-\n" . "Date: " . date("F j, Y, g:ia") ;
+	$line2 = 'Error #:' . $errno . ' - ';
+	if ( ! empty( $errortype[$errno])){
+		$line2 .= $errortype[$errno];
 	}
-
-	if (Settings::GetPublic('FileLog')){
-		Settings::GetPublic('FileLog')->addCritical($logMsg1);
-		Settings::GetPublic('FileLog')->addCritical($logMsg2);
-		Settings::GetPublic('FileLog')->addCritical($logMsg3);
-	}
-
-
-
-
+	$line3 = 'ErrorStr:'. $errstr . ' File:' . $errfile . '(Line:' . $errline . ') ';
+	return array ( $line1, $line2, $line3);
 }

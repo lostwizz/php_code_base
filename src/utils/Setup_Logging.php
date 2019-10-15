@@ -27,7 +27,7 @@ use Monolog\Processor\ProcessIdProcessor;
 use Monolog\Formatter\EmailHtmlFormatter;
 
 use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Dump as Dump;
 
 // get the log file name
 $log_fn = Settings::GetPublic('Log_file' );
@@ -136,6 +136,8 @@ $handler->setFormatter( new EmailHtmlFormatter());
 $emailLog->pushHandler( $handler);
 $emailLog->pushHandler( new StreamHandler( $log_fn, Logger::WARNING));
 Settings::SetRuntime('EmailLog' , $emailLog);
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 

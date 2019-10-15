@@ -18,6 +18,20 @@
 //***********************************************************************************************************
 //***********************************************************************************************************
 
+
+use \php_base\Utils\Settings as Settings;
+
+
+
+	const DEBUG = 100;
+
+	define( 'AUTOLOAD_LEVEL_INFO', 200);
+	define( 'AUTOLOAD_LEVEL_DEBUG', 100);
+
+DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', false);
+//DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_INFO);
+//DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_DEBUG);
+
 //********************************************************************************
 spl_autoload_register ('myAutoLoader');
 
@@ -37,7 +51,12 @@ if (!defined('DIR')){
 //***********************************************************************************************
 function myAutoLoader($class){
 	$ex= explode('\\', $class );    // get the name of just the file - eg sam\fred gives fred
-				//echo "<font color=magenta>(Looking for:" . $ex[ count($ex)-1] . ')</font>' . PHP_EOL;
+
+
+
+	if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL== AUTOLOAD_LEVEL_DEBUG )) {
+		echo "<font color=magenta>(Looking for:" . $ex[ count($ex)-1] . ')</font>' . PHP_EOL;
+	}
 
 	$base= $ex[ count($ex)-1] . '.class.php';
 	if (runTheChecks( $base)) 	return true;
@@ -51,6 +70,10 @@ function myAutoLoader($class){
 	$base= strtolower($ex[ count($ex)-1]) . '.php';
 	if (runTheChecks( $base)) 	return true;
 
+	if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL== AUTOLOAD_LEVEL_DEBUG OR AUTOLOAD_OUTPUT_LEVEL==AUTOLOAD_LEVEL_INFO  )) {
+		echo '<font color=white style="background-color:red;font-size:160%;" >', '(AutoLoad could not find!!! ' . $ex[ count($ex)-1] . ')','</font>' . PHP_EOL;
+	}
+
 	return false;
 }
 
@@ -58,9 +81,10 @@ function myAutoLoader($class){
 
 //********************************************************************************
 function runTheChecks($base){
-			//echo "Looking for:". $base . '<BR>' . PHP_EOL;
+	if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL== AUTOLOAD_LEVEL_DEBUG )) {
+		echo "Looking for:". $base . '<BR>' . PHP_EOL;
 			//fwrite(STDERR, "\n\rLooking for:". print_r($base, TRUE));
-
+	}
 	if (  tryFile( DIR . 'model'  . DS .  $base ))  				return true;
 	if (  tryFile( DIR . 'view'   . DS .  $base )) 					return true;
 	if (  tryFile( DIR . 'control'. DS .  $base ))					return true;
@@ -79,14 +103,18 @@ function runTheChecks($base){
 //********************************************************************************
 function tryFile( $fn){
 	if ( file_exists( $fn) ) {
-			//echo "<font color=magenta>FOUND:". $fn . ')</font><BR>' . PHP_EOL;
+		if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL== AUTOLOAD_LEVEL_DEBUG OR AUTOLOAD_OUTPUT_LEVEL==AUTOLOAD_LEVEL_INFO )) {
+			echo "<font color=maroon>FOUND:". $fn . ')</font><BR>' . PHP_EOL;
 			//fwrite(STDERR, "\n\rFOUND:". print_r(  $fn , TRUE));
+		}
 		$x = include_once( $fn);
 		return $x;
 	}  else {
-			//echo "NotFOUND:". $fn . '<BR>' . PHP_EOL;
+		if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL== AUTOLOAD_LEVEL_DEBUG )) {
+			echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-NotFOUND at:". $fn . '<BR>' . PHP_EOL;
 			//echo '.';
 			//fwrite(STDERR, "\n\rNOTFOUND:". print_r(  $fn , TRUE));
+		}
 		return false;
 	}
 }
