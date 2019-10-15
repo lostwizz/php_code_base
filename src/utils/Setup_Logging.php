@@ -60,9 +60,9 @@ if (extension_loaded(Settings::GetProtected( 'Logging_Type') )) {
 	$dbLog->pushProcessor( new IntrospectionProcessor());
 	$dbLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
 	$dbLog->pushProcessor( new WebProcessor());
-	Settings::SetPublic('DBLog' , $dbLog);
+	Settings::SetRuntime('DBLog' , $dbLog);
 	//$dbLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
-	Settings::GetPublic('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+	Settings::GetRuntime('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
 	//Settings::GetPublic('DBLog')->addInfo("hellow world");
 	//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -77,9 +77,9 @@ if (extension_loaded(Settings::GetProtected( 'Logging_Type') )) {
 	$dbDataLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
 	$dbDataLog->pushProcessor( new WebProcessor());
 
-	Settings::SetPublic('DBdataLog' , $dbDataLog);
+	Settings::SetRuntime('DBdataLog' , $dbDataLog);
 	//$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
-	Settings::GetPublic('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+	Settings::GetRuntime('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 }
@@ -89,9 +89,9 @@ if (extension_loaded(Settings::GetProtected( 'Logging_Type') )) {
 // create a log channel
 $log = new Logger( 'default');
 $log->pushHandler( new StreamHandler( $log_fn, Logger::INFO));
-Settings::SetPublic('FileLog' , $log);
+Settings::SetRuntime('FileLog' , $log);
 //$log->addRecord( Logger::ALERT, '-------------Starting Logging------------');
-Settings::GetPublic('FileLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
+Settings::GetRuntime('FileLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
 //////////////////////////////////////////////////////////////////////////////////////////
 
 //Dump::dump(get_class($log));
@@ -103,8 +103,10 @@ Settings::GetPublic('FileLog')->addRecord( Logger::ALERT, '-------------Starting
 $securityLog = new Logger('Security');
 $security_log_fn =Settings::GetPublic('Security_Log_file');
 
+Dump::dump($security_log_fn);
+
 $securityLog->pushHandler( new StreamHandler( $security_log_fn, Logger::DEBUG));
-Settings::SetPublic('SecurityLog' , $securityLog);
+Settings::SetRuntime('SecurityLog' , $securityLog);
 //$securityLog->addRecord( Logger::ALERT, '-------------Starting Logging------------');
 //Settings::GetPublic('SecurityLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +135,7 @@ $emailLog->pushProcessor( new WebProcessor());
 $handler->setFormatter( new EmailHtmlFormatter());
 $emailLog->pushHandler( $handler);
 $emailLog->pushHandler( new StreamHandler( $log_fn, Logger::WARNING));
-Settings::SetPublic('EmailLog' , $emailLog);
+Settings::SetRuntime('EmailLog' , $emailLog);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 

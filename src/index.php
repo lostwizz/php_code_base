@@ -106,18 +106,18 @@ if ( Settings::GetPublic('IS_DEBUGGING')) {
 
 Settings::GetRunTime('MessageLog')->addNotice( 'Starting ....');
 
-if (Settings::GetPublic('FileLog') ==null) {
+if (Settings::GetRuntime('FileLog') ==null) {
 	throw new exception('it seems that setup (or settings.class.php did not run properly');
 }
-Settings::GetPublic('FileLog')->addInfo('Staring...');
+Settings::GetRuntime('FileLog')->addInfo('Staring...');
 
 if ( extension_loaded('pdo_sqlsrv')) {
-	Settings::GetPublic('DBLog')->addInfo( 'Starting....');
-	Settings::GetPublic('SecurityLog')->addInfo('Starting...');
+	Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
+	Settings::GetRuntime('SecurityLog')->addInfo('Starting...');
 }
 
-//Settings::GetPublic('EmailLog')->addCritical( ' it blew up!', $_SERVER);
-//Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!', array( 'bt' => debug_backtrace(true), 'server' =>$_SERVER));
+//Settings::GetRuntime('EmailLog')->addCritical( ' it blew up!', $_SERVER);
+//Settings::GetRuntime('EmailLog')->addCritical('Hey, a critical log entry!', array( 'bt' => debug_backtrace(true), 'server' =>$_SERVER));
 
 
 Settings::GetRunTime('MessageLog')->addNotice( 'Starting ..session..');
@@ -311,7 +311,7 @@ Dump::dump($out);
 //Dump::dump( $o == null ? 'isnull':'isnotnull');
 
 
-//Dump::dump(Settings::GetPublic('Log_file'));
+//Dump::dump(Settings::GetRuntime('Log_file'));
 //Dump::dump( $_FILES);
 //Dump::dump($_ENV);
 

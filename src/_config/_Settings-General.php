@@ -16,11 +16,11 @@ Settings::SetPublic('Log_file',DIR . 'logs' . DS . Settings::GetPublic('App Name
 Settings::SetPublic('Security_Log_file',DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_security.log' );
 
 // these will be set in the "/Setup.php/SetupLogging.php"
-Settings::SetPublic( 'DBLog', null);
-Settings::SetPublic( 'DBdataLog', null);
-Settings::SetPublic( 'FileLog', null);
-Settings::SetPublic( 'SecurityLog', null);
-Settings::SetPublic( 'EmailLog', null);
+Settings::SetRuntime( 'DBLog', null);
+Settings::SetRuntime( 'DBdataLog', null);
+Settings::SetRuntime( 'FileLog', null);
+Settings::SetRuntime( 'SecurityLog', null);
+Settings::SetRuntime( 'EmailLog', null);
 
 
 Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD', 'CRITICAL_EMAIL_PAYLOAD');

@@ -31,7 +31,7 @@ include_once(DIR . 'model' . DS . 'model.class.php');
 
 
 echo '-------------';
-$o = Settings::GetPublic('Log_file');
+$o = Settings::GetRuntime('Log_file');
 echo '<pre>ll=', $o, '</pre>';
 
 $model = new Model();

@@ -62,7 +62,7 @@ function runTheChecks($base){
 	if (  tryFile( DIR . 'control'. DS .  $base ))					return true;
 	if (  tryFile( DIR . 'data'   . DS .  $base ))					return true;
 	if (  tryFile( DIR . 'utils'  . DS .  $base ))					return true;
-	if (  tryFile( DIR . 'utils'  . DS . 'setup' . DS . $base ))	return true;
+	////if (  tryFile( DIR . 'utils'  . DS . 'setup' . DS . $base ))	return true;
 	if (  tryFile( DIR . 'utils'  . DS . 'log'   . DS . $base ))	return true;
 	if (  tryFile( DIR . $base ))									return true;
 	if (  tryFile( DIR . 'static' . DS .  $base ))					return true;
