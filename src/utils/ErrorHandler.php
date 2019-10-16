@@ -7,35 +7,40 @@
 //
 //////////////////////////////////////////////////////////////
 
+////////
+////////use Monolog\Handler\HandlerInterface;
+////////use Monolog\Handler\StreamHandler;
+////////use Psr\Log\LoggerInterface;
+////////use Psr\Log\InvalidArgumentException;
+
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
-//use \php_base\Utils\Dump\BackTraceProcessor as BackTraceProcessor;
 
 
 if ( Settings::GetPublic('IS_DEBUGGING')) {
 	ini_set( "display_startup_errors", 1);
 	ini_set('display_errors', 1);
 	$x = error_reporting( ~0 );              /////////0xFFFFFFF  );
+	Settings::SetProtected('SurpressErrorHandlerDetails', 'NO');
 } else {
+	// not debugging
 	ini_set( "display_startup_errors", false);
 	$x = error_reporting( E_ALL ^ E_NOTICE );          ///0xFFFFFFF ^ E_NOTICE );
+	Settings::SetProtected('SurpressErrorHandlerDetails', 'YES');
+
+	Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
+	Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
+
+	Dump::dump(set_exception_handler( 'myException_handler'));
+	Dump::dump(set_exception_handler( 'myException_handler'));
 }
 
 
-echo 'HHII';
-Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
-Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
-
-Dump::dump(set_exception_handler( 'myException_handler'));
-Dump::dump(set_exception_handler( 'myException_handler'));
 
 
 //***********************************************************************************************
 //***********************************************************************************************
 function myException_handler($exception)  {
-
-echo '++here++';
-
 
 	UserErrorHandler( $exception->getCode(),
 							$exception->getMessage() ,
@@ -52,67 +57,53 @@ echo '++here++';
 //$alternate_bt=null
 function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt) {
 
-	if (! Settings::GetPublic('IS_DEBUGGING')) {
-		echo '</span>';
-		echo '<script>document.getElementById("please_wait").style.display ="none";</script>';
-		echo '<script>document.getElementById("screen").style.display ="inline";</script>';
-	}
-
-
 	$errLines = getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt);
-
-
-
-
-	if ( Settings::GetPublic('DBLog')) {
-		Settings::GetPublic('DBLog')->addCritical($logMsg1);
-		Settings::GetPublic('DBLog')->addCritical($logMsg2);
-		Settings::GetPublic('DBLog')->addCritical($logMsg3);
-	}
-
-	if (Settings::GetPublic('FileLog')){
-		Settings::GetPublic('FileLog')->addCritical($logMsg1);
-		Settings::GetPublic('FileLog')->addCritical($logMsg2);
-		Settings::GetPublic('FileLog')->addCritical($logMsg3);
-	}
-
-
-	$error_text = $errLines[0] . PHP_EOL;
-	$error_text .= $errLines[1]. PHP_EOL;
-	$error_text .= $errLines[2]. PHP_EOL;
-
-
-	$error_text .= " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n\n" ;
-	$error_text .= '<hr size=3><Br>';
-			$error_text .= "\n\n[[Back Trace==>\n" ;
-
 	$bt = debug_backtrace();
-	foreach( $bt as $bt_func) {
-		if ( ! empty(  $bt_func['file'] )) {
-			$error_text  .=  "<b>" . $bt_func['file'] . "</b>"
-								. ":" . $bt_func['line']
-								. "&nbsp;&nbsp;&nbsp;("
-								;
-		}
-		$error_text  .= $bt_func['function']
-							. ')'
-							. "\n"
-							;
+
+	$backTraceLines = getBackTraceLines($bt);
+
+	if ( Settings::GetRuntime('DBLog')) {
+		saveLog(Settings::GetRuntime('DBLog'), $errLines, $backTraceLines);
 	}
-	$to_be_exported= print_r( $bt, true);
-	$x = str_replace( ' ',  "&nbsp;",$to_be_exported);
-	$error_text .= $x . "]]\n";
-	$error_text .= " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n\n" ;
 
- 	echo "\n" . '<fieldset style="background-color: LightGray; border-style: dashed; border-width: 1px; border-color: #950095;">' . "\n";
- 	echo '<legend><font color=yellow style="background-color:red;font-size:160%;">Error BackTrace</font></legend>';
-	//echo '<font color=navyblue style="background-color:LightGray;" >';
-	echo nl2br($error_text);
-	echo '</fieldset>';
+	if (Settings::GetRuntime('FileLog')){
+		saveLog(Settings::GetRuntime('FileLog'), $errLines, $backTraceLines);
+	}
 
+	if (Settings::GetRuntime('EmailLog') and Settings::GetProtected('SurpressErrorHandlerDetails') =='YES'){
+		sendEmailLog(Settings::GetRuntime('EmailLog'), $errLines, $backTraceLines,$errno);
+	}
+
+	if (Settings::GetProtected('SurpressErrorHandlerDetails') =='NO'){
+		$error_text = $errLines[0] . PHP_EOL;
+		$error_text .= $errLines[1] . PHP_EOL;
+		$error_text .= $errLines[2] . PHP_EOL;
+		$error_text .= '<hr color=red size=9><font color=red><Br>';
+
+		$error_text .= " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n\n" ;
+		$error_text .= "\n\n[[Back Trace==>\n" ;
+		$error_text .= $backTraceLines . PHP_EOL;
+
+		$error_text .= " - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - \n\n" ;
+
+	 	echo "\n" . '<fieldset style="background-color: LightGray; border-style: dashed; border-width: 1px; border-color: #950095;">' . "\n";
+	 	echo '<legend><font color=yellow style="background-color:red;font-size:160%;">Error BackTrace</font></legend>';
+		//echo '<font color=navyblue style="background-color:LightGray;" >';
+		echo nl2br($error_text);
+		echo '</fieldset></font>';
+	} else {
+		$error_text = '<hr color=red size=9><font color=red style="font-size:160%;"><Br>';
+		$error_text .= 'An Error has occured.' . PHP_EOL;
+		$error_text .= Settings::GetProtected('Critical_email_TO_ADDR') . ' has been notified by email ';
+
+		echo nl2br($error_text);
+		die;
+	}
 }
 
 
+//-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 function getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt) {
 
 	// define an assoc array of error string
@@ -145,3 +136,71 @@ function getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt) {
 	$line3 = 'ErrorStr:'. $errstr . ' File:' . $errfile . '(Line:' . $errline . ') ';
 	return array ( $line1, $line2, $line3);
 }
+
+
+//-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
+function getBackTraceLines($bt) {
+	$error_text = '';
+	foreach( $bt as $bt_func) {
+		if ( ! empty(  $bt_func['file'] )) {
+			$error_text  .=  "<b>" . $bt_func['file'] . "</b>"
+								. ":" . $bt_func['line']
+								. "&nbsp;&nbsp;&nbsp;("
+								;
+		}
+		$error_text  .= $bt_func['function']
+							. ')'
+							. "\n"
+							;
+	}
+	$to_be_exported= print_r( $bt, true);
+	$x = str_replace( ' ',  "&nbsp;",$to_be_exported);
+	$error_text .= $x . "]]\n";
+	return $error_text;
+}
+
+
+//-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
+function saveLog( $logObject, $errLines, $backTraceLines) {
+	$logObject->addCritical($errLines[0]);
+	$logObject->addCritical($errLines[1]);
+	$logObject->addCritical($errLines[2]);
+
+	$btLines = str_replace(   "&nbsp;", ' ',$backTraceLines);
+	$logObject->addCritical($btLines);
+}
+
+
+//-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
+function sendEmailLog($emailLogObject, $errLines, $backTraceLines, $errno) {
+
+	$btLines = str_replace(   "&nbsp;", ' ',$backTraceLines);
+	$details = array(
+					'details' => $errLines,
+					'bt' => $btLines,
+					'server' =>$_SERVER,
+					'request' => $_REQUEST,
+	);
+
+	if ($errno >= 256){  //  user error and above in the $errortype
+		Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD_EXTRA', Settings::dump(true, false));
+		/*
+		//     you can pass more info with these two Settings
+			Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD_CONTEXT', array('hi'=>'mike'));
+		*/
+		$emailLogObject->addError($errLines[2], $details);
+	} else {
+		Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD_EXTRA', Settings::dump(true, true));
+		/*
+		//     you can pass more info with these two Settings
+			Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD_CONTEXT', array('hi'=>'mike'));
+		*/
+		$emailLogObject->addCritical($errLines[2], $details);
+	}
+}
+
+//-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------

@@ -118,11 +118,17 @@ class EmailHtmlFormatter extends NormalizerFormatter
 
 		$output .= '</table>';
 		$output .= '<pre>';
-		$output .= '<h2>-Extra-</h2>';
-		$output .= print_r(($record['extra'][Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD')] ?? '') , true) ;
+		if ( !empty( Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD_EXTRA'))) {
+			$output .= '<h2>-Extra-</h2>';
+			//$output .= print_r(($record['extra'][Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD_EXTRA')] ?? '') , true) ;
+			$output .= print_r(Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD_EXTRA') , true) ;
+		}
 
-		$output .= '<h2>-Context-</h2>';
-		$output .= print_r(($record['context'][Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD')] ?? ''), true) ;
+		if (!empty(Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD_CONTEXT') )){
+			$output .= '<h2>-Context-</h2>';
+			//$output .= print_r(($record['context'][Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD_CONTEXT')] ?? ''), true) ;
+			$output .= print_r(Settings::GetPublic( 'CRITICAL_EMAIL_PAYLOAD_CONTEXT'), true) ;
+		}
 		$output .= '</pre>';
 
         return $output;

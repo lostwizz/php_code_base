@@ -4,7 +4,7 @@
 namespace php_base\Utils;
 
 Settings::SetPublic('IS_DEBUGGING', true);
-
+//Settings::SetPublic('IS_DEBUGGING', false);
 
 
 //Settings::SetPublic( 'App Name', 'MikesCommandAndControl2');
@@ -25,5 +25,6 @@ Settings::SetRuntime( 'SecurityLog', null);
 Settings::SetRuntime( 'EmailLog', null);
 
 
-Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD', 'CRITICAL_EMAIL_PAYLOAD');
-
+//////////Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD', 'CRITICAL_EMAIL_PAYLOAD');
+Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD_CONTEXT', false);  // could be string or array
+Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD_EXTRA', false);  // could be string or array

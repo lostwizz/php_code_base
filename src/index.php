@@ -54,7 +54,6 @@ include_once( DIR . 'autoload.php');
 date_default_timezone_set('Canada/Yukon');
 //include_once( DIR . 'utils' . DS . 'dump.class.php');
 include_once( DIR . 'utils' . DS . 'settings.class.php');
-include_once( DIR . 'utils' . DS . 'ErrorHandler.php');
 
 require_once( DIR . '_config' . DS . '_Settings-General.php');
 require_once( DIR . '_config' . DS . '_Settings-Database.php');
@@ -62,6 +61,7 @@ require_once( DIR . '_config' . DS . '_Settings-protected.php');
 
 require_once( 'P:\Projects\_Private_Settings.php');
 
+include_once( DIR . 'utils' . DS . 'ErrorHandler.php');           // has to be after the settings are initialized
 
 Settings::SetPublic('Log_file', DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log' );
 include_once( DIR . 'utils' . DS . 'Setup_Logging.php');
@@ -107,7 +107,7 @@ Settings::GetRunTime('MessageLog')->addNotice( 'Starting ....');
 
 Settings::GetRuntime('FileLog')->addInfo('Staring...');
 
-if ( extension_loaded('pdo_sqlsrvXXXXXXXXXX')) {
+if ( extension_loaded('pdo_sqlsrvXXX')) {
 	Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
 	Settings::GetRuntime('SecurityLog')->addInfo('Starting...');
 } else {

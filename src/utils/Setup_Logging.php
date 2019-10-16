@@ -119,7 +119,7 @@ $emailLog = new Logger( 'email');
 //$handler = new Monolog\Handler\NativeMailerHandler(
 $handler = new NativeMailerHandler(
                 'mike.merrett@whitehorse.ca',
-                'Critical error',
+                'System Error in ' . Settings::GetPublic('App Name'),
                 Settings::GetPublic('App Name') . '@'. $_SERVER['SERVER_NAME'] ,
 		);
 
