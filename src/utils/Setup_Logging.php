@@ -23,15 +23,13 @@ use Monolog\Handler\PDODataHandler;
 use Monolog\Processor\IntrospectionProcessor;
 use Monolog\Processor\WebProcessor;
 use Monolog\Processor\ProcessIdProcessor;
-//use Monolog\Formatter\HtmlFormatter;
 use Monolog\Formatter\EmailHtmlFormatter;
 
 use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\Dump as Dump;
+use \php_base\Utils\Dump\Dump as Dump;
 
 // get the log file name
 $log_fn = Settings::GetPublic('Log_file' );
-
 
 
 //Dump::dumpClasses('Monolog');
@@ -39,18 +37,18 @@ $log_fn = Settings::GetPublic('Log_file' );
 //-- alternate syntax --> //$log_fn = Settings::GetProtected('Log_file' );
 //-- alternate syntax --> //$log_fn =  \whitehorse\MikesCommandAndControl2\Settings\Settings::GetProtected('Log_file' );
 
-//echo 'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW Log_file=', $log_fn;
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //create database logging
 
 
-if (extension_loaded(Settings::GetProtected( 'Logging_Type') )) {
+if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 
 	/// setup database link
 	$conn  = setup_PDO();
 //Dump::dump( $pdo);
+
+if (false) {
 
 	$dbLog = new Logger('DBLog');
 //Dump::dump($dbLog);
@@ -61,12 +59,14 @@ if (extension_loaded(Settings::GetProtected( 'Logging_Type') )) {
 	$dbLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
 	$dbLog->pushProcessor( new WebProcessor());
 	Settings::SetRuntime('DBLog' , $dbLog);
-	//$dbLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+
+				//$dbLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+
 	Settings::GetRuntime('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
 	//Settings::GetPublic('DBLog')->addInfo("hellow world");
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-
+}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//create database logging
 	$dbDataLog = new Logger('DBData');
@@ -78,8 +78,12 @@ if (extension_loaded(Settings::GetProtected( 'Logging_Type') )) {
 	$dbDataLog->pushProcessor( new WebProcessor());
 
 	Settings::SetRuntime('DBdataLog' , $dbDataLog);
-	//$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
-	Settings::GetRuntime('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+Dump::dump('++++++++++++++++++++++ herre');
+Dump::dump($dbDataLog);
+
+	$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['XXusername'=>'fred was here', 'super'=> 'sam was not here']);
+
+	Settings::GetRuntime('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['CCCCusername'=>'fred was here', 'super'=> 'sam was not here']);
 	//////////////////////////////////////////////////////////////////////////////////////////
 
 }
@@ -163,39 +167,41 @@ unset($pdo);
 // setup pdo connection to the database
 //////////////////////////////////////////////////////////////////////////////////////////
 function setup_PDO(){
-	if ( ! extension_loaded('pdo_sqlsrv')) {
+	if ( ! extension_loaded(Settings::GetProtected('database_extension_needed'))) {
 		throw new Exception ('NOT loaded');
 	}
-	if ( empty( Settings::GetProtected( 'Logging_Server'))) {
-		throw new Exception('Missing Config Data from Settings- Logging_Server');
+//	if ( empty( Settings::GetProtected( 'Logging_Server'))) {
+//		throw new Exception('Missing Config Data from Settings- Logging_Server');
+//	}
+//	if ( empty( Settings::GetProtected( 'Logging_Type'))) {
+//		throw new Exception('Missing Config Data from Settings- Logging_Type');
+//	}
+//	if ( empty(Settings::GetProtected( 'Logging_Database'))) {
+//		throw new Exception('Missing Config Data from Settings- Logging_Database');
+//	}
+	if ( empty(Settings::GetProtected( 'DB_Username'))) {
+		throw new Exception('Missing Config Data from Settings- DB_Username');
 	}
-	if ( empty( Settings::GetProtected( 'Logging_Type'))) {
-		throw new Exception('Missing Config Data from Settings- Logging_Type');
-	}
-	if ( empty(Settings::GetProtected( 'Logging_Database'))) {
-		throw new Exception('Missing Config Data from Settings- Logging_Database');
-	}
-	if ( empty(Settings::GetProtected( 'Logging_DB_Username'))) {
-		throw new Exception('Missing Config Data from Settings- Logging_DB_Username');
-	}
-	if ( empty(Settings::GetProtected( 'Logging_DB_Password'))) {
-		throw new Exception('Missing Config Data from Settings- Logging_DB_Password');
+	if ( empty(Settings::GetProtected( 'DB_Password'))) {
+		throw new Exception('Missing Config Data from Settings- DB_Password');
 	}
 
-	$dsn =  Settings::GetProtected( 'Logging_Type')
-			. ':server=' .  Settings::GetProtected( 'Logging_Server')
-			. ';database=' .  Settings::GetProtected( 'Logging_Database');
-
-	$options = 	array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-						PDO::ATTR_CASE=> PDO::CASE_LOWER,
-						PDO::ATTR_ERRMODE =>PDO::ERRMODE_EXCEPTION
-						//PDO::ATTR_PERSISTENT => true
-						);
-//Dump::dump($dsn)												;
+	$dsn = Settings::GetProtected( 'DB_DSN');
+//Dump::dump($dsn);												;
+	$options= Settings::GetProtected( 'DB_DSN_OPTIONS');
+//	$options = 	array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+//						PDO::ATTR_CASE=> PDO::CASE_LOWER,
+//						PDO::ATTR_ERRMODE =>PDO::ERRMODE_EXCEPTION
+//						//PDO::ATTR_PERSISTENT => true
+//						);
+//Dump::dump($options);
+//Dump::dump(Settings::GetProtected('Logging_DB_Username'));
+//Dump::dump(Settings::GetProtected('Logging_DB_Password'));
 	try {
+
 		$conn = new \PDO($dsn,
-						Settings::GetProtected('Logging_DB_Username'),
-						Settings::GetProtected('Logging_DB_Password'),
+						Settings::GetProtected('DB_Username'),
+						Settings::GetProtected('DB_Password'),
 						$options
 						);
 //Dump::dump($conn);

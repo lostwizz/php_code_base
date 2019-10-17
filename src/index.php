@@ -78,9 +78,10 @@ if (Settings::GetRuntime('FileLog') ==null) {
 }
 
 
-
-session_name('SESSID_' . str_replace( ' ','_',Settings::GetPublic('App Name') ));
-session_start();
+if (false) {
+	session_name('SESSID_' . str_replace( ' ','_',Settings::GetPublic('App Name') ));
+	session_start();
+}
 
 
 $mLog = new MessageLog();
@@ -107,16 +108,17 @@ Settings::GetRunTime('MessageLog')->addNotice( 'Starting ....');
 
 Settings::GetRuntime('FileLog')->addInfo('Staring...');
 
-if ( extension_loaded('pdo_sqlsrv')) {
-	Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
+if ( extension_loaded(Settings::GetProtected('database_extension_needed'))) {
+	//Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
 	Settings::GetRuntime('SecurityLog')->addInfo('Starting...');
 } else {
 	echo '<font color=white style="background-color:red;font-size:160%;" >', 'PDO_SQLSRV is not available!!- exiting ','</font>';
-	throw new exception('PDO_SQLSRV is not available!!', 256);
+	throw new exception( Settings::GetProtected('database_extension_needed'). ' is not available!!', 256);
 }
 
 
-
+//Dump::dump(Settings::GetPublic('Log_file'));
+//	Settings::GetRuntime('DBLog')->addInfo( ' a line added to the db');
 
 
 // this is for testing the crash email

@@ -35,7 +35,6 @@ class PDOHandler extends AbstractProcessingHandler
 			$this->initialize();
 		}
 
-
 ////echo '<pre>';
 ////print_r ($record);
 ////echo '<pre>';
@@ -82,13 +81,31 @@ class PDOHandler extends AbstractProcessingHandler
 		$tracer	= $record['extra']['tracer'] ??	'';
 		$this->statement->bindParam('tracer', $tracer);
 
-		$this->statement->execute();
+//////////try {
+			$r = $this->statement->execute();
+//////////echo '<pre>rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr';
+//////////echo $r ? '-=true=-': '-=False=-';
+//////////print_r( $this->pdo->errorInfo());
+//////////print_r( $this->statement->errorInfo());
+//////////////////print_r($this);
+//////////echo 'UUUUUUUUUUUUUUUUUU<pre>';
+//////////
+////////// 		} catch (\PDOException $e)	{
+//////////			echo '<pre>oooooooooooooooooooooooooooooo';
+//////////
+////////// 			echo $e->getMessage(), (int)$e->getCode();
+//////////			//echo $r ? '-=true=-': '-=False=-';
+//////////			//print_r ($r);
+//////////			print_r ($e);
+////////////print_r ($this->pdo);
+//////////			echo 'UUUUUUUUUUUUUUUUUU<pre>';
+//////////		}
 	}
 
 	private	function initialize()
 	{
-		$sql = 'INSERT INTO	[' . $this->tableName
-		 . '] (timestamp, channel,	machine_id,	App, Level,	operation, caller, caller_of_caller, threadNum,	message, tracer'
+		$sql = 'INSERT INTO	' . $this->tableName
+		 . ' (timestamp, channel,	machine_id,	App, Level,	operation, caller, caller_of_caller, threadNum,	message, tracer'
 		 . ') VALUES ('
 		 . ':time, :channel, :machine_id, :app,	:level,	:operation,	:caller, :call_caller, :thread,	:message, :tracer )' ;
 

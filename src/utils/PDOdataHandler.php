@@ -64,7 +64,7 @@ class PDOdataHandler extends AbstractProcessingHandler
 
 	private function initialize()
 	{
-		$sql = 'INSERT INTO [' . $this->tableName . '] ('
+		$sql = 'INSERT INTO ' . $this->tableName . ' ('
 		 . 'timestamp, channel, machine_id, App, Level, operation,  message'
 		 . ') VALUES ('
 		 . ':time, :channel, :machine_id, :app, :level, :operation,  :message )' ;
