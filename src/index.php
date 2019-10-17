@@ -107,7 +107,7 @@ if ( Settings::GetPublic('IS_DEBUGGING')) {
 Settings::GetRunTime('MessageLog')->addNotice( 'Starting ....');
 
 Settings::GetRuntime('FileLog')->addInfo('Staring...');
-
+////zzzzzzzzzzzzzzzzzzzzzz
 if ( extension_loaded(Settings::GetProtected('database_extension_needed'))) {
 	//Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
 	Settings::GetRuntime('SecurityLog')->addInfo('Starting...');
