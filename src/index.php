@@ -107,7 +107,7 @@ Settings::GetRunTime('MessageLog')->addNotice( 'Starting ....');
 
 Settings::GetRuntime('FileLog')->addInfo('Staring...');
 
-if ( extension_loaded('pdo_sqlsrvXXX')) {
+if ( extension_loaded('pdo_sqlsrv')) {
 	Settings::GetRuntime('DBLog')->addInfo( 'Starting....');
 	Settings::GetRuntime('SecurityLog')->addInfo('Starting...');
 } else {
@@ -129,8 +129,6 @@ if (false) {
 Settings::GetRunTime('MessageLog')->addNotice( 'Starting ..session..');
 
 
-//Dump::dump( $_SESSION); //dumpLong
-
 //
 //$a = new Authenticate();
 //echo 'does have right 1', $a->checkRights( 'fred', 'sam', 'john', Authenticate::DBA_RIGHT) ? 'yes':'no';
@@ -140,46 +138,19 @@ Settings::GetRunTime('MessageLog')->addNotice( 'Starting ..session..');
 //$_SESSION['username'] = 'merrem';
 
 // now start everything running
-//include_once( DIR . 'resolver.class.php');
 $resolver = new Resolver();
 $resolver->doWork();
 
 
-//  if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
-//    echo "CRYPT_BLOWFISH is enabled!";
-//  } else {
-//    echo "CRYPT_BLOWFISH is NOT enabled!";
-//  }
-//Dump::dumpClasses();
-
-//$cc = new myCryption();
-//$en = $cc->basicEnCrypt("This is some random string" );
-//Dump::dump($en);
-//$un = $cc->basicDeCrypt( $en);
-//Dump::dump($un);
-//
-//$en = $cc->encrypt("This is some random string" );
-//Dump::dump($en);
-//$un = $cc->decrypt( $en);
-//Dump::dump($un);
 
 //Settings::saveAsINI("F:\TEMP\__TEMP.INI");
 
 //Settings::nonDestructiveINIRestore( "F:\TEMP\__TEMP.INI");
 
-Settings::destructiveINIRestore( "F:\TEMP\__TEMP.INI");
+//Settings::destructiveINIRestore( "F:\TEMP\__TEMP.INI");
 
-$s =Settings::dump(true, false);
-Dump::dumpLong($s);
 //
-//
-$ar = array( 'fred'=> array('fred1', 'fred2','fred3', 'fred4'), 'bob'=>array('a','b','c'), 'tony'=>array('a','b','c'),'sam'=>'sam1');
-$s = Dump::arrayDisplayCompactor( $ar, array('fred','sam', 'tony'));
-Dump::dump($s);
 
-
-$s = Dump::arrayDisplayCompactor( $ar, array('fred','sam','tony'), array('bob'));
-Dump::dump($s);
 
 
 $s = HTML::Space(3);

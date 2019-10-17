@@ -53,6 +53,14 @@ abstract Class HTML {
 		$attr = self::parseOptions( $arOptions);
 		$style = self::parseStyle($arStyle);
 
+		$sel = '<Select name="' . $name . '" ' . $attr . $style . '>';
+		$options = self::Options( $values, $defaultItemValue, $addDefaultSelection);
+
+		return $sel . $options . '</select>' . PHP_EOL;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected static function Options($values, $defaultItemValue= null,	$addDefaultSelection= true){
 		$options ='';
 		if ($addDefaultSelection) {
 			$options .= '<option value="-1"';
@@ -70,10 +78,9 @@ abstract Class HTML {
 				$options .= '>' . $val . '</option>' . PHP_EOL;
 			}
 		}
-		$sel = '<Select name="' . $name . '" ' . $attr . $style . '>';
-		return $sel . $options . '</select>' . PHP_EOL;
-	}
+		return $options;
 
+	}
 
 	//-----------------------------------------------------------------------------------------------
 	public static function Radio( string $name,
@@ -104,7 +111,7 @@ abstract Class HTML {
 	 * @param 	string $type Type of the document
 	 * @return 	string
 	 */
-	public static function Doctype(string $type = 'html5') {
+	public static function DocType(string $type = 'html5') {
 		$doctypes = array(
 			'html5'			=> '<!DOCTYPE html>',
 			'xhtml11'		=> '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',

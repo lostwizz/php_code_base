@@ -17,7 +17,7 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
 
-if ( Settings::GetPublic('IS_DEBUGGING')) {
+if ( Settings::GetPublic('IS_DEBUGGING') or defined( "IS_PHPUNIT_TESTING") ) {
 	ini_set( "display_startup_errors", 1);
 	ini_set('display_errors', 1);
 	$x = error_reporting( ~0 );              /////////0xFFFFFFF  );

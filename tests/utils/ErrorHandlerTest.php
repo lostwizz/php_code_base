@@ -14,7 +14,7 @@ class ErrorHandlerTest extends TestCase{
 	public function testErrorManagerPre() :void {
 
 		//$this->assertTrue(true);
-			$this->markTestIncomplete('This test has not been implemented yet' );
+			//$this->markTestIncomplete('This test has not been implemented yet' );
 
 	}
 

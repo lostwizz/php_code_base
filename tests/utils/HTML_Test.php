@@ -12,18 +12,84 @@ use \php_base\Utils\HTML\HTML as HTML;
 
 class HTML_Test extends TestCase{
 
-
-////	function test_Doctype(){
-////				$this->markTestIncomplete('This test has not been implemented yet' );
-////	}
-////
 ////	function test_filter_XSS(){
 ////		$this->markTestIncomplete('This test has not been implemented yet' );
 ////	}
 ////
-////	function test_Select(){
-////				$this->markTestIncomplete('This test has not been implemented yet' );
-////	}
+//	function test_Select(){
+//				$this->markTestIncomplete('This test has not been implemented yet' );
+//	}
+
+	function Options_DataProvider(){
+		return [
+			[array(),null,null ,''],
+			['one', null,null, ''],
+			[ array('one'),null,null, '<option value="0" selected>one</option>' . PHP_EOL],
+		];
+	}
+
+	/**
+	* @dataProvider Options_DataProvider
+	*/
+	function test_Options($in1, $in2, $in3, $expected){
+		$o = new ExtendedHTML();
+		$a = $o->extended_Options($in1, $in2, $in3);
+		$this->assertEquals($expected, $a);
+
+	}
+
+
+
+
+	function DocType_DataProvider(){
+		return [
+			['FRED' ,''],
+			[ 99, ''],
+			[null  ,  '<!DOCTYPE html>' . "\n"],
+			['html5'		 ,  '<!DOCTYPE html>' . "\n"],
+			['xhtml11'		, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">' . "\n"],
+			['xhtml1-strict'	, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' . "\n"],
+			['xhtml1-trans'	, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' . "\n"],
+			['xhtml1-frame'	, '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">' . "\n"],
+			['html4-strict'	, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">' . "\n"],
+			['html4-trans'	, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">' . "\n"],
+			['html4-frame'	, '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">' . "\n"],
+		];
+	}
+
+	/**
+	* @dataProvider DocType_DataProvider
+	*/
+	function test_DocType($input, $expected){
+				//$this->markTestIncomplete('This test has not been implemented yet' );
+		if ( is_null($input)){
+			$a = HTML::DocType();
+		} else {
+			$a = HTML::DocType($input);
+		}
+		$this->assertEquals($expected, $a);
+	}
+
+	function test_2_DocType() {
+		$this->expectException(\TypeError::class);
+		$this->expectExceptionMessage('Argument 1 passed to php_base\Utils\HTML\HTML::DocType() must be of the type string, object given' );
+		$this->expectExceptionCode(0);
+		$this->expectExceptionMessageRegExp('/object given/');
+
+		$out =  HTML::DocType( new \stdClass());
+
+	}
+
+	function test_3_DocType() {
+		$this->expectException(\TypeError::class);
+		$this->expectExceptionMessage('Argument 1 passed to php_base\Utils\HTML\HTML::DocType() must be of the type string, null given' );
+		$this->expectExceptionCode(0);
+		$this->expectExceptionMessageRegExp('/null given/');
+
+		$out =  HTML::DocType( null);
+
+	}
+
 
 	function test_radio(){
 				//$this->markTestIncomplete('This test has not been implemented yet' );
@@ -564,5 +630,9 @@ class ExtendedHTML extends HTML{
 
 	function extended_parseStyle($ar=null){
 		return parent::parseStyle($ar);
+	}
+
+	function extended_Options( $v, $defaultItemView=null, $addDefaultSelection=null){
+		return parent::Options($v, $defaultItemView, $addDefaultSelection);
 	}
 }
