@@ -1,23 +1,24 @@
 <?php
 
-// HeaderData.class.php
+// HeaderModel.class.php
 //		- give data for the header
 
 
-namespace php_base\Data;
+namespace php_base\Model;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
-class HeaderData extends Data {
 
+//***********************************************************************************************
+//***********************************************************************************************
+class HeaderModel extends Model {
 
 //	public function doWork(){
 //		return false;
 //	}
 
-
-
+	//-----------------------------------------------------------------------------------------------
 	public function giveTitle( $short = false){
 		$out =  Settings::GetPublic( 'App Name');
 		if( ! $short){
@@ -29,16 +30,19 @@ class HeaderData extends Data {
 		return $out;
 	}
 
+	//-----------------------------------------------------------------------------------------------
 	public function giveVersion() {
 		return Settings::GetPublic( 'App Version');
 	}
 
-	public function giveServerAndDatabase(){
+	//-----------------------------------------------------------------------------------------------
+	public function giveTypeServerAndDatabase(){
 		return 'Database: ' . Settings::GetProtected('DB_Type')
 				. ' On: ' . Settings::GetProtected('DB_Server')
 				. ' Using: ' . Settings::GetProtected('DB_Database');
 	}
 
+	//-----------------------------------------------------------------------------------------------
 	public function giveStyleSheets(){
 		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
 		return [ '..\static\css\message_stack_style.css',
@@ -46,6 +50,7 @@ class HeaderData extends Data {
 				];
 	}
 
+	//-----------------------------------------------------------------------------------------------
 	public function giveJavaScriptFiles(){
 		return [
 
