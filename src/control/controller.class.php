@@ -45,7 +45,6 @@ abstract class Controller{
 
 	public $payload;
 
-
 	//-----------------------------------------------------------------------------------------------
 	abstract public function __construct($payload = null);
 
@@ -57,6 +56,5 @@ abstract class Controller{
 	public function doWork(){
 		return false;
 	}
-
 
 }

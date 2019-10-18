@@ -6,7 +6,7 @@ body {
 }
 
 
-
+/*
 .header_h1 {
 	color: black;
 	font-family: Times, TimesNR,"New Century Schoolbook", serif, Helvetica, Geneva, Arial,SunSans-Regular, sans-serif;
@@ -16,29 +16,35 @@ body {
 	text-align: center;
 	/*height: 30px;*/
 	}
-
-
+*/
 
 
 .header_table {
-	/*border: 1px solid navy;*/
+	border: 1px solid navy;
 	width: 100%;
 	height: 210px;
 	}
 
 .header_td_app_name {
-	width: 40%
+	width: 50%;
+	color: black;
+	font-family: Times, TimesNR,"New Century Schoolbook", serif, Helvetica, Geneva, Arial,SunSans-Regular, sans-serif;
+	font-size: 28pt;
+	background-color: #A6EAF9;
+	background-size: cover;
+	text-align: center;
 	}
 
 .header_td_middle_box {
+	width: 30%;
 }
 
 .header_td_version {
 	background:url("../../static/images/Whitehorse_RGB.jpg") ;
-	background-size: 300px 210px;
+	background-size: cover;  /*300px 210px;*/
 	background-repeat: no-repeat;
-	background-position: center top;
-	width: 300px;
+	background-position: right top;
+	width: 280px;
 
 	}
 

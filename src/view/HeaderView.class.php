@@ -17,27 +17,23 @@ class HeaderView extends View {
 //	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork( $data = null){
-
-
-
-
+	public function doWork( $model = null){
 
 		if ( ! Settings::GetRuntime('Surpress_Output')){  // probably because we are printing
 			echo HTML::DocType(/* 'html5'*/ 'html4-trans' ) ;
 			?>
 				<html>
 					<head>
-						<title><?php echo $data->giveTitle();?></title>
+						<title><?php echo $model->giveTitle();?></title>
 						<meta http-equiv="content-type" content="text/html; charset=utf-8">
 						<?php
-							$ar = $data->giveStyleSheets();
+							$ar = $model->giveStyleSheets();
 							foreach( $ar as $styleUrl){
 								echo '<link rel="stylesheet" href="' ;
 								echo $styleUrl;
 								echo '">' . PHP_EOL;
 							}
-							$ar = $data->giveJavaScriptFiles();
+							$ar = $model->giveJavaScriptFiles();
 							foreach( $ar as $javaScriptUrl){
 								require_once( $javaScriptUrl);
 							}
@@ -48,9 +44,9 @@ class HeaderView extends View {
 					<table class="header_table" >
 						<tr>
 							<td class="header_td_app_name">
-								<h1 class="header_h1">
+								<h1 >
 									<?php
-										echo $data->giveTitle(true);
+										echo $model->giveTitle(true);
 									?>
 								</h1>
 							</td>
@@ -65,20 +61,18 @@ class HeaderView extends View {
 
 
 			<?php
-
-			//echo date('r') ;
+				//class="header_h1"
+				//echo date('r') ;
 			echo '<pre class="pre_version">';
 			echo 'Version:';
-			echo $data->giveVersion();
+			echo $model->giveVersion();
 			echo ' ';
-			echo $data->giveServerAndDatabase();
+			echo $model->giveTypeServerAndDatabase();
 			echo '</pre>';
 
 			if ( Settings::GetPublic('IS_DEBUGGING')) {
 				echo '<h1>We is Debugging!!! </h1><br>';
 			}
-			echo '<span>App: <b>' . Settings::GetPublic('App Name') . '</b>    On:<b>'. Settings::GetPublic( 'App Server') . '</b> Ver:<b>' . Settings::GetPublic('App Version') . '</b></span>';
-			echo '<br>';
 		}
 	}
 
