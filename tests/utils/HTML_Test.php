@@ -10,21 +10,245 @@ use \php_base\Utils\HTML\HTML as HTML;
 //use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
 
+
+//////
+//////$s = HTML::Space(3);
+////////'theaction'
+//////$s = HTML::FormOpen('fredform',  'invoice_form' );
+////////$s = htmlspecialchars($s);
+//////Dump::dump($s);
+//////
+//////
+//////$a = array('one'=>'oneX', 'two'=>'twoX', 'three'=>'threeX', 'four'=>'fourX');
+//////$s = HTML::Select( 'sam', $a, 'three', true);
+//////Dump::dump( $s);
+//////echo $s;
+//////
+//////echo '-------------1-';
+//////echo HTML::BR(3);
+//////
+//////$s = HTML::Select( 'sam', $a, 'three', false);
+//////Dump::dump( $s);
+//////echo $s;
+//////echo '-------------2-';
+//////
+//////
+//////$a = array('one'=>'oneX', 'two'=>'twoX', 'three'=>'threeX', 'four'=>'fourX');
+//////$s = HTML::Select( 'sam', $a, null, true);
+//////Dump::dump( $s);
+//////echo $s;
+//////
+//////
+//////$style =  array('width' => '15em', 'height' =>'15em');
+//////// style="width: 2em; height: 2em;"
+//////
+//////$s = HTML::Radio( 'fred', 'fred was here' , true,null, $style);
+//////Dump::dump($s);
+//////echo $s , 'some radioness';
+//////
+//////echo HTML::Radio("FRED", 'somewhere over the rainbow');
+//////
+//////$out = HTML::Image( 'http://gis/cityofwhitehorseresources/Images/fire_icon.png');
+//////Dump::dump($out);
+
+
+//////
+//////$style = array('one'=>'oneX', 'two'=>'twoX', 'three'=>'threeX', 'four'=>'fourX');
+//////
+//////$out = HTML::Image( 'http://gis/cityofwhitehorseresources/Images/fire_icon.png',null, $style);
+//////
+//////	$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" />';
+//////Dump::dump($out);
+//////
+
+
 class HTML_Test extends TestCase{
 
-////	function test_filter_XSS(){
-////		$this->markTestIncomplete('This test has not been implemented yet' );
-////	}
-////
-//	function test_Select(){
-//				$this->markTestIncomplete('This test has not been implemented yet' );
-//	}
+	function test_filter_XSS(){
+		$this->markTestIncomplete('This test has not been implemented yet' );
+	}
+
+
+	function test_filter(){
+		$this->markTestIncomplete('This test has not been implemented yet' );
+	}
+
+
+
+
+	function Select_DataProvider(){
+		return [
+			['', null, null, null, null, null, '<Select name="" ></select>' . PHP_EOL],   //0
+			['FRED', null, null, null, null, null, '<Select name="FRED" ></select>' . PHP_EOL],  //1
+			['FRED', array(), null, null, null, null, '<Select name="FRED" ></select>' . PHP_EOL], //2
+
+			['FRED', array('one'), null, null, null, null, '<Select name="FRED" ><option value="0">one</option>' . PHP_EOL  //3
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1'), null, null, null, null,  '<Select name="FRED" ><option value="k1">v1</option>' . PHP_EOL   //4
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2'), null, null, null, null,  '<Select name="FRED" >'  //5
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), null, null, null, null,  '<Select name="FRED" >'  //6
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), 0, null, null, null,  '<Select name="FRED" >'   //7
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), 'k1', null, null, null,  '<Select name="FRED" >'   //8
+														. '<option value="k1" selected>v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), 'k1', null, null, null,  '<Select name="FRED" >'   //9
+														. '<option value="k1" selected>v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), 'k1', true, null, null,  '<Select name="FRED" >'         //10
+														. '<option value="-1">- Select -</option>' . PHP_EOL
+														. '<option value="k1" selected>v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), 'k1', false, null, null,  '<Select name="FRED" >'      ///11
+														. '<option value="k1" selected>v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'), -1, true, null, null,  '<Select name="FRED" >'        /// 12
+														. '<option value="-1" selected>- Select -</option>' . PHP_EOL
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 0=>'v2', 'k3'=>'v3'), 0, null, null, null,  '<Select name="FRED" >'   //13
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="0" selected>v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+
+			['FRED', array('k1'=> 'v1', 0=>'v2', 'k3'=>'v3'), 0, null,array('alt'=>'TONY') , null,  '<Select name="FRED"  alt="TONY">'   //14
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="0" selected>v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+			['FRED', array('k1'=> 'v1', 0=>'v2', 'k3'=>'v3'), 0, null,array('alt'=>'TONY') , array('backgroundcolor' => 'yellow'),
+														  '<Select name="FRED"  alt="TONY" style="backgroundcolor: yellow; ">'   //15
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="0" selected>v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL
+														. '</select>' . PHP_EOL],
+
+		];
+	}
+
+	/**
+	* @dataProvider Select_DataProvider
+	*/
+	function test_Select($in1, $in2, $in3,$in4, $in5, $in6, $expected){
+		$a = HTML::Select($in1, $in2, $in3, $in4, $in5, $in6);
+		$this->assertEquals($expected, $a);
+
+	}
 
 	function Options_DataProvider(){
 		return [
 			[array(),null,null ,''],
 			['one', null,null, ''],
-			[ array('one'),null,null, '<option value="0" selected>one</option>' . PHP_EOL],
+			[ array('one'),null,null, '<option value="0">one</option>' . PHP_EOL],
+			[ array('k1'=> 'v1'),null,null, '<option value="k1">v1</option>' . PHP_EOL],
+			[ array('k1'=> 'v1', 'k2'=>'v2'),null,null, '<option value="k1">v1</option>'
+														. PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),null,null,
+						  '<option value="k1">v1</option>' . PHP_EOL
+						. '<option value="k2">v2</option>' . PHP_EOL
+						. '<option value="k3">v3</option>' . PHP_EOL
+														],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),0,null,
+						  '<option value="k1">v1</option>' . PHP_EOL
+						. '<option value="k2">v2</option>' . PHP_EOL
+						. '<option value="k3">v3</option>' . PHP_EOL
+														],
+
+			[ array('k1'=> 'v1', '0'=>'v2', 'k3'=>'v3'),0,null,
+						  '<option value="k1">v1</option>' . PHP_EOL
+						. '<option value="0" selected>v2</option>' . PHP_EOL
+						. '<option value="k3">v3</option>' . PHP_EOL
+														],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),'k1',null, '<option value="k1" selected>v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),'k2',null, '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2" selected>v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),'k3',null, '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3" selected>v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),'k1',true,
+														  '<option value="-1">- Select -</option>' . PHP_EOL
+														. '<option value="k1" selected>v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),'k2',true,
+														  '<option value="-1">- Select -</option>' . PHP_EOL
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2" selected>v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),'k3',true,
+														  '<option value="-1">- Select -</option>' . PHP_EOL
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3" selected>v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),-1,true,
+														  '<option value="-1" selected>- Select -</option>' . PHP_EOL
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),-1,false,
+														 '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),9999,false,
+														 '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
+			[ array('k1'=> 'v1', 'k2'=>'v2', 'k3'=>'v3'),9999,true,
+														  '<option value="-1">- Select -</option>' . PHP_EOL
+														. '<option value="k1">v1</option>' . PHP_EOL
+														. '<option value="k2">v2</option>' . PHP_EOL
+														. '<option value="k3">v3</option>' . PHP_EOL],
+
 		];
 	}
 
@@ -32,6 +256,7 @@ class HTML_Test extends TestCase{
 	* @dataProvider Options_DataProvider
 	*/
 	function test_Options($in1, $in2, $in3, $expected){
+
 		$o = new ExtendedHTML();
 		$a = $o->extended_Options($in1, $in2, $in3);
 		$this->assertEquals($expected, $a);

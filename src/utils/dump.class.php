@@ -359,6 +359,10 @@ abstract class Dump {
 		if (is_string($obj)){
 			$obj = htmlspecialchars($obj, ENT_NOQUOTES);
 			$data->variable = print_r( $obj, true);
+		} elseif ( is_bool( $obj)) {
+			$data->variable = $obj?"-=True=-":"-=False=-";
+		} elseif ( is_null( $obj)) {
+			$data->variable = '-=Null=-';
 		} else {
 			$data->variable = print_r($obj, true);
 		}

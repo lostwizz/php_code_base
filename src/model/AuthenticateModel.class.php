@@ -22,8 +22,9 @@
 namespace php_base\Model;
 
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -68,6 +69,8 @@ class AuthenticateModel extends Model{
 		$uname = $this->controller->payload['username'];
 		echo 'Checking login:',  $uname;
 		echo '<br>';
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'username='. $uname . (empty($uname) ? 'NOT-logged in': 'Seems to be Loggedin'));
+		return (! empty($uname));
 	}
 	//-----------------------------------------------------------------------------------------------
 	public function doLogin(){

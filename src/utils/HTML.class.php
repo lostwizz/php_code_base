@@ -64,15 +64,15 @@ abstract Class HTML {
 		$options ='';
 		if ($addDefaultSelection) {
 			$options .= '<option value="-1"';
-			if (empty($defaultItemValue) or $defaultItemValue == -1 ) {
+			if (empty($defaultItemValue) or $defaultItemValue == -1) {
 					$options .= ' selected';
 				}
-			$options .= '>- Select -</option>';
+			$options .= '>- Select -</option>' . PHP_EOL;
 		}
 		if (is_array($values)){
 			foreach($values as $key=> $val){
 				$options .= '<option value="' . $key . '"';
-				if ($key == $defaultItemValue) {
+				if ($key === $defaultItemValue) {
 					$options .= ' selected';
 				}
 				$options .= '>' . $val . '</option>' . PHP_EOL;

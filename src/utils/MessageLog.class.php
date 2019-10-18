@@ -21,12 +21,12 @@
 
 namespace php_base\Utils;
 
-if ( ! defined( "IS_PHPUNIT_TESTING")){
-	?><link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
-}
+//if ( ! defined( "IS_PHPUNIT_TESTING")){
+//	<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
+//}
 
 
-use \php_base\Utils\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
 

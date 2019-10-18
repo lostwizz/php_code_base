@@ -3,8 +3,23 @@
 namespace Tests\Test;
 use PHPUnit\Framework\TestCase;
 
-//use \php_base\Utils\Settings\Settings as Settings;
 use \php_base\Utils\Settings as Settings;
+
+
+
+
+
+//Settings::saveAsINI("F:\TEMP\__TEMP.INI");
+
+//Settings::nonDestructiveINIRestore( "F:\TEMP\__TEMP.INI");
+
+//Settings::destructiveINIRestore( "F:\TEMP\__TEMP.INI");
+
+//
+
+
+
+
 
 class SettingsTest extends TestCase{
 //
@@ -77,13 +92,13 @@ class SettingsTest extends TestCase{
 
 
 	public function testLogDatabaseSettings() : void {
-		$x1 = Settings::GetProtected('Logging_Server');
-		$this->assertEquals( $x1 ,'vm-db-prd4');
+////		$x1 = Settings::GetProtected('Logging_Server');
+////		$this->assertEquals( $x1 ,'vm-db-prd4');
+////
+//		$x2 = Settings::GetProtected('Logging_Database');
+//		$this->assertEquals( $x2 ,'Mikes_Application_Store');
 
-		$x2 = Settings::GetProtected('Logging_Database');
-		$this->assertEquals( $x2 ,'Mikes_Application_Store');
-
-		$x3 = Settings::GetProtected('Logging_DB_Username');
+		$x3 = Settings::GetProtected('DB_Username');
 		$this->assertEquals( $x3 ,'Mikes_DBLogging_User');
 
 		$x4 = Settings::GetProtected('Logging_DB_Table');
@@ -91,13 +106,13 @@ class SettingsTest extends TestCase{
 	}
 
 	public function testDataLogDatabaseSettings() : void {
-		$x1 = Settings::GetProtected('Data_Logging_Server');
-		$this->assertEquals( $x1 ,'vm-db-prd4');
+//		$x1 = Settings::GetProtected('Data_Logging_Server');
+//		$this->assertEquals( $x1 ,'vm-db-prd4');
 
-		$x2 = Settings::GetProtected('Data_Logging_Database');
-		$this->assertEquals( $x2 ,'Mikes_Application_Store');
+	//	$x2 = Settings::GetProtected('Data_Logging_Database');
+//		$this->assertEquals( $x2 ,'Mikes_Application_Store');
 
-		$x3 = Settings::GetProtected('Data_Logging_DB_Username');
+		$x3 = Settings::GetProtected('DB_Username');
 		$this->assertEquals( $x3 ,'Mikes_DBLogging_User');
 
 		$x4 = Settings::GetProtected('Data_Logging_DB_Table');

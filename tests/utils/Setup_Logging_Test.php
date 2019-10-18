@@ -18,6 +18,15 @@ class Logging_SetupTest extends TestCase{
 
 		require_once( 'P:\Projects\_Private_Settings.php');
 
+        // force everyhting to setup
+        Settings::SetPublic( 'Use_MessageLog', true );  //true
+		Settings::SetPublic( 'Use_DBLog', true);
+		Settings::SetPublic( 'Use_DBdataLog', true);
+		Settings::SetPublic( 'Use_FileLog', true);  // true
+		Settings::SetPublic( 'Use_SecurityLog', true);
+		Settings::SetPublic( 'Use_EmailLog', true);      // true
+
+
         require_once(DIR . 'utils\setup_Logging.php');
     }
 

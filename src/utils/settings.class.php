@@ -11,6 +11,12 @@ namespace php_base\Utils;
 use \php_base\Utils\myCryption\myCryption as myCryption;
 
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\myNullAbsorber as myNullAbsorber;
+
+
+//Dump::dump(require_once(DIR . 'utils' . DS . 'myNullAbsorber.class.php'));
+
+
 
 ///echo 'xxxxx"', __NAMESPACE__, '"'; // outputs "MyProject"
 
@@ -39,6 +45,21 @@ abstract class Settings
 	//-----------------------------------------------------------------------------------------------
 	public static function hasPublicKey($key){
 		return array_key_exists( $key, $public);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function getProtectedObject($key){
+		return isset(self::$protected[$key]) ? self::$protected[$key] : new myNullAbsorber();
+	}
+
+	public static function getPublicObject($key){
+		return isset(self::$public[$key]) ? self::$public[$key] : new myNullAbsorber();
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function getRunTimeObject($key){
+//dump::dump(self::$runTime[$key]);
+		return isset(self::$runTime[$key]) ? self::$runTime[$key] : new myNullAbsorber();
 	}
 
 	//-----------------------------------------------------------------------------------------------

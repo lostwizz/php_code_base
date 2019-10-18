@@ -48,100 +48,104 @@ if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 	$conn  = setup_PDO();
 //Dump::dump( $pdo);
 
-if (false) {
+	if (Settings::GetPublic( 'Use_DBLog')) {
 
-	$dbLog = new Logger('DBLog');
-//Dump::dump($dbLog);
-	$dbTable = Settings::GetProtected('Logging_DB_Table');
-	//$dbLog->setTableName( $dbTable);
-	$dbLog->pushHandler (new \Monolog\Handler\PDOHandler( $conn, Logger::INFO, true, $dbTable));
-	$dbLog->pushProcessor( new IntrospectionProcessor());
-	$dbLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
-	$dbLog->pushProcessor( new WebProcessor());
-	Settings::SetRuntime('DBLog' , $dbLog);
+		$dbLog = new Logger('DBLog');
+	//Dump::dump($dbLog);
+		$dbTable = Settings::GetProtected('Logging_DB_Table');
+		//$dbLog->setTableName( $dbTable);
+		$dbLog->pushHandler (new \Monolog\Handler\PDOHandler( $conn, Logger::INFO, true, $dbTable));
+		$dbLog->pushProcessor( new IntrospectionProcessor());
+		$dbLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
+		$dbLog->pushProcessor( new WebProcessor());
+		Settings::SetRuntime('DBLog' , $dbLog);
 
-				//$dbLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+					//$dbLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
 
-	Settings::GetRuntime('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
-	//Settings::GetPublic('DBLog')->addInfo("hellow world");
-	//////////////////////////////////////////////////////////////////////////////////////////
+		Settings::GetRuntime('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+		//Settings::GetRuntime('DBLog')->addInfo("hellow world");
+		//////////////////////////////////////////////////////////////////////////////////////////
 
+	}
+	if (Settings::GetPublic( 'Use_DBDataLog')) {
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//create database logging
+		$dbDataLog = new Logger('DBData');
+		//$pdoData  = setup_PDO();
+		$dbTable = Settings::GetProtected('Data_Logging_DB_Table');
+		$dbDataLog->pushHandler( new \Monolog\Handler\PDODataHandler( $conn, Logger::INFO, true, $dbTable));
+		$dbDataLog->pushProcessor( new IntrospectionProcessor());
+		$dbDataLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
+		$dbDataLog->pushProcessor( new WebProcessor());
+
+		Settings::SetRuntime('DBdataLog' , $dbDataLog);
+	//Dump::dump('++++++++++++++++++++++ herre');
+	//Dump::dump($dbDataLog);
+
+		$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['XXusername'=>'fred was here', 'super'=> 'sam was not here']);
+
+		//Settings::GetRuntime('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['CCCCusername'=>'fred was here', 'super'=> 'sam was not here']);
+		//////////////////////////////////////////////////////////////////////////////////////////
+	}
 }
-	//////////////////////////////////////////////////////////////////////////////////////////
-	//create database logging
-	$dbDataLog = new Logger('DBData');
-	//$pdoData  = setup_PDO();
-	$dbTable = Settings::GetProtected('Data_Logging_DB_Table');
-	$dbDataLog->pushHandler( new \Monolog\Handler\PDODataHandler( $conn, Logger::INFO, true, $dbTable));
-	$dbDataLog->pushProcessor( new IntrospectionProcessor());
-	$dbDataLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
-	$dbDataLog->pushProcessor( new WebProcessor());
 
-	Settings::SetRuntime('DBdataLog' , $dbDataLog);
-Dump::dump('++++++++++++++++++++++ herre');
-Dump::dump($dbDataLog);
 
-	$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['XXusername'=>'fred was here', 'super'=> 'sam was not here']);
-
-	Settings::GetRuntime('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['CCCCusername'=>'fred was here', 'super'=> 'sam was not here']);
+//////////////////////////////////////////////////////////////////////////////////////////
+if (Settings::GetPublic( 'Use_FileLog')) {
+	// create a log channel
+	$log = new Logger( 'default');
+	$log->pushHandler( new StreamHandler( $log_fn, Logger::INFO));
+	Settings::SetRuntime('FileLog' , $log);
+	//$log->addRecord( Logger::ALERT, '-------------Starting Logging------------');
+	Settings::GetRuntime('FileLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
 	//////////////////////////////////////////////////////////////////////////////////////////
 
+	//Dump::dump(get_class($log));
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
-// create a log channel
-$log = new Logger( 'default');
-$log->pushHandler( new StreamHandler( $log_fn, Logger::INFO));
-Settings::SetRuntime('FileLog' , $log);
-//$log->addRecord( Logger::ALERT, '-------------Starting Logging------------');
-Settings::GetRuntime('FileLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
-//////////////////////////////////////////////////////////////////////////////////////////
+if (Settings::GetPublic( 'Use_SecurityLog') ) {
+	// create the Security Log Channel
+	$securityLog = new Logger('Security');
+	$security_log_fn =Settings::GetPublic('Security_Log_file');
 
-//Dump::dump(get_class($log));
+	//Dump::dump($security_log_fn);
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-// create the Security Log Channel
-$securityLog = new Logger('Security');
-$security_log_fn =Settings::GetPublic('Security_Log_file');
-
-//Dump::dump($security_log_fn);
-
-$securityLog->pushHandler( new StreamHandler( $security_log_fn, Logger::DEBUG));
-Settings::SetRuntime('SecurityLog' , $securityLog);
-//$securityLog->addRecord( Logger::ALERT, '-------------Starting Logging------------');
-//Settings::GetPublic('SecurityLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
-//////////////////////////////////////////////////////////////////////////////////////////
-
+	$securityLog->pushHandler( new StreamHandler( $security_log_fn, Logger::DEBUG));
+	Settings::SetRuntime('SecurityLog' , $securityLog);
+	//$securityLog->addRecord( Logger::ALERT, '-------------Starting Logging------------');
+	//Settings::GetPublic('SecurityLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
+	//////////////////////////////////////////////////////////////////////////////////////////
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
+if (Settings::GetPublic( 'Use_EmailLog')) {
 // setup an Email Logger (for critical errors)
-$emailLog = new Logger( 'email');
+	$emailLog = new Logger( 'email');
 
-//$handler = new Monolog\Handler\NativeMailerHandler(
-$handler = new NativeMailerHandler(
-                'mike.merrett@whitehorse.ca',
-                'System Error in ' . Settings::GetPublic('App Name'),
-                Settings::GetPublic('App Name') . '@'. $_SERVER['SERVER_NAME'] ,
-		);
+	//$handler = new Monolog\Handler\NativeMailerHandler(
+	$handler = new NativeMailerHandler(
+	                'mike.merrett@whitehorse.ca',
+	                'System Error in ' . Settings::GetPublic('App Name'),
+	                Settings::GetPublic('App Name') . '@'. $_SERVER['SERVER_NAME'] ,
+			);
 
-$handler->setContentType('text/html' );
-$handler->addHeader( "MIME-Version: 1.0");
+	$handler->setContentType('text/html' );
+	$handler->addHeader( "MIME-Version: 1.0");
 
-// gather as much detail as possible for the email
-$emailLog->pushProcessor( new IntrospectionProcessor());
-$emailLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
-$emailLog->pushProcessor( new WebProcessor());
+	// gather as much detail as possible for the email
+	$emailLog->pushProcessor( new IntrospectionProcessor());
+	$emailLog->pushProcessor( new \Monolog\Processor\ProcessIdProcessor());
+	$emailLog->pushProcessor( new WebProcessor());
 
-// make the email look pretty
-$handler->setFormatter( new EmailHtmlFormatter());
-$emailLog->pushHandler( $handler);
-$emailLog->pushHandler( new StreamHandler( $log_fn, Logger::WARNING));
-Settings::SetRuntime('EmailLog' , $emailLog);
+	// make the email look pretty
+	$handler->setFormatter( new EmailHtmlFormatter());
+	$emailLog->pushHandler( $handler);
+	$emailLog->pushHandler( new StreamHandler( $log_fn, Logger::WARNING));
+	Settings::SetRuntime('EmailLog' , $emailLog);
 
-
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -170,15 +174,6 @@ function setup_PDO(){
 	if ( ! extension_loaded(Settings::GetProtected('database_extension_needed'))) {
 		throw new Exception ('NOT loaded');
 	}
-//	if ( empty( Settings::GetProtected( 'Logging_Server'))) {
-//		throw new Exception('Missing Config Data from Settings- Logging_Server');
-//	}
-//	if ( empty( Settings::GetProtected( 'Logging_Type'))) {
-//		throw new Exception('Missing Config Data from Settings- Logging_Type');
-//	}
-//	if ( empty(Settings::GetProtected( 'Logging_Database'))) {
-//		throw new Exception('Missing Config Data from Settings- Logging_Database');
-//	}
 	if ( empty(Settings::GetProtected( 'DB_Username'))) {
 		throw new Exception('Missing Config Data from Settings- DB_Username');
 	}
@@ -187,26 +182,14 @@ function setup_PDO(){
 	}
 
 	$dsn = Settings::GetProtected( 'DB_DSN');
-//Dump::dump($dsn);												;
 	$options= Settings::GetProtected( 'DB_DSN_OPTIONS');
-//	$options = 	array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-//						PDO::ATTR_CASE=> PDO::CASE_LOWER,
-//						PDO::ATTR_ERRMODE =>PDO::ERRMODE_EXCEPTION
-//						//PDO::ATTR_PERSISTENT => true
-//						);
-//Dump::dump($options);
-//Dump::dump(Settings::GetProtected('Logging_DB_Username'));
-//Dump::dump(Settings::GetProtected('Logging_DB_Password'));
 	try {
-
 		$conn = new \PDO($dsn,
 						Settings::GetProtected('DB_Username'),
 						Settings::GetProtected('DB_Password'),
 						$options
 						);
-//Dump::dump($conn);
 	} catch (\PDOException $e)				{
-//Dump::dump($e->getMessage());
 		throw new \PDOException($e->getMessage(), (int)$e->getCode());
 	}
 	return $conn;

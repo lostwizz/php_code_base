@@ -21,12 +21,8 @@
 
 use \php_base\Utils\Settings as Settings;
 
-
-
-	const DEBUG = 100;
-
-	define( 'AUTOLOAD_LEVEL_INFO', 200);
-	define( 'AUTOLOAD_LEVEL_DEBUG', 100);
+define( 'AUTOLOAD_LEVEL_INFO', 200);
+define( 'AUTOLOAD_LEVEL_DEBUG', 100);
 
 DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', false);
 //DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_INFO);
@@ -51,8 +47,6 @@ if (!defined('DIR')){
 //***********************************************************************************************
 function myAutoLoader($class){
 	$ex= explode('\\', $class );    // get the name of just the file - eg sam\fred gives fred
-
-
 
 	if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL== AUTOLOAD_LEVEL_DEBUG )) {
 		echo "<font color=magenta>(Looking for:" . $ex[ count($ex)-1] . ')</font>' . PHP_EOL;

@@ -45,20 +45,25 @@ class AuthenticateController extends Controller {
 
 	//-----------------------------------------------------------------------------------------------
 	public static function controllerRequiredVars(){
-		return [];
+		return []; // no more requred vars
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public static function checkLoginRequiredVars() {
-		return array_merge(self::controllerRequiredVars(),
-				[
+	public static function getLoginRequiredVarsToCheck() {
+		return [
 					'username',
 					'password'
-				]);
+				];
+
+					////		return array_merge(self::controllerRequiredVars(),
+					////				[
+					////					'username',
+					////					'password'
+					////				]);
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function checkLogin(){
+	public function CheckLogin(){
 		$this->model->isLoggedIn();
 	}
 
