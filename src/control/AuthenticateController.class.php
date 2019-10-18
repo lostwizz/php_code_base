@@ -63,7 +63,10 @@ class AuthenticateController extends Controller {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function CheckLogin(){
+	public function CheckLogin($parent){
+Dump::dumpLong($this);
+
+return true;
 		$this->model->isLoggedIn();
 	}
 

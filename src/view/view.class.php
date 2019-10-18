@@ -14,6 +14,6 @@ abstract class View{
 		$this->controller = $controller;
 	}
 
-	abstract public function doWork( $data =null);
+	abstract public function doWork( $parent = null);
 
 }

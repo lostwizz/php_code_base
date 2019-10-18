@@ -40,6 +40,7 @@ use \php_base\Utils\myUtils\myUtils as myUtils;
 
 
 
+
 ////////!!!!!!!!!!!!!this line #45 must alwaygs be this for the unit tests to work
 //Dump::dump(__LINE__, '-This is a Title-',true);
 ////////!!!!!!!!!!!!!this line #45 must alwaygs be this for the unit tests to work
@@ -140,6 +141,9 @@ if (false) {
 
 Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ..session..');
 
+//echo Resolver::REQUEST_PROCESS;
+//$_REQUEST[Resolver::REQUEST_PROCESS]= 'TEST';
+//$_REQUEST[Resolver::REQUEST_TASK]= 'doWork';
 
 
 
@@ -155,10 +159,10 @@ Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ..session..');
 $resolver = new Resolver();
 $resolver->doWork();
 
-
-echo 'IIIIIIIIIII' . PHP_EOL;
-echo HTML::Image(  '.\static\images\Whitehorse_RGB_200x140.jpg'  );
-echo 'JJJJJJJJJJ' . PHP_EOL;
+//
+//echo 'IIIIIIIIIII' . PHP_EOL;
+//echo HTML::Image(  '.\static\images\Whitehorse_RGB_200x140.jpg'  );
+//echo 'JJJJJJJJJJ' . PHP_EOL;
 
 
 //Dump::dump( $_SESSION); //dumpLong
@@ -173,8 +177,6 @@ if ( Settings::GetPublic('IS_DEBUGGING')) {
 
 //Settings::GetRunTimeObject('MessageLog')->addERROR('something happend here !');
 
-$exec_time = microtime(true) - Settings::GetRunTime('Benchmarks.start.executionTime');
-Settings::GetRunTimeObject('MessageLog')->addINFO('Execution Time was: '. $exec_time);
 
-Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!
+
 

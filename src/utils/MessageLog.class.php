@@ -197,10 +197,15 @@ class AMessage extends MessageBase {
 
 
 	//-----------------------------------------------------------------------------------------------
-	protected function getPrettyLine(){
+	protected function getPrettyLine($style =null){
 		$s ='';
-		$lineStyle = $this->getShowStyle( $this->level);
 		$textLeader = $this->getShowTextLeader($this->level);
+
+		if (!empty($style)){
+			$lineStyle = $style;
+		} else {
+			$lineStyle = $this->getShowStyle( $this->level);
+		}
 
 		$s .= '<span class="' . $lineStyle . '">';
 		if ( !empty( $this->timeStamp)) {
@@ -217,8 +222,8 @@ class AMessage extends MessageBase {
 	}
 	//-----------------------------------------------------------------------------------------------
 	// show the contents of this message -- with the approprieate formatting etc
-	public function show() {
-		echo  $this->getPrettyLine();
+	public function show($style=null) {
+		echo  $this->getPrettyLine($style);
 	}
 
 
@@ -278,6 +283,11 @@ class MessageLog {
 			$temp = new AMessage( $obj_or_array, $timestamp, $level);
 			//$temp = new $this->a_msg_handler_class ( $obj_or_array, $val2, $val3);
 			self::$messageQueue->enqueue( $temp);
+			if (Settings::GetPublic('Show MessageLog Adds'))		 {
+				$temp->show("msg_showLines");
+				echo '<Br>' . PHP_EOL;
+			}
+
 
 			//if ( ! empty( $GLOBALS['log'])) $GLOBALS['log']->log( 'MSG>' . $obj_or_array);
 		}

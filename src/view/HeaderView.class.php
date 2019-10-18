@@ -17,23 +17,23 @@ class HeaderView extends View {
 //	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork( $model = null){
+	public function doWork( $parent =null){
 
 		if ( ! Settings::GetRuntime('Surpress_Output')){  // probably because we are printing
 			echo HTML::DocType(/* 'html5'*/ 'html4-trans' ) ;
 			?>
 				<html>
 					<head>
-						<title><?php echo $model->giveTitle();?></title>
+						<title><?php echo $this->giveTitle();?></title>
 						<meta http-equiv="content-type" content="text/html; charset=utf-8">
 						<?php
-							$ar = $model->giveStyleSheets();
+							$ar = $this->giveStyleSheets();
 							foreach( $ar as $styleUrl){
 								echo '<link rel="stylesheet" href="' ;
 								echo $styleUrl;
 								echo '">' . PHP_EOL;
 							}
-							$ar = $model->giveJavaScriptFiles();
+							$ar = $this->giveJavaScriptFiles();
 							foreach( $ar as $javaScriptUrl){
 								require_once( $javaScriptUrl);
 							}
@@ -46,7 +46,7 @@ class HeaderView extends View {
 							<td class="header_td_app_name">
 								<h1 >
 									<?php
-										echo $model->giveTitle(true);
+										echo $this->giveTitle(true);
 									?>
 								</h1>
 							</td>
@@ -58,16 +58,14 @@ class HeaderView extends View {
 
 						</tr>
 					</table>
-
-
 			<?php
 				//class="header_h1"
 				//echo date('r') ;
 			echo '<pre class="pre_version">';
 			echo 'Version:';
-			echo $model->giveVersion();
+			echo $this->giveVersion();
 			echo ' ';
-			echo $model->giveTypeServerAndDatabase();
+			echo $this->giveTypeServerAndDatabase();
 			echo '</pre>';
 
 			if ( Settings::GetPublic('IS_DEBUGGING')) {
@@ -75,5 +73,46 @@ class HeaderView extends View {
 			}
 		}
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveTitle( $short = false){
+		$out =  Settings::GetPublic( 'App Name');
+		if( ! $short){
+			$out .= ' - '
+					. Settings::GetPublic( 'App Version')
+					. ' on '
+					. Settings::GetPublic( 'App Server');
+		}
+		return $out;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveStyleSheets(){
+		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
+		return [ '..\static\css\message_stack_style.css',
+				 '..\static\css\general_style.css'
+				];
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveJavaScriptFiles(){
+		return [
+
+			];
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveVersion() {
+		return Settings::GetPublic( 'App Version');
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveTypeServerAndDatabase(){
+		return 'Database: ' . Settings::GetProtected('DB_Type')
+				. ' On: ' . Settings::GetProtected('DB_Server')
+				. ' Using: ' . Settings::GetProtected('DB_Database');
+	}
+
+
 
 }

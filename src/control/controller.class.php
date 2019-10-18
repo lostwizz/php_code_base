@@ -53,7 +53,7 @@ abstract class Controller{
 	abstract public static function controllerRequiredVars();
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(){
+	public function doWork(  ){
 		return false;
 	}
 

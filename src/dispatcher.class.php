@@ -26,59 +26,53 @@ class Dispatcher {
 		$this->DISPATCHqueue= new \SplQueue();
 
 
-		if ( ! $isHeaderAndFooterLess){
-			$this->PREqueue->enqueue('control.HeaderController');
-
-			$this->POSTqueue->enqueue( 'control.FooterController');
-			/// this will always be done in index.php so it always shows something --$this->POSTqueue->enqueue( 'utils.messageLog.showAllMessagesInBox');
-		}
+//		if ( ! $isHeaderAndFooterLess){
+//			$this->PREqueue->enqueue('HeaderController.doWork');
+//
+//			$this->POSTqueue->enqueue( 'FooterController.doWork');
+//			/// this will always be done in index.php so it always shows something --$this->POSTqueue->enqueue( 'utils.messageLog.showAllMessagesInBox');
+//		}
 
 	}
 
+		//$processClass = new $className( $this);
 	//-----------------------------------------------------------------------------------------------
-	public function do_work() {
+	public function do_work( $parentResolver = null) {
 
-//Dump::dump($this->PREqueue);
-
-		//$this->DISPATCHqueue->enqueue('sam');
-
-		if (  $this->decode( $this->PREqueue) === false ){
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
+		if (  $this->RunThruTheQueue( $this->PREqueue) === false ){
 			return false;
 		}
 
-/*
-Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!',
-					array( 'bt' => debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT),
-							'server' =>$_SERVER,
-							'request'=> $_REQUEST,
-							//'session'=>$_SESSION,
-							//'env'=> $_ENV
-							//'cookie' => $_COOKIE
-						));
-*/
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting normal queue' );
+		$r = $this->RunThruTheQueue($this->DISPATCHqueue );
+		if ( $r ===false ) {
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running normal queue' );
+		}
 
-//Dump::dump($this->POSTqueue);
-
-
-
-		if ( ! $this->decode( $this->POSTqueue) ){
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting postqueue' );
+		if ( ! $this->RunThruTheQueue( $this->POSTqueue) ){
 			return false;
 		}
 
-		return true;
+		return $r;
 	}
 
 
 	//-----------------------------------------------------------------------------------------------
-	private function decode( \SplQueue $theQueue){
+	private function RunThruTheQueue( \SplQueue $theQueue){
 		while ( ! $theQueue->isEmpty() ) {
 			$item = $theQueue->dequeue();
+//Dump::dump( $item)	;
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
 			if ( ! $item ) {
 				return false;
 			}
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
 			if (  $this->itemDecode( $item ) === false){
 				return false;
 			}
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] 3');
 		}
 		return true;
 	}
@@ -90,15 +84,16 @@ Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!',
 		}
 		$r = true;
 		$exploded = explode( '.' , $process);
+Dump::dump($exploded);
 		switch( count( $exploded)) {
 			case 1:
 				echo ' what do i do here?';
 				break;
 			case 2:
-				$r = $this->doExecute($exploded[0], $exploded[1], 'doWork', $process);
+				$r = $this->doExecute('control', $exploded[0], $exploded[1], 'doWork');
 				break;
 			case 3:
-				$r =$this->doExecute($exploded[0], $exploded[1], $exploded[2], $process);
+				$r =$this->doExecute('control', $exploded[0], $exploded[1], $exploded[1]);  //,$process
 				break;
 			default:
 				echo ' cant determine what to do';
@@ -118,16 +113,44 @@ Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!',
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addProcess( $process, $payload = null){
-		$this->PREqueue->enqueue($process);
-		//$this->payloads[$process] = $payload;
+	protected function buildItem( $process, $task =null, $action =null, $payload = null ){
+		$process = (!empty( $process)) ?        $process . 'Controller' : '';
+		$task =    (!empty( $task))    ? '.' .  $task                   : '';
+		$action =  (!empty( $action )) ? '.' .  $action                 : '';
 
-//Dump::dump($this->payloads,'before');
-//Dump::dump($payload);
-		$this->addProcessPayload($process, $payload);
-//Dump::dump($this->payloads, 'after');
+		$item = $process . $task . $action;
+
+		return $item;
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function addItemToQueue( $q, $item){
+		$q->enqueue($item);
+	}
+	//-----------------------------------------------------------------------------------------------
+	public function addPREProcess( $process, $task =null, $action =null, $payload = null){
+		$item = $this->buildItem($process, $task, $action, $payload);
+		$this->addItemToQueue($this->PREqueue, $item );
+				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
+
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function addPOSTProcess( $process, $task =null, $action =null, $payload = null){
+		$item = $this->buildItem($process, $task, $action, $payload);
+		$this->addItemToQueue($this->POSTqueue, $item );
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function addProcess( $process, $task =null, $action =null, $payload = null){
+		$item = $this->buildItem($process, $task, $action, $payload);
+		$this->addItemToQueue($this->DISPATCHqueue, $item );
+				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
+
+	}
+
+
 
 	//-----------------------------------------------------------------------------------------------
 	public function addProcessPayload($process, $payload = null) {
@@ -147,6 +170,24 @@ Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!',
 		$this->payloads[$processName] =  array_merge($this->payloads[$processName], $payload );
 	}
 
+
+	//-----------------------------------------------------------------------------------------------
+	private function doExecute( string $dir, string $class, string $method){
+		$class = '\\php_base\\' .$dir . '\\' . $class;
+
+		//$pname = $this->decodeProcessFromFullDescriptor($process);   //figure out the base process name
+		//$payload = $this->decodePayload($pname);       //send the base process the payload
+		$payload = '';   //parentResolver->payload;
+//Dump::dump($pname);
+//Dump::dump($class);
+//Dump::dump($payload);
+
+
+		$x = new $class ( $payload);            //instanciate the process  and pass it the payload
+
+		return $x->$method($this);				//run the process's method
+	}
+
 	//-----------------------------------------------------------------------------------------------
 	public function decodeProcessFromFullDescriptor($process){
 		$exploded = explode( '.' , $process);
@@ -158,17 +199,6 @@ Settings::GetPublic('EmailLog')->addCritical('Hey, a critical log entry!',
 			default:
 				return null;
 		}
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	private function doExecute( string $dir, string $class, string $method, $process){
-		$class = '\\php_base\\' .$dir . '\\' . $class;
-
-		$pname = $this->decodeProcessFromFullDescriptor($process);   //figure out the base process name
-		$payload = $this->decodePayload($pname);       //send the base process the payload
-
-		$x = new $class ( $payload);            //instanciate the process  and pass it the payload
-		return $x->$method();				//run the process's method
 	}
 
 }

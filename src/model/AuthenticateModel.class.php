@@ -64,8 +64,13 @@ class AuthenticateModel extends Model{
 ////								);
 //	}
 
+
+
 	//-----------------------------------------------------------------------------------------------
 	public function isLoggedIn(){
+
+return true;
+
 		$uname = $this->controller->payload['username'];
 		echo 'Checking login:',  $uname;
 		echo '<br>';

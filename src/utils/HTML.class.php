@@ -16,6 +16,60 @@ abstract Class HTML {
 		return self::VERSION;
 	}
 
+	//-----------------------------------------------------------------------------------------------
+	//<tr class="logon_tr"><td class="logon_td_input">User Name: </td><td class="logon_td_input"><input type="TEXT" name="username" class="logon_username_input" value=""></td><td class="logon_td_input"></td></tr><tr class="logon_tr"><td class="logon_td_input">Password: </td><td class="logon_td_input"><input type="password" name="password" class="logon_password_input" value=""></td><td class="logon_td_input"></td></tr>					</table>
+
+//	public static function TextBox($name, $lable=null,  $width= 50, $usingTD=true, $arOptions=null, $arStyle=null ){
+//		$attr = self::parseOptions( $arOptions);
+//		$style = self::parseStyle($arStyle);
+//
+//		$out  = '<td>';
+//		$out .= $lable;
+//		$out .= '</td><td>';
+//		$out .=
+//
+//
+//
+//
+//	}
+
+
+	//-----------------------------------------------------------------------------------------------
+	//<input type="TEXT" name="username" class="logon_username_input" value="">
+	public static function Text($name, $value=null, $arOptions=null, $arStyle=null){
+
+		$name =  (!empty($name))  ? ' name="' .  $name  . '"' : '';
+		$value = (!empty($value)) ? ' value="' . $value . '"' : '';
+		return self::ShowInput( $name, $value, 'TEXT', $arOptions, $arStyle);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected static function ShowInput( $name, $value, $type='TEXT', $arOptions=null, $arStyle=null){
+		$attr = self::parseOptions( $arOptions);
+		$style = self::parseStyle($arStyle);
+
+		return '<Input type="' . $type . '"' . $name . $value . $attr . $style . ' >'  . PHP_EOL;
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
+//			<input type="submit" name="logon_action" value="Submit Logon" class="logon_submit_button">
+//							</td>
+//							<td class="logon_buttons_td">
+//								<input type="reset" value="Reset" class="logon_reset_button">
+//							</td>
+//							<td class="logon_buttons_td">
+	public static function Submit( $name, $value=null,  $arOptions=null, $arStyle=null){
+		$name =  (!empty($name))  ? ' name="' .  $name  . '"' : '';
+		$value = (!empty($value)) ? ' value="' . $value . '"' : '';
+		return self::ShowInput( $name, $value, 'Submit', $arOptions, $arStyle);
+	}
+
+	public static function Reset( $value='reset',  $arOptions=null, $arStyle=null){
+		$value = (!empty($value)) ? ' value="' . $value . '"' : '';
+		return self::ShowInput( '', $value, 'Reset', $arOptions, $arStyle);
+	}
+
 
 	//-----------------------------------------------------------------------------------------------
 				//<select multiple name=text size=number  tabindex=number>
@@ -226,7 +280,7 @@ abstract Class HTML {
 	public static function FormOpen(string $action,
 									string $name=null,
 									string $method = 'POST',
-									string $enctype = 'multipart/form-data',
+									$enctype = 'multipart/form-data',
 									$arOptions=null,
 									$arStyle=null
 								){
@@ -263,10 +317,8 @@ abstract Class HTML {
 		$v = (!empty($value))
 				? ' value="' . $value . '"'
 				: '';
-		$attr = self::parseOptions( $arOptions);
-		$style = self::parseStyle($arStyle);
+		return self::ShowInput( $n, $v, 'HIDDEN', $arOptions, $arStyle);
 
-		return '<input type=HIDDEN'. $n . $v . $attr . $style . '>' . PHP_EOL;
 	}
 
 
