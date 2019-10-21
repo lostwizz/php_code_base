@@ -22,63 +22,93 @@
 namespace php_base\Control;
 
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
 //***********************************************************************************************
 //***********************************************************************************************
 class AuthenticateController extends Controller {
 
+	public $action;
+	public $payload;
+
 	//-----------------------------------------------------------------------------------------------
-	public function __construct($payload = null) {
+	public function __construct($action='', $payload = null) {
 		$this->model = new \php_base\model\AuthenticateModel($this);
 		$this->data = new \php_base\data\AuthenticateData($this);
 		$this->view = new \php_base\view\AuthenticateView($this);
 
+		$this->action = $action;
 		$this->payload = $payload;
+//Dump::dump($payload);
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	public function doWork(){
 		echo 'authenticationController doWork hi - i am here!!';
+		echo 'should never get here';
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public static function controllerRequiredVars(){
-		return []; // no more requred vars
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public static function getLoginRequiredVarsToCheck() {
-		return [
-					'username',
-					'password'
-				];
-
-					////		return array_merge(self::controllerRequiredVars(),
-					////				[
-					////					'username',
-					////					'password'
-					////				]);
-	}
+//	public static function controllerRequiredVars(){
+//		return []; // no more requred vars
+//	}
+//
+//	//-----------------------------------------------------------------------------------------------
+//	public static function getLoginRequiredVarsToCheck() {
+//		return [
+//					'username',
+//					'password'
+//				];
+//
+//					////		return array_merge(self::controllerRequiredVars(),
+//					////				[
+//					////					'username',
+//					////					'password'
+//					////				]);
+//	}
 
 	//-----------------------------------------------------------------------------------------------
 	public function CheckLogin($parent){
-Dump::dumpLong($this);
+//Dump::dumpLong($this);
+		Settings::GetRunTimeObject('MessageLog')->addNotice('at checkLogin');
+//Dump::dump($this->payload);
 
-return true;
-		$this->model->isLoggedIn();
+		$username = (!empty( $this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
+		$password = (!empty( $this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
+
+		//if ( !empty($this->action) and !empty($this->))
+		switch ( $this->action){
+			case 'no_Credentials':
+			case 'Need_Login':
+				Settings::GetRunTimeObject('MessageLog')->addNotice('about to showLoginPage');
+				return $this->view->showLoginPage();
+
+			case 'do_the_logon_attempt':
+				Settings::GetRunTimeObject('MessageLog')->addNotice('about to tryToLogin');
+				return $this->model->tryToLogin($username, $password);
+
+			case 'Check_Ongoing_Connection':
+				Settings::GetRunTimeObject('MessageLog')->addNotice('about to isLoggedIn');
+				return $this->model->isLoggedIn($username, $password);
+
+			default:
+				return false;
+		}
+
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function forceLoginRequiredVars(){
-		return array_merge(self::controllerRequiredVars(),
-				 []);
-	}
+//	public function forceLoginRequiredVars(){
+//		return array_merge(self::controllerRequiredVars(),
+//				 ['entered_username',
+//				  'entered_password'
+//				  ]);
+//	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function forceLogin(){
-		$this->model->doLogin();
-	}
+//	//-----------------------------------------------------------------------------------------------
+//	public function forceLogin(){
+//		$this->model->doLogin();
+//	}
 
 }

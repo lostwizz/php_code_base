@@ -68,6 +68,7 @@
 		<testsuite name="base_structure">
 			<file>Tests/DirectoryStructureTest.php</file>
 			<file>Tests/Resolver_Test.php</file>
+			<file>Tests/dispatcher_Test.php</file>
 
 		</testsuite>
 

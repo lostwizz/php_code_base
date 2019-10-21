@@ -33,156 +33,177 @@ class Resolver {
 	//-----------------------------------------------------------------------------------------------
 	public function doWork() {
 
-Dump::dump($_REQUEST);
-		//$this->doLoginWork();
-
+		if ( Settings::GetPublic('IS_DEBUGGING') ) {
+			Dump::dump($_REQUEST);
+		}
 
 		$this->AddHeader();
-		$this->doAuthenticateUserHasLoggedIn();		// always start with login checks
-
 		$this->AddFooter();
+
+		$this->SetupAuthenticateCheck();		// always start with login checks
 
 		$this->decodeRequestinfo();
 
-		$r = $this->doDispatchCurrent();
+		$this->SetupDefaultController();    // this would usually be the menu starter
+
+		$r = $this->StartDispatch();
 		return $r;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function doDispatchCurrent(){
+	protected function StartDispatch(){
 
-//Dump::dumpLong($this);
+		$r = $this->dispatcher->do_work( $this);
 
-		if ( $this->dispatcher->do_work( $this) === false ){
 
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false' );
-			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false');
+		if ( $r[0] == false ){
+			//echo 'Loggon failed';
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on pre' );
+			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on pre');
 			return false;
+		}
+		if ($r[2]== false){
+			//echo 'Post Queue failed? footer?';
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on post' );
+			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on post');
+			return false;
+		}
+
+		if ( $r[1] == false){
+			//echo 'the dispach queue got a false';
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on dispatchQ' );
+			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on dispatchQ');
+
 		} else {
+			//echo 'all seems good to the resolver';
 			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a true' );
 			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a true');
 			return true;
 		}
+
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function SetupDefaultController(){
+		$process = 'TEST';
+		$task = 'doWork';
+		$action = null;
+		$payload = [ 'username'=> Settings::GetRunTime( 'Currently Logged In User' )];
+		$this->dispatcher->addProcess( $process, $task, $action, $payload);
+
+	}
+
+
 
 	//-----------------------------------------------------------------------------------------------
 	public function decodeRequestinfo(){
 
-		if ($this->hasNoPassedInfo()){
-			$this->doAuthenticateMustLogOn();
-			return;
+		$process = ( ! empty($_REQUEST[self::REQUEST_PROCESS] )) ? $_REQUEST[self::REQUEST_PROCESS] : null;
+		$task =    ( ! empty($_REQUEST[self::REQUEST_TASK]    )) ? $_REQUEST[self::REQUEST_TASK]    : null;
+		$action =  ( ! empty($_REQUEST[self::REQUEST_ACTION]  )) ? $_REQUEST[self::REQUEST_ACTION]  : null;
+		$payload = ( ! empty($_REQUEST[self::REQUEST_PAYLOAD] )) ? $_REQUEST[self::REQUEST_PAYLOAD] : null;
+
+		if ( ! ( $process == 'Authenticate' and $task =='CheckLogin' )){
+			$this->dispatcher->addProcess( $process, $task, $action, $payload);
+		} else {
+			//already have an authenticate.checkLogin task - dont need another
+		}
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
+		// always start with logged on check
+		// now false cases -
+				// nothing passed so show logon form
+				//  loggin on for the first time
+						// sucessfull
+						// unsucsessful
+				// have already logged on and just check session? still good
+						// have already logged in and timed out OR some other reason they should login again
+	protected function SetupAuthenticateCheck(){
+
+		$payload = ( ! empty($_REQUEST[self::REQUEST_PAYLOAD] )) ? $_REQUEST[self::REQUEST_PAYLOAD] : array();
+		$process ='Authenticate';
+		$task = 'CheckLogin';
+
+		if ($this->hasNoPassedInfo()) {
+			$action = 'Need_Login';
+			$payload = array_merge( $payload, array('authAction'=> $action));
+		} else  if ( $this->passingFirstTimeCredentials()){
+			$action = 'do_the_logon_attempt';
+			$payload = array_merge( $payload, array('authAction'=> $action));
+		} else if ( $this->passingOngoingDetails()){
+			$action = 'Check_Ongoing_Connection';
+			$payload = array_merge( $payload, array('authAction'=> $action));
+		} else {
+			$action ='no_Credentials';
+			$payload = array_merge( $payload, array('authAction'=> $action));
 		}
 
-		$this->determineProcessFromRequest();
+		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	function hasNoPassedInfo(){
-		if ( !empty( $_REQUEST) and  !empty($_REQUEST[self::REQUEST_PROCESS])){
+		if ( empty( $_REQUEST) or empty($_REQUEST[self::REQUEST_PROCESS])){
 			return true;
 		}
 		return false;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	function determineProcessFromRequest() {
-		$process = ( ! empty($_REQUEST[self::REQUEST_PROCESS] )) ? $_REQUEST[self::REQUEST_PROCESS] : null;
-		$task =    ( ! empty($_REQUEST[self::REQUEST_TASK]    )) ? $_REQUEST[self::REQUEST_TASK]    : null;
-		$action =  ( ! empty($_REQUEST[self::REQUEST_ACTION]  )) ? $_REQUEST[self::REQUEST_ACTION]  : null;
-		$payload = ( ! empty($_REQUEST[self::REQUEST_PAYLOAD] )) ? $_REQUEST[self::REQUEST_PAYLOAD] : null;
-		$this->dispatcher->addProcess( $process, $task, $action, $payload);
+	protected function passingOngoingDetails(){
+		if ( !empty( $_REQUEST)
+		 and !empty( $_REQUEST['payload'])
+		 and !empty($_REQUEST['payload']['credentials'])
+		 and !empty($_REQUEST['payload']['credentials']['username'])){
+
+			//////////!!!!!! and anything else that needs to be passes in an ongoin session - maybe session id?
+			Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details true');
+			return true;
+		} else {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details false');
+			return false;
+		}
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function passingFirstTimeCredentials() {
+		 if ( !empty( $_REQUEST[self::REQUEST_PROCESS])
+		  and $_REQUEST[self::REQUEST_PROCESS] == 'Authenticate'
+		  and ! empty($_REQUEST[self::REQUEST_TASK])
+		  and $_REQUEST[self::REQUEST_TASK] == 'CheckLogin'
+		 ) {
+		 	Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login true');
+		 	return true;
+		 } else {
+		 	Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login false');
+		 	return false;
+		 }
+	}
+
+
 
 	//-----------------------------------------------------------------------------------------------
 	protected function AddHeader(){
 		$process ='Header';
 		$task = 'doWork';
-		$action = '';
+		$action = null;
 		$payload =null;
 
 		$this->dispatcher->addPREProcess( $process, $task, $action, $payload);
-
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	protected function doAuthenticateUserHasLoggedIn(){
-				// always start with logged on check
-		$process ='Authenticate';
-		$task = 'CheckLogin';
-		$action = 'isAuthenticated';
-		$payload =null;
-
-		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	protected function doAuthenticateMustLogOn(){
-				// always start with logged on check
-		$process ='Authenticate';
-		$task = 'forceLogin';
-		$action = 'isNOTAuthenticated';
-		$payload =null;
-
-		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	protected function AddFooter(){
 		$process ='Footer';
 		$task = 'doWork';
-		$action = '';
+		$action = null;
 		$payload =null;
 
 		$this->dispatcher->addPOSTProcess( $process, $task, $action, $payload);
-
 	}
 
-
-//
-//		$arRequiredPayload = \php_base\Control\AuthenticateController::getLoginRequiredVarsToCheck();
-//		$requiredVars = $this->getRequiredPayload( $arRequiredPayload);
-//
-//		$isLoggedOn = $this->dispatcher->addProcess( 'control.AuthenticateController.CheckLogin', $requiredVars);
-//
-//		if (! $isLoggedOn) {
-//			$this->dispatcher->addProcess( 'control.AuthenticateController.ForceLogin');
-//
-//		}
-//		$this->dispatcher->addProcessPayload('control.HeaderController', $requiredVars);
-//		$this->dispatcher->addProcessPayload('control.FooterController', $requiredVars);
-
-//Dump::dumplong( $this->dispatcher);
-//
-//$ar = $this->dispatcher;
-//$s = Dump::arrayDisplayCompactor( $ar, array('payloads'));
-//Dump::dumplong($s);
-
-
-
-	//-----------------------------------------------------------------------------------------------
-//	protected function getRequiredPayload( $arRequiredVars){
-//		$arOfVars = array();
-//		foreach( $arRequiredVars as $varName){
-//			$arOfVars[$varName] = $this->isVarInRequestOrSession( $varName);
-//		}
-//		return $arOfVars;
-//	}
-
-
-	//-----------------------------------------------------------------------------------------------
-//	protected function isVarInRequestOrSession( $varName){
-//		if ( !empty($_REQUEST) and !empty( $_REQUEST[ $varName])) {
-//			return  $_REQUEST[ $varName];
-//		} else if (!empty($_SESSION) and !empty($_SESSION[$varName])) {
-//			return $_SESSION[$varName];
-//		} else {
-//			return false;
-//		}
-//	}
-
-
-
-	//-----------------------------------------------------------------------------------------------
 
 
 }

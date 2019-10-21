@@ -47,6 +47,7 @@ abstract class MessageBase {
 	const CRITICAL = 500;
 	const ALERT = 550;
 	const EMERGENCY = 600;
+	const TODO = 999;
 
 
  	protected static $levels = array(
@@ -58,6 +59,7 @@ abstract class MessageBase {
         self::CRITICAL  => 'CRITICAL',
         self::ALERT     => 'ALERT',
         self::EMERGENCY => 'EMERGENCY',
+        self::TODO      => 'TODO'
     );
 
 	protected $text;	// the messageText message
@@ -284,7 +286,8 @@ class MessageLog {
 			//$temp = new $this->a_msg_handler_class ( $obj_or_array, $val2, $val3);
 			self::$messageQueue->enqueue( $temp);
 			if (Settings::GetPublic('Show MessageLog Adds'))		 {
-				$temp->show("msg_showLines");
+				//$temp->show("msg_showLines");
+				$temp->show();
 				echo '<Br>' . PHP_EOL;
 			}
 
@@ -292,6 +295,16 @@ class MessageLog {
 			//if ( ! empty( $GLOBALS['log'])) $GLOBALS['log']->log( 'MSG>' . $obj_or_array);
 		}
 	}
+
+
+	//-----------------------------------------------------------------------------------------------
+	public function addToDo( $obj_or_array=null, $timestamp=null) {
+		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+			$obj_or_array[2] = AMessage::TODO;
+		}
+		$this->add( $obj_or_array, $timestamp, AMessage::TODO);
+	}
+
 
 	//-----------------------------------------------------------------------------------------------
 	public function addDebug( $obj_or_array=null, $timestamp=null) {

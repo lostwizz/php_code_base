@@ -35,20 +35,25 @@ abstract Class HTML {
 
 
 	//-----------------------------------------------------------------------------------------------
+	//'<input type=hidden name="' . ACTION_SYSTEM . '" value="' . INVOICING_SYSTEM . '">';
+	public static function Hidden( string $name, string $value, $arOptions=null, $arStyle=null){
+		$n = (!empty($name))
+				? ' name="' . $name . '"'
+				: '';
+		$v = (!empty($value))
+				? ' value="' . $value . '"'
+				: '';
+		return self::ShowInput( $n, $v, 'HIDDEN', $arOptions, $arStyle);
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
 	//<input type="TEXT" name="username" class="logon_username_input" value="">
 	public static function Text($name, $value=null, $arOptions=null, $arStyle=null){
 
 		$name =  (!empty($name))  ? ' name="' .  $name  . '"' : '';
 		$value = (!empty($value)) ? ' value="' . $value . '"' : '';
 		return self::ShowInput( $name, $value, 'TEXT', $arOptions, $arStyle);
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	protected static function ShowInput( $name, $value, $type='TEXT', $arOptions=null, $arStyle=null){
-		$attr = self::parseOptions( $arOptions);
-		$style = self::parseStyle($arStyle);
-
-		return '<Input type="' . $type . '"' . $name . $value . $attr . $style . ' >'  . PHP_EOL;
 	}
 
 
@@ -65,9 +70,18 @@ abstract Class HTML {
 		return self::ShowInput( $name, $value, 'Submit', $arOptions, $arStyle);
 	}
 
+	//-----------------------------------------------------------------------------------------------
 	public static function Reset( $value='reset',  $arOptions=null, $arStyle=null){
 		$value = (!empty($value)) ? ' value="' . $value . '"' : '';
 		return self::ShowInput( '', $value, 'Reset', $arOptions, $arStyle);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected static function ShowInput( $name, $value, $type='TEXT', $arOptions=null, $arStyle=null){
+		$attr = self::parseOptions( $arOptions);
+		$style = self::parseStyle($arStyle);
+
+		return '<Input type="' . $type . '"' . $name . $value . $attr . $style . ' >' ;//. PHP_EOL;
 	}
 
 
@@ -149,7 +163,7 @@ abstract Class HTML {
 		$attr = self::parseOptions( $arOptions);
 		$style = self::parseStyle($arStyle);
 
-		$r = '<input type="radio" name="' . $name . '" value="' . $val . '"' ;
+		$r = '<Input type="radio" name="' . $name . '" value="' . $val . '"' ;
 		$r .=  ($isChecked) ?  ' checked' :'';
 		return $r . $attr . $style . '/>' . $lable ;
 	}
@@ -306,19 +320,6 @@ abstract Class HTML {
 	//-----------------------------------------------------------------------------------------------
 	public static function FormClose( ){
 		return ' </form>' .  PHP_EOL;
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	//'<input type=hidden name="' . ACTION_SYSTEM . '" value="' . INVOICING_SYSTEM . '">';
-	public static function Hidden( string $name, string $value, $arOptions=null, $arStyle=null){
-		$n = (!empty($name))
-				? ' name="' . $name . '"'
-				: '';
-		$v = (!empty($value))
-				? ' value="' . $value . '"'
-				: '';
-		return self::ShowInput( $n, $v, 'HIDDEN', $arOptions, $arStyle);
-
 	}
 
 

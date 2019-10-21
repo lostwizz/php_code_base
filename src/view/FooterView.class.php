@@ -24,7 +24,7 @@ class FooterView extends View {
 		Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!
 
 		echo '<footer>';
-		echo '<Br>--footer--<Br>';
+		//echo '<Br>--footer--<Br>';
 
 		echo '</footer>';
 

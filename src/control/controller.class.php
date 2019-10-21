@@ -43,14 +43,16 @@ abstract class Controller{
 	public $view;
 	public $data;
 
+	public $action;
 	public $payload;
 
-	//-----------------------------------------------------------------------------------------------
-	abstract public function __construct($payload = null);
-
 
 	//-----------------------------------------------------------------------------------------------
-	abstract public static function controllerRequiredVars();
+	abstract public function __construct($action ='', $payload = null);
+
+
+//	//-----------------------------------------------------------------------------------------------
+//	abstract public static function controllerRequiredVars();
 
 	//-----------------------------------------------------------------------------------------------
 	public function doWork(  ){

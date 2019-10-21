@@ -28,10 +28,12 @@ use \php_base\Utils\Dump\Dump as Dump;
 //***********************************************************************************************
 //***********************************************************************************************
 class FooterController extends Controller {
+	public $action;
+	public $payload;
 
 
 	//-----------------------------------------------------------------------------------------------
-	public function __construct($payload = null) {
+	public function __construct($action='', $payload = null) {
 		//$this->model = new \whitehorse\MikesCommandAndControl2\model\FooterModel($this);
 		//$this->data = new \whitehorse\MikesCommandAndControl2\data\FooterData($this);
 		$this->view = new \php_base\view\FooterView($this);
@@ -44,8 +46,8 @@ class FooterController extends Controller {
 		$this->view->doWork( $this);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function controllerRequiredVars(){
-		return [];
-	}
+//	//-----------------------------------------------------------------------------------------------
+//	public static function controllerRequiredVars(){
+//		return [];
+//	}
 }

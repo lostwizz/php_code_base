@@ -37,6 +37,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 
 .msg_style_INFO {
 	color: #D3D3D3;
+	background: black;
 	}
 
 .msg_style_NOTICE {
@@ -63,6 +64,12 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	color: YellowGreen;
 	background: Red
 	}
+
+.msg_style_TODO {
+	color: Red:
+	background: Grey;
+	}
+
 .msg_style_UNKNOWN {
 	color: black;
 	}
@@ -70,4 +77,5 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 .msg_style_default {
 	color: black;
 	}
+
 

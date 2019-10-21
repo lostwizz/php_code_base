@@ -15,8 +15,8 @@ Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 550);  //                   ALERT = 550;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 600);  //                   EMERGENCY = 600;
 
-Settings::SetPublic('Show MessageLog Adds', true);
-//Settings::SetPublic('Show MessageLog Adds', false);
+//Settings::SetPublic('Show MessageLog Adds', true);
+Settings::SetPublic('Show MessageLog Adds', false);
 
 
 //Settings::SetPublic( 'App Name', 'MikesCommandAndControl2');

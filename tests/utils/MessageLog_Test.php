@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-use \php_base\Settings\Utils\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\utils;
 
@@ -18,6 +18,29 @@ include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 //***********************************************************************************************
 class MessageLog_Test extends TestCase {
 
+	public static function setUpBeforeClass(): void   {
+		include_once( DIR . 'utils' . DS . 'settings.class.php');
+		require_once( DIR . '_config' . DS . '_Settings-General.php');
+		require_once( DIR . '_config' . DS . '_Settings-Database.php');
+		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+
+		require_once( 'P:\Projects\_Private_Settings.php');
+
+        // force everyhting to setup
+       // Settings::SetPublic( 'Use_MessageLog', true );  //true
+		Settings::SetPublic( 'Use_MessageLog', false );  //true
+		Settings::SetPublic( 'Use_DBLog', false);
+		Settings::SetPublic( 'Use_DBdataLog', false);
+		Settings::SetPublic( 'Use_FileLog', false);  // true
+		Settings::SetPublic( 'Use_SecurityLog', false);
+		Settings::SetPublic( 'Use_EmailLog', false);      // true
+
+
+        //require_once(DIR . 'utils\setup_Logging.php');
+
+		Settings::SetPublic('Show MessageLog Adds', false);
+
+    }
 
 	//-----------------------------------------------------------------------------------------------
 	public function test_constuctor() {

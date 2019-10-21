@@ -25,66 +25,64 @@ class Dispatcher {
 		$this->POSTqueue = new \SplQueue();
 		$this->DISPATCHqueue= new \SplQueue();
 
-
-//		if ( ! $isHeaderAndFooterLess){
-//			$this->PREqueue->enqueue('HeaderController.doWork');
-//
-//			$this->POSTqueue->enqueue( 'FooterController.doWork');
-//			/// this will always be done in index.php so it always shows something --$this->POSTqueue->enqueue( 'utils.messageLog.showAllMessagesInBox');
-//		}
-
 	}
 
-		//$processClass = new $className( $this);
+	// abort if anything returns FALSE
 	//-----------------------------------------------------------------------------------------------
 	public function do_work( $parentResolver = null) {
 
 		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
-		if (  $this->RunThruTheQueue( $this->PREqueue) === false ){
-			return false;
+		$pre_result = $this->RunThruTheQueue( $this->PREqueue);
+
+		$dispatch_result = false;    //pre load the failure - only success will change it
+		if ( $pre_result != false  ){
+
+			// the pre queue contains authentication - so if it returns false then dont do any actuall work
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting normal queue' );
+			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue );
+			if ($dispatch_result ==false ) {
+				Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running normal queue' );
+				//return false;
+			}
 		}
 
-		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting normal queue' );
-		$r = $this->RunThruTheQueue($this->DISPATCHqueue );
-		if ( $r ===false ) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running normal queue' );
-		}
-
+		// show the footer in all cases (it has the message stack for one- so you know what happend)
 		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting postqueue' );
-		if ( ! $this->RunThruTheQueue( $this->POSTqueue) ){
-			return false;
-		}
+		$post_result =  $this->RunThruTheQueue( $this->POSTqueue);
 
-		return $r;
+
+		return array( $pre_result, $dispatch_result, $post_result);
 	}
 
 
 	//-----------------------------------------------------------------------------------------------
 	private function RunThruTheQueue( \SplQueue $theQueue){
+
+//$this->dumpQueue($theQueue);
+
 		while ( ! $theQueue->isEmpty() ) {
 			$item = $theQueue->dequeue();
-//Dump::dump( $item)	;
 			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
-			if ( ! $item ) {
-				return false;
+			if ( ! empty($item )) {
+				Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
+				if (  $this->itemDecodeAndExecute( $item ) === false){
+					return false;
+				}
+				Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] 3');
+			} else {
+				Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher - item is empty!! why!!');
 			}
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
-			if (  $this->itemDecode( $item ) === false){
-				return false;
-			}
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] 3');
 		}
 		return true;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	private function itemDecode( string $process=null){
+	private function itemDecodeAndExecute( string $process=null){
 		if (empty($process) ) {
 			return true;
 		}
 		$r = true;
 		$exploded = explode( '.' , $process);
-Dump::dump($exploded);
 		switch( count( $exploded)) {
 			case 1:
 				echo ' what do i do here?';
@@ -93,7 +91,10 @@ Dump::dump($exploded);
 				$r = $this->doExecute('control', $exploded[0], $exploded[1], 'doWork');
 				break;
 			case 3:
-				$r =$this->doExecute('control', $exploded[0], $exploded[1], $exploded[1]);  //,$process
+				$r =$this->doExecute('control', $exploded[0], $exploded[1], $exploded[2]);  //,$process
+				break;
+			case 4:
+				$r =$this->doExecute('control', $exploded[0], $exploded[1], $exploded[2], $exploded[3]);  //,$process
 				break;
 			default:
 				echo ' cant determine what to do';
@@ -102,26 +103,48 @@ Dump::dump($exploded);
 		return $r;
 	}
 
+	//-----------------------------------------------------------------------------------------------
+	private function doExecute( string $dir, string $class, string $task, string $action='', $payload = null){
+		$class = '\\php_base\\' .$dir . '\\' . $class;
+		$payload = (!empty($payload)) ? $this->processPayloadFROMItem($payload) : null;
+
+		$x = new $class ($action,  $payload);            //instanciate the process  and pass it the payload
+
+		return $x->$task($this);				//run the process's method
+	}
 
 
 	//-----------------------------------------------------------------------------------------------
-	protected function decodePayload($process){
-		if ( !empty($this->payloads) and !empty( $this->payloads[$process])){
-			return $this->payloads[$process];
-		} else {
-			return null;
-		}
-	}
+//	protected function decodePayload($process){
+//		if ( !empty($this->payloads) and !empty( $this->payloads[$process])){
+//			return $this->payloads[$process];
+//		} else {
+//			return null;
+//		}
+//	}
 
+	//-----------------------------------------------------------------------------------------------
 	protected function buildItem( $process, $task =null, $action =null, $payload = null ){
 		$process = (!empty( $process)) ?        $process . 'Controller' : '';
 		$task =    (!empty( $task))    ? '.' .  $task                   : '';
 		$action =  (!empty( $action )) ? '.' .  $action                 : '';
 
-		$item = $process . $task . $action;
+		$payload = (!empty( $payload )) ? '.' .  $this->processPayloadForItem($payload)  : '';
 
+		$item = $process . $task . $action  . $payload;
 		return $item;
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function processPayloadForItem($payload){
+		return serialize($payload);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function processPayloadFROMItem($payload){
+		return unserialize($payload);
+	}
+
 
 	//-----------------------------------------------------------------------------------------------
 	protected function addItemToQueue( $q, $item){
@@ -131,8 +154,7 @@ Dump::dump($exploded);
 	public function addPREProcess( $process, $task =null, $action =null, $payload = null){
 		$item = $this->buildItem($process, $task, $action, $payload);
 		$this->addItemToQueue($this->PREqueue, $item );
-				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
-
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -146,59 +168,65 @@ Dump::dump($exploded);
 	public function addProcess( $process, $task =null, $action =null, $payload = null){
 		$item = $this->buildItem($process, $task, $action, $payload);
 		$this->addItemToQueue($this->DISPATCHqueue, $item );
-				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
-
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
 	}
 
 
 
 	//-----------------------------------------------------------------------------------------------
-	public function addProcessPayload($process, $payload = null) {
-		$processName = $this->decodeProcessFromFullDescriptor($process);
-		if (!empty( $payload) )  {
-			if (! empty( $this->payloads[$processName])) {
-				$this->addToPayload( $processName, $payload);
-				//$this->payloads[$processName][] = $payload;
-			} else {
-				$this->payloads[$processName] = $payload;
-			}
+//	public function addProcessPayload($process, $payload = null) {
+//		$processName = $this->decodeProcessFromFullDescriptor($process);
+//		if (!empty( $payload) )  {
+//			if (! empty( $this->payloads[$processName])) {
+//				$this->addToPayload( $processName, $payload);
+//				//$this->payloads[$processName][] = $payload;
+//			} else {
+//				$this->payloads[$processName] = $payload;
+//			}
+//		}
+//	}
+
+	//-----------------------------------------------------------------------------------------------
+//	protected  function addToPayload( $processName, $payload){
+//		$this->payloads[$processName] =  array_merge($this->payloads[$processName], $payload );
+//	}
+//
+
+
+	//-----------------------------------------------------------------------------------------------
+//	public function decodeProcessFromFullDescriptor($process){
+//Dump::dump( $process);
+//		$exploded = explode( '.' , $process);
+//		switch( count( $exploded)) {
+//			case 2:
+//				return $process;
+//			case 3:
+//				return $exploded[0] . '.' . $exploded[1];
+////			case 4:
+////				return $exploded[0] . '.' . $exploded[1];
+//
+//			default:
+//				return null;
+//		}
+//	}
+
+
+
+	//-----------------------------------------------------------------------------------------------
+	public function dumpQueue( $theQueue) {
+
+		echo '<pre class="pre_debug_queue">';
+		echo '@@@@@@@@@@@@@ count=' .  $theQueue->count()   . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';
+		$theQueue->rewind();
+		while($theQueue->valid()){
+		    echo $theQueue->current();  //;."-\n"; // Show the first one
+		    echo '<br>';
+		    $theQueue->next(); // move the cursor to the next element
 		}
+		$theQueue->rewind();
+		echo '@@@@@@@@@@@@@%%%%%%%%%%%';
+		echo '</pre>';
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected  function addToPayload( $processName, $payload){
-		$this->payloads[$processName] =  array_merge($this->payloads[$processName], $payload );
-	}
-
-
-	//-----------------------------------------------------------------------------------------------
-	private function doExecute( string $dir, string $class, string $method){
-		$class = '\\php_base\\' .$dir . '\\' . $class;
-
-		//$pname = $this->decodeProcessFromFullDescriptor($process);   //figure out the base process name
-		//$payload = $this->decodePayload($pname);       //send the base process the payload
-		$payload = '';   //parentResolver->payload;
-//Dump::dump($pname);
-//Dump::dump($class);
-//Dump::dump($payload);
-
-
-		$x = new $class ( $payload);            //instanciate the process  and pass it the payload
-
-		return $x->$method($this);				//run the process's method
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function decodeProcessFromFullDescriptor($process){
-		$exploded = explode( '.' , $process);
-		switch( count( $exploded)) {
-			case 2:
-				return $process;
-			case 3:
-				return $exploded[0] . '.' . $exploded[1];
-			default:
-				return null;
-		}
-	}
 
 }

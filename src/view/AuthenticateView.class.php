@@ -31,6 +31,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 //***********************************************************************************************
 class AuthenticateView extends View{
 
+	protected static $loginAttempts =0;
+
 //	var $controller;
 
 //	//-----------------------------------------------------------------------------------------------
@@ -45,17 +47,27 @@ class AuthenticateView extends View{
 
 	//-----------------------------------------------------------------------------------------------
 	public function showLoginPage(){
+		self::$loginAttempts ++;
+
+		if ( self::$loginAttempts > 4) {
+			echo 'Sorry to many login attempts';
+		}
+
 		echo 'This is the login page - aint it pretty?';
 		//echo 'uname = ', $this->controller->payload['username'];
-		echo HTML::FormOpen( Resolver::REQUEST_PROCESS,
+		echo HTML::FormOpen( 'index.php',
 						'LoginForm',
 						'POST',
 						null,
 						NULL,
 						NULL
 					);
-		echo HTML::Hidden( Resolver::REQUEST_TASK, 'Login_form');
+		echo HTML::Hidden( Resolver::REQUEST_PROCESS, 'Authenticate');
+		echo HTML::Hidden( Resolver::REQUEST_TASK, 'CheckLogin');
 		echo HTML::Hidden( Resolver::REQUEST_ACTION, 'Login_check');
+
+		echo HTML::HIDDEN( Resolver::REQUEST_PAYLOAD,  Resolver::REQUEST_PAYLOAD .'[loginAttempts]');
+
 
 		echo '<center>';
 		echo 'Logon Form for ', Settings::GetPublic( 'App Name') ;
@@ -64,20 +76,22 @@ class AuthenticateView extends View{
 		?> <table border=1 align=center>
 				<tr>
 					<td>Username: </td>
-					<td colspan=2> <?php echo HTML::Text( 'entered_username', null, array( 'maxlength' => 30, 'size'=>30)); ?></td>
+					<td colspan=2> <?php echo HTML::Text( Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array( 'maxlength' => 30, 'size'=>30)); ?></td>
 				</tr><tr>
 					<td>Password: </td>
-					<td colspan=2><?php echo HTML::Text( 'entered_password', null, array( 'maxlength' =>100, 'size'=>30)); ?></td>
+					<td colspan=2><?php echo HTML::Text( Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array( 'maxlength' =>100, 'size'=>30)); ?></td>
 				</tr><tr>
 					<td align=center colspan=3><?php echo HTML::Submit('login_form_submit', 'Submit Logon');?></td>
 				</tr><tr>
 					<td><?php echo HTML::Submit('login_change_password', 'Change Password');?></td>
 					<td><?php echo HTML::Submit('login_Register', 'Add New Account');?></td>
 					<td><?php echo HTML::Submit('login_Forgot_password', 'Forgot Password');?></td>
+
 				</tr>
 			</table>
 		<?php
 		echo HTML::FormClose();
+		return false;
 	}
 
 }

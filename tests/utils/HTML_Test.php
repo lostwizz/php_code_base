@@ -5,6 +5,10 @@ use PHPUnit\Framework\TestCase;
 
 
 use \php_base\Utils\HTML\HTML as HTML;
+
+use \php_base\Utils\Settings as Settings;
+
+
 //use \php_base\Settings\Settings as Settings;
 //use \php_base\Utils\Dump\Dump as Dump;
 //use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
@@ -63,6 +67,32 @@ use \php_base\Utils\HTML\HTML as HTML;
 
 
 class HTML_Test extends TestCase{
+
+
+	public static function setUpBeforeClass(): void   {
+		include_once( DIR . 'utils' . DS . 'settings.class.php');
+		require_once( DIR . '_config' . DS . '_Settings-General.php');
+		require_once( DIR . '_config' . DS . '_Settings-Database.php');
+		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+
+		require_once( 'P:\Projects\_Private_Settings.php');
+
+        // force everyhting to setup
+       // Settings::SetPublic( 'Use_MessageLog', true );  //true
+		Settings::SetPublic( 'Use_DBLog', true);
+		Settings::SetPublic( 'Use_DBdataLog', true);
+		Settings::SetPublic( 'Use_FileLog', true);  // true
+		Settings::SetPublic( 'Use_SecurityLog', true);
+		Settings::SetPublic( 'Use_EmailLog', true);      // true
+
+
+        //require_once(DIR . 'utils\setup_Logging.php');
+
+		Settings::SetPublic( 'Use_MessageLog', false );  //true
+
+    }
+
+
 
 	function test_filter_XSS(){
 		$this->markTestIncomplete('This test has not been implemented yet' );
@@ -319,52 +349,52 @@ class HTML_Test extends TestCase{
 	function test_radio(){
 				//$this->markTestIncomplete('This test has not been implemented yet' );
 		$out = HTML::Radio("FRED", 7);
-		$expect = '<input type="radio" name="FRED" value="7"/>';
+		$expect = '<Input type="radio" name="FRED" value="7"/>';
 		$this->assertEquals( $expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow');
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow"/>';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow"/>';
 		$this->assertEquals( $expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?');
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow"/>Where was Dorthy?';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow"/>Where was Dorthy?';
 		$this->assertEquals( $expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', true);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow" checked/>Where was Dorthy?';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow" checked/>Where was Dorthy?';
 		$this->assertEquals( $expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow"/>Where was Dorthy?';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow"/>Where was Dorthy?';
 		$this->assertEquals( $expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow" checked/>';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow" checked/>';
 		$this->assertEquals( $expect, $out);
 
 
 		$options =  array('alt'=>'TONY');
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY"/>';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY"/>';
 		$this->assertEquals( $expect, $out);
 
 		$options['snow'] = 'somesnow';
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow"/>';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow"/>';
 		$this->assertEquals( $expect, $out);
 
 		$style = 'backgroundcolor: yellow';
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
-		$expect ='<input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow" style="backgroundcolor: yellow"/>';
+		$expect ='<Input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow" style="backgroundcolor: yellow"/>';
 		$this->assertEquals( $expect, $out);
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow" style="backgroundcolor: yellow; "/>';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow" style="backgroundcolor: yellow; "/>';
 		$this->assertEquals( $expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, null, $style);
-		$expect = '<input type="radio" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; "/>';
+		$expect = '<Input type="radio" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; "/>';
 		$this->assertEquals( $expect, $out);
 
 		}
@@ -691,31 +721,31 @@ class HTML_Test extends TestCase{
 	function test_Hidden() {
 
 		$out = HTML::Hidden( 'SAM', 'FRED' );
-		$expected = '<input type=HIDDEN name="SAM" value="FRED">' . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" >' ;//. PHP_EOL ;
 		$this->assertEquals($expected, $out);
 
 		$out = HTML::Hidden( 'SAM', 'FRED', null );
-		$expected = '<input type=HIDDEN name="SAM" value="FRED">' . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" >' ; // . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$options =  array('alt'=>'TONY');
 		$out = HTML::Hidden( 'SAM', 'FRED', $options );
-		$expected = '<input type=HIDDEN name="SAM" value="FRED" alt="TONY">' . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" alt="TONY" >'; // . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$style = 'backgroundcolor: yellow';
 		$out = HTML::Hidden( 'SAM', 'FRED', null, $style );
-		$expected = '<input type=HIDDEN name="SAM" value="FRED" style="backgroundcolor: yellow">' . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow" >' ; //. PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Hidden( 'SAM', 'FRED', null, $style );
-		$expected = '<input type=HIDDEN name="SAM" value="FRED" style="backgroundcolor: yellow; ">' . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow; " >'; // . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$options =  array('alt'=>'TONY');
 		$style = array('backgroundcolor' => 'yellow');
-		$expected = '<input type=HIDDEN name="SAM" value="FRED" style="backgroundcolor: yellow; ">' . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow; " >' ; //. PHP_EOL;
 		$this->assertEquals($expected, $out);
 	}
 
