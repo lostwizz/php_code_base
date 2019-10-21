@@ -135,6 +135,13 @@ class Resolver {
 		} else if ( $this->passingOngoingDetails()){
 			$action = 'Check_Ongoing_Connection';
 			$payload = array_merge( $payload, array('authAction'=> $action));
+		} else if ($this->isChangePasswordRequest()) {
+
+		} else if ($this->isForgotPasswordRequest()){
+
+
+		} else if($this->isSignupRequest()){
+
 		} else {
 			$action ='no_Credentials';
 			$payload = array_merge( $payload, array('authAction'=> $action));
@@ -142,6 +149,24 @@ class Resolver {
 
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	function isChangePasswordRequest(){
+		return false;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	function isForgotPasswordRequest(){
+		return false;
+
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	function isSignupRequest(){
+		return false;
+
+	}
+
 
 	//-----------------------------------------------------------------------------------------------
 	function hasNoPassedInfo(){
@@ -208,3 +233,79 @@ class Resolver {
 
 }
 
+
+
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
+//***********************************************************************************************
+//***********************************************************************************************
+class Response {
+	public $process = null;
+	public $task =null;
+	public $action = null;
+	public $payload = null;
+
+	public $message;
+	public $errNum;  //   >=0 all is good - positive numbers are good - negative numbers are bad
+
+	public $canContinue =false;
+	public $continueProcess;
+	public $continueTask;
+	public $continueAction;
+	public $continuePayload;
+
+	//-----------------------------------------------------------------------------------------------
+	public function __construct( $message, $errno, $canContinue= false ){
+		$this->setMessage( $message, $errno, $canContinue);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessTaskActionPayload( $process, $task, $action=null, $payload=null){
+		$this->process = $process;
+		$this->task = $task;
+		$this->action = $action;
+		$this->payload = $payload;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setMessage($message, $errNum = -1, $canContinue = false){
+		$this->message = $message;
+		$this->errNum = $errNum;
+		$this->canContinue = $canContinue;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setContinue($canContinue, $cProcess=null, $cTask =null, $cAction=null, $cPayload = null){
+		$this->canContinue = $canContinue;
+		$this->continueProcess = $cProcess;
+		$this->continueTask = $cTask;
+		$this->continueAction = $cAction;
+		$this->continuePayload = $cPayload;
+	}
+
+}
+
+//***********************************************************************************************
+//***********************************************************************************************
+abstract class ResponseErrorCodes {
+	protected static $errors = array(
+			0 => 'Not an Error',
+			-1 => 'Generic Warning',
+			-2 => 'Generic Error',
+
+	)
+
+	public static function giveErrorMessage( $errNo){
+		if ( array_key_exists( $errNo, self::$errors ){
+			return self::$errors[$errNo];
+		} else {
+			return '-Unknown Error Code-';
+		}
+	}
+}

@@ -83,9 +83,9 @@ class AuthenticateView extends View{
 				</tr><tr>
 					<td align=center colspan=3><?php echo HTML::Submit('login_form_submit', 'Submit Logon');?></td>
 				</tr><tr>
-					<td><?php echo HTML::Submit('login_change_password', 'Change Password');?></td>
-					<td><?php echo HTML::Submit('login_Register', 'Add New Account');?></td>
-					<td><?php echo HTML::Submit('login_Forgot_password', 'Forgot Password');?></td>
+					<td><?php echo HTML::Submit('login_button', 'Change Password');?></td>
+					<td><?php echo HTML::Submit('login_button', 'Add New Account');?></td>
+					<td><?php echo HTML::Submit('login_button', 'Forgot Password');?></td>
 
 				</tr>
 			</table>

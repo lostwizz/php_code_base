@@ -27,8 +27,11 @@ class FooterController_Test extends TestCase {
 
 		$o = new FooterController();
 
-		$r = $o->controllerRequiredVars();
-		$this->assertEquals(array(), $r);
+		$r = $o->action;
+		$this->assertNull( $r);
+
+		$r = $o->payload;
+		$this->assertNull( $r);
 
 	}
 }

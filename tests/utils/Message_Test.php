@@ -31,7 +31,8 @@ class AMessageTest extends TestCase {
 	        400     => 'ERROR',
 	        500  => 'CRITICAL',
 	        550     => 'ALERT',
-	        600 => 'EMERGENCY'
+	        600 => 'EMERGENCY',
+	        999 => 'TODO'
            );
       $this->assertEquals($expected, $a);
 
@@ -44,6 +45,8 @@ class AMessageTest extends TestCase {
 	        anExtendedMessage::CRITICAL  => 'CRITICAL',
 	        anExtendedMessage::ALERT     => 'ALERT',
 	        anExtendedMessage::EMERGENCY => 'EMERGENCY',
+			anExtendedMessage::TODO      => 'TODO'
+
        	);
 		$this->assertEquals($expected, $a);
 	}

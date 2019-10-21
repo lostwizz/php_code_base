@@ -97,7 +97,6 @@ class AMessage extends MessageBase {
 		echo 'msg=',$this->text, ' time=', $this->timeStamp, ' level=', parent::$levels[ $this->level], '<Br>';
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
 	// set the contents of the message
 	//      could be just a string or could be an array( string, timestamp, level)
@@ -109,11 +108,6 @@ class AMessage extends MessageBase {
 			$this->setFromArray([$textOrArray, $timeStamp, $level]);
 		}
 	}
-
-
-///} elseif ( is_string($textOrArray)) {
-///			$this->setText($textOrArray);
-
 
 	//-----------------------------------------------------------------------------------------------
 	protected function setFromArray( $ar = null ): void {
@@ -166,18 +160,15 @@ class AMessage extends MessageBase {
 		}
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
 	// return the contents of this message in the form of an array
 	public function get() {
-		//$a = array();
 		$a = array( $this->text,
 					  $this->timeStamp,
 					  $this->level
 					);
 		return $a;
 	}
-
 
 	//-----------------------------------------------------------------------------------------------
 	protected function getShowStyle($level) {
@@ -196,7 +187,6 @@ class AMessage extends MessageBase {
 			return 'UNKNOWN ';
 		}
 	}
-
 
 	//-----------------------------------------------------------------------------------------------
 	protected function getPrettyLine($style =null){
@@ -219,9 +209,9 @@ class AMessage extends MessageBase {
 		$s .= $x;
 
 		$s .= '</span>';
-//Dump::dump($s);
 		return $s;
 	}
+
 	//-----------------------------------------------------------------------------------------------
 	// show the contents of this message -- with the approprieate formatting etc
 	public function show($style=null) {
@@ -275,24 +265,27 @@ class MessageLog {
 		$this->showAllMessages();
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
 	// add a new message to the stack ( may include some values passed down to the message class)
 	public function add( $obj_or_array=null, $timestamp=null, $level=null) {
+
 		if ( is_object( $obj_or_array) and ( $obj_or_array instanceof AMessage )){
 			self::$messageQueue->enqueue( $obj_or_array);
 		} else {
+			if (Settings::GetPublic('Show MessageLog Adds')) {
+				$bt = debug_backtrace(false, 2);
+				if ( is_string($obj_or_array ) and !empty($bt[1])) {
+					$obj_or_array .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn"> - '. basename($bt[1]['file']) . ':' . $bt[1]['line'] . '</span>';
+				}
+			}
+
 			$temp = new AMessage( $obj_or_array, $timestamp, $level);
-			//$temp = new $this->a_msg_handler_class ( $obj_or_array, $val2, $val3);
 			self::$messageQueue->enqueue( $temp);
+
 			if (Settings::GetPublic('Show MessageLog Adds'))		 {
-				//$temp->show("msg_showLines");
 				$temp->show();
 				echo '<Br>' . PHP_EOL;
 			}
-
-
-			//if ( ! empty( $GLOBALS['log'])) $GLOBALS['log']->log( 'MSG>' . $obj_or_array);
 		}
 	}
 
@@ -422,11 +415,11 @@ class MessageLog {
 		if ($includeFieldSet) {
 			?><fieldset class="msg_fieldset"><Legend id="message_box_show_all_in_box" class="msg_legend">Messages</legend><?php
 		}
-				if ( $this->hasMessages()) {
-					$this->showAllMessages();
-				} else {
-					echo '&nbsp;';
-				}
+		if ( $this->hasMessages()) {
+			$this->showAllMessages();
+		} else {
+			echo '&nbsp;';
+		}
 		if ($includeFieldSet) {
 			?></fieldset><?php
 		}
@@ -434,7 +427,7 @@ class MessageLog {
 }
 
 
-/// some usage examples
+/// some usage examples  - now you should use GetRunTimeObject !!!!!!!!!!! so it returns something callable (even if it does nothing)
 
 ////include_once(DIR . 'utils' . DS . 'messagelog.class.php');
 ////$mLog = new MessageLog();

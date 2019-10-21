@@ -70,6 +70,7 @@
 			<file>Tests/Resolver_Test.php</file>
 			<file>Tests/dispatcher_Test.php</file>
 
+			<file>Tests/menuController.php</file>
 		</testsuite>
 
 

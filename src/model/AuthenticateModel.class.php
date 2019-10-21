@@ -112,11 +112,6 @@ class AuthenticateModel extends Model{
 	}
 
 
-//	//-----------------------------------------------------------------------------------------------
-//	public function doLogin(){
-//		$this->controller->view->showLoginPage();
-//	}
-
 	//-----------------------------------------------------------------------------------------------
 	public function isGoodAuthentication($username){
 
