@@ -246,20 +246,22 @@ class Resolver {
 //***********************************************************************************************
 //***********************************************************************************************
 class Response {
-	public $process = null;
-	public $task =null;
-	public $action = null;
-	public $payload = null;
+	protected $process = null;
+	protected $task =null;
+	protected $action = null;
+	protected $payload = null;
 
-	public $message;
-	public $errNum;  //   >=0 all is good - positive numbers are good - negative numbers are bad
- Public shouldThrow =false;
-Public exceptionToThrow;
-	public $canContinue =false;
-	public $continueProcess;
-	public $continueTask;
-	public $continueAction;
-	public $continuePayload;
+	protected $message;
+	protected $errNum;  //   >=0 all is good - positive numbers are good - negative numbers are bad
+
+	protected $shouldThrow =false;
+	protected $exceptionToThrow;
+
+	protected $canContinue =false;
+	protected $continueProcess;
+	protected $continueTask;
+	protected $continueAction;
+	protected $continuePayload;
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct( $message, $errno, $canContinue= false ){
@@ -290,20 +292,65 @@ Public exceptionToThrow;
 		$this->continuePayload = $cPayload;
 	}
 
+	//-----------------------------------------------------------------------------------------------
+	public function setException($shouldThrow = true, $exception=null){
+		$this->$shouldThrow = $shouldThrow;
+		$this->$exception = $exception;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function hadFatalError(){
+		return (($this->errNum<-1) or $this->shouldThrow);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function hadRecoverableError(){
+		if ( $this->hadFatalError() ){
+			return false;
+		} else {
+			return ($this->errNum >1 );
+		}
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveMessage(){
+		return $this->message . '(' . $this->errNum . ')';
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveProcessTaskActivityPayload(){
+		if (!empty($this-process)) {
+			return array( $this->process, $this->task, $this->activity, $this->payload );
+		} else {
+			return null;
+		}
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function giveContinueProcessTaskActivityPayload(){
+		if ( $this->canContinue and ! empty( $this->continueProcess)) {
+			return array( $this->continueProcess, $this->continueTask, $this->continueActivity, $this->continuePayload );
+		} else {
+			return null;
+		}
+	}
+
 }
 
 //***********************************************************************************************
 //***********************************************************************************************
 abstract class ResponseErrorCodes {
 	protected static $errors = array(
+			2 => 'All is good',
+			1 => 'Generic Warning all is good',
 			0 => 'Not an Error',
-			-1 => 'Generic Warning',
+			-1 => 'Generic Warning something might be wrong',
 			-2 => 'Generic Error',
+		);
 
-	)
 
 	public static function giveErrorMessage( $errNo){
-		if ( array_key_exists( $errNo, self::$errors ){
+		if ( array_key_exists( $errNo, self::$errors )){
 			return self::$errors[$errNo];
 		} else {
 			return '-Unknown Error Code-';
