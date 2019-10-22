@@ -253,7 +253,8 @@ class Response {
 
 	public $message;
 	public $errNum;  //   >=0 all is good - positive numbers are good - negative numbers are bad
-
+ Public shouldThrow =false;
+Public exceptionToThrow;
 	public $canContinue =false;
 	public $continueProcess;
 	public $continueTask;
