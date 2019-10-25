@@ -24,6 +24,8 @@ namespace php_base\Control;
 
 use \php_base\Settings\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -41,8 +43,8 @@ class HeaderController extends Controller {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(){
-		$this->view->doWork(  $this  );
+	public function doWork() : Response {
+		return $this->view->doWork(  $this  );
 	}
 
 	//-----------------------------------------------------------------------------------------------

@@ -1,56 +1,42 @@
 <?php
 
-namespace php_base\Utils;
+namespace php_base\Data;
 
+
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
 
-abstract Class myUtils {
+//***********************************************************************************************
+//***********************************************************************************************
+Class UserRoleAndPermissionsData extends Data{
+
+	public $action;
+	public $payload;
 
 	//-----------------------------------------------------------------------------------------------
-	// format a number in a currency format (i.e with dollar sign)
-	public static function ShowMoney( $val, $leftPadding =10, $arOptions=null, $arStyle=null){
-		//$mon = sprintf( '%10.2f', $val);
-		$mon = '$' . number_format( round($val,2 ), 2, '.',',');
-		$mon = str_pad( $mon, $leftPadding,' ', STR_PAD_LEFT);
-		$mon = str_replace( ' ','&nbsp', $mon);
-		return $mon;
+	public function __construct($action ='', $payload = null){
+		$this->action = $action;
+		$this->payload = $payload;
+		Settings::GetRunTimeObject('MessageLog')->addInfo('User: created model');
 	}
 
 
-	//-----------------------------------------------------------------------------------------------
-	public static function GiveTempFileName( $dir, $prefix='temp_'){
-//		do{
-//			$seed = substr(md5(microtime() ) , 0, 8);
-//			$filename = $dir . $trailing_slash . $prefix . $seed . $postfix;
-//		} while (file_exists($filename));
-//		$fp = fopen($filename, "w");
-//		fclose($fp);
-		$filename = tempnam($dir, $prefix);
-		return $filename;
-	}
+
 
 	//-----------------------------------------------------------------------------------------------
-	public static function PrettyName( $aTime){
 
-	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function GiveCurrentDate($withTime=false) {
-		if ($withTime){
-			$r = date( 'g:ia d-M-Y');
-		} else {
-			$r = date( 'd-M-Y');
-		}
-		return $r;
-	}
+
 
 	//-----------------------------------------------------------------------------------------------
+
 
 	//-----------------------------------------------------------------------------------------------
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// setup pdo connection to the database
 	//////////////////////////////////////////////////////////////////////////////////////////
-	public static function setup_PDO(){
+	function setup_PDO(){
 		if ( ! extension_loaded(Settings::GetProtected('database_extension_needed'))) {
 			throw new Exception ('NOT loaded');
 		}

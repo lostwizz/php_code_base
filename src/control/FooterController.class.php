@@ -24,6 +24,8 @@ namespace php_base\Control;
 
 use \php_base\Settings\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -41,9 +43,9 @@ class FooterController extends Controller {
 		$this->payload = $payload;
 	}
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(){
+	public function doWork() : Response{
 		$this->payload = 'hi';
-		$this->view->doWork( $this);
+		return $this->view->doWork( $this);
 	}
 
 //	//-----------------------------------------------------------------------------------------------

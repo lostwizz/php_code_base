@@ -23,7 +23,10 @@ namespace php_base\View;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\HTML\HTML as HTML;
+use \php_base\Utils\Response as Response;
+
 use \php_base\Resolver as Resolver;
+
 
 use \php_base\Utils\Dump\Dump as Dump;
 
@@ -41,12 +44,12 @@ class AuthenticateView extends View{
 //	}
 
 	//-----------------------------------------------------------------------------------------------
-	public  function doWork( $data =null){
+	public  function doWork( $data =null) : Response{
 		return true;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function showLoginPage(){
+	public function showLoginPage() : Response {
 		self::$loginAttempts ++;
 
 		if ( self::$loginAttempts > 4) {
@@ -91,7 +94,7 @@ class AuthenticateView extends View{
 			</table>
 		<?php
 		echo HTML::FormClose();
-		return false;
+		return new Response( 'ok', 0, true);
 	}
 
 }

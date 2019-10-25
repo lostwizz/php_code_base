@@ -67,6 +67,11 @@ body {
 	text-align: left;
 	}
 
+.responseError{
+	background-color: red;
+	color: white;
+}
+
 .pre_debug_queue {
 	color: ;violet;
 	background-color: LightGreen;

@@ -2,6 +2,7 @@
 
 namespace php_base\View;
 
+use \php_base\Utils\Response as Response;
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -14,6 +15,6 @@ abstract class View{
 		$this->controller = $controller;
 	}
 
-	abstract public function doWork( $parent = null);
+	abstract public function doWork( $parent = null) : Response ;
 
 }

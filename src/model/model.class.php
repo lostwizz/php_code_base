@@ -3,6 +3,9 @@
 
 namespace php_base\Model;
 
+
+use \php_base\Utils\Response as Response;
+
 //***********************************************************************************************
 //***********************************************************************************************
 class Model {
@@ -15,8 +18,8 @@ class Model {
 		$this->controller = $controller;
 	}
 
-	public function doWork(){
-		return false;
+	public function doWork() : Response {
+		return Response::GenericError();
 	}
 
 }

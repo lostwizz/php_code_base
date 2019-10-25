@@ -7,6 +7,7 @@ namespace php_base\View;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
 
 
 //***********************************************************************************************
@@ -15,7 +16,7 @@ class FooterView extends View {
 
 	//-----------------------------------------------------------------------------------------------
 
-	public function doWork( $parent  =null){
+	public function doWork( $parent  =null) : Response{
 
 		//Settings::GetRunTimeObject('MessageLog')->addERROR('some error message');
 
@@ -29,7 +30,8 @@ class FooterView extends View {
 		echo '</footer>';
 
 		echo '</body>';
-
+		//return new Response('ok', 0, true);
+		return Response::NoError();
 	}
 }
 

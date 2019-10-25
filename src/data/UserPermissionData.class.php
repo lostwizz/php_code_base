@@ -1,6 +1,6 @@
 <?php
 //**********************************************************************************************
-//* PermissionData.class.php
+//* UserPermissionData.class.php
 //*
 //* $Id$
 //* $Rev: 0000 $
@@ -19,15 +19,18 @@
 //***********************************************************************************************************
 
 
-namespace php_base\model;
+namespace php_base\data;
 
 
-use \php_base\Settings\Settings as Settings;
+
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
-class ClassName {
+class UserPermissionData {
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct() {

@@ -24,6 +24,7 @@ namespace php_base\Model;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
 
 
 //***********************************************************************************************
@@ -67,7 +68,7 @@ class AuthenticateModel extends Model{
 
 
 	//-----------------------------------------------------------------------------------------------
-	public function isLoggedIn($username, $password){
+	public function isLoggedIn($username, $password) : Response{
 
 		if ( !empty($username)) {
 
@@ -90,11 +91,11 @@ class AuthenticateModel extends Model{
 
 
 //	//-----------------------------------------------------------------------------------------------
-	public function tryToLogin($username, $password) {
+	public function tryToLogin($username, $password) : Response{
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('check the username against somthing -db or file or hard or whatever!!!');
 		if (empty($username) or empty($password)){
-			return false;
+			return new Response( 'Missing Username or Password trying to login', -5, false);
 		}
 
 		//////////////// -DEBUG CODE
@@ -102,11 +103,11 @@ class AuthenticateModel extends Model{
 			Settings::GetRunTimeObject('MessageLog')->addInfo('User: ' . $username . ' Sucessfully Logged in');
 			self::$User = $username;
 			Settings::SetRunTime( 'Currently Logged In User', $username );
-			return true;
+			return Response::NoError();
 		} else {
 			Settings::GetRunTimeObject('MessageLog')->addNotice('User: ' . $username . ' UNSucessfully Logged in!!!!');
 			self::$User = null;
-			return false;
+			return new Response( 'Failed Trying to Login', -4, false);
 		}
 //		return false;
 	}
@@ -114,7 +115,6 @@ class AuthenticateModel extends Model{
 
 	//-----------------------------------------------------------------------------------------------
 	public function isGoodAuthentication($username){
-
 
 		///////////////////// DEBUG CODE
 		if ($username = self::Uname) {
@@ -125,9 +125,9 @@ class AuthenticateModel extends Model{
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(){
+	public function doWork() : Response{
 			// should never get here
-		return false;
+		return Response::NoError();
 	}
 
 ////	//-----------------------------------------------------------------------------------------------

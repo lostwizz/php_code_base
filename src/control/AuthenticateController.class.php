@@ -24,6 +24,8 @@ namespace php_base\Control;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -41,10 +43,13 @@ class AuthenticateController extends Controller {
 		$this->action = $action;
 		$this->payload = $payload;
 //Dump::dump($payload);
+
+		Settings::SetRunTime( 'Currently Logged In User', false);            //after a successful logon this will be set to the userid
+
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(){
+	public function doWork() : Response {
 		echo 'authenticationController doWork hi - i am here!!';
 		echo 'should never get here';
 	}
@@ -69,7 +74,7 @@ class AuthenticateController extends Controller {
 //	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function CheckLogin($parent){
+	public function CheckLogin($parent) : Response {
 //Dump::dumpLong($this);
 		Settings::GetRunTimeObject('MessageLog')->addNotice('at checkLogin');
 //Dump::dump($this->payload);
@@ -93,7 +98,8 @@ class AuthenticateController extends Controller {
 				return $this->model->isLoggedIn($username, $password);
 
 			default:
-				return false;
+				//return false;
+				return new Response('Invalid Login' , -3, false);
 		}
 
 	}

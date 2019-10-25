@@ -9,7 +9,7 @@ Settings::SetProtected('test', 'test_val');
 //see ..\_private_settings.php
 
 
-Settings::SetProtected( 'DB_Table_UserManager', 'UserManagement' );
-Settings::SetProtected( 'DB_Table_RoleManager', 'RoleManagement' );
-Settings::SetProtected( 'DB_Table_PermissionsManager', 'PermissionManagement' );
+Settings::SetProtected( 'DB_Table_UserManager', 'Users' );
+Settings::SetProtected( 'DB_Table_RoleManager', 'Roles' );
+Settings::SetProtected( 'DB_Table_PermissionsManager', 'RolePermission' );
 Settings::SetProtected( 'DB_Table_UserAttributes', 'UserAttributeManagement' );

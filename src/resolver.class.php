@@ -5,6 +5,7 @@ namespace php_base;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
 
 
 //***********************************************************************************************
@@ -31,7 +32,7 @@ class Resolver {
 
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork() {
+	public function doWork() : Response {
 
 		if ( Settings::GetPublic('IS_DEBUGGING') ) {
 			Dump::dump($_REQUEST);
@@ -40,12 +41,16 @@ class Resolver {
 		$this->AddHeader();
 		$this->AddFooter();
 
-		$this->SetupAuthenticateCheck();		// always start with login checks
+		$this->AddSetupAuthenticateCheck();		// always start with login checks
+
+		$this->AddSetupUserRoleAndPermissions(); // after they have logged in now setup the user permissions
 
 		$this->decodeRequestinfo();
 
 		$this->SetupDefaultController();    // this would usually be the menu starter
 
+
+		// $r should be a ResponseClass
 		$r = $this->StartDispatch();
 		return $r;
 	}
@@ -54,32 +59,30 @@ class Resolver {
 	protected function StartDispatch(){
 
 		$r = $this->dispatcher->do_work( $this);
-
-
-		if ( $r[0] == false ){
+		if ( $r->hadFatalError()){
 			//echo 'Loggon failed';
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on pre' );
-			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on pre');
-			return false;
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got: ' . $r->toString() );
+			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got:' . $r->toString());
+			return $r;
 		}
-		if ($r[2]== false){
-			//echo 'Post Queue failed? footer?';
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on post' );
-			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on post');
-			return false;
-		}
+////		if ($r[2]== false){
+////			//echo 'Post Queue failed? footer?';
+////			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on post' );
+////			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on post');
+////			return false;
+////		}
+////
+////		if ( $r[1] == false){
+////			//echo 'the dispach queue got a false';
+////			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on dispatchQ' );
+////			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on dispatchQ');
 
-		if ( $r[1] == false){
-			//echo 'the dispach queue got a false';
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on dispatchQ' );
-			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on dispatchQ');
 
-		} else {
 			//echo 'all seems good to the resolver';
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a true' );
-			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a true');
-			return true;
-		}
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a true' );
+		Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a true');
+		return $r;
+
 
 	}
 
@@ -90,7 +93,6 @@ class Resolver {
 		$action = null;
 		$payload = [ 'username'=> Settings::GetRunTime( 'Currently Logged In User' )];
 		$this->dispatcher->addProcess( $process, $task, $action, $payload);
-
 	}
 
 
@@ -110,6 +112,14 @@ class Resolver {
 		}
 	}
 
+	protected function AddSetupUserRoleAndPermissions(){
+		$process = 'UserRoleAndPermissions';
+		$task = 'Setup';
+		$action = null;
+		$payload =null;
+		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
+	}
+
 
 	//-----------------------------------------------------------------------------------------------
 		// always start with logged on check
@@ -120,7 +130,7 @@ class Resolver {
 						// unsucsessful
 				// have already logged on and just check session? still good
 						// have already logged in and timed out OR some other reason they should login again
-	protected function SetupAuthenticateCheck(){
+	protected function AddSetupAuthenticateCheck(){
 
 		$payload = ( ! empty($_REQUEST[self::REQUEST_PAYLOAD] )) ? $_REQUEST[self::REQUEST_PAYLOAD] : array();
 		$process ='Authenticate';
@@ -235,125 +245,3 @@ class Resolver {
 
 
 
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-	//-----------------------------------------------------------------------------------------------
-//***********************************************************************************************
-//***********************************************************************************************
-class Response {
-	protected $process = null;
-	protected $task =null;
-	protected $action = null;
-	protected $payload = null;
-
-	protected $message;
-	protected $errNum;  //   >=0 all is good - positive numbers are good - negative numbers are bad
-
-	protected $shouldThrow =false;
-	protected $exceptionToThrow;
-
-	protected $canContinue =false;
-	protected $continueProcess;
-	protected $continueTask;
-	protected $continueAction;
-	protected $continuePayload;
-
-	//-----------------------------------------------------------------------------------------------
-	public function __construct( $message, $errno, $canContinue= false ){
-		$this->setMessage( $message, $errno, $canContinue);
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function setProcessTaskActionPayload( $process, $task, $action=null, $payload=null){
-		$this->process = $process;
-		$this->task = $task;
-		$this->action = $action;
-		$this->payload = $payload;
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function setMessage($message, $errNum = -1, $canContinue = false){
-		$this->message = $message;
-		$this->errNum = $errNum;
-		$this->canContinue = $canContinue;
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function setContinue($canContinue, $cProcess=null, $cTask =null, $cAction=null, $cPayload = null){
-		$this->canContinue = $canContinue;
-		$this->continueProcess = $cProcess;
-		$this->continueTask = $cTask;
-		$this->continueAction = $cAction;
-		$this->continuePayload = $cPayload;
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function setException($shouldThrow = true, $exception=null){
-		$this->$shouldThrow = $shouldThrow;
-		$this->$exception = $exception;
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function hadFatalError(){
-		return (($this->errNum<-1) or $this->shouldThrow);
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function hadRecoverableError(){
-		if ( $this->hadFatalError() ){
-			return false;
-		} else {
-			return ($this->errNum >1 );
-		}
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function giveMessage(){
-		return $this->message . '(' . $this->errNum . ')';
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function giveProcessTaskActivityPayload(){
-		if (!empty($this-process)) {
-			return array( $this->process, $this->task, $this->activity, $this->payload );
-		} else {
-			return null;
-		}
-	}
-
-	//-----------------------------------------------------------------------------------------------
-	public function giveContinueProcessTaskActivityPayload(){
-		if ( $this->canContinue and ! empty( $this->continueProcess)) {
-			return array( $this->continueProcess, $this->continueTask, $this->continueActivity, $this->continuePayload );
-		} else {
-			return null;
-		}
-	}
-
-}
-
-//***********************************************************************************************
-//***********************************************************************************************
-abstract class ResponseErrorCodes {
-	protected static $errors = array(
-			2 => 'All is good',
-			1 => 'Generic Warning all is good',
-			0 => 'Not an Error',
-			-1 => 'Generic Warning something might be wrong',
-			-2 => 'Generic Error',
-		);
-
-
-	public static function giveErrorMessage( $errNo){
-		if ( array_key_exists( $errNo, self::$errors )){
-			return self::$errors[$errNo];
-		} else {
-			return '-Unknown Error Code-';
-		}
-	}
-}

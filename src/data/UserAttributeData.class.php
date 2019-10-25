@@ -19,15 +19,17 @@
 //***********************************************************************************************************
 
 
-namespace php_base\model;
+namespace php_base\data;
 
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
-class UserAttributeData {
+class UserAttributeData  extends data{
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct() {

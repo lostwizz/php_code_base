@@ -6,6 +6,8 @@ namespace php_base\Control;
 
 use \php_base\Settings\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -29,12 +31,16 @@ class TESTController extends Controller {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(){
+	public function doWork() : Response{
 
 Dump::dump('!!!!!!!!!!!!! at TestController');
 
+
+		//Settings::SetRunTime('userPermissions')-
+
 		//$this->view->doWork(  $this  );
-		return true;
+		//return new Resonse( 'ok', 0, true);
+		return Response::NoError();
 	}
 
 //	//-----------------------------------------------------------------------------------------------

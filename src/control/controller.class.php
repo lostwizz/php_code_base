@@ -34,6 +34,7 @@ use php_base\View;
 
 use \php_base\Settings\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
 
 
 //***********************************************************************************************
@@ -55,7 +56,7 @@ abstract class Controller{
 //	abstract public static function controllerRequiredVars();
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork(  ){
+	public function doWork(  ) : Response{
 		return false;
 	}
 

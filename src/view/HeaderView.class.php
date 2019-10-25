@@ -5,6 +5,8 @@ namespace php_base\View;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 use \php_base\Utils\HTML\HTML as HTML;
 
@@ -17,7 +19,7 @@ class HeaderView extends View {
 //	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function doWork( $parent =null){
+	public function doWork( $parent =null) : Response{
 
 		if ( ! Settings::GetRuntime('Surpress_Output')){  // probably because we are printing
 			echo HTML::DocType(/* 'html5'*/ 'html4-trans' ) ;
@@ -72,6 +74,8 @@ class HeaderView extends View {
 				echo '<h1>We is Debugging!!! </h1><br>';
 			}
 		}
+		//return new Response('ok', 0, true);
+		return Response::NoError();
 	}
 
 	//-----------------------------------------------------------------------------------------------
