@@ -4,9 +4,10 @@
 namespace php_base\Control;
 
 
-use \php_base\Settings\Settings as Settings;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+
 
 
 //***********************************************************************************************
@@ -35,8 +36,23 @@ class TESTController extends Controller {
 
 Dump::dump('!!!!!!!!!!!!! at TestController');
 
+		//$perms=Settings::GetRunTime('userPermissions');
+		//$perms= UserRoleAndPermissionsModel
 
-		//Settings::SetRunTime('userPermissions')-
+//Dump::dump(Settings::GetRunTime('userPermissions'));
+
+		$perms = Settings::GetRunTime('userPermissions');
+//Dump::dumpLong( $perms);
+
+		$p1 = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
+//Dump::dump($p1);
+
+		$process = 'test';
+		$task = 'testRead';
+		$action = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
+
+		$x = $perms->isAllowed( $p1, $process, $task, $action);
+Dump::dump($x);
 
 		//$this->view->doWork(  $this  );
 		//return new Resonse( 'ok', 0, true);

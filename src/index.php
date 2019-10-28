@@ -159,7 +159,7 @@ Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ..session..');
 $resolver = new Resolver();
 $response = $resolver->doWork();
 
-if ($response->hadFatalError()){
+if ($response->hadFatalError() and $response->failNoisily() ){
 	echo '<h2 class="responseError" >' .   PHP_EOL;
 	echo 'Fatal Error: ' .  $response->toString();
 	echo '</h2>' .   PHP_EOL;

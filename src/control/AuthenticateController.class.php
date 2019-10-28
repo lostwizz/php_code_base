@@ -45,7 +45,6 @@ class AuthenticateController extends Controller {
 //Dump::dump($payload);
 
 		Settings::SetRunTime( 'Currently Logged In User', false);            //after a successful logon this will be set to the userid
-
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -53,25 +52,6 @@ class AuthenticateController extends Controller {
 		echo 'authenticationController doWork hi - i am here!!';
 		echo 'should never get here';
 	}
-
-	//-----------------------------------------------------------------------------------------------
-//	public static function controllerRequiredVars(){
-//		return []; // no more requred vars
-//	}
-//
-//	//-----------------------------------------------------------------------------------------------
-//	public static function getLoginRequiredVarsToCheck() {
-//		return [
-//					'username',
-//					'password'
-//				];
-//
-//					////		return array_merge(self::controllerRequiredVars(),
-//					////				[
-//					////					'username',
-//					////					'password'
-//					////				]);
-//	}
 
 	//-----------------------------------------------------------------------------------------------
 	public function CheckLogin($parent) : Response {
@@ -103,18 +83,5 @@ class AuthenticateController extends Controller {
 		}
 
 	}
-
-	//-----------------------------------------------------------------------------------------------
-//	public function forceLoginRequiredVars(){
-//		return array_merge(self::controllerRequiredVars(),
-//				 ['entered_username',
-//				  'entered_password'
-//				  ]);
-//	}
-
-//	//-----------------------------------------------------------------------------------------------
-//	public function forceLogin(){
-//		$this->model->doLogin();
-//	}
 
 }

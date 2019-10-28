@@ -23,6 +23,8 @@ Class Response {
 	protected $shouldThrow =false;
 	protected $exceptionToThrow;
 
+	protected $failSilently =false;
+
 	protected $canContinue =false;
 	protected $continueProcess;
 	protected $continueTask;
@@ -30,8 +32,8 @@ Class Response {
 	protected $continuePayload;
 
 	//-----------------------------------------------------------------------------------------------
-	public function __construct( string $message, int $errno, bool $canContinue= false ){
-		$this->setMessage( $message, $errno, $canContinue);
+	public function __construct( string $message, int $errno, bool $canContinue= false, $failSilently=false ){
+		$this->setMessage( $message, $errno, $canContinue, $failSilently);
 	}
 
 
@@ -60,10 +62,11 @@ Class Response {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public function setMessage($message, $errNum = -1, $canContinue = false){
+	public function setMessage($message, $errNum = -1, $canContinue = false, $failSilently=false){
 		$this->message = $message;
 		$this->errNum = $errNum;
 		$this->canContinue = $canContinue;
+		$this->failSilently = $failSilently;
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -84,6 +87,11 @@ Class Response {
 	//-----------------------------------------------------------------------------------------------
 	public function hadFatalError(){
 		return (($this->errNum<-1) or $this->shouldThrow);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function failNoisily() {
+		return ! $this->failSilently;
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -132,5 +140,3 @@ Class Response {
 
 
 }
-
-

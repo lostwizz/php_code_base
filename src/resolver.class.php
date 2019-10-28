@@ -177,7 +177,6 @@ class Resolver {
 
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
 	function hasNoPassedInfo(){
 		if ( empty( $_REQUEST) or empty($_REQUEST[self::REQUEST_PROCESS])){
@@ -217,8 +216,6 @@ class Resolver {
 		 }
 	}
 
-
-
 	//-----------------------------------------------------------------------------------------------
 	protected function AddHeader(){
 		$process ='Header';
@@ -242,6 +239,3 @@ class Resolver {
 
 
 }
-
-
-

@@ -14,11 +14,10 @@ use \php_base\Utils\Response as Response;
 //***********************************************************************************************
 class Dispatcher {
 
-	var $PREqueue ;
-	var $POSTqueue ;
-	var $DISPATCHqueue;
-
-	var $payloads = array();
+	protected $PREqueue ;
+	protected $POSTqueue ;
+	protected $DISPATCHqueue;
+	protected $payloads = array();
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct( bool $isHeaderAndFooterLess = false){
@@ -28,8 +27,8 @@ class Dispatcher {
 
 	}
 
-	// abort if anything returns FALSE
 	//-----------------------------------------------------------------------------------------------
+	// abort if anything returns FALSE
 	public function do_work( $parentResolver = null)  : Response {
 
 		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
@@ -59,7 +58,6 @@ class Dispatcher {
 		return Response::NoError();
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
 	private function RunThruTheQueue( \SplQueue $theQueue) : Response {
 
@@ -73,7 +71,7 @@ class Dispatcher {
 					Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
 					$response = $this->itemDecodeAndExecute( $item );
 					if ( $response->hadFatalError()){
-										Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
+						Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
 						return $response;
 					}
 
@@ -85,7 +83,7 @@ class Dispatcher {
 			}
 			return $response;
 		} catch (\Exception $e){
-Dump::dumpLong($e)			;
+//Dump::dumpLong($e)			;
 			$enum = $e->getCode();
 			if ( !is_numeric($enum)){
 				$enum = -1;
@@ -138,16 +136,6 @@ Dump::dumpLong($e)			;
 		return $x->$task($this);				//run the process's method
 	}
 
-
-	//-----------------------------------------------------------------------------------------------
-//	protected function decodePayload($process){
-//		if ( !empty($this->payloads) and !empty( $this->payloads[$process])){
-//			return $this->payloads[$process];
-//		} else {
-//			return null;
-//		}
-//	}
-
 	//-----------------------------------------------------------------------------------------------
 	protected function buildItem( $process, $task =null, $action =null, $payload = null )  {
 		$process = (!empty( $process)) ?        $process . 'Controller' : '';
@@ -170,11 +158,11 @@ Dump::dumpLong($e)			;
 		return unserialize($payload);
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
 	protected function addItemToQueue( $q, $item){
 		$q->enqueue($item);
 	}
+
 	//-----------------------------------------------------------------------------------------------
 	public function addPREProcess( $process, $task =null, $action =null, $payload = null){
 		$item = $this->buildItem($process, $task, $action, $payload);
@@ -195,47 +183,6 @@ Dump::dumpLong($e)			;
 		$this->addItemToQueue($this->DISPATCHqueue, $item );
 		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
 	}
-
-
-
-	//-----------------------------------------------------------------------------------------------
-//	public function addProcessPayload($process, $payload = null) {
-//		$processName = $this->decodeProcessFromFullDescriptor($process);
-//		if (!empty( $payload) )  {
-//			if (! empty( $this->payloads[$processName])) {
-//				$this->addToPayload( $processName, $payload);
-//				//$this->payloads[$processName][] = $payload;
-//			} else {
-//				$this->payloads[$processName] = $payload;
-//			}
-//		}
-//	}
-
-	//-----------------------------------------------------------------------------------------------
-//	protected  function addToPayload( $processName, $payload){
-//		$this->payloads[$processName] =  array_merge($this->payloads[$processName], $payload );
-//	}
-//
-
-
-	//-----------------------------------------------------------------------------------------------
-//	public function decodeProcessFromFullDescriptor($process){
-//Dump::dump( $process);
-//		$exploded = explode( '.' , $process);
-//		switch( count( $exploded)) {
-//			case 2:
-//				return $process;
-//			case 3:
-//				return $exploded[0] . '.' . $exploded[1];
-////			case 4:
-////				return $exploded[0] . '.' . $exploded[1];
-//
-//			default:
-//				return null;
-//		}
-//	}
-
-
 
 	//-----------------------------------------------------------------------------------------------
 	public function dumpQueue( $theQueue) {
