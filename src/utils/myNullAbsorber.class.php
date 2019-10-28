@@ -1,4 +1,12 @@
 <?php
+//**********************************************************************************************
+//* myNullAbsorber.class.php
+//*
+//* $Id$
+//* $Rev: 0000 $
+//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
+//*
+//* DESCRIPTION:
 
 // this class exists so that the Settings::GetRuntimeObject(x) will return something that
 //		wont error out if it was an object expecting to work when calling
@@ -13,6 +21,16 @@
 //
 //     this way i can write code that does not depend on something existing -- say when i move between home and work
 //                  on objects i have protected this way
+//*
+//* USAGE:
+//*
+//* HISTORY:
+//* 12-Sep-19 M.Merrett - Created
+//*
+//* TODO:
+//*
+//***********************************************************************************************************
+//***********************************************************************************************************
 
 
 namespace php_base\Utils;

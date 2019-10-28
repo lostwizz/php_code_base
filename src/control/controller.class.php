@@ -1,5 +1,11 @@
 <?php
-// Test file for GitWCRev
+//**********************************************************************************************
+//* Controller.class.php
+//*
+//* $Id$
+
+//* $WCREV$
+//* $Rev: 0000 $// Test file for GitWCRev
      /*
  "$WCREV$";
  "$WCREV=7$";
