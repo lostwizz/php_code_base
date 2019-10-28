@@ -37,11 +37,11 @@ Settings::SetRuntime( 'SecurityLog', null);
 Settings::SetRuntime( 'EmailLog', null);
 
 Settings::SetPublic( 'Use_MessageLog', true );  //true
-Settings::SetPublic( 'Use_DBLog', false);
-Settings::SetPublic( 'Use_DBdataLog', false);
-Settings::SetPublic( 'Use_FileLog', false);  // true
+Settings::SetPublic( 'Use_DBLog', true);
+Settings::SetPublic( 'Use_DBdataLog', true);
+Settings::SetPublic( 'Use_FileLog', true);  // true
 Settings::SetPublic( 'Use_SecurityLog', true);
-Settings::SetPublic( 'Use_EmailLog', false);      // true
+Settings::SetPublic( 'Use_EmailLog', true);      // true
 
 
 //////////Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD', 'CRITICAL_EMAIL_PAYLOAD');

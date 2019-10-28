@@ -61,18 +61,19 @@ class UserInfoData extends data {
 	}
 
 	//-----------------------------------------------------------------------------------------------
+	////						,app
+	////						,method
+	////						,username
+	////						,password
+
 	protected function doReadFromDatabase($username) {
 		try {
 			$sql = 'SELECT  UserId
-						,app
-						,method
-						,username
-						,password
 						,PrimaryRoleName
 						,ip
 						,last_logon_time
 					FROM ' .  Settings::GetProtected( 'DB_Table_UserManager')
-					. ' WHERE  app =? AND username = ?';
+					. ' WHERE  app = ? AND username = ?';
 
 			$conn = myUtils::setup_PDO();
 	  		$stmt = $conn->prepare($sql);

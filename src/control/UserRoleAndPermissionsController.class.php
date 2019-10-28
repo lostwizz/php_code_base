@@ -1,6 +1,12 @@
 <?php
 //**********************************************************************************************
 //* UserRoleAndPermissionsController.class.php
+/**
+ * sets up the users permissions from the database
+ *
+ * @author  mike.merrett@whitehorse.ca
+ * @license City of Whitehorse
+ */
 //*
 //* $Id$
 //* $Rev: 0000 $
@@ -19,11 +25,7 @@
 //***********************************************************************************************************
 
 
-
-
-
 namespace php_base\control;
-
 
 
 use \php_base\Utils\Settings as Settings;
@@ -35,8 +37,19 @@ use \php_base\Utils\Response as Response;
 //***********************************************************************************************
 Class UserRoleAndPermissionsController {
 
+	/**
+	 * the usersname
+	 *
+	 * @var string
+	 */
 	public $username;
 
+
+	/**
+	 * the usersinfo - such as username Primary Role Name,
+	 *
+	 * @var string
+	 */
 	public $usersInfo;
 	public $usersRoles;
 	public $usersRights;
@@ -121,7 +134,6 @@ Class UserRoleAndPermissionsController {
 
 			// now we have an array of Role ids
 			$arOfRoleIDs = $this->usersRoles->RoleIDData;
-	//Dump::dump($arOfRoleIDs);
 
 			// now with roleid go and get the permissions related to those role ids
 			$this->userPermissions =  new \php_base\data\UserPermissionData($arOfRoleIDs);
@@ -130,9 +142,6 @@ Class UserRoleAndPermissionsController {
 
 
 //Dump::dump(Settings::GetRunTime('userPermissions'));
-
-			//////$this->model = new \php_base\model\UserRoleAndPermissionsModel($this);
-//Dump::dump($this->model);
 		} catch (\Exception $e){
 			return new Response( 'something happended when trying to load all permissions' , -7);
 		}

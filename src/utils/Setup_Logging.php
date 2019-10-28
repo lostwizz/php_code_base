@@ -25,7 +25,13 @@
 namespace php_base\Utils;
 
 //echo DIR . 'vendor/autoload.php';
-require_once(DIR . 'vendor/autoload.php');
+
+//P:\Projects\php_code_base\src\..\vendor\autoload.php
+//echo   DIR . '..' . DS . 'vendor/autoload.php';
+require_once(  DIR . '..' . DS . 'vendor' . DS . 'autoload.php');
+
+//require_once(DIR . 'vendor\monolog\monolog\src\Monolog\Logger.php');
+
 require_once(DIR . 'utils' . DS . 'PDOHandler.php');
 require_once(DIR . 'utils' . DS . 'PDOdataHandler.php');
 require_once(DIR . 'utils' . DS . 'EmailHtmlFormatter.php');
@@ -143,6 +149,7 @@ if (Settings::GetPublic( 'Use_SecurityLog') ) {
 //////////////////////////////////////////////////////////////////////////////////////////
 if (Settings::GetPublic( 'Use_EmailLog')) {
 // setup an Email Logger (for critical errors)
+
 	$emailLog = new Logger( 'email');
 
 	//$handler = new Monolog\Handler\NativeMailerHandler(

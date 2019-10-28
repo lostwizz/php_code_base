@@ -1,7 +1,23 @@
 <?php
-
-
-//***********************************************************************************
+//**********************************************************************************************
+//* index2.php
+//*
+//* $Id$
+//* $Rev: 0000 $
+//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
+//*
+//* DESCRIPTION:
+//*       main entry point for the program
+//*
+//* USAGE:
+//*
+//* HISTORY:
+//* 12-Sep-19 M.Merrett - Created
+//*
+//* TODO:
+//*
+//***********************************************************************************************************
+//***********************************************************************************************************
 // setup the Directory Root
 define ('DS', DIRECTORY_SEPARATOR);
                //define ('DIR', 'p:' . DS . 'Projects' . DS . 'MikesCommandAndControl2' . DS . 'src' . DS );
@@ -10,8 +26,6 @@ if ( strripos (realpath('.'), 'src' ) <1 ){
 } else {
 	define('DIR', realpath('.') . DS );
 }
-
-
 
 include_once( DIR . 'autoload.php');
 
@@ -27,20 +41,6 @@ use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\myUtils\myUtils as myUtils;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ////////!!!!!!!!!!!!!this line #45 must alwaygs be this for the unit tests to work
 //Dump::dump(__LINE__, '-This is a Title-',true);
 ////////!!!!!!!!!!!!!this line #45 must alwaygs be this for the unit tests to work
@@ -53,6 +53,10 @@ use \php_base\Utils\myUtils\myUtils as myUtils;
 include_once( DIR . 'autoload.php');
 date_default_timezone_set('Canada/Yukon');
 //include_once( DIR . 'utils' . DS . 'dump.class.php');
+
+
+require_once(  DIR . '..' . DS . 'vendor' . DS . 'autoload.php');
+
 include_once( DIR . 'utils' . DS . 'settings.class.php');
 
 require_once( DIR . '_config' . DS . '_Settings-General.php');
@@ -99,10 +103,7 @@ if ( Settings::GetPublic('Use_MessageLog')){
 //************************************************************************************
 
 
-
-
 Settings::SetRunTime('Benchmarks.start.executionTime',  microtime(true));
-
 
 
 //if ( Settings::GetPublic('IS_DEBUGGING')) {
@@ -119,12 +120,9 @@ Settings::SetRunTime('Benchmarks.start.executionTime',  microtime(true));
 //	}
 //}
 
-Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ....');
-Settings::GetRuntimeObject('FileLog')->addInfo('Staring...');
-Settings::GetRuntimeObject('SecurityLog')->addInfo('Starting...');
 
 //Dump::dump(Settings::GetProtected('database_extension_needed'));
-if ( extension_loaded(Settings::GetProtected('database_extension_needed'))) {
+if ( extension_loaded( Settings::GetProtected( 'database_extension_needed'))) {
 	Settings::GetRuntimeObject('DBLog')->addInfo( 'Starting....');
 } else {
 	echo '<font color=white style="background-color:red;font-size:160%;" >', 'PDO_SQLSRV is not available!!- exiting ','</font>';
@@ -138,22 +136,17 @@ if (false) {
 	Settings::GetRuntimeObject('EmailLog')->addCritical('Hey, a critical log entry!', array( 'bt' => debug_backtrace(true), 'server' =>$_SERVER));
 }
 
-
-Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ..session..');
-
-//echo Resolver::REQUEST_PROCESS;
-//$_REQUEST[Resolver::REQUEST_PROCESS]= 'TEST';
-//$_REQUEST[Resolver::REQUEST_TASK]= 'doWork';
-
+if ( Settings::GetPublic('IS_DEBUGGING')) {
+	Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ....');
+	Settings::GetRuntimeObject('FileLog')->addInfo('Staring...');
+	Settings::GetRuntimeObject('SecurityLog')->addInfo('Starting...');
+}
 
 
-//
-//$a = new Authenticate();
-//echo 'does have right 1', $a->checkRights( 'fred', 'sam', 'john', Authenticate::DBA_RIGHT) ? 'yes':'no';
-//echo 'does have right 2', $a->checkRights( 'fred', 'sam', 'john', Authenticate::READ_RIGHT)? 'yes':'no';
+if ( Settings::GetPublic('IS_DEBUGGING')) {
+	Settings::GetRunTimeObject('MessageLog')->addNotice( 'Starting ..session..');
+}
 
-
-//$_SESSION['username'] = 'merrem';
 
 // now start everything running
 $resolver = new Resolver();
@@ -166,10 +159,6 @@ if ($response->hadFatalError() and $response->failNoisily() ){
 	echo '<BR><BR>Exiting!';
 }
 
-//
-//echo 'IIIIIIIIIII' . PHP_EOL;
-//echo HTML::Image(  '.\static\images\Whitehorse_RGB_200x140.jpg'  );
-//echo 'JJJJJJJJJJ' . PHP_EOL;
 
 
 //Dump::dump( $_SESSION); //dumpLong
@@ -181,9 +170,4 @@ session_write_close();
 if ( Settings::GetPublic('IS_DEBUGGING')) {
 	echo '<br>--...The End.--<Br>';
 }
-
-//Settings::GetRunTimeObject('MessageLog')->addERROR('something happend here !');
-
-
-
 

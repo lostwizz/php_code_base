@@ -78,9 +78,11 @@ function doRunTheSearch($class){
 	$base= strtolower($ex[ count($ex)-1]) . '.php';
 	if (runTheChecks( $base)) 	return true;
 
-	if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL != AUTOLOAD_LEVEL_NONE )) {
-		echo '<font color=white style="background-color:red;font-size:160%;" >', '(AutoLoad could not find!!! ' . $ex[ count($ex)-1] . ')','</font>' . PHP_EOL;
-	}
+
+//fail silently
+//	if ( !empty(AUTOLOAD_OUTPUT_LEVEL)  and (AUTOLOAD_OUTPUT_LEVEL != AUTOLOAD_LEVEL_NONE )) {
+//		echo '<font color=white style="background-color:red;font-size:160%;" >', '(AutoLoad could not find!!! ' . $ex[ count($ex)-1] . ')','</font>' . PHP_EOL;
+//	}
 	return false;
 }
 
@@ -100,6 +102,8 @@ function runTheChecks($base){
 	////if (  tryFile( DIR . 'utils'  . DS . 'log'   . DS . $base ))	return true;
 	if (  tryFile( DIR . $base ))									return true;
 	if (  tryFile( DIR . 'static' . DS .  $base ))					return true;
+
+	if (  tryFile(DIR . '..' . DS . 'vendor' . DS . 'monolog' . DS . 'monolog' . DS . 'src' . DS . $base)) return true;
 	return false;
 }
 
