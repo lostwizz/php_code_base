@@ -3,9 +3,36 @@
 //* authenticateModel.class.php
 //*
 //* $Id$
+
+//* $WCREV$
 //* $Rev: 0000 $
 //* $Date: 2019-08-30 12:00:20 -0700 (Fri, 30 Aug 2019) $
 //*
+//*   "$WCREV$";
+//*   "$WCREV=7$";
+//*   "$WCMODS?Modified:Not modified$";
+//*   "$WCUNVER?Unversioned items found:no unversioned items$";
+//*   "$WCDATE$";
+//*   "$WCDATEUTC$";
+//*   "$WCDATE=%a, %d %B %Y$";
+//*   "$WCDATE=$";
+//*   "$WCDATE=%a, %c %B %Y$";
+//*   "$WCDATEUTC=%a, %d %B %Y$";
+//*   "$WCNOW$";
+//*   "$WCNOWUTC$";
+//*   "$WCISTAGGED?Tagged:Not tagged$";
+//*   "$WCINGIT?versioned:not versioned$";
+//*   "$WCFILEMODS?Modified:Not modified$";
+//*   "$WCSUBMODULE?Working tree has at least one submodule:Working tree has no submodules$";
+//*   "$WCSUBMODULEUP2DATE?All submodules are up2date (checked out HEAD):At least one submodule is not up2date (checked HEAD differs)$";
+//*   "$WCMODSINSUBMODULE?At least one submodule has uncommitted items:No submodule has uncommitted items$";
+//*   "$WCUNVERINSUBMODULE?At least one submodule has unversioned files:No submodule with unversioned files$";
+//*   "$WCMODSFULL?Modified items found (recursively):No modified items found (also not in submodules)$";
+//*   "$WCUNVERFULL?Unversioned items found (recursively):No unversioned items found (also not in submodules)$";
+//*
+
+
+
 //* DESCRIPTION:
 //*
 //* USAGE:
@@ -48,9 +75,8 @@ class AuthenticateModel extends Model{
 	public function isLoggedIn($username, $password) : Response{
 
 		if ( !empty($username)) {
-
-			echo 'Checking login:',  $username;
-			echo '<br>';
+			//echo 'Checking login:',  $username;
+			//echo '<br>';
 			if ($this->isGoodAuthentication( $username, $password)) {
 				Settings::GetRunTimeObject('MessageLog')->addInfo('User: '. $username . ' is logged on');
 				// user and password are good so they is logged in
