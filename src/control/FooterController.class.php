@@ -30,6 +30,10 @@ use \php_base\Utils\Response as Response;
 //***********************************************************************************************
 //***********************************************************************************************
 class FooterController extends Controller {
+
+	public $process;
+	public $task;
+
 	public $action = null;
 	public $payload = null;
 
@@ -42,6 +46,14 @@ class FooterController extends Controller {
 
 		$this->payload = $payload;
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
+	}
+
+
 	//-----------------------------------------------------------------------------------------------
 	public function doWork() : Response{
 		$this->payload = 'hi';

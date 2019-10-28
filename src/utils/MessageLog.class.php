@@ -275,7 +275,10 @@ class MessageLog {
 			if (Settings::GetPublic('Show MessageLog Adds')) {
 				$bt = debug_backtrace(false, 2);
 				if ( is_string($obj_or_array ) and !empty($bt[1])) {
-					$obj_or_array .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn"> - '. basename($bt[1]['file']) . ':' . $bt[1]['line'] . '</span>';
+					if (Settings::GetPublic('Show MessageLog Adds_FileAndLine')) {
+						$obj_or_array .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn">';
+						$obj_or_array .= '- '. basename($bt[1]['file']) . ':' . $bt[1]['line'] . '</span>';
+					}
 				}
 			}
 

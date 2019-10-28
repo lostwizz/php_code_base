@@ -30,6 +30,11 @@ use \php_base\Utils\Response as Response;
 //***********************************************************************************************
 //***********************************************************************************************
 class HeaderController extends Controller {
+
+	public $process;
+	public $task;
+
+
 	public $action;
 	public $payload;
 
@@ -40,6 +45,12 @@ class HeaderController extends Controller {
 		$this->view = new \php_base\view\HeaderView($this);
 
 		$this->payload = $payload;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
 	}
 
 	//-----------------------------------------------------------------------------------------------

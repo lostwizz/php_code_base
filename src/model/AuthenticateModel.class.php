@@ -41,31 +41,8 @@ class AuthenticateModel extends Model{
 	const NO_RIGHT = '__NO__RIGHT__';
 	///////////const NOBODY = '__NO__BODY__';
 
-	//var $controller;
 
 	protected static $User;
-
-//	protected static $curUserID = 0;  // number (id)
-//	protected static $curUserName;  // name
-//	protected static $curRoleID;  // number (id)
-//	protected static $curRoleName;  // desc
-//	protected static $curPermissions; //array( id, roleid, model, task, field, right (read, write, dba)
-
-	//-----------------------------------------------------------------------------------------------
-//	public function __construct($controller) {
-//		$this->controller = $controller;
-//		//dummy Settings
-////		self::$curUserID =1000;
-////		self::$curUserName= 'Mike';
-////		self::$curRoleID=  99;
-////		self::$curRoleName = self::DBA_RIGHT;
-////		self::$curPermissions = array (
-////									array('model'=>	'UserManagement', 'task'=> '*', 'field'=> 'RoleID', 'right'=> self::WRITE_RIGHT),
-////									array('model'=>	'*', 'task'=> '*', 'field'=> '*', 'right'=> self::READ_RIGHT)
-////								);
-//	}
-
-
 
 	//-----------------------------------------------------------------------------------------------
 	public function isLoggedIn($username, $password) : Response{

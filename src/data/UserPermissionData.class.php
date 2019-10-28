@@ -72,9 +72,10 @@ class UserPermissionData {
 		try {
 			$sql = 'SELECT id
 						,roleId
-						,model
-						,task
-						,field
+						,UPPER(process) as process
+						,UPPER(task) as task
+						,UPPER(action) as action
+						,UPPER(field) as field
 						,Permission
 					FROM ' .  Settings::GetProtected( 'DB_Table_PermissionsManager')
 					. ' WHERE  RoleId in ('

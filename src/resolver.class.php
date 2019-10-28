@@ -193,10 +193,10 @@ class Resolver {
 		 and !empty($_REQUEST['payload']['credentials']['username'])){
 
 			//////////!!!!!! and anything else that needs to be passes in an ongoin session - maybe session id?
-			Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details true');
+			//Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details true');
 			return true;
 		} else {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details false');
+			//Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details false');
 			return false;
 		}
 	}
@@ -208,10 +208,10 @@ class Resolver {
 		  and ! empty($_REQUEST[self::REQUEST_TASK])
 		  and $_REQUEST[self::REQUEST_TASK] == 'CheckLogin'
 		 ) {
-		 	Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login true');
+		 	//Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login true');
 		 	return true;
 		 } else {
-		 	Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login false');
+		 	//Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login false');
 		 	return false;
 		 }
 	}

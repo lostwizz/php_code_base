@@ -8,6 +8,7 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
+use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
 
 
 //***********************************************************************************************
@@ -17,6 +18,9 @@ class TESTController extends Controller {
 	public $model;
 	public $view;
 	public $data;
+
+	public $process;
+	public $task;
 
 	public $action;
 	public $payload;
@@ -32,6 +36,13 @@ class TESTController extends Controller {
 	}
 
 	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
 	public function doWork() : Response{
 
 Dump::dump('!!!!!!!!!!!!! at TestController');
@@ -44,15 +55,26 @@ Dump::dump('!!!!!!!!!!!!! at TestController');
 		$perms = Settings::GetRunTime('userPermissions');
 //Dump::dumpLong( $perms);
 
-		$p1 = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
+		//$p1 = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
+		$p1 = UserRoleAndPermissionsModel::WRITE_RIGHT;
 //Dump::dump($p1);
 
-		$process = 'test';
-		$task = 'testRead';
-		$action = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
+		//$process = 'test';
+		//$task = 'testRead';
+		//$action = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
+		$action = UserRoleAndPermissionsModel::WRITE_RIGHT;
 
-		$x = $perms->isAllowed( $p1, $process, $task, $action);
-Dump::dump($x);
+//::WILDCARD_RIGHT
+		$x = $perms->isAllowed( $p1, $this->process, $this->task, $action);
+//Dump::dump($x);
+
+
+		$x = $perms->isAllowed( UserRoleAndPermissionsModel::DBA_RIGHT , $this->process, $this->task, $action);
+//Dump::dump($x);
+
+		$x = $perms->isAllowed( UserRoleAndPermissionsModel::READ_RIGHT , $this->process, $this->task, 'actionfred');
+//Dump::dump($x);
+
 
 		//$this->view->doWork(  $this  );
 		//return new Resonse( 'ok', 0, true);

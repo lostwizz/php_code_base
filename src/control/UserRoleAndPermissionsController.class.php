@@ -22,6 +22,9 @@ Class UserRoleAndPermissionsController {
 	public $view;
 	public $model;
 
+	public $process;
+	public $task;
+
 	public $action;
 	public $payload;
 
@@ -31,12 +34,18 @@ Class UserRoleAndPermissionsController {
 		if ( !empty($u)) {
 
 			$this->model = new \php_base\model\UserRoleAndPermissionsModel($this);
-			$this->data = new \php_base\data\UserRoleAndPermissionsData($this);
+			//$this->data = new \php_base\data\UserRoleAndPermissionsData($this);
 			//$this->view = new \php_base\data\UserRoleandPermissionsView($this);
 
 			$this->action = $action;
 			$this->payload = $payload;
 		}
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -70,7 +79,7 @@ Class UserRoleAndPermissionsController {
 			return new Response('Username not supplied to LoadPermissions', -6, false, true);
 		}
 
-		Settings::GetRunTimeObject('MessageLog')->addInfo('starting load');
+		//Settings::GetRunTimeObject('MessageLog')->addInfo('starting load');
 
 		try {
 			// setup the user with the extra data in the users table and then get the attributes for that user
@@ -94,10 +103,11 @@ Class UserRoleAndPermissionsController {
 
 			// now with roleid go and get the permissions related to those role ids
 			$this->userPermissions =  new \php_base\data\UserPermissionData($arOfRoleIDs);
+//Dump::dump($this->userPermissions );
 			// now we are setup to check the permissions -- Model->hasRights
 
 
-Dump::dump(Settings::GetRunTime('userPermissions'));
+//Dump::dump(Settings::GetRunTime('userPermissions'));
 
 			//////$this->model = new \php_base\model\UserRoleAndPermissionsModel($this);
 //Dump::dump($this->model);

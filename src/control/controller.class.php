@@ -44,6 +44,9 @@ abstract class Controller{
 	public $view;
 	public $data;
 
+	public $process;
+	public $task;
+
 	public $action;
 	public $payload;
 
@@ -59,5 +62,12 @@ abstract class Controller{
 	public function doWork(  ) : Response{
 		return false;
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
+	}
+
 
 }

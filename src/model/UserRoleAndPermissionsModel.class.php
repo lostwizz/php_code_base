@@ -31,7 +31,7 @@ Class UserRoleAndPermissionsModel extends Model{
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct( $controller){   //$action ='', $payload = null){
-Dump::dump($controller)		;
+//Dump::dump($controller);
 		if (!empty( $controller)){
 			$this->controller = $controller;
 		}
@@ -49,8 +49,13 @@ Dump::dump($controller)		;
 
 
 	//-----------------------------------------------------------------------------------------------
-	public  function isAllowed( $permission= self::NO_RIGHT, $process=self::NO_RIGHT, $task=self::NO_RIGHT, $action=null){
-		if (empty($permission) or $permission== self::NO_RIGHT){
+	public  function isAllowed( $wantedPermission= self::NO_RIGHT,
+								$process=self::NO_RIGHT,
+								$task=self::NO_RIGHT,
+								$action=self::NO_RIGHT,
+								$field=self::WILDCARD_RIGHT
+							){
+		if (empty($wantedPermission) or $wantedPermission== self::NO_RIGHT){
 			return false;
 		}
 		if ( empty($process) or $process==self::NO_RIGHT) {
@@ -59,27 +64,153 @@ Dump::dump($controller)		;
 		if ( empty($task) or $task==self::NO_RIGHT) {
 			return false;
 		}
+		if ( empty($action) or $action ==self::NO_RIGHT){
+			return false;
+		}
+		$s = $wantedPermission . '<=' . $process . '.' . $task . '.' . $action . '.' . $field;
 
 		$arPermissions = $this->controller->userPermissions->permissionList;
-Dump::dump( $arPermissions);
+
+		$process = strtoupper($process);
+		$task = strtoupper($task);
+		$action = strtoupper($action);
+		$field = strtoupper($field);
+//Dump::dump( $arwantedPermissions);
+
 		foreach( $arPermissions as $value){
-			if ( $this->checkRight( $value, $permission, $process, $task, $action )) {
+			if (  $this->checkRight( $value, $wantedPermission, $process, $task, $action, $field )) {
+				Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
+				Settings::GetRuntimeObject( 'SecurityLog')->addNotice( Settings::GetRunTime( 'Currently Logged In User') . ' has permission: '. $s);
+
 				return true;
 			}
 		}
+		Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have permission wanted: ' . $s);
+				Settings::GetRuntimeObject( 'SecurityLog')->addAlert( Settings::GetRunTime( 'Currently Logged In User') . ' Does NOT have permission: '. $s);
 		return false;
-
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function checkRight( $value, $permission, $process, $task, $action ) {
+	protected function checkRight( $singleOfPermissions, $wantedPermission, $process, $task, $action, $field ) {
 
-Dump::dumpLong( array( $value, $permission, $process, $task, $action));
+//Dump::dumpLong( array( $singleOfPermissions, $wantedPermission, $process, $task, $action, $field));
 
-		//if ( ! $this->checkModel($))
-
+		if ( ! $this->checkProcess($singleOfPermissions, $process)) { return false;}
+		if ( ! $this->checkTask( $singleOfPermissions, $task)) 		{ return false;}
+		if ( ! $this->checkAction( $singleOfPermissions, $action)) 	{ return false;}
+		if ( ! $this->checkField( $singleOfPermissions, $field)) 	{ return false;}
+		return $this->checkPermission($singleOfPermissions, $wantedPermission);
 	}
 
+	//-----------------------------------------------------------------------------------------------
+	protected function checkProcess( $singleOfPermissions, $process){
+		$r = (($process == self::WILDCARD_RIGHT)
+		   or ($process == $singleOfPermissions['PROCESS'])
+		   or ($singleOfPermissions['PROCESS'] ==self::WILDCARD_RIGHT));
+
+//		$s =$r ? '+true+':'+false+';
+//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkProcess:' .  $s);
+		return $r;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function checkTask( $singleOfPermissions, $task){
+		$r  = (($task == self::WILDCARD_RIGHT)
+		    or ($task == $singleOfPermissions['TASK'])
+		    or ($singleOfPermissions['TASK'] ==self::WILDCARD_RIGHT));
+
+//		$s =$r ? '+true+':'+false+';
+//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkTask:' .  $s);
+		return $r;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function checkAction( $singleOfPermissions, $action){
+		$r = (($action == self::WILDCARD_RIGHT)
+		   or ($action == $singleOfPermissions['ACTION'])
+		   or ( $singleOfPermissions['ACTION'] == self::WILDCARD_RIGHT));
+
+//		$s =$r ? '+true+':'+false+';
+//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkAction:' .  $s);
+		return $r;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function checkField( $singleOfPermissions, $field){
+		$r = (($field == self::WILDCARD_RIGHT)
+		   or ($field == $singleOfPermissions['FIELD'])
+		   or ($singleOfPermissions['FIELD'] ==self::WILDCARD_RIGHT));
+
+//		$s =$r ? '+true+':'+false+';
+//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkField:' .  $s);
+		return $r;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected function checkPermission($singleOfPermissions, $wantedPermission){
+		switch ($wantedPermission ){
+			case self::GOD_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT )
+				  or  ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+				break;
+			case self::DBA_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::DBA_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+				  break;
+			case self::WRITE_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::DBA_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::WRITE_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+				  break;
+			case self::READ_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::DBA_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::WRITE_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::READ_RIGHT)
+				  or  ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+				  break;
+			case self::NO_RIGHT:
+				$r =  false;
+				break;
+			case self::WILDCARD_RIGHT;
+				$r = false;
+		}
+//		$s = 'wanted: ' . $wantedPermission;
+//		$s .= ' --> ' . $singleOfPermissions['PERMISSION'];
+//		$s .= '_';
+//		$s .= $r ? '^true^' : '^false^';
+//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkPerm:' .  $s);
+		return $r;
+	}
+
+////	//-----------------------------------------------------------------------------------------------
+////	protected function checkWantedRight($rightWanted, $aRow){
+//////echo 'R>', $rightWanted, '<>' , $aRow['right'], '<>';
+////		if ( $aRow['right'] == $rightWanted){
+//////echo '-y-';
+////			return true;
+////		}
+////		if ( $aRow['right'] == self::WILDCARD_RIGHT ){
+////			return true;
+////		}
+//////echo '#';
+////		if ( $rightWanted == self::READ_RIGHT and ( $aRow['right'] == self::WRITE_RIGHT
+////													or $aRow['right'] == self::DBA_RIGHT
+////													or $aRow['right'] == self::GOD_RIGHT)) {
+//////echo '@@'	;
+////			return true;
+////		}
+////		if ( $rightWanted == self::WRITE_RIGHT and ( $aRow['right'] == self::DBA_RIGHT
+////													or $aRow['right'] == self::GOD_RIGHT)){
+////			return true;
+////		}
+////		if ($rightWanted == self::DBA_RIGHT and ($aRow['right']== self::GOD_RIGHT)){
+////			return true;
+////		}
+////		return false;
+////	}
 ////	//-----------------------------------------------------------------------------------------------
 ////	protected function checkIfHasRight($model = self::NO_RIGHT, $task = self::NO_RIGHT, $field = self::NO_RIGHT, $rightWanted = self::NO_RIGHT){
 ////		foreach( self::$curPermissions as $row) {
@@ -122,32 +253,6 @@ Dump::dumpLong( array( $value, $permission, $process, $task, $action));
 ////		return ( $aRow['field'] == $field or $aRow['field'] == self::WILDCARD_RIGHT);
 ////	}
 ////
-////	//-----------------------------------------------------------------------------------------------
-////	protected function checkWantedRight($rightWanted, $aRow){
-//////echo 'R>', $rightWanted, '<>' , $aRow['right'], '<>';
-////		if ( $aRow['right'] == $rightWanted){
-//////echo '-y-';
-////			return true;
-////		}
-////		if ( $aRow['right'] == self::WILDCARD_RIGHT ){
-////			return true;
-////		}
-//////echo '#';
-////		if ( $rightWanted == self::READ_RIGHT and ( $aRow['right'] == self::WRITE_RIGHT
-////													or $aRow['right'] == self::DBA_RIGHT
-////													or $aRow['right'] == self::GOD_RIGHT)) {
-//////echo '@@'	;
-////			return true;
-////		}
-////		if ( $rightWanted == self::WRITE_RIGHT and ( $aRow['right'] == self::DBA_RIGHT
-////													or $aRow['right'] == self::GOD_RIGHT)){
-////			return true;
-////		}
-////		if ($rightWanted == self::DBA_RIGHT and ($aRow['right']== self::GOD_RIGHT)){
-////			return true;
-////		}
-////		return false;
-////	}
 ////
 ////	//-----------------------------------------------------------------------------------------------
 ////	public function checkRights( $model = self::NO_RIGHT, $task = self::NO_RIGHT, $field = self::NO_RIGHT, $rightWanted = self::NO_RIGHT){

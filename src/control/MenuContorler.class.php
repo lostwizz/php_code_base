@@ -1,3 +1,4 @@
+<?php
 
 namespace php_base\Control;
 
@@ -8,6 +9,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 //***********************************************************************************************
 //***********************************************************************************************
 class MenuController extends Controller {
+	public $process;
+	publci $task;
 
 	public $action;
 	public $payload;
@@ -21,6 +24,13 @@ class MenuController extends Controller {
 		$this->action = $action;
 		$this->payload = $payload;
 	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
+	}
+
 
 	//-----------------------------------------------------------------------------------------------
 	public function doWork(){

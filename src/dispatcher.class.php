@@ -31,15 +31,15 @@ class Dispatcher {
 	// abort if anything returns FALSE
 	public function do_work( $parentResolver = null)  : Response {
 
-		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
+		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
 		$pre_result = $this->RunThruTheQueue( $this->PREqueue);
 
 		if ($pre_result->hadFatalError()){
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running normal queue' . $pre_result->toString() );
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running pre queue' . $pre_result->toString() );
 			return $pre_result;
 		} else {
 			// the pre queue contains authentication - so if it returns false then dont do any actuall work
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting normal queue' );
+			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting normal queue' );
 			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue );
 			if ($dispatch_result->hadFatalError() ) {
 				Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running normal queue' . $dispatch_result);
@@ -48,10 +48,10 @@ class Dispatcher {
 		}
 
 		// show the footer in all cases (it has the message stack for one- so you know what happend)
-		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting postqueue' );
+		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting postqueue' );
 		$post_result =  $this->RunThruTheQueue( $this->POSTqueue);
 		if ( $post_result->hadFatalError()){
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running normal queue' . $post_result);
+			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher got an error from the running post queue' . $post_result);
 			return $post_result;
 		}
 
@@ -66,16 +66,16 @@ class Dispatcher {
 			$response  = null;
 			while ( ! $theQueue->isEmpty() ) {
 				$item = $theQueue->dequeue();
-				Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
+				//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
 				if ( ! empty($item )) {
-					Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
+					//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
 					$response = $this->itemDecodeAndExecute( $item );
 					if ( $response->hadFatalError()){
-						Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
+						//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
 						return $response;
 					}
 
-					Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] '. $response->toString());
+					//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] '. $response->toString());
 				} else {
 					Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher - item is empty!! why!! -but ignoring');
 					$response = Response::GenericWarning();
@@ -124,15 +124,25 @@ class Dispatcher {
 	}
 
 	//-----------------------------------------------------------------------------------------------
+	//   eg. $class = TESTController
 	private function doExecute( string $dir, string $class, string $task, string $action='', $payload = null)  : Response {
+		if ( substr( $class, -10) == 'Controller'){
+			$process = substr( $class, 0, -10);
+		} else {
+			$process = $class;
+		}
+
 		$class = '\\php_base\\' .$dir . '\\' . $class;
 		$payload = (!empty($payload)) ? $this->processPayloadFROMItem($payload) : null;
 
 //Dump::dump( $class);
 //Dump::dump($task);
 
-		Settings::GetRunTimeObject('MessageLog')->addInfo( "dispatcher do execute - new $class ($action,  payload);");
+		//Settings::GetRunTimeObject('MessageLog')->addInfo( "dispatcher do execute - new $class ($action,  payload);");
 		$x = new $class ($action,  $payload);            //instanciate the process  and pass it the payload
+
+		$x->setProcessAndTask( $process, $task);
+
 		return $x->$task($this);				//run the process's method
 	}
 
@@ -167,21 +177,21 @@ class Dispatcher {
 	public function addPREProcess( $process, $task =null, $action =null, $payload = null){
 		$item = $this->buildItem($process, $task, $action, $payload);
 		$this->addItemToQueue($this->PREqueue, $item );
-		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
+		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	public function addPOSTProcess( $process, $task =null, $action =null, $payload = null){
 		$item = $this->buildItem($process, $task, $action, $payload);
 		$this->addItemToQueue($this->POSTqueue, $item );
-		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
+		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	public function addProcess( $process, $task =null, $action =null, $payload = null){
 		$item = $this->buildItem($process, $task, $action, $payload);
 		$this->addItemToQueue($this->DISPATCHqueue, $item );
-		Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
+		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
 	}
 
 	//-----------------------------------------------------------------------------------------------

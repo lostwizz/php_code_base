@@ -16,6 +16,7 @@ Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 600);  //                   EMERGENCY = 600;
 
 Settings::SetPublic('Show MessageLog Adds', true);
+Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
 //Settings::SetPublic('Show MessageLog Adds', false);
 
 
@@ -39,7 +40,7 @@ Settings::SetPublic( 'Use_MessageLog', true );  //true
 Settings::SetPublic( 'Use_DBLog', false);
 Settings::SetPublic( 'Use_DBdataLog', false);
 Settings::SetPublic( 'Use_FileLog', false);  // true
-Settings::SetPublic( 'Use_SecurityLog', false);
+Settings::SetPublic( 'Use_SecurityLog', true);
 Settings::SetPublic( 'Use_EmailLog', false);      // true
 
 

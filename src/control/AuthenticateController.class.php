@@ -31,6 +31,9 @@ use \php_base\Utils\Response as Response;
 //***********************************************************************************************
 class AuthenticateController extends Controller {
 
+	public $process;
+	public $task;
+
 	public $action;
 	public $payload;
 
@@ -44,7 +47,13 @@ class AuthenticateController extends Controller {
 		$this->payload = $payload;
 //Dump::dump($payload);
 
-		Settings::SetRunTime( 'Currently Logged In User', false);            //after a successful logon this will be set to the userid
+		//Settings::SetRunTime( 'Currently Logged In User', false);            //after a successful logon this will be set to the userid
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function setProcessAndTask( $process, $task){
+		$this->process = $process;
+		$this->task = $task;
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -56,7 +65,7 @@ class AuthenticateController extends Controller {
 	//-----------------------------------------------------------------------------------------------
 	public function CheckLogin($parent) : Response {
 //Dump::dumpLong($this);
-		Settings::GetRunTimeObject('MessageLog')->addNotice('at checkLogin');
+		//Settings::GetRunTimeObject('MessageLog')->addNotice('at checkLogin');
 //Dump::dump($this->payload);
 
 		$username = (!empty( $this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
@@ -66,15 +75,15 @@ class AuthenticateController extends Controller {
 		switch ( $this->action){
 			case 'no_Credentials':
 			case 'Need_Login':
-				Settings::GetRunTimeObject('MessageLog')->addNotice('about to showLoginPage');
+				//Settings::GetRunTimeObject('MessageLog')->addNotice('about to showLoginPage');
 				return $this->view->showLoginPage();
 
 			case 'do_the_logon_attempt':
-				Settings::GetRunTimeObject('MessageLog')->addNotice('about to tryToLogin');
+				//Settings::GetRunTimeObject('MessageLog')->addNotice('about to tryToLogin');
 				return $this->model->tryToLogin($username, $password);
 
 			case 'Check_Ongoing_Connection':
-				Settings::GetRunTimeObject('MessageLog')->addNotice('about to isLoggedIn');
+				//Settings::GetRunTimeObject('MessageLog')->addNotice('about to isLoggedIn');
 				return $this->model->isLoggedIn($username, $password);
 
 			default:
