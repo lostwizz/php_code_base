@@ -87,6 +87,16 @@ if (false) {
 	session_start();
 }
 
+//echo '<BR>';
+//echo  '\php_code_base\src\static\css\message_stack_style.css';
+//echo '<br>';
+Dump::dumpLong( $_SERVER);
+
+
+//echo $_SERVER['HTTP_HOST'] . '\php_code_base\src\static\css\message_stack_style.css';
+//echo '<BR>';
+
+
 if ( Settings::GetPublic('Use_MessageLog')){
 	$mLog = new MessageLog();
 	Settings::SetRunTime('MessageLog', $mLog);
