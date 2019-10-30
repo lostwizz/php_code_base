@@ -28,6 +28,10 @@ namespace php_base\Utils;
 //***********************************************************************************************
 abstract class ResponseErrorCodes {
 
+   const TODO = -999999;
+   const TestingError= -9999;
+
+
 	protected static $errors = array(
 			    2 => 'All is good',
 			    1 => 'Generic Warning all is good',
@@ -44,7 +48,8 @@ abstract class ResponseErrorCodes {
 			  -10 => ' ',
 			  -11 => 'XXXXXXX',
 
-			-9999 => 'testing error'
+			-9999 => 'testing error',
+         -999999 => 'DODO'
 		);
 
 

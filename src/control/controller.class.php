@@ -58,7 +58,7 @@ abstract class Controller{
 
 
 	//-----------------------------------------------------------------------------------------------
-	abstract public function __construct($action ='', $payload = null);
+	abstract public function __construct(string $passedAction = '', $passedPayload = null);
 
 
 //	//-----------------------------------------------------------------------------------------------

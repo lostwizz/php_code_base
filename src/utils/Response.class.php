@@ -30,6 +30,9 @@ use \php_base\Utils\Dump\Dump as Dump;
 //***********************************************************************************************
 //***********************************************************************************************
 Class Response {
+
+
+
 	protected $process = null;
 	protected $task =null;
 	protected $action = null;
@@ -70,6 +73,9 @@ Class Response {
 		return new Response('Generic Error', -2, true);
 	}
 
+   public static function TODO_Error(){
+      return new Response('- TODO-', ResponseErrorCodes::TODO);
+   }
 
 	//-----------------------------------------------------------------------------------------------
 	public function setProcessTaskActionPayload( $process, $task, $action=null, $payload=null){

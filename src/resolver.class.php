@@ -126,7 +126,7 @@ class Resolver {
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * StartDicpatch
+    * StartDispatch
     *
     * this is where the dispatcher gets called to run -- and any errors are passed back up the chain
     *
@@ -179,8 +179,7 @@ class Resolver {
     */
    public function decodeRequestInfo(): void {
 
-      //$vv = filter_input(\INPUT_POST, 'REQUEST_PROCESS');
-      $vv2 = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
+      $vv2 = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
 
       //dump::dump($vv);
 //      dump::dump($vv2);
