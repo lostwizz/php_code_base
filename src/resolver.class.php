@@ -53,7 +53,7 @@ class Resolver {
 	public function doWork() : Response {
 
 		if ( Settings::GetPublic('IS_DEBUGGING') ) {
-			Dump::dump($_REQUEST);
+			Dump::dump(filter_input_array (\INPUT_POST));
 		}
 
 		$this->AddHeader();
@@ -74,7 +74,7 @@ class Resolver {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function StartDispatch(){
+	protected function startDispatch(){
 
 		$r = $this->dispatcher->do_work( $this);
 		if ( $r->hadFatalError()){
@@ -105,7 +105,7 @@ class Resolver {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function SetupDefaultController(){
+	protected function setupDefaultController(){
 		$process = 'TEST';
 		$task = 'doWork';
 		$action = null;
@@ -118,10 +118,15 @@ class Resolver {
 	//-----------------------------------------------------------------------------------------------
 	public function decodeRequestinfo(){
 
-		$process = ( ! empty($_REQUEST[self::REQUEST_PROCESS] )) ? $_REQUEST[self::REQUEST_PROCESS] : null;
-		$task =    ( ! empty($_REQUEST[self::REQUEST_TASK]    )) ? $_REQUEST[self::REQUEST_TASK]    : null;
-		$action =  ( ! empty($_REQUEST[self::REQUEST_ACTION]  )) ? $_REQUEST[self::REQUEST_ACTION]  : null;
-		$payload = ( ! empty($_REQUEST[self::REQUEST_PAYLOAD] )) ? $_REQUEST[self::REQUEST_PAYLOAD] : null;
+      //$vv = filter_input(\INPUT_POST, 'REQUEST_PROCESS');
+      $vv2 = filter_input_array (\INPUT_POST);
+
+      //dump::dump($vv);
+      dump::dump($vv2);
+		$process = ( ! empty($vv2[self::REQUEST_PROCESS] )) ? $vv2[self::REQUEST_PROCESS] : null;
+		$task =    ( ! empty($vv2[self::REQUEST_TASK]    )) ? $vv2[self::REQUEST_TASK]    : null;
+		$action =  ( ! empty($vv2[self::REQUEST_ACTION]  )) ? $vv2[self::REQUEST_ACTION]  : null;
+		$payload = ( ! empty($vv2[self::REQUEST_PAYLOAD] )) ? $vv2[self::REQUEST_PAYLOAD] : null;
 
 		if ( ! ( $process == 'Authenticate' and $task =='CheckLogin' )){
 			$this->dispatcher->addProcess( $process, $task, $action, $payload);
@@ -130,7 +135,7 @@ class Resolver {
 		}
 	}
 
-	protected function AddSetupUserRoleAndPermissions(){
+	protected function addSetupUserRoleAndPermissions(){
 		$process = 'UserRoleAndPermissions';
 		$task = 'Setup';
 		$action = null;
@@ -148,9 +153,10 @@ class Resolver {
 						// unsucsessful
 				// have already logged on and just check session? still good
 						// have already logged in and timed out OR some other reason they should login again
-	protected function AddSetupAuthenticateCheck(){
+	protected function addSetupAuthenticateCheck(){
+      $vv = filter_input_array (\INPUT_POST);
 
-		$payload = ( ! empty($_REQUEST[self::REQUEST_PAYLOAD] )) ? $_REQUEST[self::REQUEST_PAYLOAD] : array();
+		$payload = ( ! empty($vv[self::REQUEST_PAYLOAD] )) ? $vv[self::REQUEST_PAYLOAD] : array();
 		$process ='Authenticate';
 		$task = 'CheckLogin';
 
@@ -166,15 +172,11 @@ class Resolver {
 		} else if ($this->isChangePasswordRequest()) {
 
 		} else if ($this->isForgotPasswordRequest()){
-
-
 		} else if($this->isSignupRequest()){
-
 		} else {
 			$action ='no_Credentials';
 			$payload = array_merge( $payload, array('authAction'=> $action));
 		}
-
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 
@@ -197,7 +199,8 @@ class Resolver {
 
 	//-----------------------------------------------------------------------------------------------
 	function hasNoPassedInfo(){
-		if ( empty( $_REQUEST) or empty($_REQUEST[self::REQUEST_PROCESS])){
+        $vv = filter_input_array (\INPUT_POST);
+		if ( empty($vv[self::REQUEST_PROCESS])){
 			return true;
 		}
 		return false;
@@ -205,10 +208,11 @@ class Resolver {
 
 	//-----------------------------------------------------------------------------------------------
 	protected function passingOngoingDetails(){
-		if ( !empty( $_REQUEST)
-		 and !empty( $_REQUEST['payload'])
-		 and !empty($_REQUEST['payload']['credentials'])
-		 and !empty($_REQUEST['payload']['credentials']['username'])){
+	  $vv = filter_input_array (\INPUT_POST);
+		if ( !empty( $vv)
+		 and !empty( $vv['payload'])
+		 and !empty($vv['payload']['credentials'])
+		 and !empty($vv['payload']['credentials']['username'])){
 
 			//////////!!!!!! and anything else that needs to be passes in an ongoin session - maybe session id?
 			//Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details true');
@@ -221,10 +225,11 @@ class Resolver {
 
 	//-----------------------------------------------------------------------------------------------
 	protected function passingFirstTimeCredentials() {
-		 if ( !empty( $_REQUEST[self::REQUEST_PROCESS])
-		  and $_REQUEST[self::REQUEST_PROCESS] == 'Authenticate'
-		  and ! empty($_REQUEST[self::REQUEST_TASK])
-		  and $_REQUEST[self::REQUEST_TASK] == 'CheckLogin'
+	$vv = filter_input_array (\INPUT_POST);
+	 if ( !empty( $vv[self::REQUEST_PROCESS])
+		  and $vv[self::REQUEST_PROCESS] == 'Authenticate'
+		  and ! empty($vv[self::REQUEST_TASK])
+		  and $vv[self::REQUEST_TASK] == 'CheckLogin'
 		 ) {
 		 	//Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login true');
 		 	return true;
@@ -235,7 +240,7 @@ class Resolver {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function AddHeader(){
+	protected function addHeader(){
 		$process ='Header';
 		$task = 'doWork';
 		$action = null;
@@ -245,7 +250,7 @@ class Resolver {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function AddFooter(){
+	protected function addFooter(){
 		$process ='Footer';
 		$task = 'doWork';
 		$action = null;
