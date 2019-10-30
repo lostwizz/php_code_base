@@ -102,7 +102,7 @@ class Resolver {
     *          - sets the last task as the footer - but errors before the footer might cause the footer to never be called
     * @since x.x.x
     *
-    * @return Rsponse Object - passes back up the food change any errors or successes
+    * @return Response Object - passes back up the food change any errors or successes
     */
    public function doWork(): Response {
 
