@@ -1,24 +1,31 @@
 <?php
 
-/**
+/** * ********************************************************************************************
  * resolver.class.php
+ *
+ * Summary (no period for file headers)
  *
  * @author mike.merrett@whitehorse.ca
  * @version 0.0.1
  * $Id$
  *
- * @description:
+ * Description. (use period)
  *
  *
+ * @link URL
+ *
+ * @package WordPress
+ * @subpackage Component
+ * @since x.x.x (when the file was introduced)
  *
  * @example path description
  * @see elementName
- * @since 1 Oct 2019
+ *
  * @todo Description
  *
  */
 //**********************************************************************************************
-//namespace whitehorse\MikesCommandAndControl2\Resolver;
+
 
 namespace php_base;
 
@@ -26,10 +33,21 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ * Summary.
+ *
+ * Description.
+ *
+ * @since 0.0.2
+ */
 class Resolver {
 
+   /**
+    * Summary.
+    *
+    * @since x.x.x (if available)
+    * @var type $var Description.
+    */
    const REQUEST_PROCESS = 'ACTION_PROCESS';
    const REQUEST_TASK = 'ACTION_TASK';
    const REQUEST_ACTION = 'ACTION_ACTION';
