@@ -88,6 +88,9 @@ class HeaderView extends View {
 			echo $this->giveTypeServerAndDatabase();
 			echo '</pre>';
 
+                        echo DIR;
+
+
 			if ( Settings::GetPublic('IS_DEBUGGING')) {
 				echo '<h1>We is Debugging!!! </h1><br>';
 			}
@@ -111,8 +114,10 @@ class HeaderView extends View {
 	//-----------------------------------------------------------------------------------------------
 	public function giveStyleSheets(){
 		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
-		return [ '..\static\css\message_stack_style.css',
-				 '..\static\css\general_style.css'
+echo             DIR . 'static\css\message_stack_style.css';
+
+		return [ DIR . 'static\css\message_stack_style.css',
+                        DIR . 'static\css\general_style.css'
 				];
 	}
 

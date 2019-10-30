@@ -1,20 +1,22 @@
 <?php
 //**********************************************************************************************
-//* index2.php
+//* index.php
 //*
 //* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
+//* @author mike.merrett@whitehorse.ca
+//* @version  0.0.1
+//* @since 12-Sep-19 M.Merrett - Created
+//* @category
 //*
-//* DESCRIPTION:
-//*       main entry point for the program
+//* @description:
 //*
-//* USAGE:
 //*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
+//* @example:
 //*
-//* TODO:
+//*
+//*
+//* @todo:
+//*
 //*
 //***********************************************************************************************************
 //***********************************************************************************************************
@@ -87,6 +89,10 @@ if (false) {
 	session_start();
 }
 
+$tt = new \php_base\UtilsmyNullAbsorber();
+$h = new \php_base\View\HeaderView($tt );
+$h->doWork($tt);
+
 if ( Settings::GetPublic('Use_MessageLog')){
 	$mLog = new MessageLog();
 	Settings::SetRunTime('MessageLog', $mLog);
@@ -96,6 +102,45 @@ if ( Settings::GetPublic('Use_MessageLog')){
 //************************************************************************************
 //************************************************************************************
 //************************************************************************************
+//
+/**
+ *
+ * Example_Class is a sample class for demonstrating PHPDoc
+ *
+ *  Example_Class is a class that has no real actual code, but merely
+ * exists to help provide people with an understanding as to how the
+ *  various PHPDoc tags are used.
+ *
+ *  Example usage:
+ *  if (Example_Class::example()) {
+ *     print "I am an example.";
+ *  }
+ *
+ * @package Example
+ * @author David Sklar
+ * @author Adam Trachtenberg
+ * @version $Revision: 1.3 $
+ * @access public
+ * @see http://www.example.com/pear
+ */
+// **
+// * @param type $sample
+// * @throws exception
+// *
+// * @param type $sample
+// * @throws exception
+//         class Example extends PEAR {
+//             returns the sample data
+//
+//             @param string $sample the sample data
+//             @return array all of the exciting sample options
+//             @access private
+//                      function _sampleMe($sample) { Any text following docstore.
+//
+// */
+
+//https://netbeans.org/kb/trails/php.html
+//
 //************************************************************************************
 //************************************************************************************
 //************************************************************************************
