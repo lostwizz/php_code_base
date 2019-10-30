@@ -6,26 +6,32 @@
  * Summary (no period for file headers)
  *
  * @author mike.merrett@whitehorse.ca
- * @version 0.0.1
+ * @version 0.5.0
  * $Id$
  *
- * Description. (use period)
+ * Description.
+ * this class handles the interaction between what the user enters and what the rest
+ *    of the server does - it handles the POST/GET responses and passes the Dispatcher
+ *    the Queue items. Process/Task/Action/Payload (PTAP)
  *
  *
  * @link URL
  *
- * @package WordPress
- * @subpackage Component
- * @since x.x.x (when the file was introduced)
+ * @package ModelViewController - Resolver
+ * @subpackage Resolver
+ * @since 0.3.0
  *
- * @example path description
+ * @example
+ *          // now start everything running
+ *               $resolver = new Resolver();
+ *                $response = $resolver->doWork();
+ *
  * @see elementName
  *
  * @todo Description
  *
  */
 //**********************************************************************************************
-
 
 namespace php_base;
 
@@ -34,7 +40,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 /** * **********************************************************************************************
- * Summary.
+ * takes the input and makes a process/task/action out of it and Dispatcher executes
  *
  * Description.
  *
@@ -43,58 +49,60 @@ use \php_base\Utils\Response as Response;
 class Resolver {
 
    /**
-    * Summary.
+    * the constants are used in the submit  and hidden html to know what things were passed.
     *
-    * @since x.x.x (if available)
-    * @var type $var Description.
+    * @since 0.0.2
+    * @var string REQUEST_PROCESS  the name used for passing the Process thru the input pages.
+    * @var string REQUEST_TASK  the name used for passing the Task thru the input pages.
+    * @var string REQUEST_ACTION  the name used for passing the Action thru the input pages.
+    * @var string REQUEST_PAYLOAD  passing the payload around to keep it available.
     */
    const REQUEST_PROCESS = 'ACTION_PROCESS';
    const REQUEST_TASK = 'ACTION_TASK';
    const REQUEST_ACTION = 'ACTION_ACTION';
    const REQUEST_PAYLOAD = 'ACTION_PAYLOAD';
 
-   public $dispatcher;
-   public $requestInfo;
+   /**
+    *
+    * @var string $process  holds the current process.
+    * @var string $task holds the current task.
+    * @var string $action holds the current action.
+    * @var string $payload holds the current payload.
+    */
    public $process = null;
    public $task = null;
    public $action = null;
    public $payload = null;
 
+   /**
+    *
+    * @var object of Dispatcher - the dispatcher instance need to send all the Process/Task/Action/Payload (PTAP) down to execute.
+    *
+    */
+   public $dispatcher;
+
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * object constructor.
     *
-    * Description.
+    * Creates a new Dispatcher object - which will execute the PTAP.
     *
-    * @since x.x.x
+    * @since 0.0.2
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
     */
    public function __construct() {
       $this->dispatcher = new Dispatcher();
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * doWork is the default method to use when calling this class object.
     *
-    * Description.
-    *
+    * sets up the initial PTAP to be run
+    *          - the first thing is always the MVCD for the Header
+    *          - the second thing is always verify the login in detail (or create a sign in page, or verify they are already logged on.
+    *          - sets the last task as the footer - but errors before the footer might cause the footer to never be called
     * @since x.x.x
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @return Rsponse Object - passes back up the food change any errors or successes
     */
    public function doWork(): Response {
 
@@ -109,7 +117,7 @@ class Resolver {
 
       $this->AddSetupUserRoleAndPermissions(); // after they have logged in now setup the user permissions
 
-      $this->decodeRequestinfo();
+      $this->decodeRequestInfo();
 
       $this->SetupDefaultController();    // this would usually be the menu starter
       // $r should be a ResponseClass
@@ -118,20 +126,14 @@ class Resolver {
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * StartDicpatch
     *
-    * Description.
+    * this is where the dispatcher gets called to run -- and any errors are passed back up the chain
     *
-    * @since x.x.x
+    * @since 0.0.2
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher Class
+    * @return Response Object - passes any success or failures up the chain
     */
    protected function startDispatch(): Response {
 
@@ -142,40 +144,23 @@ class Resolver {
          Settings::GetRuntimeObject('FileLog')->addNotice('resolver got:' . $r->toString());
          return $r;
       }
-////		if ($r[2]== false){
-////			//echo 'Post Queue failed? footer?';
-////			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on post' );
-////			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on post');
-////			return false;
-////		}
-////
-////		if ( $r[1] == false){
-////			//echo 'the dispach queue got a false';
-////			Settings::GetRunTimeObject('MessageLog')->addNotice( 'resolver got a false on dispatchQ' );
-////			Settings::GetRuntimeObject('FileLog')->addNotice( 'resolver got a false on dispatchQ');
-      //echo 'all seems good to the resolver';
+
       Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got a true');
       Settings::GetRuntimeObject('FileLog')->addNotice('resolver got a true');
       return $r;
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * setupDefaultController - if no PTAP is setup something outside the PRE or POST task then it will run this
+    *                            - usually a menu system would here
     *
-    * Description.
+    * creates and adds a PTAP to the dispatcher queue
     *
-    * @since x.x.x
+    * @since 0.0.3
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher
     */
-   protected function setupDefaultController() {
+   protected function setupDefaultController(): void {
       $process = 'TEST';
       $task = 'doWork';
       $action = null;
@@ -184,22 +169,15 @@ class Resolver {
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * decodeRequestInfo - take what was passed thru GET/POST and add it to the dispacher queue.
     *
-    * Description.
+    * takes any info passed back in a GET/POST and validates it then gets dispatcher to add it to a queue
     *
-    * @since x.x.x
+    * @since 0.0.2
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher
     */
-   public function decodeRequestinfo() {
+   public function decodeRequestInfo(): void {
 
       //$vv = filter_input(\INPUT_POST, 'REQUEST_PROCESS');
       $vv2 = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
@@ -211,30 +189,22 @@ class Resolver {
       $action = (!empty($vv2[self::REQUEST_ACTION])) ? $vv2[self::REQUEST_ACTION] : null;
       $payload = (!empty($vv2[self::REQUEST_PAYLOAD])) ? $vv2[self::REQUEST_PAYLOAD] : null;
 
+      /** if the GET/POST are not an Authenticate PTAP then do what they are */
       if (!( $process == 'Authenticate' and $task == 'CheckLogin' )) {
          $this->dispatcher->addProcess($process, $task, $action, $payload);
-      } else {
-         //already have an authenticate.checkLogin task - dont need another
       }
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * addSetupUserRoleAndPermissions - after a successful logon then setup the users permissions.
     *
-    * Description.
+    * causes a task to run which sets up the user permissions and gets dispatcher to add it to a queue
     *
-    * @since x.x.x
+    * @since 0.0.8
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher and UserRoleAndPermission classes
     */
-   protected function addSetupUserRoleAndPermissions() {
+   protected function addSetupUserRoleAndPermissions(): void {
       $process = 'UserRoleAndPermissions';
       $task = 'Setup';
       $action = null;
@@ -243,222 +213,52 @@ class Resolver {
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * addSetupAuthenticateCheck - always start with logged on check
     *
-    * Description.
+    *   always start with logged on check
+    *     now false cases -
+    *                nothing passed so show logon form
+    *                loggin on for the first time
+    *                sucessfull
+    *                unsucsessful
+    *  have already logged on and just check session? still good
+    * already logged in and timed out OR some other reason they should login again
     *
-    * @since x.x.x
+    * @since 0.0.6
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher
     */
-   // always start with logged on check
-   // now false cases -
-   // nothing passed so show logon form
-   //  loggin on for the first time
-   // sucessfull
-   // unsucsessful
-   // have already logged on and just check session? still good
-   // have already logged in and timed out OR some other reason they should login again
-   protected function addSetupAuthenticateCheck() {
-      $vv = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
+   protected function addSetupAuthenticateCheck(): void {
 
-      $payload = (!empty($vv[self::REQUEST_PAYLOAD])) ? $vv[self::REQUEST_PAYLOAD] : array();
       $process = 'Authenticate';
       $task = 'CheckLogin';
 
-      if ($this->hasNoPassedInfo()) {
+      $vv = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
+
+      if (empty($vv[self::REQUEST_ACTION])) {
          $action = 'Need_Login';
-         $payload = array_merge($payload, array('authAction' => $action));
-      } else if ($this->passingFirstTimeCredentials()) {
-         $action = 'do_the_logon_attempt';
-         $payload = array_merge($payload, array('authAction' => $action));
-      } else if ($this->passingOngoingDetails()) {
-         $action = 'Check_Ongoing_Connection';
-         $payload = array_merge($payload, array('authAction' => $action));
-      } else if ($this->isChangePasswordRequest()) {
-
-      } else if ($this->isForgotPasswordRequest()) {
-
-      } else if ($this->isSignupRequest()) {
-
       } else {
-         $action = 'no_Credentials';
-         $payload = array_merge($payload, array('authAction' => $action));
+         $action = \str_replace(' ', '_', $vv[self::REQUEST_ACTION]);/** dont want spaces in the action name (methods cant have a space) so make them an Underline */
       }
+
+      $payload = (!empty($vv[self::REQUEST_PAYLOAD])) ? $vv[self::REQUEST_PAYLOAD] : array();
+      if (!empty($action)) {
+         $payload = \array_merge($payload, array('authAction' => $action));
+      }
+
       $this->dispatcher->addPREProcess($process, $task, $action, $payload);
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * addHeader - outputs the header - including html version style sheets java script etc.
     *
-    * Description.
+    * adds the header to the PRE Dispatcher queue
     *
-    * @since x.x.x
+    * @since 0.0.7
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher HeaderController
     */
-   function isChangePasswordRequest() {
-      return false;
-   }
-
-   /** -----------------------------------------------------------------------------------------------
-    * Summary.
-    *
-    * Description.
-    *
-    * @since x.x.x
-    *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
-    */
-   function isForgotPasswordRequest() {
-      return false;
-   }
-
-   /** -----------------------------------------------------------------------------------------------
-    * Summary.
-    *
-    * Description.
-    *
-    * @since x.x.x
-    *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
-    */
-   function isSignupRequest() {
-      return false;
-   }
-
-   /** -----------------------------------------------------------------------------------------------
-    * Summary.
-    *
-    * Description.
-    *
-    * @since x.x.x
-    *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
-    */
-   function hasNoPassedInfo() {
-      $vv = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
-      if (empty($vv[self::REQUEST_PROCESS])) {
-         return true;
-      }
-      return false;
-   }
-
-   /** -----------------------------------------------------------------------------------------------
-    * Summary.
-    *
-    * Description.
-    *
-    * @since x.x.x
-    *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
-    */
-   protected function passingOngoingDetails() {
-      $vv = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
-      if (!empty($vv)
-              and ! empty($vv['payload'])
-              and ! empty($vv['payload']['credentials'])
-              and ! empty($vv['payload']['credentials']['username'])) {
-
-         //////////!!!!!! and anything else that needs to be passes in an ongoin session - maybe session id?
-         //Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details true');
-         return true;
-      } else {
-         //Settings::GetRunTimeObject('MessageLog')->addNotice('ongoing details false');
-         return false;
-      }
-   }
-
-   /** -----------------------------------------------------------------------------------------------
-    * Summary.
-    *
-    * Description.
-    *
-    * @since x.x.x
-    *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
-    */
-   protected function passingFirstTimeCredentials() {
-      $vv = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
-      if (!empty($vv[self::REQUEST_PROCESS])
-              and $vv[self::REQUEST_PROCESS] == 'Authenticate'
-              and ! empty($vv[self::REQUEST_TASK])
-              and $vv[self::REQUEST_TASK] == 'CheckLogin'
-      ) {
-         //Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login true');
-         return true;
-      } else {
-         //Settings::GetRunTimeObject('MessageLog')->addNotice('firsttime login false');
-         return false;
-      }
-   }
-
-   /** -----------------------------------------------------------------------------------------------
-    * Summary.
-    *
-    * Description.
-    *
-    * @since x.x.x
-    *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
-    */
-   protected function addHeader() {
+   protected function addHeader(): void {
       $process = 'Header';
       $task = 'doWork';
       $action = null;
@@ -468,22 +268,16 @@ class Resolver {
    }
 
    /** -----------------------------------------------------------------------------------------------
-    * Summary.
+    * addFooter - adds the footer PTAP to the dispatch post queue
     *
-    * Description.
+    * adds footer to the dispatcher post queue
     *
-    * @since x.x.x
+    * @since 0.0.5
     *
-    * @see Function/method/class relied on
-    * @link URL
-    * @global type $varname Description.
-    * @global type $varname Description.
-    *
-    * @param type $var Description.
-    * @param type $var Optional. Description. Default.
-    * @return type Description.
+    * @see Dispatcher FooterController
+
     */
-   protected function addFooter() {
+   protected function addFooter(): void {
       $process = 'Footer';
       $task = 'doWork';
       $action = null;
