@@ -339,7 +339,7 @@ abstract class Dump {
 		list($fn, $lineNum) = BackTraceProcessor::ExtractCallingLine($bt);
 		$data->fileName = $fn;
 		$data->lineNum = $lineNum;
-		$data->serverName = $_SERVER['SERVER_NAME'];
+		$data->serverName = empty($_SERVER['SERVER_NAME']) ? 'aunknoen' : $_SERVER['SERVER_NAME'];
 		$codeLine = BackTraceProcessor::ExtractCodeLine( $fn, $lineNum);
 		$data->codeLine = $codeLine;
 		$varName = self::ExtractVariableName( $obj, $codeLine);

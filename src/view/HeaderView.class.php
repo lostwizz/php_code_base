@@ -114,10 +114,9 @@ class HeaderView extends View {
 	//-----------------------------------------------------------------------------------------------
 	public function giveStyleSheets(){
 		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
-echo             DIR . 'static\css\message_stack_style.css';
 
-		return [ DIR . 'static\css\message_stack_style.css',
-                        DIR . 'static\css\general_style.css'
+		return [  'static\css\message_stack_style.css',
+                         'static\css\general_style.css'
 				];
 	}
 

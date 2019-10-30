@@ -156,7 +156,7 @@ if (Settings::GetPublic( 'Use_EmailLog')) {
 	$handler = new NativeMailerHandler(
 	                'mike.merrett@whitehorse.ca',
 	                'System Error in ' . Settings::GetPublic('App Name'),
-	                Settings::GetPublic('App Name') . '@'. $_SERVER['SERVER_NAME'] ,
+	                Settings::GetPublic('App Name') . '@'. (empty($_SERVER['SERVER_NAME']) ? 'aunknoen' : $_SERVER['SERVER_NAME'] ) ,
 			);
 
 	$handler->setContentType('text/html' );
