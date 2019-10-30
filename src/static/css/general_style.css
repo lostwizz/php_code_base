@@ -14,8 +14,8 @@ body {
 	background-color: #A6EAF9;
 	background-size: cover;
 	text-align: center;
-	/*height: 30px;*/
-	}
+   height: 30px;
+}
 */
 
 
@@ -73,7 +73,7 @@ body {
 }
 
 .pre_debug_queue {
-	color: ;violet;
+	color: violet;
 	background-color: LightGreen;
 	font-size: 12pt;
 
@@ -283,84 +283,6 @@ body {
 .td_role_maintenance_ptf {
 	border: 1px solid navy;
 	}
-
-//a:link {
-//		color: blue;
-//		background-color: #FFFDCC
-//	}
-//a:visited {
-//		color: purplez ;
-//		background-color: #FFFDCC
-//	}
-//A:hover { background: cyan }
-
-//.td_odd {
-//				text-align: left;
-//				background-color: #D8D8D8;
-//		}
-//.td_even {
-//				text-align: left;
-//				background-color: #F5F5F5;
-//		}
-
-//
-//.tabs {
-///*	width: 750px;*/
-//	margin: 10px;
-//}
-
-
-//.tab_active {
-//	-moz-border-radius: 5px 5px 0px 0px;
-///*	border-color: #D2CE82;
-//	border-width: 1px;
-//	border-style: solid;
-//*/	background-color: #CE393E;
-//	color: #000000;
-///*	float: left;*/
-///*	width: 150px;*/
-//	cursor: default;
-//	font-weight: bold;
-//	padding: 2px;
-//	font-size: 14pt;
-//	/*text-align: left;*/
-//}
-
-//.tab_inactive {
-//	-moz-border-radius: 5px 5px 0px 0px;
-///*	border-color: #000000;
-//	border-style: solid;
-//	border-width: 1px;
-//*/	background-color: #B1DAA7;
-//	color: #777777;
-///*	float: left;*/
-///*	width: 150px;*/
-//	cursor: default;
-//	padding: 2px;
-//	font-size: 14pt;
-//	/*text-align: left;*/
-//}
-
-//.secondary {
-//	background-color: #B1DAA7;
-//	padding: 2px;
-//	font-size: 10pt;
-//}
-
-//.tab_content {
-//	-moz-border-radius: 0px 10px 10px 10px;
-///*	width: 90%;
-//	border-color: #aaaaaa;
-//	border-style: solid;
-//	border-width: 1px;
-//	color: #000000;
-//	float: left;
-//	text-align: left;
-//	padding: 10px;
-//	*/
-//}
-
-
 
 
 .menu_fieldset {
@@ -628,83 +550,6 @@ body {
 	border: 1px solid navy;
 	}
 
-//a:link {
-//		color: blue;
-//		background-color: #FFFDCC
-//	}
-//a:visited {
-//		color: purplez ;
-//		background-color: #FFFDCC
-//	}
-//A:hover { background: cyan }
-
-//.td_odd {
-//				text-align: left;
-//				background-color: #D8D8D8;
-//		}
-//.td_even {
-//				text-align: left;
-//				background-color: #F5F5F5;
-//		}
-
-//
-//.tabs {
-///*	width: 750px;*/
-//	margin: 10px;
-//}
-
-
-//.tab_active {
-//	-moz-border-radius: 5px 5px 0px 0px;
-///*	border-color: #D2CE82;
-//	border-width: 1px;
-//	border-style: solid;
-//*/	background-color: #CE393E;
-//	color: #000000;
-///*	float: left;*/
-///*	width: 150px;*/
-//	cursor: default;
-//	font-weight: bold;
-//	padding: 2px;
-//	font-size: 14pt;
-//	/*text-align: left;*/
-//}
-
-//.tab_inactive {
-//	-moz-border-radius: 5px 5px 0px 0px;
-///*	border-color: #000000;
-//	border-style: solid;
-//	border-width: 1px;
-//*/	background-color: #B1DAA7;
-//	color: #777777;
-///*	float: left;*/
-///*	width: 150px;*/
-//	cursor: default;
-//	padding: 2px;
-//	font-size: 14pt;
-//	/*text-align: left;*/
-//}
-
-//.secondary {
-//	background-color: #B1DAA7;
-//	padding: 2px;
-//	font-size: 10pt;
-//}
-
-//.tab_content {
-//	-moz-border-radius: 0px 10px 10px 10px;
-///*	width: 90%;
-//	border-color: #aaaaaa;
-//	border-style: solid;
-//	border-width: 1px;
-//	color: #000000;
-//	float: left;
-//	text-align: left;
-//	padding: 10px;
-//	*/
-//}
-
-
 
 
 .menu_fieldset {
@@ -715,7 +560,7 @@ body {
 
 .menu_table {
 	border: 1px solid navy;
-	width: "100%";
+	width: 100%;
 	background-color:#8080C0
 
 	/*background-color:#FF0000
@@ -974,83 +819,6 @@ header_td_app_name {
 	border: 1px solid navy;
 	}
 
-//a:link {
-//		color: blue;
-//		background-color: #FFFDCC
-//	}
-//a:visited {
-//		color: purplez ;
-//		background-color: #FFFDCC
-//	}
-//A:hover { background: cyan }
-
-//.td_odd {
-//				text-align: left;
-//				background-color: #D8D8D8;
-//		}
-//.td_even {
-//				text-align: left;
-//				background-color: #F5F5F5;
-//		}
-
-//
-//.tabs {
-///*	width: 750px;*/
-//	margin: 10px;
-//}
-
-
-//.tab_active {
-//	-moz-border-radius: 5px 5px 0px 0px;
-///*	border-color: #D2CE82;
-//	border-width: 1px;
-//	border-style: solid;
-//*/	background-color: #CE393E;
-//	color: #000000;
-///*	float: left;*/
-///*	width: 150px;*/
-//	cursor: default;
-//	font-weight: bold;
-//	padding: 2px;
-//	font-size: 14pt;
-//	/*text-align: left;*/
-//}
-
-//.tab_inactive {
-//	-moz-border-radius: 5px 5px 0px 0px;
-///*	border-color: #000000;
-//	border-style: solid;
-//	border-width: 1px;
-//*/	background-color: #B1DAA7;
-//	color: #777777;
-///*	float: left;*/
-///*	width: 150px;*/
-//	cursor: default;
-//	padding: 2px;
-//	font-size: 14pt;
-//	/*text-align: left;*/
-//}
-
-//.secondary {
-//	background-color: #B1DAA7;
-//	padding: 2px;
-//	font-size: 10pt;
-//}
-
-//.tab_content {
-//	-moz-border-radius: 0px 10px 10px 10px;
-///*	width: 90%;
-//	border-color: #aaaaaa;
-//	border-style: solid;
-//	border-width: 1px;
-//	color: #000000;
-//	float: left;
-//	text-align: left;
-//	padding: 10px;
-//	*/
-//}
-
-
 
 
 .menu_fieldset {
@@ -1061,7 +829,7 @@ header_td_app_name {
 
 .menu_table {
 	border: 1px solid navy;
-	width: "100%";
+	width: 100%;
 	background-color:#8080C0
 
 	/*background-color:#FF0000
