@@ -29,13 +29,13 @@ use \php_base\Utils\Dump\Dump as Dump;
 //***********************************************************************************************
 class MenuController extends Controller {
 	public $process;
-	publci $task;
+	public $task;
 
 	public $action;
 	public $payload;
 
 	//-----------------------------------------------------------------------------------------------
-	public function __construct($action='', $payload = null) {
+	public function __construct( string $passedAction = '', $passedPayload = null) {
 		//$this->model = new \php_base\model\AuthenticateModel($this);
 		//$this->data = new \php_base\data\AuthenticateData($this);
 		$this->view = new \php_base\view\AuthenticateView($this);
