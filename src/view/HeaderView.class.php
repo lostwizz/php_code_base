@@ -20,125 +20,182 @@
 
 namespace php_base\View;
 
-
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
-
-
 use \php_base\Utils\HTML\HTML as HTML;
 
 //***********************************************************************************************
 //***********************************************************************************************
+/**
+ *
+ */
 class HeaderView extends View {
-
 //	//-----------------------------------------------------------------------------------------------
 //	public function __construct($controller) {
 //	}
+//
 
-	//-----------------------------------------------------------------------------------------------
-	public function doWork( $parent =null) : Response{
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @param type $parent
+    * @return Response
+    */
+   public function doWork($parent = null): Response {
 
-		if ( ! Settings::GetRuntime('Surpress_Output')){  // probably because we are printing
-			echo HTML::DocType(/* 'html5'*/ 'html4-trans' ) ;
-			?>
-				<html>
-					<head>
-						<title><?php echo $this->giveTitle();?></title>
-						<meta http-equiv="content-type" content="text/html; charset=utf-8">
-						<?php
-							$ar = $this->giveStyleSheets();
-							foreach( $ar as $styleUrl){
-								echo '<link rel="stylesheet" href="' ;
-								echo $styleUrl;
-								echo '">' . PHP_EOL;
-							}
-							$ar = $this->giveJavaScriptFiles();
-							foreach( $ar as $javaScriptUrl){
-								require_once( $javaScriptUrl);
-							}
-						?>
-					</head>
-				</html>
-				<body>
-					<table class="header_table" >
-						<tr>
-							<td class="header_td_app_name">
-								<h1 >
-									<?php
-										echo $this->giveTitle(true);
-									?>
-								</h1>
-							</td>
-							<td class="header_td_middle_box">
-							</td>
-							<td class="header_td_version">
+      if (!Settings::GetRuntime('Surpress_Output')) {  // probably because we are printing
+         $this->showHTMLHeader();
+         ?>
+         <body>
+            <?php
+            $this->showPageHeadTable();
+            $this->showSubTitle();
 
-							</td>
+            if (Settings::GetPublic('IS_DEBUGGING')) {
+               echo '<h1>We is Debugging!!! </h1><br>';
+            }
+         }
+         //return new Response('ok', 0, true);
+         return Response::NoError();
+      }
 
-						</tr>
-					</table>
-			<?php
-				//class="header_h1"
-				//echo date('r') ;
-			echo '<pre class="pre_version">';
-			echo 'Version:';
-			echo $this->giveVersion();
-			echo ' ';
-			echo $this->giveTypeServerAndDatabase();
-			echo '</pre>';
+      /** -----------------------------------------------------------------------------------------------
+       *
+       */
+      protected function showHTMLHeader() {
+         echo HTML::DocType(/* 'html5' */ 'html4-trans');
+         ?>
+      <html>
+         <head>
+            <title>
+               <?php
+               echo $this->giveTitle();
+               ?>
+            </title>
+            <meta http-equiv="content-type" content="text/html; charset=utf-8">
+            <?php
+            $this->showAllStyleSheets();
+            $this->showAllJavaScriptFiles();
+            ?>
+         </head>
+      </html>
+      <?php
+   }
 
-                        echo DIR;
+   /** -----------------------------------------------------------------------------------------------
+    *
+    */
+   protected function showAllStyleSheets() {
+      $arCss = $this->giveStyleSheets();
+      foreach ($arCss as $styleUrl) {
+         echo '<link rel="stylesheet" href="';
+         echo $styleUrl;
+         echo '">' . PHP_EOL;
+      }
+   }
 
+   /** -----------------------------------------------------------------------------------------------
+    *
+    */
+   protected function showAllJavaScriptFiles() {
+      $arJava = $this->giveJavaScriptFiles();
+      foreach ($arJava as $javaScriptUrl) {
+         require_once( $javaScriptUrl);
+      }
+   }
 
-			if ( Settings::GetPublic('IS_DEBUGGING')) {
-				echo '<h1>We is Debugging!!! </h1><br>';
-			}
-		}
-		//return new Response('ok', 0, true);
-		return Response::NoError();
-	}
+   /** -----------------------------------------------------------------------------------------------
+    *
+    */
+   protected function showPageHeadTable() {
+      ?>
+      <table class="header_table" >
+         <tr>
+            <td class="header_td_app_name">
+               <h1 >
+                  <?php
+                  echo $this->giveTitle(true);
+                  ?>
+               </h1>
+            </td>
+            <td class="header_td_middle_box">
+            </td>
+            <td class="header_td_version">
 
-	//-----------------------------------------------------------------------------------------------
-	public function giveTitle( $short = false){
-		$out =  Settings::GetPublic( 'App Name');
-		if( ! $short){
-			$out .= ' - '
-					. Settings::GetPublic( 'App Version')
-					. ' on '
-					. Settings::GetPublic( 'App Server');
-		}
-		return $out;
-	}
+            </td>
 
-	//-----------------------------------------------------------------------------------------------
-	public function giveStyleSheets(){
-		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
+         </tr>
+      </table>
+      <?php
+   }
 
-		return [  'static\css\message_stack_style.css',
-                         'static\css\general_style.css'
-				];
-	}
+   /** -----------------------------------------------------------------------------------------------
+    *
+    */
+   protected function showSubTitle() {
+      //class="header_h1"
+      //echo date('r') ;
+      echo '<pre class="pre_version">';
+      echo 'Version:';
+      echo $this->giveVersion();
+      echo ' ';
+      echo $this->giveTypeServerAndDatabase();
+      echo '</pre>';
+   }
 
-	//-----------------------------------------------------------------------------------------------
-	public function giveJavaScriptFiles(){
-		return [
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @param type $short
+    * @return string
+    */
+   public function giveTitle($short = false) {
+      $out = Settings::GetPublic('App Name');
+      if (!$short) {
+         $out .= ' - '
+                 . Settings::GetPublic('App Version')
+                 . ' on '
+                 . Settings::GetPublic('App Server');
+      }
+      return $out;
+   }
 
-			];
-	}
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @return type
+    */
+   public function giveStyleSheets() {
+      //<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
 
-	//-----------------------------------------------------------------------------------------------
-	public function giveVersion() {
-		return Settings::GetPublic( 'App Version');
-	}
+      return ['static\css\message_stack_style.css',
+         'static\css\general_style.css'
+      ];
+   }
 
-	//-----------------------------------------------------------------------------------------------
-	public function giveTypeServerAndDatabase(){
-		return 'Database: ' . Settings::GetProtected('DB_Type')
-				. ' On: ' . Settings::GetProtected('DB_Server')
-				. ' Using: ' . Settings::GetProtected('DB_Database');
-	}
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @return type
+    */
+   public function giveJavaScriptFiles() {
+      return [
+      ];
+   }
 
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @return type
+    */
+   public function giveVersion() {
+      return Settings::GetPublic('App Version');
+   }
 
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @return type
+    */
+   public function giveTypeServerAndDatabase() {
+      return 'Database: ' . Settings::GetProtected('DB_Type')
+              . ' On: ' . Settings::GetProtected('DB_Server')
+              . ' Using: ' . Settings::GetProtected('DB_Database');
+   }
 
 }

@@ -28,11 +28,17 @@ abstract class View{
 
     public $controller;
 
-		//-----------------------------------------------------------------------------------------------
+   /** -----------------------------------------------------------------------------------------------
+    *
+     * @param type $controller
+     */
 	public function __construct($controller) {
 		$this->controller = $controller;
 	}
 
+    /** -----------------------------------------------------------------------------------------------
+    *
+    */
 	abstract public function doWork( $parent = null) : Response ;
 
 }

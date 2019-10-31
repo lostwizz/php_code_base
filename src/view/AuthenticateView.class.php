@@ -57,14 +57,17 @@ class AuthenticateView extends View {
 //	public function __construct($controller) {
 //		$this->controller = $controller;
 //	}
-   //-----------------------------------------------------------------------------------------------
+
+   /** -----------------------------------------------------------------------------------------------
+    *
+    * @param type $data
+    * @return Response
+    */
    public function doWork($data = null): Response {
       return true;
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+   /** -----------------------------------------------------------------------------------------------
     *
     * @return Response
     */
@@ -90,11 +93,21 @@ class AuthenticateView extends View {
 
       echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
 
-
       echo '<center>';
       echo 'Logon Form for ', Settings::GetPublic('App Name');
       echo '</center>';
-      ?> <table border=1 align=center>
+
+      $this->showLoginBox();
+      echo HTML::FormClose();
+      return new Response('ok', 0, true);
+   }
+
+   /** -----------------------------------------------------------------------------------------------
+    *
+    */
+   protected function showLoginBox() {
+      ?>
+      <table border=1 align=center>
          <tr>
             <td>Username: </td>
             <td colspan=2><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array('maxlength' => 30, 'size' => 30)); ?></td>
@@ -107,12 +120,9 @@ class AuthenticateView extends View {
             <td><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Change Password'); ?></td>
             <td><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Add New Account'); ?></td>
             <td><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Forgot Password'); ?></td>
-
          </tr>
       </table>
       <?php
-      echo HTML::FormClose();
-      return new Response('ok', 0, true);
    }
 
 }

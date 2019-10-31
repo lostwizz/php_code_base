@@ -164,7 +164,7 @@ if (Settings::GetPublic('Use_MessageLog')) {
 // now start everything running
    $resolver = new Resolver();
    $response = $resolver->doWork();
-   //-------------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------
 
    if ($response->hadFatalError() and $response->failNoisily()) {
       echo '<h2 class="responseError" >' . PHP_EOL;
