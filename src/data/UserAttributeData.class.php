@@ -21,18 +21,18 @@
 
 namespace php_base\data;
 
-
-use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
-use \php_base\Utils\Response as Response;
-
 use \php_base\Utils\myUtils as myUtils;
+use \php_base\Utils\myDBUtils as myDBUtils;
+
+use \php_base\Utils\Response as Response;
+use \php_base\Utils\Settings as Settings;
 
 //***********************************************************************************************
 //***********************************************************************************************
 class UserAttributeData  extends data{
 
-	public $UserAttributes;
+	public $UserAttributes= [];
 	public $roleNames =[];
 
 	//-----------------------------------------------------------------------------------------------
@@ -68,7 +68,6 @@ class UserAttributeData  extends data{
 			 	and !in_array($record['ATTRIBUTEVALUE'] , $this->roleNames)){
 
 			 		$this->roleNames[] = $record['ATTRIBUTEVALUE'];
-
 			 	}
 			} else {
 				$this->UserAttributes[$record['ATTRIBUTENAME']] = $record['ATTRIBUTEVALUE'];
@@ -98,25 +97,19 @@ class UserAttributeData  extends data{
 ////5	1	SecondaryRole	Clerk
 ////6	1	SecondaryRole	ViewOnly
 	protected function doReadFromDatabase($userID) {
+
 		try {
 			$sql = 'SELECT Id
 						,UserId
 						,AttributeName
 						,AttributeValue
 					FROM ' .  Settings::GetProtected( 'DB_Table_UserAttributes')
-					. ' WHERE  UserId = ?';
+					. ' WHERE  UserId = :userid';
 
-			$conn = myUtils::setup_PDO();
-	  		$stmt = $conn->prepare($sql);
-
-			$app = Settings::GetPublic( 'UserId');
-	  		$stmt->bindParam(1, $userID, \PDO::PARAM_INT);
-
-	  		$stmt->execute();
-	  		$data = $stmt->fetchAll();
+			$params = array( ':userid' =>$userID);
+			$data = myDBUtils::doDBSelectMulti($sql, $params) ;
 
 			$this->ProcessAttributes( $data);
-
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());
 		} catch (\Exception $e){

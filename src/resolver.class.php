@@ -286,3 +286,5 @@ class Resolver {
 	}
 
 }
+
+color: #FFD700;

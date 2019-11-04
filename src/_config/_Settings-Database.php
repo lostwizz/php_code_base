@@ -13,6 +13,7 @@ Settings::SetProtected( 'DB_Table_UserManager', 'Users' );
 Settings::SetProtected( 'DB_Table_RoleManager', 'Roles' );
 Settings::SetProtected( 'DB_Table_PermissionsManager', 'RolePermissions' );
 Settings::SetProtected( 'DB_Table_UserAttributes', 'UserAttributes' );
+Settings::SetProtected( 'DB_Table_Settings', 'Settings');
 
 
 

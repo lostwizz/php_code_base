@@ -50,6 +50,8 @@ use Monolog\Processor\ProcessIdProcessor;
 use Monolog\Formatter\EmailHtmlFormatter;
 
 use \php_base\Utils\myUtils as myUtils;
+use \php_base\Utils\myDBUtils as myDBUtils;
+
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
@@ -71,9 +73,7 @@ $log_fn = Settings::GetPublic('Log_file' );
 if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 
 	/// setup database link
-	//$conn  = setup_PDO();
-	$conn = myUtils::setup_PDO();
-//Dump::dump( $pdo);
+	$conn = myDBUtils::setupPDO();
 
 	if (Settings::GetPublic( 'Use_DBLog')) {
 

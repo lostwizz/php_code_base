@@ -36,7 +36,7 @@ class PDOHandler extends AbstractProcessingHandler
 	private $tableName;
 
 
-	public function	__construct(PDO	$pdo, $level = Logger::DEBUG, bool $bubble = true, string $tableName ='')
+	public function	__construct(\PDO	$pdo, $level = Logger::DEBUG, bool $bubble = true, string $tableName ='')
 	{
 		$this->pdo = $pdo;
 		parent::__construct($level,	$bubble);

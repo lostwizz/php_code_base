@@ -30,6 +30,8 @@ use \php_base\Utils\myCryption\myCryption as myCryption;
 
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\myNullAbsorber as myNullAbsorber;
+use \php_base\Utils\myDBUtils as myDBUtils;
+
 
 
 //Dump::dump(require_once(DIR . 'utils' . DS . 'myNullAbsorber.class.php'));
@@ -287,6 +289,170 @@ abstract class Settings
 		}
 	}
 
+
+
+
+//CREATE TABLE [dbo].[Settings](
+//	[id] [bigint] NOT NULL,
+//	[App] [varchar](50) NOT NULL,
+//	[SettingName] [varchar](50) NULL,
+//	[SettingValue] [varchar](max) NULL,
+//	[SettingTypeHint] [varchar](50) NULL,
+//	[Category] [varchar](50) NULL,
+//	[TimeStamp] [datetime] NULL,
+//	[is_active] [int] NULL,
+// CONSTRAINT [PK_Settings] PRIMARY KEY CLUSTERED
+//(
+//	[id] ASC
+//)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 100) ON [PRIMARY]
+//) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+//GO
+//
+//ALTER TABLE [dbo].[Settings] ADD  CONSTRAINT [DF_Table_1_timestamp]  DEFAULT (getdate()) FOR [TimeStamp]
+//GO
+//
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $updatePublic
+	 * @param bool $updateProtected
+	 */
+	public static function dbReadAndApplySettings(bool $updatePublic = true, bool $updateProtected = true) {
+
+//		echo '<pre>';
+//		echo self::dump(true);
+//		echo '</pre>';
+
+
+		$data = self::doTableRead();
+		self::ProcessReadSettings($data);
+
+//		echo '<pre>';
+//		echo self::dump(true);
+//		echo '</pre>';
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 */
+	protected static function ProcessReadSettings($data) {
+		foreach ($data as $item) {
+			$val = self::processReadTypeHint($item);
+
+			switch ($item['CATEGORY']) {
+				case 'Public':
+					self::SetPublic($item['SETTINGNAME'], $val);
+					break;
+				case 'Protected':
+					self::SetProtected($item['SETTINGNAME'], $val);
+					break;
+				default:
+					break;  // do nothing
+			}
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $item
+	 * @return boolean
+	 */
+	protected static function processReadTypeHint($item) {
+		switch (strtolower($item['SETTINGTYPEHINT'])) {
+			case 'bool':
+				if ($item['SETTINGVALUE'] == '-True-' ){
+					return true;
+				} else {
+					return false;
+				}
+			case 'array':
+				return unserialize($item['SETTINGVALUE']);
+			case 'string':
+			default:
+				return $item['SETTINGVALUE'];
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	protected static function doTableRead() {
+		$sql = 'SELECT id, app, SettingName, SettingValue, SettingTypeHint, Category, TimeStamp, is_active'
+				  . ' FROM ' . Settings::GetProtected('DB_Table_Settings')
+				  . " WHERE App = '" . Settings::GetPublic('App Name') . "'"
+				  . " AND is_active = '1' "
+		;
+		$data = myDBUtils::doDBSelectMulti($sql);
+		return $data;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function dbWriteSettings(bool $writePublic = true, bool $writeProtected = false) {
+		if ($writePublic) {
+			self::doTableWrite(self::$public);
+		}
+		if ($writeProtected) {
+			self::doTableWrite(self::$protected);
+		}
+	}
+
+
+	//-----------------------------------------------------------------------------------------------
+	protected static function doTableWrite(array $ar, $witch= 'Public') {
+		foreach($ar as $key=>$value) {
+			if (self::checkExistsInDB($key) ){
+				self::UpdateOne($key, $value, $which);
+			} else {
+				self::InsertOne( $key, $value, $which);
+			}
+		}
+		myDBUtils::EndWriteOne();
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected static function checkExistsInDB( $key){
+		return false;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	protected static function InsertOne($k, $v, $which ){
+		$sql = 'INSERT INTO ' . Settings::getProtected( 'DB_Table_Settings')
+				  . ' (App, SettingName, SettingValue, SettingTypeHint, Category, is_active ) '
+				  . ' Values '
+				  . '( :app, :name, :value :hint, :cat, :active )'
+				  ;
+
+		$valueAndHints = self::processWriteTypeHint( $v);
+		$params = array( ':app' => Settings::GetPublic('App Name'),
+								':name' => $k,
+								':value' => $valueAndHints[0],
+								':hint' => $valueAndHints[1],
+								':cat' => $which,
+								':active' => 1
+										);
+
+
+		myDBUtils::BeginWriteOne($sql);
+		myDBUtils::WriteOne($sql);
+
+	}
+
+	//-----------------------------------------------------------------------------------------------
+		protected static function processWriteTypeHint( $v){
+		if (is_array($v)){
+			return array( 'array', \serialize($v));
+		}
+		if (is_bool($v)){
+			$b = $v ? '-True-' : '-False-' ;
+			return array('bool', $b);
+		}
+		return array('string', $v);
+	}
+
+
+}
 //////	//-----------------------------------------------------------------------------------------------
 //////	public static function  onlyKeysINIRestore($fn, $listOfKeys,  $method =self::INI_RESTORE_OVERWRITE){
 //////		if (is_array($listOfKeys)) {
@@ -308,7 +474,6 @@ abstract class Settings
 //////		}
 //////	}
 
-}
 
 
 

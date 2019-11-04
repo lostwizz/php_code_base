@@ -30,6 +30,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 use \php_base\Utils\myUtils as myUtils;
+use \php_base\Utils\myDBUtils as myDBUtils;
+
 
 
 //***********************************************************************************************
@@ -62,9 +64,6 @@ Class UserRoleData  extends Data {
 	//-----------------------------------------------------------------------------------------------
 	protected function doReadFromDatabase($ArrayOfNames) {
 		$names = "'" . implode( "', '", $ArrayOfNames) ."'";
-
-//dump::dump($names);
-
 		try {
 			$sql = 'SELECT RoleId
 						,Name
@@ -73,16 +72,10 @@ Class UserRoleData  extends Data {
 					. $names
 					. ')';
 
-			$conn = myUtils::setup_PDO();
-	  		$stmt = $conn->prepare($sql);
-
-			$app = Settings::GetPublic( 'RoleId');
-	  		$stmt->bindParam(1, $userID, \PDO::PARAM_INT);
-	  		$stmt->execute();
-	  		$data = $stmt->fetchAll();
+			$params = null; ///array(Settings::GetPublic( 'RoleId') );
+			$data = myDBUtils::doDBSelectMulti($sql, $params);
 
 	  		$this->ProcessRoleIDs($data);
-
 
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());

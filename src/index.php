@@ -73,6 +73,14 @@ include_once( DIR . 'utils' . DS . 'ErrorHandler.php');           // has to be a
 Settings::SetPublic('Log_file', DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log');
 include_once( DIR . 'utils' . DS . 'Setup_Logging.php');
 
+
+
+//echo serialize(array('fred'=>'johnny', 'bob'=> 'house'));
+
+
+Settings::GetRunTimeObject('MessageLog')->addNotice('Starting read from db settings');
+Settings::dbReadAndApplySettings();
+
 Settings::SetPublic('TEST that All is well', 'YES');
 
 

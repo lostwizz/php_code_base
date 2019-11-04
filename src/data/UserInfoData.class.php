@@ -26,6 +26,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 use \php_base\Utils\myUtils as myUtils;
+use \php_base\Utils\myDBUtils as myDBUtils;
 
 
 
@@ -69,13 +70,20 @@ class UserInfoData extends data {
 	protected function doReadFromDatabase($username) {
 		try {
 			$sql = 'SELECT  UserId
+						,method
+						,username
+						,password
 						,PrimaryRoleName
 						,ip
 						,last_logon_time
 					FROM ' .  Settings::GetProtected( 'DB_Table_UserManager')
-					. ' WHERE  app = ? AND username = ?';
+					. ' WHERE  app = :app AND username = :uname ';
 
-			$conn = myUtils::setup_PDO();
+			$params = array(  ':app' => Settings::GetPublic('App Name'),
+									':uname' => strtolower($username)
+				 );
+
+			$conn = myDBUtils::setupPDO();
 	  		$stmt = $conn->prepare($sql);
 
 			$app = Settings::GetPublic( 'App Name');
@@ -91,6 +99,7 @@ class UserInfoData extends data {
 			} else {
 				throw new \Exception('Bad Data Rows Returned', -4);
 			}
+
 
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());

@@ -851,3 +851,10 @@ header_td_app_name {
 
 .menu_buttons {
 	}
+
+
+
+	.UserStateDump{
+		color: blueviolet;
+		background-color: wheat;
+	}

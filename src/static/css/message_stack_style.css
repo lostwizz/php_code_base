@@ -53,6 +53,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 
 .msg_style_CRITICAL {
 	color: #FFD700;
+	background: black;
 	}
 
 .msg_style_ALERT {

@@ -64,35 +64,5 @@ abstract Class myUtils {
 
 	//-----------------------------------------------------------------------------------------------
 
-	//-----------------------------------------------------------------------------------------------
-	//////////////////////////////////////////////////////////////////////////////////////////
-	// setup pdo connection to the database
-	//////////////////////////////////////////////////////////////////////////////////////////
-	public static function setup_PDO(){
-		if ( ! extension_loaded(Settings::GetProtected('database_extension_needed'))) {
-			throw new Exception ('NOT loaded');
-		}
-		if ( empty(Settings::GetProtected( 'DB_Username'))) {
-			throw new Exception('Missing Config Data from Settings- DB_Username');
-		}
-		if ( empty(Settings::GetProtected( 'DB_Password'))) {
-			throw new Exception('Missing Config Data from Settings- DB_Password');
-		}
-
-		$dsn = Settings::GetProtected( 'DB_DSN');
-		$options= Settings::GetProtected( 'DB_DSN_OPTIONS');
-		try {
-			$conn = new \PDO($dsn,
-							Settings::GetProtected('DB_Username'),
-							Settings::GetProtected('DB_Password'),
-							$options
-							);
-			$conn->setAttribute( \PDO::ATTR_CASE, \PDO::CASE_UPPER);
-			$conn->setAttribute( \PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-		} catch (\PDOException $e)				{
-			throw new \PDOException($e->getMessage(), (int)$e->getCode());
-		}
-		return $conn;
-	}
 
 }

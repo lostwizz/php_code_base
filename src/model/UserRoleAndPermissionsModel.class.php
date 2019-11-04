@@ -90,7 +90,7 @@ Class UserRoleAndPermissionsModel extends Model{
 		}
 		$s = $wantedPermission . '<=' . $process . '.' . $task . '.' . $action . '.' . $field;
 
-		$arPermissions = $this->controller->userPermissions->permissionList;
+		$arPermissions = $this->controller->userPermissions;
 
 		$process = strtoupper($process);
 		$task = strtoupper($task);

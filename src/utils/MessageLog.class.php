@@ -123,7 +123,7 @@ class AMessage extends MessageBase {
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected function setText(string $textString= null) :void{
+	protected function setText( $textString= null) :void{
 		if (empty( $textString)){
 				$this->text = '';
 		} else {
@@ -205,8 +205,14 @@ class AMessage extends MessageBase {
 		}
 		$s .= $textLeader;
 
+		if ( is_array($this->text)){
+			$this->text = \print_r($this->text, true);
+		}
+
 		$x = str_replace( "\n", '<BR>', $this->text);
-		$s .= $x;
+		$y = str_replace( ' ', '&nbsp;', $x);
+		$z = str_replace( "\t", '&nbsp;&nbsp;&nbsp;', $y);
+		$s .= $z;
 
 		$s .= '</span>';
 		return $s;
