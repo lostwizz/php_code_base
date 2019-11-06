@@ -114,6 +114,9 @@ Class myCryption{
 
 
 
+//sodium_crypto_pwhash_str( $pw, SODIUM_CRYPTO_PWHASH_OPSLIMIT_MODERATE , SODIUM_CRYPTO_PWHASH_MEMLIMIT_MODERATE);
+
+
 
 
 	protected $nonce;

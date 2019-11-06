@@ -40,6 +40,14 @@
 //* TODO:
 //*
 //***********************************************************************************************************
+/*  use something like this to hash the password
+/*  $options = [    'cost' => 12,];
+/* echo password_hash("rasmuslerdorf", PASSWORD_DEFAULT, $options);
+
+or
+sodium_crypto_pwhash_str( $pw, SODIUM_CRYPTO_PWHASH_OPSLIMIT_MODERATE , SODIUM_CRYPTO_PWHASH_MEMLIMIT_MODERATE);
+*/
+
 //***********************************************************************************************************
 // a basic mod to cause gitwcrev to run
 
