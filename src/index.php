@@ -91,11 +91,28 @@ if (Settings::GetPublic('TEST that All is well') != 'YES') {
 if (Settings::GetRuntimeObject('FileLog') == null) {
    throw new exception('it seems that setup (or settings.class.php did not run properly');
 }
+phpinfo();
+if (false) {
+	//https://libmemcached.org/libMemcached.html
+	//https://www.php.net/manual/en/book.memcached.php
 
+
+$mc = new Memcached();
+$mc->addServer("localhost", 11211);
+
+$mc->set("foo", "Hello!");
+$mc->set("bar", "Memcached...");
+}
 
 if (false) {
    session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
    session_start();
+
+	//think about how to use   session_regenerate_id(true);
+	//    and/or session_destroy()
+	// https://www.php.net/manual/en/function.session-destroy.php
+
+	
 }
 
 //$tt = new \php_base\UtilsmyNullAbsorber();

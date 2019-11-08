@@ -30,6 +30,11 @@
  *
  * @todo Description
  *
+ *
+ *
+ * https://www.php-fig.org/psr/
+ *
+ * 
  */
 //**********************************************************************************************
 
@@ -217,7 +222,8 @@ Class UserRoleAndPermissionsController {
 		usort($this->userPermissions, function ($a, $b) {
 			$sA = $this->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
 			$sB = $this->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
-			return strcmp($sA, $sB);
+			//return strcmp($sA, $sB);
+			return $sA <=> $sb;
 		});
 
 		return (!empty($this->userPermissions));

@@ -54,17 +54,17 @@ abstract class Settings
 
 	//-----------------------------------------------------------------------------------------------
 	public static function hasProtectedKey($key){
-		return array_key_exists( $key, $protected);
+		return array_key_exists( $key, self::$protected);
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	public static function hasRunTimeKey($key){
-		return array_key_exists( $key, $runTime);
+		return array_key_exists( $key, self::$runTime);
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	public static function hasPublicKey($key){
-		return array_key_exists( $key, $public);
+		return array_key_exists( $key, self::$public);
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -96,7 +96,6 @@ abstract class Settings
     public static function getRunTime($key) {
         return isset(self::$runTime[$key]) ? self::$runTime[$key] : false;
     }
-
 
 	//-----------------------------------------------------------------------------------------------
     public static function setProtected($key,$value) {
@@ -400,7 +399,7 @@ abstract class Settings
 
 
 	//-----------------------------------------------------------------------------------------------
-	protected static function doTableWrite(array $ar, $witch= 'Public') {
+	protected static function doTableWrite(array $ar, $which= 'Public') {
 		foreach($ar as $key=>$value) {
 			if (self::checkExistsInDB($key) ){
 				self::UpdateOne($key, $value, $which);
@@ -417,26 +416,24 @@ abstract class Settings
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected static function InsertOne($k, $v, $which ){
-		$sql = 'INSERT INTO ' . Settings::getProtected( 'DB_Table_Settings')
+	protected static function InsertOne($k, $v, $which) {
+		$sql = 'INSERT INTO ' . Settings::getProtected('DB_Table_Settings')
 				  . ' (App, SettingName, SettingValue, SettingTypeHint, Category, is_active ) '
 				  . ' Values '
 				  . '( :app, :name, :value :hint, :cat, :active )'
-				  ;
+		;
 
-		$valueAndHints = self::processWriteTypeHint( $v);
-		$params = array( ':app' => Settings::GetPublic('App Name'),
-								':name' => $k,
-								':value' => $valueAndHints[0],
-								':hint' => $valueAndHints[1],
-								':cat' => $which,
-								':active' => 1
-										);
-
+		$valueAndHints = self::processWriteTypeHint($v);
+		$params = [':app' => Settings::GetPublic('App Name'),
+			':name' => $k,
+			':value' => $valueAndHints[0],
+			':hint' => $valueAndHints[1],
+			':cat' => $which,
+			':active' => 1
+		];
 
 		myDBUtils::BeginWriteOne($sql);
-		myDBUtils::WriteOne($sql);
-
+		myDBUtils::WriteOne($params);
 	}
 
 	//-----------------------------------------------------------------------------------------------

@@ -83,7 +83,7 @@ abstract Class myDBUtils {
 	 * @throws \PDOException
 	 */
 	public static function setupNewPDO(): \PDO {
-		$conn = false;
+		//$conn = false;
 		$dsn = Settings::GetProtected('DB_DSN');
 		$options = Settings::GetProtected('DB_DSN_OPTIONS');
 		try {
@@ -187,7 +187,7 @@ dump::dump($e->getMessage())	;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public static function doBindingSimple($paramas, $stmt){
+	public static function doBindingSimple($params, $stmt){
 		if (is_array($paramas)) {
 			$i =1;
 			foreach($params as $value) {
