@@ -9,7 +9,7 @@
  * @version 0.5.0
  * $Id$
  *
- * Description.
+ * Description.`
  * this handles the initial logn on screen and its results - also resonsible for vwerifying the user is still "Logged on"
  *
  *

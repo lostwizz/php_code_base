@@ -40,7 +40,9 @@ Class UserRoleData  extends Data {
 //	public $action;
 //	public $payload;
 
-	public $RoleIDData =[];
+	public $RoleIDData =[];    // array with the keys begin the name and the values being the roleID #
+										//		- only needed this way because of the RolePermissions needing the the list of ids
+	public $RoleIDnames =[];	// array with the keys being the roleID # and the values being the name
 
 	//-----------------------------------------------------------------------------------------------
 	public function __construct($ArrayOfNames){
@@ -57,6 +59,7 @@ Class UserRoleData  extends Data {
 		foreach( $data as $record) {
 			if ( !empty($record['NAME']) and !empty($record['ROLEID']) ) {
 				$this->RoleIDData[ $record['NAME']] = $record['ROLEID'];
+				$this->RoleIDnames[$record['ROLEID']] = $record['NAME'];
 			}
 		}
 	}

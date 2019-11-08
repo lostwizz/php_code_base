@@ -146,23 +146,27 @@ abstract Class myDBUtils {
 	 */
 	public static function doDBSelectMulti(string $sql, array $params = null) {
 		//Settings::GetRunTimeObject('MessageLog')->addEmergency($sql);
-//dump::dump($sql);
+dump::dump($sql);
+dump::dump($params);
 		try {
 			$conn = myDBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
-			self::doBinding($params, $stmt);
+			dump::dump($stmt);
+			self::doBinding($params, $stmt );
 			$stmt->execute();
 			$data = $stmt->fetchAll();
-//dump::dump($data);
+dump::dump($data);
 
 			$stmt->closeCursor();
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);
 
 			return $data;
 		} catch (\PDOException $e) {
+dump::dump($e->getMessage())	;
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
 		} catch (\Exception $e) {
+dump::dump($e->getMessage())	;
 			throw new \Exception($e->getMessage(), (int) $e->getCode());
 		}
 	}

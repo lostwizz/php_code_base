@@ -1,22 +1,35 @@
 <?php
+
+/** * ********************************************************************************************
+ * HeaderController.class.php
+ *
+ * Summary handles all the stuff at the top of the page - basically everything before the menu
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description.
+ * this class controls the info at the top of the page (title, version, logo etc)
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - Header
+ * @subpackage Resolver
+ * @since 0.3.0
+ *
+ * @example
+ *
+ *
+ * @see HeaderController.class.php
+ * @see HeaderView.class.php
+ * @see response.class.php
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* HeaderController.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 13:12:55 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 
 
 namespace php_base\Control;
@@ -27,18 +40,23 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ * HeaderController mvc - handle setting up for putting a header at the top of the page
+ *
+ */
 class HeaderController extends Controller {
 
 	public $process;
 	public $task;
 
-
 	public $action;
 	public $payload;
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $action
+	 * @param type $payload
+	 */
 	public function __construct($action='', $payload = null) {
 		//$this->model = new \php_base\model\HeaderModel($this);
 		//$this->data = new \php_base\data\HeaderData($this);
@@ -47,19 +65,26 @@ class HeaderController extends Controller {
 		$this->payload = $payload;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *  set the process and task
+	 * @param type $process
+	 * @param type $task
+	 */
 	public function setProcessAndTask( $process, $task){
 		$this->process = $process;
 		$this->task = $task;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 * this calls the method that actually shows the footer
+	 *
+	 * @return Response
+	 */
 	public function doWork() : Response {
 		return $this->view->doWork(  $this  );
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function controllerRequiredVars(){
-		return [];
-	}
+
 }

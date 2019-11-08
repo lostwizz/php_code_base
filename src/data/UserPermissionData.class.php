@@ -62,14 +62,12 @@ class UserPermissionData {
 
 	//-----------------------------------------------------------------------------------------------
 	public function ProcessAttributes( $data){
-
 		$this->permissionList = $data;
 	}
 
 	//-----------------------------------------------------------------------------------------------
 	protected function doReadFromDatabase($listOfRolesIDs) {
 		$ids =  implode( ', ' , $listOfRolesIDs) ;
-
 		try {
 			$sql = 'SELECT id
 						,roleId

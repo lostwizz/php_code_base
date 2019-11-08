@@ -67,29 +67,36 @@ class UserInfoData extends data {
 	////						,username
 	////						,password
 
-	protected function doReadFromDatabase($username) {
-		try {
-			$sql = 'SELECT  UserId
+	/* UserId
 						,method
 						,username
 						,password
 						,PrimaryRoleName
 						,ip
 						,last_logon_time
-					FROM ' .  Settings::GetProtected( 'DB_Table_UserManager')
-					. ' WHERE  app = :app AND username = :uname ';
+	 *
+	 */
+	protected function doReadFromDatabase($username) {
+		try {
+			$sql = 'SELECT * '
+					. ' FROM ' .  Settings::GetProtected( 'DB_Table_UserManager')
+					. ' WHERE username = :uname AND  app = :app ;';
+					//. ' WHERE  username = :uname ;';
+					//. ' WHERE  app = :app ';
 
-			$params = array(  ':app' => Settings::GetPublic('App Name'),
-									':uname' => strtolower($username)
+			$app = Settings::GetPublic( 'App Name');
+	  		$username = strtolower($username);
+
+			$params = array(  ':app' => $app,
+									':uname' => $username
 				 );
 
+if (false ){
 			$conn = myDBUtils::setupPDO();
 	  		$stmt = $conn->prepare($sql);
 
-			$app = Settings::GetPublic( 'App Name');
 	  		$stmt->bindParam(1, $app, \PDO::PARAM_STR);
 
-	  		$username = strtolower($username);
 	  		$stmt->bindParam(2, $username, \PDO::PARAM_STR);
 	  		$stmt->execute();
 	  		$data = $stmt->fetchAll();
@@ -100,7 +107,14 @@ class UserInfoData extends data {
 				throw new \Exception('Bad Data Rows Returned', -4);
 			}
 
+} else {
 
+
+			$data = myDBUtils::doDBSelectMulti($sql, $params);
+			dump::dump( $data);
+			$this->UserInfo =  $data[0];
+			die;
+}
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());
 		} catch (\Exception $e)				{

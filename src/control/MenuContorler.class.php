@@ -1,22 +1,41 @@
 <?php
+/** * ********************************************************************************************
+ * MenuController.class.php
+ *
+ * Summary (no period for file headers)
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description.
+ * this class handles the Menus (or menu like stuff
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - Menu
+ * @subpackage Menu
+ * @since 0.3.0
+ *
+ * @example
+
+ *
+ * @see MenuView.class.php
+ * @see Response
+ *
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* MenuController.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-08-30 11:58:13 -0700 (Fri, 30 Aug 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 30-Aug-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
+
+namespace php_base;
+
+use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
+
 
 
 namespace php_base\Control;
@@ -25,8 +44,9 @@ namespace php_base\Control;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ *   MenuController
+ */
 class MenuController extends Controller {
 	public $process;
 	public $task;
@@ -34,24 +54,34 @@ class MenuController extends Controller {
 	public $action;
 	public $payload;
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $passedAction
+	 * @param type $passedPayload
+	 */
 	public function __construct( string $passedAction = '', $passedPayload = null) {
 		//$this->model = new \php_base\model\AuthenticateModel($this);
 		//$this->data = new \php_base\data\AuthenticateData($this);
-		$this->view = new \php_base\view\AuthenticateView($this);
+		$this->view = new \php_base\view\MenuView($this);
 
 		$this->action = $action;
 		$this->payload = $payload;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $process
+	 * @param type $task
+	 */
 	public function setProcessAndTask( $process, $task){
 		$this->process = $process;
 		$this->task = $task;
 	}
 
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function doWork(){
 		echo 'menuController doWork hi - i am here!!';
 		echo 'should never get here';
