@@ -87,11 +87,12 @@ class UserInfoData extends data {
 			$app = Settings::GetPublic( 'App Name');
 	  		$username = strtolower($username);
 
-			$params = array(  ':app' => $app,
-									':uname' => $username
-				 );
 
 if (false ){
+
+		$params = array(  ':app' => $app,
+									':uname' => $username
+				 );
 			$conn = myDBUtils::setupPDO();
 	  		$stmt = $conn->prepare($sql);
 
@@ -109,11 +110,14 @@ if (false ){
 
 } else {
 
+			$params = array(  ':app' => ['val' =>$app,'type'=>\PDO::PARAM_STR],
+									':uname' => ['val'=> $username, 'type'=>\PDO::PARAM_STR]
+				 );
 
-			$data = myDBUtils::doDBSelectMulti($sql, $params);
-			dump::dump( $data);
-			$this->UserInfo =  $data[0];
-			die;
+			$data = myDBUtils::doDBSelectSingle($sql, $params);
+		//	dump::dump( $data);
+			$this->UserInfo =  $data;
+
 }
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());

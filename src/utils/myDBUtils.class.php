@@ -146,17 +146,17 @@ abstract Class myDBUtils {
 	 */
 	public static function doDBSelectMulti(string $sql, array $params = null) {
 		//Settings::GetRunTimeObject('MessageLog')->addEmergency($sql);
-dump::dump($sql);
-dump::dump($params);
+//dump::dump($sql);
+//dump::dump($params);
 		try {
 			$conn = myDBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
-			dump::dump($stmt);
+			//dump::dump($stmt);
 			self::doBinding($params, $stmt );
 			$stmt->execute();
 			$data = $stmt->fetchAll();
-dump::dump($data);
+//dump::dump($data);
 
 			$stmt->closeCursor();
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);
@@ -176,7 +176,11 @@ dump::dump($e->getMessage())	;
 	public static function doBinding( $params, $stmt){
 		if ( is_array($params) and !empty($params)  and !empty($stmt)){
 			foreach ($params as $key=> $value) {
-				$stmt->bindParam($key, $value );
+				if ( is_array( $value )) {
+					$stmt->bindParam($key, $value['val'], $value['type']);
+				} else {
+					$stmt->bindParam($key, $value);
+				}
 			}
 		}
 

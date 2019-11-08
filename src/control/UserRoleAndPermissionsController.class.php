@@ -150,7 +150,7 @@ Class UserRoleAndPermissionsController {
 			unset($this->arOfRoleIDs);
 
 			$this->view->dumpState(null, null, true);
-			//$this->view->dumpPermissions();
+			$this->view->dumpPermissions();
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
 		}
