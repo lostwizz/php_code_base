@@ -1,171 +1,214 @@
 <?php
+
 //**********************************************************************************************
-//* settings.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
-//echo '<pre> getPublic-->';
-//print_r($key);
-//print_r(self::$public);
-//echo '</pre>';
-
-
+/* settings.class.php
+ *
+ * static utility class that handles settings for the app -- public, protected and realtime
+ *
+ * @author  mike.merrett@whitehorse.ca
+ * @license City of Whitehorse
+ *
+ * Description:
+ * 		static class that handles the settings for the application  -- public, protected and realtime
+ *
+ *
+ * @link URL
+ *
+ * @package utils
+ * @subpackage settings
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see index.php
+ * @see myNullAbsorber.class.php
+ *
+ * @todo Description
+ *
+ *
+ *
+ * https://www.php-fig.org/psr/
+ *
+ *
+ */
+//**********************************************************************************************
 
 namespace php_base\Utils;
 
 use \php_base\Utils\myCryption\myCryption as myCryption;
-
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\myNullAbsorber as myNullAbsorber;
 use \php_base\Utils\myDBUtils as myDBUtils;
 
-
-
 //Dump::dump(require_once(DIR . 'utils' . DS . 'myNullAbsorber.class.php'));
-
-
-
 ///echo 'xxxxx"', __NAMESPACE__, '"'; // outputs "MyProject"
+//
+//
 
-//***********************************************************************************************
-//***********************************************************************************************
-abstract class Settings
-{
-    static protected $protected = array(); // For DB / passwords etc
-    static protected $public = array(); // For all public strings such as meta stuff for site
-    static protected $runTime = array();  // for runtime vars that will realyonly exist when running
+/** * **********************************************************************************************
+ *
+ */
+abstract class Settings {
 
-	public const INI_RESTORE_OVERWRITE =1;
+	static protected $protected = array(); // For DB / passwords etc
+	static protected $public = array(); // For all public strings such as meta stuff for site
+	static protected $runTime = array();  // for runtime vars that will realyonly exist when running
+
+	public const INI_RESTORE_OVERWRITE = 1;
+
 	//static public INI_RESTORE_ONLYNEW = 'n';
+	//
 
 
-	//-----------------------------------------------------------------------------------------------
-	public static function hasProtectedKey($key){
-		return array_key_exists( $key, self::$protected);
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function hasProtectedKey($key) {
+		return array_key_exists($key, self::$protected);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function hasRunTimeKey($key){
-		return array_key_exists( $key, self::$runTime);
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function hasRunTimeKey($key) {
+		return array_key_exists($key, self::$runTime);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function hasPublicKey($key){
-		return array_key_exists( $key, self::$public);
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function hasPublicKey($key) {
+		return array_key_exists($key, self::$public);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function getProtectedObject($key){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function getProtectedObject($key) {
 		return isset(self::$protected[$key]) ? self::$protected[$key] : new myNullAbsorber();
 	}
 
-	public static function getPublicObject($key){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function getPublicObject($key) {
 		return isset(self::$public[$key]) ? self::$public[$key] : new myNullAbsorber();
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function getRunTimeObject($key){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function getRunTimeObject($key) {
 //dump::dump(self::$runTime[$key]);
 		return isset(self::$runTime[$key]) ? self::$runTime[$key] : new myNullAbsorber();
 	}
 
-	//-----------------------------------------------------------------------------------------------
-    public static function getProtected($key) {
-        return isset(self::$protected[$key]) ? self::$protected[$key] : false;
-    }
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function getProtected($key) {
+		return isset(self::$protected[$key]) ? self::$protected[$key] : false;
+	}
 
-	//-----------------------------------------------------------------------------------------------
-    public static function getPublic($key) {
-        return isset(self::$public[$key]) ? self::$public[$key] : false;
-    }
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function getPublic($key) {
+		return isset(self::$public[$key]) ? self::$public[$key] : false;
+	}
 
-	//-----------------------------------------------------------------------------------------------
-    public static function getRunTime($key) {
-        return isset(self::$runTime[$key]) ? self::$runTime[$key] : false;
-    }
-
-	//-----------------------------------------------------------------------------------------------
-    public static function setProtected($key,$value) {
-        self::$protected[$key] = $value;
-    }
-
-	//-----------------------------------------------------------------------------------------------
-    public static function setPublic($key,$value) {
-        self::$public[$key] = $value;
-    }
-
-	//-----------------------------------------------------------------------------------------------
-    public static function setRunTime($key,$value) {
-        self::$runTime[$key] = $value;
-    }
-
-	//-----------------------------------------------------------------------------------------------
-    public function __get($key){
-    	//$this->key // returns public->key
-        return isset(self::$public[$key]) ? self::$public[$key] : false;
-    }
-
-	//-----------------------------------------------------------------------------------------------
-    public function __isset($key) {
-        return isset(self::$public[$key]);
-    }
-
-
-	//-----------------------------------------------------------------------------------------------
-    public static function dumpCR(bool $show_protected = false, bool $show_runtime = false) : string {
-    	$s = self::dump( $show_protected, $show_runtime);
-    	$r  = str_replace('<BR>', "\r\n", $s);
-    	return $r;
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @return type
+	 */
+	public static function getRunTime($key) {
+		return isset(self::$runTime[$key]) ? self::$runTime[$key] : false;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-    public static function dumpBR(bool $show_protected = false, bool $show_runtime = false) : string {
-    	$s = self::dump( $show_protected, $show_runtime);
-    	$r  = str_replace("\n", '<BR>', $s);
-    	return $r;
+	public static function setProtected($key, $value) {
+		self::$protected[$key] = $value;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public static function dump(bool $show_protected = false, bool $show_runtime = false) : string {
+	public static function setPublic($key, $value) {
+		self::$public[$key] = $value;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function setRunTime($key, $value) {
+		self::$runTime[$key] = $value;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function __get($key) {
+		//$this->key // returns public->key
+		return isset(self::$public[$key]) ? self::$public[$key] : false;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public function __isset($key) {
+		return isset(self::$public[$key]);
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function dumpCR(bool $show_protected = false, bool $show_runtime = false): string {
+		$s = self::dump($show_protected, $show_runtime);
+		$r = str_replace('<BR>', "\r\n", $s);
+		return $r;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function dumpBR(bool $show_protected = false, bool $show_runtime = false): string {
+		$s = self::dump($show_protected, $show_runtime);
+		$r = str_replace("\n", '<BR>', $s);
+		return $r;
+	}
+
+	//-----------------------------------------------------------------------------------------------
+	public static function dump(bool $show_protected = false, bool $show_runtime = false): string {
 		$s = 'Settings::dump:<BR>';
-		if ( $show_runtime) {
-			foreach( self::$runTime as $key => $val){
-				$s .= 'RunTime: ' .  var_export( $key, true) . ' ==> ' . print_r( $val, true);
+		if ($show_runtime) {
+			foreach (self::$runTime as $key => $val) {
+				$s .= 'RunTime: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';
 			}
 		}
-		if ( $show_protected) {
-			foreach( self::$protected as $key => $val){
-				$s .= 'Protected: ' .  var_export( $key, true) . ' ==> ' . print_r( $val, true);
+		if ($show_protected) {
+			foreach (self::$protected as $key => $val) {
+				$s .= 'Protected: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';
 			}
 		}
-		foreach( self::$public as $key => $val){
-			$s .= 'Public: '  . var_export( $key, true) . ' ==> ' . print_r( $val, true);
+		foreach (self::$public as $key => $val) {
+			$s .= 'Public: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 			$s .= '<Br>';
 		}
 		//$s .= '<Br>';
 		return $s;
 	}
 
-
-
 	//-----------------------------------------------------------------------------------------------
 	protected static function giveINISetting($value) {
-		switch (gettype($value)){
+		switch (gettype($value)) {
 			case 'boolean':
 				return $value ? '-True-' : '-False-';
 			case 'NULL':
@@ -175,49 +218,48 @@ abstract class Settings
 				return serialize($value);
 			default:
 				return urlencode($value);
-
 		}
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	public static function saveAsINI( $fn) {
-		$s  = ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . "\n";
-		$s .= ';;Written: ' . date( DATE_RFC822) . "\n";
+	public static function saveAsINI($fn) {
+		$s = ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . "\n";
+		$s .= ';;Written: ' . date(DATE_RFC822) . "\n";
 		$s .= ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;' . "\n";
 
 		$s .= self::getINIPublic();
 		$s .= self::getINIProtected();
 
-		$handle = fopen( $fn, 'w');
-		fwrite( $handle, $s);
-		fclose( $handle);
+		$handle = fopen($fn, 'w');
+		fwrite($handle, $s);
+		fclose($handle);
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected static function getINIPublic(){
+	protected static function getINIPublic() {
 		$s = "\n";
 		$s .= '[PUBLIC]' . "\n";
-    	foreach( self::$public as $key => $val){
-    		//$s .= 'Public: '  . var_export( $key, true) . ' ==> ' . print_r( $val, true);
+		foreach (self::$public as $key => $val) {
+			//$s .= 'Public: '  . var_export( $key, true) . ' ==> ' . print_r( $val, true);
 			$s .= $key . '=';
-			$s .= self::giveINISetting( $val );
+			$s .= self::giveINISetting($val);
 
 			$s .= "\n";
 			$s .= "\n";
-    	}
+		}
 		return $s;
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected static function getINIProtected(){
+	protected static function getINIProtected() {
 		$encryptionClass = new myCryption();
 		$s = "\n";
 		$s .= '[PROTECTED]' . "\n";
-		foreach( self::$protected as $key => $val){
-			$s .=  $key . '=';
+		foreach (self::$protected as $key => $val) {
+			$s .= $key . '=';
 
-			$basicValue = self::giveINISetting( $val );
-			$s_encrypted = $encryptionClass->encrypt( '_E_' . $basicValue);
+			$basicValue = self::giveINISetting($val);
+			$s_encrypted = $encryptionClass->encrypt('_E_' . $basicValue);
 
 			$s .= $s_encrypted;
 			$s .= "\n";
@@ -227,16 +269,16 @@ abstract class Settings
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected static function readINI( $fn){
+	protected static function readINI($fn) {
 		$encryptionClass = new myCryption();
 
-		if ( file_exists( $fn)) {
-			$a = parse_ini_file( $fn, true,   INI_SCANNER_RAW );
+		if (file_exists($fn)) {
+			$a = parse_ini_file($fn, true, INI_SCANNER_RAW);
 			//$b = self::decode_encrypted();
 			$b = array();
-			foreach( $a['PROTECTED'] as $key=> $val){
-				$x = $encryptionClass->decrypt(	$val);
-				if( substr($x, 0, 3) == '_E_') {          /// handle when string is not encrypted in the ini
+			foreach ($a['PROTECTED'] as $key => $val) {
+				$x = $encryptionClass->decrypt($val);
+				if (substr($x, 0, 3) == '_E_') {			 /// handle when string is not encrypted in the ini
 					$s = substr($x, 3);
 				} else {
 					$s = $val;
@@ -255,41 +297,36 @@ abstract class Settings
 	//-----------------------------------------------------------------------------------------------
 	public static function destructiveINIRestore($fn) {
 		$fromINI = self::readINI($fn);
-		if ( is_array($fromINI)){
+		if (is_array($fromINI)) {
 			self::$public = $fromINI['PUBLIC'];
 			self::$protected = $fromINI['PROTECTED'];
 		}
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
-	public static function nonDestructiveINIRestore($fn, $method =self::INI_RESTORE_OVERWRITE){
+	public static function nonDestructiveINIRestore($fn, $method = self::INI_RESTORE_OVERWRITE) {
 		$fromINI = self::readINI($fn);
-		if ( is_array($fromINI)){
-			foreach( $fromINI['PUBLIC'] as $key => $val){
-				if( array_key_exists($key, self::$public))	{
-					if ($method == self::INI_RESTORE_OVERWRITE){
+		if (is_array($fromINI)) {
+			foreach ($fromINI['PUBLIC'] as $key => $val) {
+				if (array_key_exists($key, self::$public)) {
+					if ($method == self::INI_RESTORE_OVERWRITE) {
 						self::$public[$key] = $val;
 					}
 				} else {
 					self::$public[$key] = $val;
 				}
 			}
-			foreach( $fromINI['PROTECTED'] as $key => $val){
-				if( array_key_exists($key, self::$protected))	{
-					if ($method == self::INI_RESTORE_OVERWRITE){
+			foreach ($fromINI['PROTECTED'] as $key => $val) {
+				if (array_key_exists($key, self::$protected)) {
+					if ($method == self::INI_RESTORE_OVERWRITE) {
 						self::$protected[$key] = $val;
 					}
 				} else {
 					self::$protected[$key] = $val;
 				}
-
 			}
 		}
 	}
-
-
-
 
 //CREATE TABLE [dbo].[Settings](
 //	[id] [bigint] NOT NULL,
@@ -360,7 +397,7 @@ abstract class Settings
 	protected static function processReadTypeHint($item) {
 		switch (strtolower($item['SETTINGTYPEHINT'])) {
 			case 'bool':
-				if ($item['SETTINGVALUE'] == '-True-' ){
+				if ($item['SETTINGVALUE'] == '-True-') {
 					return true;
 				} else {
 					return false;
@@ -397,21 +434,20 @@ abstract class Settings
 		}
 	}
 
-
 	//-----------------------------------------------------------------------------------------------
-	protected static function doTableWrite(array $ar, $which= 'Public') {
-		foreach($ar as $key=>$value) {
-			if (self::checkExistsInDB($key) ){
+	protected static function doTableWrite(array $ar, $which = 'Public') {
+		foreach ($ar as $key => $value) {
+			if (self::checkExistsInDB($key)) {
 				self::UpdateOne($key, $value, $which);
 			} else {
-				self::InsertOne( $key, $value, $which);
+				self::InsertOne($key, $value, $which);
 			}
 		}
 		myDBUtils::EndWriteOne();
 	}
 
 	//-----------------------------------------------------------------------------------------------
-	protected static function checkExistsInDB( $key){
+	protected static function checkExistsInDB($key) {
 		return false;
 	}
 
@@ -425,11 +461,11 @@ abstract class Settings
 
 		$valueAndHints = self::processWriteTypeHint($v);
 		$params = [':app' => Settings::GetPublic('App Name'),
-			':name' => $k,
-			':value' => $valueAndHints[0],
-			':hint' => $valueAndHints[1],
-			':cat' => $which,
-			':active' => 1
+			 ':name' => $k,
+			 ':value' => $valueAndHints[0],
+			 ':hint' => $valueAndHints[1],
+			 ':cat' => $which,
+			 ':active' => 1
 		];
 
 		myDBUtils::BeginWriteOne($sql);
@@ -437,19 +473,19 @@ abstract class Settings
 	}
 
 	//-----------------------------------------------------------------------------------------------
-		protected static function processWriteTypeHint( $v){
-		if (is_array($v)){
-			return array( 'array', \serialize($v));
+	protected static function processWriteTypeHint($v) {
+		if (is_array($v)) {
+			return array('array', \serialize($v));
 		}
-		if (is_bool($v)){
-			$b = $v ? '-True-' : '-False-' ;
+		if (is_bool($v)) {
+			$b = $v ? '-True-' : '-False-';
 			return array('bool', $b);
 		}
 		return array('string', $v);
 	}
 
-
 }
+
 //////	//-----------------------------------------------------------------------------------------------
 //////	public static function  onlyKeysINIRestore($fn, $listOfKeys,  $method =self::INI_RESTORE_OVERWRITE){
 //////		if (is_array($listOfKeys)) {

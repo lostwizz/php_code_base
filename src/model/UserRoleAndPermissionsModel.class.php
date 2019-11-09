@@ -1,25 +1,42 @@
 <?php
+
 //**********************************************************************************************
 //* UserRoleAndPermissionsModel.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-08-30 12:00:20 -0700 (Fri, 30 Aug 2019) $
-//*  $WCNOW$
-//*  $WCDATE$
-//*  $WCUNVER?DATE_NOW:DATE_COMMIT$
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 30-Aug-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
+/**
+ * sets up the users permissions from the database
+ *
+ * @author  mike.merrett@whitehorse.ca
+ * @license City of Whitehorse
+ *
+ * Description.
+ * this class handles the interaction between what the user enters and what the rest
+ *    of the server does - it handles the POST/GET responses and passes the Dispatcher
+ *    the Queue items. Process/Task/Action/Payload (PTAP)
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - UserRoleAndPermissions
+ * @subpackage UserRoleAndPermissions
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see UserRoleAndPermissionsController.class.php
+ * @see UserInfoData.class.php
+ * @see UserAttributedata.class.php
+ * @see UserPermissionData.class.php
+ * @see UserRoleData.class.php
+ *
+ * @todo Description
+ *
+ *
+ *
+ * https://www.php-fig.org/psr/
+ *
+ *
+ */
+//**********************************************************************************************
 
 namespace php_base\Model;
 
@@ -33,43 +50,50 @@ use \php_base\Utils\Response as Response;
 
 //***********************************************************************************************
 //***********************************************************************************************
+/**
+ * handles the logic for user roles and permissions
+ */
 Class UserRoleAndPermissionsModel extends Model{
 
+	/*
+	 * theses the the constants for ALL the possible permissions i.e. none, read,  write, dba and god (in hirachial order)
+	 */
 	const GOD_RIGHT = 'GOD';
-	const DBA_RIGHT ='DBA';
+	const DBA_RIGHT = 'DBA';
 	const WRITE_RIGHT = 'Write';
-	const READ_RIGHT ='Read';
-
+	const READ_RIGHT = 'Read';
 	const WILDCARD_RIGHT = '*';
-
 	const NO_RIGHT = '__NO__RIGHT__';
-	///////////const NOBODY = '__NO__BODY__';
+
 
 	public $action;
 	public $payload;
 
 	public $controller;
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *  constructor - basically keeps track of the controller
+	 * @param type $controller
+	 */
 	public function __construct( $controller){   //$action ='', $payload = null){
-//Dump::dump($controller);
 		if (!empty( $controller)){
 			$this->controller = $controller;
 		}
 	}
 
 
-//	//-----------------------------------------------------------------------------------------------
-//	public function modelSetUser($uname) {
-//		if ( !empty($uname)){
-//			$this->username = $uname;
-//		}
-//
-//
-//	}
 
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * - do the test to see if the user has the permissions to do something
+	 *
+	 * @param type $wantedPermission
+	 * @param type $process
+	 * @param type $task
+	 * @param type $action
+	 * @param type $field
+	 * @return boolean
+	 */
 	public  function isAllowed( $wantedPermission= self::NO_RIGHT,
 								$process=self::NO_RIGHT,
 								$task=self::NO_RIGHT,
@@ -96,22 +120,31 @@ Class UserRoleAndPermissionsModel extends Model{
 		$task = strtoupper($task);
 		$action = strtoupper($action);
 		$field = strtoupper($field);
-//Dump::dump( $arwantedPermissions);
 
 		foreach( $arPermissions as $value){
 			if (  $this->checkRight( $value, $wantedPermission, $process, $task, $action, $field )) {
-				Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
+				//Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
 				Settings::GetRuntimeObject( 'SecurityLog')->addNotice( Settings::GetRunTime( 'Currently Logged In User') . ' has permission: '. $s);
 
 				return true;
 			}
 		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have permission wanted: ' . $s);
-				Settings::GetRuntimeObject( 'SecurityLog')->addAlert( Settings::GetRunTime( 'Currently Logged In User') . ' Does NOT have permission: '. $s);
+		//Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have permission wanted: ' . $s);
+		Settings::GetRuntimeObject( 'SecurityLog')->addAlert( Settings::GetRunTime( 'Currently Logged In User') . ' Does NOT have permission: '. $s);
 		return false;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * check if this right allows it
+	 *
+	 * @param type $singleOfPermissions
+	 * @param type $wantedPermission
+	 * @param type $process
+	 * @param type $task
+	 * @param type $action
+	 * @param type $field
+	 * @return boolean
+	 */
 	protected function checkRight( $singleOfPermissions, $wantedPermission, $process, $task, $action, $field ) {
 
 //Dump::dumpLong( array( $singleOfPermissions, $wantedPermission, $process, $task, $action, $field));
@@ -123,29 +156,38 @@ Class UserRoleAndPermissionsModel extends Model{
 		return $this->checkPermission($singleOfPermissions, $wantedPermission);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * check if the process allows it
+	 * @param type $singleOfPermissions
+	 * @param type $process
+	 * @return type
+	 */
 	protected function checkProcess( $singleOfPermissions, $process){
 		$r = (($process == self::WILDCARD_RIGHT)
 		   or ($process == $singleOfPermissions['PROCESS'])
 		   or ($singleOfPermissions['PROCESS'] ==self::WILDCARD_RIGHT));
-
-//		$s =$r ? '+true+':'+false+';
-//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkProcess:' .  $s);
 		return $r;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *  check if the task allows it
+	 * @param type $singleOfPermissions
+	 * @param type $task
+	 * @return type
+	 */
 	protected function checkTask( $singleOfPermissions, $task){
 		$r  = (($task == self::WILDCARD_RIGHT)
 		    or ($task == $singleOfPermissions['TASK'])
 		    or ($singleOfPermissions['TASK'] ==self::WILDCARD_RIGHT));
-
-//		$s =$r ? '+true+':'+false+';
-//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkTask:' .  $s);
 		return $r;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * check if the action allows it
+	 * @param type $singleOfPermissions
+	 * @param type $action
+	 * @return type
+	 */
 	protected function checkAction( $singleOfPermissions, $action){
 		$r = (($action == self::WILDCARD_RIGHT)
 		   or ($action == $singleOfPermissions['ACTION'])
@@ -156,7 +198,13 @@ Class UserRoleAndPermissionsModel extends Model{
 		return $r;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * check if the field allows it
+	 *
+	 * @param type $singleOfPermissions
+	 * @param type $field
+	 * @return type
+	 */
 	protected function checkField( $singleOfPermissions, $field){
 		$r = (($field == self::WILDCARD_RIGHT)
 		   or ($field == $singleOfPermissions['FIELD'])
@@ -167,7 +215,17 @@ Class UserRoleAndPermissionsModel extends Model{
 		return $r;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * check if the permission hirachy allows it
+	 *			 i.e. god will allow everthing - dba will allow everything unless restricted by GOD rights
+	 *				or
+	 *	       i.e. -if you want read then you can get it with wildcard, read rights, write rights, dba rights, or god rights
+	 *								- otherwise you dont get to read
+	 *
+	 * @param type $singleOfPermissions
+	 * @param type $wantedPermission
+	 * @return boolean
+	 */
 	protected function checkPermission($singleOfPermissions, $wantedPermission){
 		switch ($wantedPermission ){
 			case self::GOD_RIGHT:
@@ -205,92 +263,4 @@ Class UserRoleAndPermissionsModel extends Model{
 //		Settings::GetRunTimeObject('MessageLog')->addNotice('checkPerm:' .  $s);
 		return $r;
 	}
-
-////	//-----------------------------------------------------------------------------------------------
-////	protected function checkWantedRight($rightWanted, $aRow){
-//////echo 'R>', $rightWanted, '<>' , $aRow['right'], '<>';
-////		if ( $aRow['right'] == $rightWanted){
-//////echo '-y-';
-////			return true;
-////		}
-////		if ( $aRow['right'] == self::WILDCARD_RIGHT ){
-////			return true;
-////		}
-//////echo '#';
-////		if ( $rightWanted == self::READ_RIGHT and ( $aRow['right'] == self::WRITE_RIGHT
-////													or $aRow['right'] == self::DBA_RIGHT
-////													or $aRow['right'] == self::GOD_RIGHT)) {
-//////echo '@@'	;
-////			return true;
-////		}
-////		if ( $rightWanted == self::WRITE_RIGHT and ( $aRow['right'] == self::DBA_RIGHT
-////													or $aRow['right'] == self::GOD_RIGHT)){
-////			return true;
-////		}
-////		if ($rightWanted == self::DBA_RIGHT and ($aRow['right']== self::GOD_RIGHT)){
-////			return true;
-////		}
-////		return false;
-////	}
-////	//-----------------------------------------------------------------------------------------------
-////	protected function checkIfHasRight($model = self::NO_RIGHT, $task = self::NO_RIGHT, $field = self::NO_RIGHT, $rightWanted = self::NO_RIGHT){
-////		foreach( self::$curPermissions as $row) {
-////			if ( ! $this->checkModel($model, $row)){
-////				continue;
-////			}
-////			if ( ! $this->checkTask( $task, $row) ) {
-////				continue;
-////			}
-////			if ( ! $this->checkField($field, $row)){
-////				continue;
-////			}
-////			if (! $this->checkWantedRight($rightWanted, $row)){
-////				continue;
-////			}
-////			return true;
-////		}
-////		return false;
-////	}
-////
-////
-////	//-----------------------------------------------------------------------------------------------
-////	protected function checkModel($model, $aRow){
-//////echo 'm>'. $model,'<>', $aRow['model'] , '<>';
-////		$x = ( $aRow['model'] == $model or $aRow['model'] == self::WILDCARD_RIGHT);
-//////echo ($x?'Y':'N'), '< <br>';
-////		return $x;
-////	}
-////
-////	//-----------------------------------------------------------------------------------------------
-////	protected function checkTask($task, $aRow){
-//////echo 't>'. $task,'<>', $aRow['task'] , '<>';
-////		$x = ( $aRow['task'] == $task or $aRow['task'] == self::WILDCARD_RIGHT);
-//////echo ($x?'Y':'N'), '< <br>';
-////		return $x;
-////	}
-////
-////	//-----------------------------------------------------------------------------------------------
-////	protected function checkField($field, $aRow){
-////		return ( $aRow['field'] == $field or $aRow['field'] == self::WILDCARD_RIGHT);
-////	}
-////
-////
-////	//-----------------------------------------------------------------------------------------------
-////	public function checkRights( $model = self::NO_RIGHT, $task = self::NO_RIGHT, $field = self::NO_RIGHT, $rightWanted = self::NO_RIGHT){
-//////		$s =   'User: ' . self::$curUserName . ' (' . self::$curUserID . ') '
-//////			. ' Role: ' . self::$curRoleName . ' (' . self::$curRoleID . ') '
-//////			. ' wanted Model:' . $model
-//////			. ' task:' . $task
-//////			. ' field' . $field
-//////			. ' rightWanted: ' . $rightWanted
-//////			;
-////		//Settings::GetPublic('SecurityLog')->addInfo( $s);
-////		$this->loadCache('RoleManagement');
-////		$this->loadCache('PermissionManagement');
-////
-////		$r = $this->checkIfHasRight($model, $task, $field, $rightWanted) ;
-////		return $r;
-////	}
-////
-
 }

@@ -1,22 +1,37 @@
 <?php
+
+/** * ********************************************************************************************
+ * UserInfoData.class.php
+ *
+ * Summary: reads the user's attributes from the database
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description:
+ * Reads the userid and password from something - DB or file.
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - UserRoleAndPermissions\UserInfoData
+ * @subpackage UserRoleAndPermissions
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see UserRoleAndPermissionsController.class.php
+ * @see UserRoleAndPermissionsModel.class.php
+ * @see UserRoleAndPermissionsView.class.php
+ * @see UserAttributeData.class.php
+ * @see UserPermissionData.class.php
+ * @see UserRoleData.class.php
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* UserInfoData.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-11 16:08:38 -0700 (Wed, 11 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 11-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 
 
 namespace php_base\data;
@@ -30,20 +45,26 @@ use \php_base\Utils\myDBUtils as myDBUtils;
 
 
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ * reads the info on a user - the id, password and last time they logged in and any other basic data
+ */
 class UserInfoData extends data {
 
 
 	public $UserInfo;
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *  constructor - initiate the read from the database
+	 * @param type $username
+	 */
 	public function __construct($username) {
 		$this->doReadFromDatabase($username);
-//dump::dump($this->UserInfo);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *  give the user id (assuming the database has be read
+	 * @return int
+	 */
 	public function getUserID() : int {
 		if ( !empty( $this->UserInfo) and !empty( $this->UserInfo['USERID'])) {
 			return  $this->UserInfo['USERID'];
@@ -52,7 +73,11 @@ class UserInfoData extends data {
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * return the primary role from the user info table (assuming database has been read
+	 *
+	 * @return boolean
+	 */
 	public function getPrimaryRole() {
 		if ( !empty( $this->UserInfo) and !empty( $this->UserInfo['PRIMARYROLENAME'])) {
 			return  $this->UserInfo['PRIMARYROLENAME'];
@@ -76,6 +101,13 @@ class UserInfoData extends data {
 						,last_logon_time
 	 *
 	 */
+	/** -----------------------------------------------------------------------------------------------
+	 *  read from the database table
+	 *
+	 * @param type $username
+	 * @throws \PDOException
+	 * @throws \Exception
+	 */
 	protected function doReadFromDatabase($username) {
 		try {
 			$sql = 'SELECT * '
@@ -87,38 +119,13 @@ class UserInfoData extends data {
 			$app = Settings::GetPublic( 'App Name');
 	  		$username = strtolower($username);
 
-
-if (false ){
-
-		$params = array(  ':app' => $app,
-									':uname' => $username
-				 );
-			$conn = myDBUtils::setupPDO();
-	  		$stmt = $conn->prepare($sql);
-
-	  		$stmt->bindParam(1, $app, \PDO::PARAM_STR);
-
-	  		$stmt->bindParam(2, $username, \PDO::PARAM_STR);
-	  		$stmt->execute();
-	  		$data = $stmt->fetchAll();
-
-			if (count($data) ==1 ) {
-				$this->UserInfo =  $data[0];
-			} else {
-				throw new \Exception('Bad Data Rows Returned', -4);
-			}
-
-} else {
-
 			$params = array(  ':app' => ['val' =>$app,'type'=>\PDO::PARAM_STR],
 									':uname' => ['val'=> $username, 'type'=>\PDO::PARAM_STR]
 				 );
 
 			$data = myDBUtils::doDBSelectSingle($sql, $params);
-		//	dump::dump( $data);
 			$this->UserInfo =  $data;
 
-}
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());
 		} catch (\Exception $e)				{

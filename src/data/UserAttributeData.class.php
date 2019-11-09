@@ -1,22 +1,37 @@
 <?php
+
+/** * ********************************************************************************************
+ * UserAttributeData.class.php
+ *
+ * Summary: reads the user's attributes from the database
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description:
+ * Reads the userid and password from something - DB or file.
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - UserRoleAndPermissions\UserAttributes
+ * @subpackage UserRoleAndPermissions
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see UserRoleAndPermissionsController.class.php
+ * @see UserRoleAndPermissionsModel.class.php
+ * @see UserRoleAndPermissionsView.class.php
+ * @see UserInfoData.class.php
+ * @see UserPermissionData.class.php
+ * @see UserRoleData.class.php
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* UserAttributeData.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-11 16:08:56 -0700 (Wed, 11 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 11-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 
 
 namespace php_base\data;
@@ -28,34 +43,48 @@ use \php_base\Utils\myDBUtils as myDBUtils;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ * This any of the reads or writes to the UserAttributes table
+ */
 class UserAttributeData  extends data{
 
 	public $UserAttributes= [];
 	public $roleNames =[];
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * constructor - starts of the reading of data for that User Id
+	 * @param type $userID
+	 */
 	public function __construct($userID) {
-
 		$this->doReadFromDatabase($userID);
-//Dump::dump($this->UserAttributes);
-//Dump::dump($this->roleNames);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * returns the basic list of Roles (used for the processsing of roles to eliminate duplicates
+	 *
+	 * @return type
+	 */
 	public function getArrayOfRoleNames() {
 		return $this->roleNames;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * take the primary roll and add it to the list of roles
+	 *
+	 * @param type $roleName
+	 */
 	public function AddPrimaryRole($roleName){
 		if ( !in_array( $roleName, $this->roleNames ) and !empty($roleName)) {
 			$this->roleNames[] = $roleName;
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * take the raw data from the database and make an associative array for the attributes
+	 *    - handle duplicates (dont add 2nd  copy)
+	 *
+	 * @param type $data
+	 */
 	public function ProcessAttributes( $data) {
 
 //Dump::dump(	$this->roleNames);
@@ -96,6 +125,13 @@ class UserAttributeData  extends data{
 ////4	1	PrimaryRole	DBA
 ////5	1	SecondaryRole	Clerk
 ////6	1	SecondaryRole	ViewOnly
+	/** -----------------------------------------------------------------------------------------------
+	 * read the database for that user id
+	 *
+	 * @param type $userID
+	 * @throws \PDOException
+	 * @throws \Exception
+	 */
 	protected function doReadFromDatabase($userID) {
 
 		try {

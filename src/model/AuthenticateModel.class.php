@@ -1,44 +1,36 @@
 <?php
 
+/** * ********************************************************************************************
+ * AuthenticateModel.class.php
+ *
+ * Summary: reads the user's attributes from the database
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description:
+ * Reads the userid and password from something - DB or file.
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - AuthenticateModel
+ * @subpackage Authenticate
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see AuthenticateController.class.php
+ * @see AuthenticateView.class.php
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* authenticateModel.class.php
-//*
-//* $Id$
-//* $WCREV$
-//* $Rev: 0000 $
-//* $Date: 2019-08-30 12:00:20 -0700 (Fri, 30 Aug 2019) $
-//*
-//*   "$WCREV$";
-//*   "$WCREV=7$";
-//*   "$WCMODS?Modified:Not modified$";
-//*   "$WCUNVER?Unversioned items found:no unversioned items$";
-//*   "$WCDATE$";
-//*   "$WCDATEUTC$";
-//*   "$WCDATE=%a, %d %B %Y$";
-//*   "$WCDATE=$";
-//*   "$WCDATE=%a, %c %B %Y$";
-//*   "$WCDATEUTC=%a, %d %B %Y$";
-//*   "$WCNOW$";
-//*   "$WCNOWUTC$";
-//*   "$WCISTAGGED?Tagged:Not tagged$";
-//*   "$WCINGIT?versioned:not versioned$";
-//*   "$WCFILEMODS?Modified:Not modified$";
-//*   "$WCSUBMODULE?Working tree has at least one submodule:Working tree has no submodules$";
-//*   "$WCSUBMODULEUP2DATE?All submodules are up2date (checked out HEAD):At least one submodule is not up2date (checked HEAD differs)$";
-//*   "$WCMODSINSUBMODULE?At least one submodule has uncommitted items:No submodule has uncommitted items$";
-//*   "$WCUNVERINSUBMODULE?At least one submodule has unversioned files:No submodule with unversioned files$";
-//*   "$WCMODSFULL?Modified items found (recursively):No modified items found (also not in submodules)$";
-//*   "$WCUNVERFULL?Unversioned items found (recursively):No unversioned items found (also not in submodules)$";
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 30-Aug-19 M.Merrett - Created
-//*
-//* TODO:
-//*
+
+
+
 //***********************************************************************************************************
 /*  use something like this to hash the password
 /*  $options = [    'cost' => 12,];
@@ -48,32 +40,29 @@ or
 sodium_crypto_pwhash_str( $pw, SODIUM_CRYPTO_PWHASH_OPSLIMIT_MODERATE , SODIUM_CRYPTO_PWHASH_MEMLIMIT_MODERATE);
 */
 
-//***********************************************************************************************************
-// a basic mod to cause gitwcrev to run
-
 namespace php_base\Model;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ * business logic for the authentication
+ */
 class AuthenticateModel extends Model {
 
-	const GOD_RIGHT = 'GOD';
-	const DBA_RIGHT = 'DBA';
-	const WRITE_RIGHT = 'Write';
-	const READ_RIGHT = 'Read';
-	const WILDCARD_RIGHT = '*';
-	const NO_RIGHT = '__NO__RIGHT__';
 
-	///////////const NOBODY = '__NO__BODY__';
-
-
+	/*
+	 * the current user
+	 */
 	protected static $User;
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *  a check to see if the user is logged in (timeouts and bad passwords type situations may return basically  false
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
 	public function isLoggedIn($username, $password): Response {
 
 		if (!empty($username)) {
@@ -94,7 +83,12 @@ class AuthenticateModel extends Model {
 		return (!empty($username));
 	}
 
-//	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * given a username and a password see if the password is valid for that username
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
 	public function tryToLogin($username, $password): Response {
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('check the username against somthing -db or file or hard or whatever!!!');
@@ -116,7 +110,11 @@ class AuthenticateModel extends Model {
 //		return false;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * test if the username and password are good
+	 * @param type $passedUsername
+	 * @return boolean
+	 */
 	public function isGoodAuthentication($passedUsername) {
 
 		///////////////////// DEBUG CODE
@@ -127,7 +125,10 @@ class AuthenticateModel extends Model {
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * default method called if something goes wrong - should never get here
+	 * @return Response
+	 */
 	public function doWork(): Response {
 		// should never get here
 		return Response::NoError();

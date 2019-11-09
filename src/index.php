@@ -91,7 +91,12 @@ if (Settings::GetPublic('TEST that All is well') != 'YES') {
 if (Settings::GetRuntimeObject('FileLog') == null) {
    throw new exception('it seems that setup (or settings.class.php did not run properly');
 }
-phpinfo();
+
+
+
+
+
+//phpinfo();
 if (false) {
 	//https://libmemcached.org/libMemcached.html
 	//https://www.php.net/manual/en/book.memcached.php
@@ -112,7 +117,7 @@ if (false) {
 	//    and/or session_destroy()
 	// https://www.php.net/manual/en/function.session-destroy.php
 
-	
+
 }
 
 //$tt = new \php_base\UtilsmyNullAbsorber();

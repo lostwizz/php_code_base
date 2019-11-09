@@ -1,6 +1,41 @@
 <?php
 
-//UserRoleandPermissionsView
+//**********************************************************************************************
+//* UserRoleandPermissionsView.class.php
+/**
+ * sets up any output users roles and permissions
+ *
+ * @author  mike.merrett@whitehorse.ca
+ * @license City of Whitehorse
+ *
+ * Description.
+ * this shows any info from the userRolesAndPermissions - typically not much (some debug output)
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewController - UserRoleAndPermissions View
+ * @subpackage UserRoleAndPermissions
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see UserRoleAndPermissionsModel.class.php
+ * @see UserInfoData.class.php
+ * @see UserAttributedata.class.php
+ * @see UserPermissionData.class.php
+ * @see UserRoleData.class.php
+ * @see UserRoleAndPermissionsController.class.php
+ *
+ * @todo Description
+ *
+ *
+ *
+ * https://www.php-fig.org/psr/
+ *
+ *
+ */
+//**********************************************************************************************
 
 namespace php_base\View;
 
@@ -12,14 +47,14 @@ use \php_base\Utils\HTML\HTML as HTML;
 
 
 /** * **********************************************************************************************
- *
+ * does any output from the user roles and permissions controller
  */
 class UserRoleAndPermissionsView extends View {
 
 	public $parent = null;
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * constructor - the parent has the data
 	 * @param type $parentObj
 	 */
 	public function __construct($parentObj) {
@@ -36,6 +71,7 @@ class UserRoleAndPermissionsView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 * dump the state  - which is basically the parent class and its properties
 	 *
 	 * @param type $arRoleNames
 	 * @param type $arOfRoleIds

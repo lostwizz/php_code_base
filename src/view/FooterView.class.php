@@ -1,23 +1,31 @@
 <?php
 
+/** * ********************************************************************************************
+ * FooterView.class.php
+ *
+ * Summary: this shows stuff at the bottom of the page
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description: handles all footer output
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewControllerData - FooterView
+ * @subpackage View
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see FooterController.class.php
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* FooterView.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 
 namespace php_base\View;
 
@@ -25,8 +33,9 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * **********************************************************************************************
+ *  show all the stuff at the bottom of the page
+ */
 class FooterView extends View {
 
 	/** -----------------------------------------------------------------------------------------------

@@ -1,22 +1,31 @@
 <?php
+
+/** * ********************************************************************************************
+ * HeaderView.class.php
+ *
+ * Summary: this shows stuff at the top of the page
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description: handles all header output
+ *
+ *
+ * @link URL
+ *
+ * @package ModelViewControllerData - HeaderView
+ * @subpackage View
+ * @since 0.3.0
+ *
+ * @example
+ *
+ * @see HeaderController.class.php
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* headerview.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 
 namespace php_base\View;
 
@@ -25,19 +34,18 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\HTML\HTML as HTML;
 
-//***********************************************************************************************
-//***********************************************************************************************
-/**
- *
+/** * **********************************************************************************************
+ * shows all the stuff at the top of the page
  */
 class HeaderView extends View {
+
 //	//-----------------------------------------------------------------------------------------------
 //	public function __construct($controller) {
 //	}
 //
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * this is the method that gets called to output the header
 	 * @param type $parent
 	 * @return Response
 	 */
@@ -60,7 +68,7 @@ class HeaderView extends View {
 		}
 
 		/** -----------------------------------------------------------------------------------------------
-		 *
+		 * make it look pretty
 		 */
 		protected function showHTMLHeader() {
 			echo HTML::DocType(/* 'html5' */ 'html4-trans');
@@ -83,7 +91,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * load up style sheets files
 	 */
 	protected function showAllStyleSheets() {
 		$arCss = $this->giveStyleSheets();
@@ -95,7 +103,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * load up all the java script files
 	 */
 	protected function showAllJavaScriptFiles() {
 		$arJava = $this->giveJavaScriptFiles();
@@ -105,7 +113,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * show the invisible table to allign things at the top of the page
 	 */
 	protected function showPageHeadTable() {
 		?>
@@ -130,7 +138,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * show the "info bar" with app name and version type stuff
 	 */
 	protected function showSubTitle() {
 		//class="header_h1"
@@ -144,6 +152,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 * give the title (or the app name and version and server
 	 *
 	 * @param type $short
 	 * @return string
@@ -160,7 +169,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * give a list of style sheets
 	 * @return type
 	 */
 	public function giveStyleSheets() {
@@ -172,7 +181,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * give all the javascript files
 	 * @return type
 	 */
 	public function giveJavaScriptFiles() {
@@ -181,7 +190,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * give the version
 	 * @return type
 	 */
 	public function giveVersion() {
@@ -189,7 +198,7 @@ class HeaderView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * give the database info
 	 * @return type
 	 */
 	public function giveTypeServerAndDatabase() {

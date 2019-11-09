@@ -34,7 +34,7 @@
  *
  * https://www.php-fig.org/psr/
  *
- * 
+ *
  */
 //**********************************************************************************************
 
@@ -44,10 +44,8 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-//***********************************************************************************************
-//***********************************************************************************************
-/**
- *
+/** * **********************************************************************************************
+ * controller for the user roles and permissions
  */
 Class UserRoleAndPermissionsController {
 
@@ -154,8 +152,8 @@ Class UserRoleAndPermissionsController {
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
 
-			$this->view->dumpState(null, null, true);
-			$this->view->dumpPermissions();
+			//$this->view->dumpState(null, null, true);
+			//$this->view->dumpPermissions();
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
 		}
@@ -222,8 +220,7 @@ Class UserRoleAndPermissionsController {
 		usort($this->userPermissions, function ($a, $b) {
 			$sA = $this->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
 			$sB = $this->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
-			//return strcmp($sA, $sB);
-			return $sA <=> $sb;
+			return $sA <=> $sB;
 		});
 
 		return (!empty($this->userPermissions));
