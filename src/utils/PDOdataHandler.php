@@ -1,22 +1,33 @@
 <?php
+
+/** * ********************************************************************************************
+ * PDOdataHandler.class.php
+ *
+ * Summary: monolog class to put the messages in a PDO database
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description.
+ * maintains 3 queues and then executes them in order -- and checks the response of the execution
+ *    and may abort or continue on processing.
+ *
+ *
+ *
+ * @package monolog
+ * @subpackage PDOHandler
+ * @since 0.3.0
+ *
+ * @ see monolog
+ *
+ * @example
+ *
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* PDOdataHandler.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
 
 namespace Monolog\Handler;
 
@@ -29,6 +40,9 @@ use \PDO;
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 
+/** * ********************************************************************************************
+ *
+ */
 class PDOdataHandler extends AbstractProcessingHandler
 {
 	private $initialized = false;
@@ -37,6 +51,13 @@ class PDOdataHandler extends AbstractProcessingHandler
 	private $tableName;
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param PDO $pdo
+	 * @param type $level
+	 * @param bool $bubble
+	 * @param string $tableName
+	 */
 	public function __construct(PDO $pdo, $level = Logger::DEBUG, bool $bubble = true,  string $tableName ='')
 	{
 		$this->pdo = $pdo;
@@ -48,8 +69,11 @@ class PDOdataHandler extends AbstractProcessingHandler
 	//	$this->tableName = $tablename;
 	//}
 
-
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $record
+	 * @return void
+	 */
 	protected function write(array $record): void
 	{
 		if (!$this->initialized) {
@@ -80,6 +104,9 @@ class PDOdataHandler extends AbstractProcessingHandler
 		$this->statement->execute();
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	private function initialize()
 	{
 		$sql = 'INSERT INTO ' . $this->tableName . ' ('

@@ -1,38 +1,43 @@
 <?php
+
+/** * ********************************************************************************************
+ * myCryption.class.php
+ *
+ * Summary maintains 3 queues (Pre/Dispatcher/Post) and executes thing in the queues.
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description.
+ * maintains 3 queues and then executes them in order -- and checks the response of the execution
+ *    and may abort or continue on processing.
+ *
+ *
+ *
+ * @package ModelViewController - Dispatcher
+ * @subpackage Dispatcher
+ * @since 0.3.0
+ *
+ * @example
+ *        $r = $this->dispatcher->do_work($this);
+ *
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* myCryption.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
-
-
 // mostly from https://www.the-art-of-web.com/php/two-way-encryption/
-
-
 // other interesting sites:
 //			https://github.com/defuse/php-encryption
 //			https://deliciousbrains.com/php-encryption-methods/
 
-
-
 namespace php_base\utils\myCryption;
 
-
-Class myCryption{
-
+/** * ********************************************************************************************
+ *
+ */
+Class myCryption {
 
 	protected $method = 'aes-128-ctr'; // default cipher method if none supplied
 	protected $key;
@@ -46,73 +51,88 @@ Class myCryption{
 //		}
 //	}
 
-
-
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @param type $method
+	 */
 	public function __construct($key = FALSE, $method = FALSE) {
-		if(!$key) {
+		if (!$key) {
 			$key = php_uname(); // default encryption key if none supplied
 		}
-		if(ctype_print($key)) {
-	  		// convert ASCII keys to binary format
+		if (ctype_print($key)) {
+			// convert ASCII keys to binary format
 			$this->key = openssl_digest($key, 'SHA256', TRUE);
 		} else {
 			$this->key = $key;
 		}
-		if($method) {
-			if(in_array(strtolower($method), openssl_get_cipher_methods())) {
+		if ($method) {
+			if (in_array(strtolower($method), openssl_get_cipher_methods())) {
 				$this->method = $method;
-	  		} else {
+			} else {
 				die(__METHOD__ . ": unrecognised cipher method: {$method}");
 			}
 		}
-  	}
+	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
 	protected function iv_bytes() {
 		return openssl_cipher_iv_length($this->method);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return type
+	 */
 	public function encrypt($data) {
 		$iv = openssl_random_pseudo_bytes($this->iv_bytes());
 		return bin2hex($iv) . openssl_encrypt($data, $this->method, $this->key, 0, $iv);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// decrypt encrypted string
+	/** -----------------------------------------------------------------------------------------------
+	 * decrypt encrypted string
+	 * @param type $data
+	 * @return boolean
+	 */
 	public function decrypt($data) {
-		$iv_strlen = 2  * $this->iv_bytes();
-		if(preg_match("/^(.{" . $iv_strlen . "})(.+)$/", $data, $regs)) {
+		$iv_strlen = 2 * $this->iv_bytes();
+		if (preg_match("/^(.{" . $iv_strlen . "})(.+)$/", $data, $regs)) {
 			list(, $iv, $crypted_string) = $regs;
-			if(ctype_xdigit($iv) && strlen($iv) % 2 == 0) {
+			if (ctype_xdigit($iv) && strlen($iv) % 2 == 0) {
 				return openssl_decrypt($crypted_string, $this->method, $this->key, 0, hex2bin($iv));
 			}
 		}
 		return FALSE; // failed to decrypt
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 * FROM https://gist.github.com/niczak/2501891
+	 * @param type $string
+	 * @return type
+	 */
+	public function safe_b64encode($string) {
+		$data = base64_encode($string);
+		$data = str_replace(array('+', '/', '='), array('-', '_', ''), $data);
+		return $data;
+	}
 
-
-	//-----------------------------------------------------------------------------------------------
-	// FROM https://gist.github.com/niczak/2501891
-    public  function safe_b64encode($string) {
-        $data = base64_encode($string);
-        $data = str_replace(array('+','/','='),array('-','_',''),$data);
-        return $data;
-    }
-
-	//-----------------------------------------------------------------------------------------------
-    public function safe_b64decode($string) {
-        $data = str_replace(array('-','_'),array('+','/'),$string);
-        $mod4 = strlen($data) % 4;
-        if ($mod4) {
-            $data .= substr('====', $mod4);
-        }
-        return base64_decode($data);
-    }
-
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $string
+	 * @return type
+	 */
+	public function safe_b64decode($string) {
+		$data = str_replace(array('-', '_'), array('+', '/'), $string);
+		$mod4 = strlen($data) % 4;
+		if ($mod4) {
+			$data .= substr('====', $mod4);
+		}
+		return base64_decode($data);
+	}
 
 //sodium_crypto_pwhash_str( $pw, SODIUM_CRYPTO_PWHASH_OPSLIMIT_MODERATE , SODIUM_CRYPTO_PWHASH_MEMLIMIT_MODERATE);
 
@@ -124,14 +144,21 @@ Class myCryption{
 	protected $block_size;
 	protected $messageAuthenticationCode;
 
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
 	public function sodium_GetMessageAuthenticationCode() {
 		return $this->messageAuthenticationCode;
 	}
 
-	// $secret_key needs to be 32 bytes long
-	public function sodium_init( $secret_key=null){
-		if ( empty($secret_key)){
+	/** -----------------------------------------------------------------------------------------------
+	  // $secret_key needs to be 32 bytes long
+	 * @param type $secret_key
+	 * @return type
+	 */
+	public function sodium_init($secret_key = null) {
+		if (empty($secret_key)) {
 			$secret_key = sodium_crypto_secretbox_keygen();
 		}
 		$this->block_size = 16;
@@ -140,18 +167,30 @@ Class myCryption{
 		return $secret_key;
 	}
 
-	public function sodium_encrypt( $message, $secret_key=null){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $message
+	 * @param type $secret_key
+	 * @return type
+	 */
+	public function sodium_encrypt($message, $secret_key = null) {
 
 		$secret = empty($secret_key) ? $this->secret_key : $secret_key;
 
 		$padded_message = sodium_pad($message, $this->block_size);
 
-		$this->messageAuthenticationCode  = sodium_crypto_auth($message, $secret);
+		$this->messageAuthenticationCode = sodium_crypto_auth($message, $secret);
 		$encrypted_message = sodium_crypto_secretbox($padded_message, $this->nonce, $secret);
 		return $encrypted_message;
 	}
 
-	public function sodium_decrypt( $encrypted_message, $secret_key=null){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $encrypted_message
+	 * @param type $secret_key
+	 * @return type
+	 */
+	public function sodium_decrypt($encrypted_message, $secret_key = null) {
 		$secret = empty($secret_key) ? $this->secret_key : $secret_key;
 
 		$decrypted_padded_message = sodium_crypto_secretbox_open($encrypted_message, $this->nonce, $secret);
@@ -160,10 +199,18 @@ Class myCryption{
 		return $decrypted_message;
 	}
 
-	public function sodium_authenticate($sodium_mac, $message, $key ){
-		return sodium_crypto_auth_verify( $sodium_mac, $message, $key);
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $sodium_mac
+	 * @param type $message
+	 * @param type $key
+	 * @return type
+	 */
+	public function sodium_authenticate($sodium_mac, $message, $key) {
+		return sodium_crypto_auth_verify($sodium_mac, $message, $key);
 	}
 
+}
 
 //	function crypt($input, $rounds = 7) {
 //		$salt = "";
@@ -173,7 +220,6 @@ Class myCryption{
 //		}
 //		return $this->crypt($input, sprintf('$2y$%02y$', $rounds) . $salt);
 //	}
-
 ////
 ////	//-----------------------------------------------------------------------------------------------
 ////	function basicEnCrypt( $token){
@@ -218,4 +264,3 @@ Class myCryption{
 ////
 ////		return $output;
 ////	}
-}

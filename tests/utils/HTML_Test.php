@@ -868,7 +868,7 @@ class HTML_Test extends TestCase{
 
 	function test_version(){
 		$out = HTML::Version();
-		$expected = '0.1.0';
+		$expected = '0.3.0';
 		$this->assertEquals($expected, $out);
 
 	}

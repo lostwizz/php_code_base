@@ -126,7 +126,7 @@ class MessageLog_Test extends TestCase {
 	public function test_AddAndShow_2line(){
 		$ML = new ExtendedMessageLogTest();
 
-		$this->expectOutputString( '<span class="msg_style_NOTICE">[samFakeTimeStamp] NOTICE Sam was here</span><br>'
+		$this->expectOutputString( '<span class="msg_style_NOTICE">[samFakeTimeStamp] NOTICE Sam&nbsp;was&nbsp;here</span><br>'
 									. '<span class="msg_style_NOTICE">[fakeTimeStamp] NOTICE fred</span><br>');
 
 		$ML->addNotice( 'Sam was here', 'samFakeTimeStamp');
@@ -546,7 +546,7 @@ class MessageLog_Test extends TestCase {
 		$ML = new ExtendedMessageLogTest();
 
 		$ML->addEmergency( 'Hello World', 'fakeTimeStamp');
-		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello World</span>');
+		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello&nbsp;World</span>');
 		$ML->showNextMessage();
 	}
 
@@ -557,8 +557,8 @@ class MessageLog_Test extends TestCase {
 		$ML->addEmergency( 'Hello World1', 'fakeTimeStamp');
 		$ML->addAlert( 'Hello World2', 'fakeTimeStamp2');
 
-		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello World1</span>'
-								. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello World2</span>' );
+		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello&nbsp;World1</span>'
+								. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello&nbsp;World2</span>' );
 
 		$ML->showNextMessage();
 		$ML->showNextMessage();
@@ -570,7 +570,7 @@ class MessageLog_Test extends TestCase {
 		$ML = new ExtendedMessageLogTest();
 
 		$ML->addEmergency( 'Hello World', 'fakeTimeStamp');
-		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello World</span><br>');
+		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello&nbsp;World</span><br>');
 		$ML->showAllMessages();
 
 	}
@@ -582,9 +582,9 @@ class MessageLog_Test extends TestCase {
 		$ML->addEmergency( 'Hello World1', 'fakeTimeStamp');
 		$ML->addAlert( 'Hello World2', 'fakeTimeStamp2');
 
-		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello World1</span>'
+		$this->expectOutputString( '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello&nbsp;World1</span>'
 								. '<br>'
-								. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello World2</span>'
+								. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello&nbsp;World2</span>'
 								. '<br>'
 								);
 		$ML->showAllMessages();
@@ -599,8 +599,8 @@ class MessageLog_Test extends TestCase {
 		$ML->addAlert( 'Hello World2', 'fakeTimeStamp2');
 
 		$this->expectOutputString('<fieldset class="msg_fieldset"><Legend id="message_box_show_all_in_box" class="msg_legend">Messages</legend>'
-						. '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello World1</span><br>'
-						. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello World2</span><br>'
+						. '<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello&nbsp;World1</span><br>'
+						. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello&nbsp;World2</span><br>'
 						. '</fieldset>'
 								);
 		$ML->showAllMessagesInBox(true);
@@ -614,8 +614,8 @@ class MessageLog_Test extends TestCase {
 		$ML->addEmergency( 'Hello World1', 'fakeTimeStamp');
 		$ML->addAlert( 'Hello World2', 'fakeTimeStamp2');
 
-		$this->expectOutputString('<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello World1</span><br>'
-						. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello World2</span><br>'
+		$this->expectOutputString('<span class="msg_style_EMERGENCY">[fakeTimeStamp] EMERGENCY Hello&nbsp;World1</span><br>'
+						. '<span class="msg_style_ALERT">[fakeTimeStamp2] ALERT Hello&nbsp;World2</span><br>'
 								);
 		$ML->showAllMessagesInBox(false);
 

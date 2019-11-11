@@ -1,35 +1,52 @@
 <?php
 
+/** * ********************************************************************************************
+ * HTML.class.php
+ *
+ * Summary: static class wrapper for the html code
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description: static wrapper for the html code
+ *
+ *
+ *
+ * @package utils
+ * @subpackage HTML
+ * @since 0.3.0
+ *
+ * @see  https://github.com/queued/HTML-Helper/blob/master/class.html.php
+ *
+ * @example
+ *
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* HTML.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
 //***********************************************************************************************************
-//***********************************************************************************************************
-//  from:
-/// https://github.com/queued/HTML-Helper/blob/master/class.html.php
 
 namespace php_base\Utils\HTML;
 
 use \php_base\Utils\Dump\Dump as Dump;
 
+/** * **********************************************************************************************
+ * static class to do some html code
+ */
 abstract Class HTML {
 
-   private const VERSION = '0.1.0';
+	/**
+	 * @var version number
+	 */
+   private const VERSION = '0.3.0';
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * gives a version number
+    * @static
+    * @return type
+    */
    public static function Version() {
       return self::VERSION;
    }
@@ -50,7 +67,16 @@ abstract Class HTML {
 //
 //	}
    //-----------------------------------------------------------------------------------------------
-   //'<input type=hidden name="' . ACTION_SYSTEM . '" value="' . INVOICING_SYSTEM . '">';
+	/** -----------------------------------------------------------------------------------------------
+    * return a text with a hidden input
+    * @example  output : '<input type=hidden name="' . ACTION_SYSTEM . '" value="' . INVOICING_SYSTEM . '">';
+    * @static
+    * @param string $name
+    * @param string $value
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Hidden(string $name, string $value, $arOptions = null, $arStyle = null) {
       $n = (!empty($name)) ? ' name="' . $name . '"' : '';
       $v = (!empty($value)) ? ' value="' . $value . '"' : '';
@@ -59,8 +85,17 @@ abstract Class HTML {
 
    //-----------------------------------------------------------------------------------------------
    //<input type="TEXT" name="username" class="logon_username_input" value="">
+	/** -----------------------------------------------------------------------------------------------
+    * gives a text input
+	 *
+    * @static
+    * @param type $name
+    * @param type $value
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Text($name, $value = null, $arOptions = null, $arStyle = null) {
-
       $name = (!empty($name)) ? ' name="' . $name . '"' : '';
       $value = (!empty($value)) ? ' value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle);
@@ -73,26 +108,60 @@ abstract Class HTML {
 //								<input type="reset" value="Reset" class="logon_reset_button">
 //							</td>
 //							<td class="logon_buttons_td">
+	/** -----------------------------------------------------------------------------------------------
+    * gives a submit button
+    * @static
+    * @param type $name
+    * @param type $value
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Submit($name, $value = null, $arOptions = null, $arStyle = null) {
       $name = (!empty($name)) ? ' name="' . $name . '"' : '';
       $value = (!empty($value)) ? ' value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle);
    }
 
-   //-----------------------------------------------------------------------------------------------
+   	/** -----------------------------------------------------------------------------------------------
+	* gives a password text box
+    * @static
+    * @param type $name
+    * @param type $value
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Password($name, $value = null, $arOptions = null, $arStyle = null) {
       $name = (!empty($name)) ? ' name="' . $name . '"' : '';
       $value = (!empty($value)) ? ' value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'Password', $arOptions, $arStyle);
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    *  gives a reset button
+	 *
+    * @static
+    * @param type $value
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Reset($value = 'reset', $arOptions = null, $arStyle = null) {
       $value = (!empty($value)) ? ' value="' . $value . '"' : '';
       return self::ShowInput('', $value, 'Reset', $arOptions, $arStyle);
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * gives a text box for input
+    * @static
+    * @param type $name
+    * @param type $value
+    * @param type $type
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    protected static function ShowInput($name, $value, $type = 'TEXT', $arOptions = null, $arStyle = null) {
       $attr = self::parseOptions($arOptions);
       $style = self::parseStyle($arStyle);
@@ -125,6 +194,17 @@ abstract Class HTML {
    //////<option value="32">Youth Passes</option>
    //////<option value="29">Youth Tickets</option>
    //////</select>
+	/** -----------------------------------------------------------------------------------------------
+    * gives a select drop down box
+    * @static
+    * @param string $name
+    * @param type $values
+    * @param type $defaultItemValue
+    * @param type $addDefaultSelection
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Select(string $name,
            $values,
            $defaultItemValue = null,
@@ -141,7 +221,15 @@ abstract Class HTML {
       return $sel . $options . '</select>' . PHP_EOL;
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * gives the options for a select box
+	 *
+    * @static
+    * @param type $values
+    * @param type $defaultItemValue
+    * @param type $addDefaultSelection
+    * @return string
+    */
    protected static function Options($values, $defaultItemValue = null, $addDefaultSelection = true) {
       $options = '';
       if ($addDefaultSelection) {
@@ -163,7 +251,18 @@ abstract Class HTML {
       return $options;
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * gives a radio selection
+	 *
+    * @static
+    * @param string $name
+    * @param string $val
+    * @param type $lable
+    * @param type $isChecked
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Radio(string $name,
            string $val,
            $lable = null,
@@ -179,9 +278,7 @@ abstract Class HTML {
       return $r . $attr . $style . '/>' . $lable;
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+	/** -----------------------------------------------------------------------------------------------
     * Generates a HTML document type
     *
     * @static
@@ -207,9 +304,7 @@ abstract Class HTML {
       }
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+	/** -----------------------------------------------------------------------------------------------
     * Creates the <img /> tag
     *
     * @static
@@ -232,9 +327,7 @@ abstract Class HTML {
       return '<img src="' . $url . '"' . $attr . ' ' . $style . '/>';
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+	/** -----------------------------------------------------------------------------------------------
     * Creates a HTML Anchor link
     *
     * @static
@@ -252,10 +345,10 @@ abstract Class HTML {
       return '<a href="' . $url . '"' . $attr . $style . '>' . $lable . '</a>';
    }
 
-   //-----------------------------------------------------------------------------------------------
-
 	/** -----------------------------------------------------------------------------------------------
+	 * gives a horizontal line
 	 *
+    * @static
 	 * @return string
 	 */
 	public static function HR($size =1) {
@@ -280,10 +373,8 @@ abstract Class HTML {
       return str_repeat('<BR />', $count);
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
-    * Returns non-breaking space entities
+	/** -----------------------------------------------------------------------------------------------
+    * Returns non-breaking space entities repeated
     *
     * @static
     * @access 	public
@@ -297,9 +388,7 @@ abstract Class HTML {
       return str_repeat('&nbsp;', $count);
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+	/** -----------------------------------------------------------------------------------------------
     * HTML::Form() -> Creates the <form> tag with the specified variables.
     *
     * @static
@@ -330,12 +419,25 @@ abstract Class HTML {
       return $html;
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * closes the form tag
+	 *
+    * @static
+    * @return type
+    */
    public static function FormClose() {
       return ' </form>' . PHP_EOL;
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * open a tag of some sort
+	 *
+    * @static
+    * @param string $tag
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
    public static function Open(string $tag, $arOptions = null, $arStyle = null) {
       $attr = self::parseOptions($arOptions);
       $style = self::parseStyle($arStyle);
@@ -343,14 +445,17 @@ abstract Class HTML {
       return '<' . $tag . $attr . $style . '>' . PHP_EOL;
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * gives a close tag
+    * @static
+    * @param string $tag
+    * @return type
+    */
    public static function Close(string $tag) {
       return PHP_EOL . '</' . $tag . '>' . PHP_EOL;
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+	/** -----------------------------------------------------------------------------------------------
     * HTML::Filter_XSS($str, $args) -> Filter some string with the params into $args
     *
     * @static
@@ -398,9 +503,7 @@ abstract Class HTML {
       return $str;
    }
 
-   //-----------------------------------------------------------------------------------------------
-
-   /**
+	/** -----------------------------------------------------------------------------------------------
     * ONLY FOR THIS CLASS (self)
     * self::filter description
     *
@@ -435,7 +538,12 @@ abstract Class HTML {
       }
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * takes an array (or string) and puts a style wrapper around it
+	 * @static
+    * @param type $arStyle
+    * @return type
+    */
    protected static function parseStyle($arStyle = null) {
       if (is_string($arStyle)) {
          return (!empty($arStyle)) ? ' style="' . $arStyle . '"' : null;
@@ -452,7 +560,12 @@ abstract Class HTML {
       return null;
    }
 
-   //-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+    * take the options as a string or array and returns a string for inclusion in the tag(s)
+    * @static
+    * @param type $arOptions
+    * @return string
+    */
    protected static function parseOptions($arOptions = null) {
       if (is_string($arOptions)) {
          return (!empty($arOptions)) ? ' ' . trim($arOptions) : '';

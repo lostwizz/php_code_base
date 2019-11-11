@@ -48,22 +48,6 @@
 		-->
 
 
-		<testsuite name="Utils">
-			<file>Tests/utils/SettingsClassTest.php</file>
-			<file>Tests/utils/Setup_Logging_Test.php</file>
-			<!-- <file>Tests/utils/log/LoggingToDBTest.php</file>   -->
-			<file>Tests/utils/dumpTest.php</file>
-
-			<file>Tests/utils/Message_Test.php</file>
-			<file>Tests/utils/MessageLog_Test.php</file>
-
-			<file>Tests/utils/HTML_Test.php</file>
-			<file>Tests/utils/myCryption_Test.php</file>
-			<file>Tests/utils/myUtils_Test.php</file>
-			<file>Tests/utils/ErrorHandlerTest.php</file>
-		</testsuite>
-
-
 
 		<testsuite name="base_structure">
 			<file>Tests/DirectoryStructureTest.php</file>
@@ -80,6 +64,23 @@
 
 			<file>Tests/control/FooterController_Test.php</file>
 			<file>Tests/view/FooterView_Test.php</file>
+		</testsuite>
+
+
+
+		<testsuite name="Utils">
+			<file>Tests/utils/dumpTest.php</file>
+			<file>Tests/utils/SettingsClassTest.php</file>
+			<file>Tests/utils/Setup_Logging_Test.php</file>
+			<!-- <file>Tests/utils/log/LoggingToDBTest.php</file>   -->
+
+			<file>Tests/utils/Message_Test.php</file>
+			<file>Tests/utils/MessageLog_Test.php</file>
+
+			<file>Tests/utils/HTML_Test.php</file>
+			<file>Tests/utils/myCryption_Test.php</file>
+			<file>Tests/utils/myUtils_Test.php</file>
+			<file>Tests/utils/ErrorHandlerTest.php</file>
 		</testsuite>
 
 

@@ -90,11 +90,11 @@ Settings::SetRuntime( 'EmailLog', null);
  * this indicates which of the logging is active (true) and which are basically left turned off
  */
 Settings::SetPublic( 'Use_MessageLog', true );  //true
-Settings::SetPublic( 'Use_DBLog', true);
-Settings::SetPublic( 'Use_DBdataLog', true);
-Settings::SetPublic( 'Use_FileLog', true);  // true
-Settings::SetPublic( 'Use_SecurityLog', true);
-Settings::SetPublic( 'Use_EmailLog', true);      // true
+Settings::SetPublic( 'Use_DBLog', false);
+Settings::SetPublic( 'Use_DBdataLog', false);
+Settings::SetPublic( 'Use_FileLog', false);  // true
+Settings::SetPublic( 'Use_SecurityLog', false);
+Settings::SetPublic( 'Use_EmailLog', false);      // true
 
 
 /**

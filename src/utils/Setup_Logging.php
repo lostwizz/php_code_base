@@ -1,26 +1,34 @@
 <?php
 //**********************************************************************************************
 //* setup_Logging.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
-/**
- * Setup_Logging.php
+/** * ********************************************************************************************
+ * Setup_Logging.class.php
+ *
+ * Summary: sets up logging for the application
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description sets up logging for the applicaion
+ *
+ *
+ * @package utils
+ * @subpackage logging
+ * @since 0.3.0
+ *
+ * @see PDOHandler
+ * @see PDOdataHandler
+ * @see EmailHtmlFormatter
+ * @see myDBUtils
+ *
+ * @example
+ *
+ *
+ * @todo Description
  *
  */
+//**********************************************************************************************
 
 namespace php_base\Utils;
 
@@ -34,7 +42,7 @@ require_once(  DIR . '..' . DS . 'vendor' . DS . 'autoload.php');
 
 require_once(DIR . 'utils' . DS . 'PDOHandler.php');
 require_once(DIR . 'utils' . DS . 'PDOdataHandler.php');
-require_once(DIR . 'utils' . DS . 'EmailHtmlFormatter.php');
+require_once(DIR . 'utils' . DS . 'EmailHtmlFormatter.class.php');
 
 use \PDO;
 
@@ -192,35 +200,3 @@ unset($pdo);
 // this wont send as it is not critical
 //$emailLog->info( 'hi');
 
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-// setup pdo connection to the database
-//////////////////////////////////////////////////////////////////////////////////////////
-//function setup_PDO(){
-//	if ( ! extension_loaded(Settings::GetProtected('database_extension_needed'))) {
-//		throw new Exception ('NOT loaded');
-//	}
-//	if ( empty(Settings::GetProtected( 'DB_Username'))) {
-//		throw new Exception('Missing Config Data from Settings- DB_Username');
-//	}
-//	if ( empty(Settings::GetProtected( 'DB_Password'))) {
-//		throw new Exception('Missing Config Data from Settings- DB_Password');
-//	}
-//
-//	$dsn = Settings::GetProtected( 'DB_DSN');
-//	$options= Settings::GetProtected( 'DB_DSN_OPTIONS');
-//	try {
-//		$conn = new \PDO($dsn,
-//						Settings::GetProtected('DB_Username'),
-//						Settings::GetProtected('DB_Password'),
-//						$options
-//						);
-//	} catch (\PDOException $e)				{
-//		throw new \PDOException($e->getMessage(), (int)$e->getCode());
-//	}
-//	return $conn;
-//}
-//////////////////////////////////////////////////////////////////////////////////////////
-/////zzzzzzzzzzz

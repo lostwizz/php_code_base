@@ -1,41 +1,38 @@
 <?php
+
+/** * ********************************************************************************************
+ * ErrorHandler.php
+ *
+ * Summary: my error handler to replace the stock one
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description:
+ *	  custom error handler - it can send log message and thru them emails
+ *
+ *
+ * @package ErrorHandler
+ * @subpackage
+ * @since 0.3.0
+ *
+ * @see   https://www.php.net/manual/en/class.error.php
+ *
+ * @example
+ *
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* ErrorHandler.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-09-12 09:46:20 -0700 (Thu, 12 Sep 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 12-Sep-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
-
-//////////////////////////////////////////////////////////////
-// ErrorHandler.php
-//
-//
-//   https://www.php.net/manual/en/class.error.php
-//
-//////////////////////////////////////////////////////////////
-
-////////
-////////use Monolog\Handler\HandlerInterface;
-////////use Monolog\Handler\StreamHandler;
-////////use Psr\Log\LoggerInterface;
-////////use Psr\Log\InvalidArgumentException;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
-
+/**
+ *  setup for debugging or production
+ */
 if ( Settings::GetPublic('IS_DEBUGGING') or defined( "IS_PHPUNIT_TESTING") ) {
 	ini_set( "display_startup_errors", 1);
 	ini_set('display_errors', 1);
@@ -47,6 +44,7 @@ if ( Settings::GetPublic('IS_DEBUGGING') or defined( "IS_PHPUNIT_TESTING") ) {
 	$x = error_reporting( E_ALL ^ E_NOTICE );          ///0xFFFFFFF ^ E_NOTICE );
 	Settings::SetProtected('SurpressErrorHandlerDetails', 'YES');
 
+	// for some wierd reason theys seem to only work on the second try
 	Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
 	Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
 
@@ -57,13 +55,15 @@ if ( Settings::GetPublic('IS_DEBUGGING') or defined( "IS_PHPUNIT_TESTING") ) {
 
 
 
-//***********************************************************************************************
-//***********************************************************************************************
+/** * ********************************************************************************************
+ * my exception handler which calls the error handler
+ *
+ * @param type $exception
+ */
 function myException_handler($exception)  {
 
 	UserErrorHandler( $exception->getCode(),
 							$exception->getMessage() ,
-								//. '(Error Code:' . $exception->getCode . ')',
 							$exception->getFile(),
 							$exception->getLine(),
 							$exception->getTrace()
@@ -71,9 +71,16 @@ function myException_handler($exception)  {
 }
 
 
-//***********************************************************************************************
-//***********************************************************************************************
-//$alternate_bt=null
+
+/** * ********************************************************************************************
+ * error handler if debugging shows lots of info if not then just a generic msg
+ *
+ * @param type $errno
+ * @param type $errstr
+ * @param type $errfile
+ * @param type $errline
+ * @param type $alternate_bt
+ */
 function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt) {
 
 	$errLines = getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt);
@@ -120,9 +127,15 @@ function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt) {
 	}
 }
 
-
-//-----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------
+/** * ********************************************************************************************
+ * get some text info on the error thrown
+ * @param type $errno
+ * @param type $errstr
+ * @param type $errfile
+ * @param type $errline
+ * @param type $alternate_bt
+ * @return type
+ */
 function getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt) {
 
 	// define an assoc array of error string
@@ -156,9 +169,11 @@ function getTextAboutError($errno, $errstr, $errfile, $errline, $alternate_bt) {
 	return array ( $line1, $line2, $line3);
 }
 
-
-//-----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------
+/** * ********************************************************************************************
+ * process the backtrace
+ * @param type $bt
+ * @return string
+ */
 function getBackTraceLines($bt) {
 	$error_text = '';
 	foreach( $bt as $bt_func) {
@@ -179,9 +194,13 @@ function getBackTraceLines($bt) {
 	return $error_text;
 }
 
-
-//-----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------
+/** * ********************************************************************************************
+ * save the error into the log(s)
+ *
+ * @param type $logObject
+ * @param type $errLines
+ * @param type $backTraceLines
+ */
 function saveLog( $logObject, $errLines, $backTraceLines) {
 	$logObject->addCritical($errLines[0]);
 	$logObject->addCritical($errLines[1]);
@@ -191,9 +210,14 @@ function saveLog( $logObject, $errLines, $backTraceLines) {
 	$logObject->addCritical($btLines);
 }
 
-
-//-----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------
+/** * ********************************************************************************************
+ * send an email log message
+ *
+ * @param type $emailLogObject
+ * @param type $errLines
+ * @param type $backTraceLines
+ * @param type $errno
+ */
 function sendEmailLog($emailLogObject, $errLines, $backTraceLines, $errno) {
 
 	$btLines = str_replace(   "&nbsp;", ' ',$backTraceLines);
@@ -220,6 +244,3 @@ function sendEmailLog($emailLogObject, $errLines, $backTraceLines, $errno) {
 		$emailLogObject->addCritical($errLines[2], $details);
 	}
 }
-
-//-----------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------

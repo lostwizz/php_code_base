@@ -140,13 +140,13 @@ class DumpTest extends TestCase{
 		// this is very hard totest - the back trace is dependant on where you run it from
 		$bt = array( 0=> array (
 				    'file' => DIR .'index.php',
-				    'line' => 45,
+				    'line' => 55,
 				    'function' => 'dump',
 				    'class' => 'whitehorse\\php_base\\Utils\\Dump\\Dump',
 				    'type' => '::',
 				    'args' =>
 				    array (
-				      0 => 45,
+				      0 => 55,
 				      1 => '-This is a Title-',
 				      2 => true,
 				    ),
@@ -157,11 +157,11 @@ class DumpTest extends TestCase{
 
 		DumpExtendedClass::ExtendSetBackTrace($data, $bt);
 		$dumpData = $data->backTrace;
-		$expectedData = DIR . 'index.php:45(dump)45, -This is a Title-, -True-' . "\n";
+		$expectedData = DIR . 'index.php:55(dump)55, -This is a Title-, -True-' . "\n";
 		$this->assertEquals($expectedData, $dumpData);
 
 		$dumpData = DumpExtendedClass::ExtendBeautifyBackTrace($data);
-		$expectedData= '<font color=#0000FF>' . DIR . 'index.php:45(dump)45, -This is a Title-, -True-' ."\n". '</font>' ."\n";
+		$expectedData= '<font color=#0000FF>' . DIR . 'index.php:55(dump)55, -This is a Title-, -True-' ."\n". '</font>' ."\n";
 
 		$this->assertEquals($expectedData, $dumpData);
 
@@ -169,11 +169,11 @@ class DumpTest extends TestCase{
 		DumpExtendedClass::ExtendSetVariableName( $data, $o, $bt);
 		$this->assertEquals( DIR . 'index.php', $data->fileName );
 
-		$this->assertEquals(45, $data->lineNum);
+		$this->assertEquals(55, $data->lineNum);
 
 		$this->assertEquals('localhost', $data->serverName);
 
-		$this->assertEquals( '//Dump::dump(__LINE__, \'-This is a Title-\',true);' ."\r\n", $data->codeLine, 'if fails then chec that line 45 in index.php is //Dump::dump....');
+		$this->assertEquals( '//Dump::dump(__LINE__, \'-This is a Title-\',true);' ."\r\n", $data->codeLine, 'if fails then chec that line 55 in index.php is //Dump::dump....');
 
 		$expected = "__LINE__, '-This is a Title-',true";
 		$this->assertEquals( $expected, $data->variableName);

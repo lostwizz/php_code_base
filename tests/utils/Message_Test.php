@@ -340,16 +340,16 @@ class AMessageTest extends TestCase {
 
 		return [
 	            [['Hello World', null, null ],
-	               '<span class="msg_style_NOTICE">[' . $nowIsh . '] NOTICE Hello World</span>'],
+	               '<span class="msg_style_NOTICE">[' . $nowIsh . '] NOTICE Hello&nbsp;World</span>'],
 
                 [['Hello World', 'someFakeTextTimeStamp', anExtendedMessage::DEBUG ],
-	               '<span class="msg_style_DEBUG">[someFakeTextTimeStamp] DEBUG Hello World</span>'],
+	               '<span class="msg_style_DEBUG">[someFakeTextTimeStamp] DEBUG Hello&nbsp;World</span>'],
 
 	            [['Hello World', 'someFakeTextTimeStamp', anExtendedMessage::EMERGENCY ],
-	               '<span class="msg_style_EMERGENCY">[someFakeTextTimeStamp] EMERGENCY Hello World</span>'],
+	               '<span class="msg_style_EMERGENCY">[someFakeTextTimeStamp] EMERGENCY Hello&nbsp;World</span>'],
 
 	            [['Hello World', 'aNewFakeTS', null ],
-	               '<span class="msg_style_NOTICE">[aNewFakeTS] NOTICE Hello World</span>'],
+	               '<span class="msg_style_NOTICE">[aNewFakeTS] NOTICE Hello&nbsp;World</span>'],
 
 	            [[null, null, null ],
 	               '<span class="msg_style_NOTICE">[' . $nowIsh . '] NOTICE </span>'],
@@ -382,7 +382,7 @@ class AMessageTest extends TestCase {
 		//$nowIsh =  date( 'g:i:s');
 		$nowIsh = '23:55:30';
 
-		$expected ='<span class="msg_style_NOTICE">[' . $nowIsh . '] NOTICE Hello World</span>';
+		$expected ='<span class="msg_style_NOTICE">[' . $nowIsh . '] NOTICE Hello&nbsp;World</span>';
 		$this->expectOutputString( $expected);
 		$o->show();
 	}

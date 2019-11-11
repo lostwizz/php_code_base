@@ -1,23 +1,31 @@
 <?php
+/** * ********************************************************************************************
+ * messagelog.class.php
+ *
+ * Summary: handles a message log queue for messages at the footer of a page
+ *
+ * @author mike.merrett@whitehorse.ca
+ * @version 0.5.0
+ * $Id$
+ *
+ * Description
+ * handles a message log queue
+ *
+ *
+ * @package utils
+ * @subpackage Message Log
+ * @since 0.3.0
+ *
+ * @see settings
+ * @see myNullAbsorber
+ *
+ * @example
+ *  Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
+ *
+ * @todo Description
+ *
+ */
 //**********************************************************************************************
-//* messagelog.class.php
-//*
-//* $Id$
-//* $Rev: 0000 $
-//* $Date: 2019-08-30 12:01:00 -0700 (Fri, 30 Aug 2019) $
-//*
-//* DESCRIPTION:
-//*
-//* USAGE:
-//*
-//* HISTORY:
-//* 30-Aug-19 M.Merrett - Created
-//*
-//* TODO:
-//*
-//***********************************************************************************************************
-//***********************************************************************************************************
-
 
 namespace php_base\Utils;
 
@@ -29,14 +37,15 @@ namespace php_base\Utils;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 
-
-define('AR_TEXT',0);
+define('AR_TEXT', 0);
 define('AR_TimeStamp', 1);
-define('AR_LEVEL',2);
-
+define('AR_LEVEL', 2);
 
 //***********************************************************************************************
 //***********************************************************************************************
+/**
+ * the message base class for AMessage
+ */
 abstract class MessageBase {
 
 	const DEBUG = 100;
@@ -49,185 +58,234 @@ abstract class MessageBase {
 	const EMERGENCY = 600;
 	const TODO = 999;
 
-
- 	protected static $levels = array(
-        self::DEBUG     => 'DEBUG',
-        self::INFO      => 'INFO',
-        self::NOTICE    => 'NOTICE',
-        self::WARNING   => 'WARNING',
-        self::ERROR     => 'ERROR',
-        self::CRITICAL  => 'CRITICAL',
-        self::ALERT     => 'ALERT',
-        self::EMERGENCY => 'EMERGENCY',
-        self::TODO      => 'TODO'
-    );
-
-	protected $text;	// the messageText message
-	protected $timeStamp;		// time stamp for the message (for displaying the time)
-	protected $level;				// level of the message (see defines at top)
+	/**
+	 *
+	 * @var array $levels - gives a text description of the error type
+	 */
+	protected static $levels = array(
+		self::DEBUG => 'DEBUG',
+		self::INFO => 'INFO',
+		self::NOTICE => 'NOTICE',
+		self::WARNING => 'WARNING',
+		self::ERROR => 'ERROR',
+		self::CRITICAL => 'CRITICAL',
+		self::ALERT => 'ALERT',
+		self::EMERGENCY => 'EMERGENCY',
+		self::TODO => 'TODO'
+	);
+	protected $text; // the messageText message
+	protected $timeStamp;  // time stamp for the message (for displaying the time)
+	protected $level;	// level of the message (see defines at top)
 
 	abstract function Show();
-	abstract function Set($value=null);
+
+	abstract function Set($value = null);
+
 	abstract function Get();
 }
 
-
-
 //***********************************************************************************************
 //***********************************************************************************************
+/**
+ * a message class
+ *     - the base has the text and level
+ */
 class AMessage extends MessageBase {
 
 	public $timestamp;
 
-	//-----------------------------------------------------------------------------------------------
-	public function __construct( $text=null, $timestamp=null, $level=null) {
-		$this->setText( $text);
-		$this->setTimeStamp( $timestamp);
-		$this->setLevel($level );
+	/** -----------------------------------------------------------------------------------------------
+	 * construct a message
+	 * @param type $text
+	 * @param type $timestamp
+	 * @param type $level
+	 */
+	public function __construct($text = null, $timestamp = null, $level = null) {
+		$this->setText($text);
+		$this->setTimeStamp($timestamp);
+		$this->setLevel($level);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * converts the message into a string which is formatted [time] level - text
+	 * @return type
+	 */
 	public function __toString() {
-		return $this->timeStamp . ' (Level: ' . parent::$levels[ $this->level] .') '. $this->text;
+		return $this->timeStamp . ' (Level: ' . parent::$levels[$this->level] . ') ' . $this->text;
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// dump the contents of this message
+	/** -----------------------------------------------------------------------------------------------
+	 * dump the contents of this message
+	 */
 	public function dump() {
-		echo 'msg=',$this->text, ' time=', $this->timeStamp, ' level=', parent::$levels[ $this->level], '<Br>';
+		echo 'msg=', $this->text, ' time=', $this->timeStamp, ' level=', parent::$levels[$this->level], '<Br>';
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// set the contents of the message
-	//      could be just a string or could be an array( string, timestamp, level)
-	public function set($textOrArray=null, $timeStamp=null, $level=null){
-
-		if ( !empty( $textOrArray) and is_array($textOrArray) ){
+	/** -----------------------------------------------------------------------------------------------
+	 * set the contents of the message
+	 *     -could be just a string or could be an array( string, timestamp, level)
+	 * @param type $textOrArray
+	 * @param type $timeStamp
+	 * @param type $level
+	 */
+	public function set($textOrArray = null, $timeStamp = null, $level = null) {
+		if (!empty($textOrArray) and is_array($textOrArray)) {
 			$this->setFromArray($textOrArray);
 		} else {
 			$this->setFromArray([$textOrArray, $timeStamp, $level]);
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected function setFromArray( $ar = null ): void {
-		if ( array_key_exists(AR_TEXT, $ar)){
-			$this->setText( $ar[AR_TEXT]);
+	/** -----------------------------------------------------------------------------------------------
+	 *  format things
+	 * @param type $ar
+	 * @return void
+	 */
+	protected function setFromArray($ar = null): void {
+		if (array_key_exists(AR_TEXT, $ar)) {
+			$this->setText($ar[AR_TEXT]);
 		}
-		if ( array_key_exists(AR_TimeStamp, $ar)){
-			$this->setTimeStamp( $ar[AR_TimeStamp]);
+		if (array_key_exists(AR_TimeStamp, $ar)) {
+			$this->setTimeStamp($ar[AR_TimeStamp]);
 		}
-		if ( array_key_exists(AR_LEVEL, $ar)){
-			$this->setLevel($ar[AR_LEVEL] );
+		if (array_key_exists(AR_LEVEL, $ar)) {
+			$this->setLevel($ar[AR_LEVEL]);
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected function setText( $textString= null) :void{
-		if (empty( $textString)){
-				$this->text = '';
+	/** -----------------------------------------------------------------------------------------------
+	 * set the text of the message
+	 * @param type $textString
+	 * @return void
+	 */
+	protected function setText($textString = null): void {
+		if (empty($textString)) {
+			$this->text = '';
 		} else {
 			$this->text = $textString;
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected function setTimeStamp(string $timeStamp = null){
-		if (  defined( "IS_PHPUNIT_TESTING")){
+	/** -----------------------------------------------------------------------------------------------
+	 * set the timestamp - it does not have to be a time it can be any string
+	 *      - if timestamp it must be formatted properly before getting here
+	 * @param string $timeStamp
+	 */
+	protected function setTimeStamp(string $timeStamp = null) {
+		if (defined("IS_PHPUNIT_TESTING")) {
 			$this->timeStamp = '23:55:30';
-			if ( empty($timeStamp)) {
+			if (empty($timeStamp)) {
 				$this->timeStamp = '23:55:30';
 			} else {
 				$this->timeStamp = $timeStamp;
 			}
-		}  else {
-			if ( empty($timeStamp)) {
-				$this->timeStamp = date( 'g:i:s');    // current timestamp
+		} else {
+			if (empty($timeStamp)) {
+				$this->timeStamp = date('g:i:s');	// current timestamp
 			} else {
 				$this->timeStamp = $timeStamp;
 			}
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected function setLevel( $level = null){
-		if(empty($level) or $level <100){
-			$this->level = AMessage::NOTICE;      //Default
-		} else if ( array_key_exists($level, parent::$levels) ) {
+	/** -----------------------------------------------------------------------------------------------
+	 * set the level of the message
+	 * @param type $level
+	 */
+	protected function setLevel($level = null) {
+		if (empty($level) or $level < 100) {
+			$this->level = AMessage::NOTICE;	  //Default
+		} else if (array_key_exists($level, parent::$levels)) {
 			$this->level = $level;
 		} else {
-			$this->level = AMessage::NOTICE;      //Default
+			$this->level = AMessage::NOTICE;	  //Default
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// return the contents of this message in the form of an array
+	/** -----------------------------------------------------------------------------------------------
+	 * return the contents of this message in the form of an array
+	 *
+	 * @return type
+	 */
 	public function get() {
-		$a = array( $this->text,
-					  $this->timeStamp,
-					  $this->level
-					);
+		$a = array($this->text,
+			$this->timeStamp,
+			$this->level
+		);
 		return $a;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * return  appropriate style
+	 * @param type $level
+	 * @return string
+	 */
 	protected function getShowStyle($level) {
-		if (array_key_exists($level, parent::$levels) ){
+		if (array_key_exists($level, parent::$levels)) {
 			return 'msg_style_' . parent::$levels[$level];
 		} else {
 			return 'msg_style_UNKNOWN';
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected function getShowTextLeader($level){
-		if (array_key_exists($level, parent::$levels) ){
+	/** -----------------------------------------------------------------------------------------------
+	 * show the appropriate level text
+	 * @param type $level
+	 * @return string
+	 */
+	protected function getShowTextLeader($level) {
+		if (array_key_exists($level, parent::$levels)) {
 			return parent::$levels[$level] . ' ';
 		} else {
 			return 'UNKNOWN ';
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	protected function getPrettyLine($style =null){
-		$s ='';
+	/** -----------------------------------------------------------------------------------------------
+	 * return the message all pretty like spans with style
+	 * @param type $style
+	 * @return string
+	 */
+	protected function getPrettyLine($style = null) {
+		$s = '';
 		$textLeader = $this->getShowTextLeader($this->level);
 
-		if (!empty($style)){
+		if (!empty($style)) {
 			$lineStyle = $style;
 		} else {
-			$lineStyle = $this->getShowStyle( $this->level);
+			$lineStyle = $this->getShowStyle($this->level);
 		}
 
 		$s .= '<span class="' . $lineStyle . '">';
-		if ( !empty( $this->timeStamp)) {
-			$s .= '['.  $this->timeStamp . '] ';
+		if (!empty($this->timeStamp)) {
+			$s .= '[' . $this->timeStamp . '] ';
 		}
 		$s .= $textLeader;
 
-		if ( is_array($this->text)){
+		if (is_array($this->text)) {
 			$this->text = \print_r($this->text, true);
 		}
 
-		$x = str_replace( "\n", '<BR>', $this->text);
-		$y = str_replace( ' ', '&nbsp;', $x);
-		$z = str_replace( "\t", '&nbsp;&nbsp;&nbsp;', $y);
+		$x = str_replace("\n", '<BR>', $this->text);
+		$y = str_replace(' ', '&nbsp;', $x);
+		$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 		$s .= $z;
 
 		$s .= '</span>';
 		return $s;
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// show the contents of this message -- with the approprieate formatting etc
-	public function show($style=null) {
-		echo  $this->getPrettyLine($style);
+	/** -----------------------------------------------------------------------------------------------
+	 * show the contents of this message -- with the appropriate formatting etc
+	 *
+	 * @param type $style
+	 */
+	public function show($style = null) {
+		echo $this->getPrettyLine($style);
 	}
-
 
 }
 
-
 //***********************************************************************************************
 //***********************************************************************************************
 //***********************************************************************************************
@@ -236,156 +294,215 @@ class AMessage extends MessageBase {
 //***********************************************************************************************
 //***********************************************************************************************
 //***********************************************************************************************
+/**
+ * the message log handler
+ */
 class MessageLog {
 
+	/** the queue static so there is only one */
 	protected static $messageQueue;
 
-	//-----------------------------------------------------------------------------------------------
-	function __construct(){
-		if (empty( self::$messageQueue)) {
+	/** -----------------------------------------------------------------------------------------------
+	 * construct a message log - i.e. the queue
+	 */
+	function __construct() {
+		if (empty(self::$messageQueue)) {
 			self::$messageQueue = new \SplQueue();
 		}
 	}
 
-
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * handle trying to show message log as a string
+	 * @return string
+	 */
 	public function __toString() {
 
 		$s = '';
 		self::$messageQueue->rewind();
 
-		while(self::$messageQueue->valid()){
-    		$x = self::$messageQueue->current();
-    		$s .= $x->__toString();
-    		$s .= '<br />';
-    		self::$messageQueue->next();//switch to next list item
+		while (self::$messageQueue->valid()) {
+			$x = self::$messageQueue->current();
+			$s .= $x->__toString();
+			$s .= '<br />';
+			self::$messageQueue->next(); //switch to next list item
 		}
 		return $s;
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// add a new message to the stack ( may include some values passed down to the message class)
-	public function addAndShow(  $obj_or_array=null, $val2=null, $val3=null) {
-		$this->add(  $obj_or_array, $val2, $val3);
-
+	/** -----------------------------------------------------------------------------------------------
+	 * add a new message to the stack ( may include some values passed down to the message class)
+	 *
+	 * @param type $obj_or_array
+	 * @param type $val2
+	 * @param type $val3
+	 */
+	public function addAndShow($obj_or_array = null, $val2 = null, $val3 = null) {
+		$this->add($obj_or_array, $val2, $val3);
 		$this->showAllMessages();
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// add a new message to the stack ( may include some values passed down to the message class)
-	public function add( $obj_or_array=null, $timestamp=null, $level=null) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a new message to the stack ( may include some values passed down to the message class)
+	 *
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 * @param type $level
+	 */
+	public function add($obj_or_array = null, $timestamp = null, $level = null) {
 
-		if ( is_object( $obj_or_array) and ( $obj_or_array instanceof AMessage )){
-			self::$messageQueue->enqueue( $obj_or_array);
+		if (is_object($obj_or_array) and ( $obj_or_array instanceof AMessage )) {
+			self::$messageQueue->enqueue($obj_or_array);
 		} else {
 			if (Settings::GetPublic('Show MessageLog Adds')) {
 				$bt = debug_backtrace(false, 2);
-				if ( is_string($obj_or_array ) and !empty($bt[1])) {
+				if (is_string($obj_or_array) and ! empty($bt[1])) {
 					if (Settings::GetPublic('Show MessageLog Adds_FileAndLine')) {
 						$obj_or_array .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn">';
-						$obj_or_array .= '- '. basename($bt[1]['file']) . ':' . $bt[1]['line'] . '</span>';
+						$obj_or_array .= '- ' . basename($bt[1]['file']) . ':' . $bt[1]['line'] . '</span>';
 					}
 				}
 			}
 
-			$temp = new AMessage( $obj_or_array, $timestamp, $level);
-			self::$messageQueue->enqueue( $temp);
+			$temp = new AMessage($obj_or_array, $timestamp, $level);
+			self::$messageQueue->enqueue($temp);
 
-			if (Settings::GetPublic('Show MessageLog Adds'))		 {
+			if (Settings::GetPublic('Show MessageLog Adds')) {
 				$temp->show();
 				echo '<Br>' . PHP_EOL;
 			}
 		}
 	}
 
-
-	//-----------------------------------------------------------------------------------------------
-	public function addToDo( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a to do message to the log
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addToDo($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::TODO;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::TODO);
+		$this->add($obj_or_array, $timestamp, AMessage::TODO);
 	}
 
-
-	//-----------------------------------------------------------------------------------------------
-	public function addDebug( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a debug message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addDebug($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::DEBUG;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::DEBUG);
+		$this->add($obj_or_array, $timestamp, AMessage::DEBUG);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addInfo( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a info message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addInfo($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::INFO;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::INFO);
+		$this->add($obj_or_array, $timestamp, AMessage::INFO);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addNotice( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a notice message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addNotice($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::NOTICE;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::NOTICE);
+		$this->add($obj_or_array, $timestamp, AMessage::NOTICE);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addWarning( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a warning message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addWarning($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::WARNING;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::WARNING);
+		$this->add($obj_or_array, $timestamp, AMessage::WARNING);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addError( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add an error message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addError($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ERROR;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::ERROR);
+		$this->add($obj_or_array, $timestamp, AMessage::ERROR);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addCritical( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add a critical message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addCritical($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::CRITICAL;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::CRITICAL);
+		$this->add($obj_or_array, $timestamp, AMessage::CRITICAL);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addAlert( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add an alert message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addAlert($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ALERT;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::ALERT);
+		$this->add($obj_or_array, $timestamp, AMessage::ALERT);
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public function addEmergency( $obj_or_array=null, $timestamp=null) {
-		if (is_array($obj_or_array)  and !empty( $obj_or_array[2])) {
+	/** -----------------------------------------------------------------------------------------------
+	 * add an emergency message
+	 * @param type $obj_or_array
+	 * @param type $timestamp
+	 */
+	public function addEmergency($obj_or_array = null, $timestamp = null) {
+		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::EMERGENCY;
 		}
-		$this->add( $obj_or_array, $timestamp, AMessage::EMERGENCY);
+		$this->add($obj_or_array, $timestamp, AMessage::EMERGENCY);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * are there any messages in the queue
+	 * @return type
+	 */
 	public function hasMessages() {
-		return (self::$messageQueue->count() >0);
+		return (self::$messageQueue->count() > 0);
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 * how many messages are still in the queue
+	 * @return type
+	 */
 	public function stackSize() {
 		return self::$messageQueue->count();
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	//  pop a message off the stack and return it
+	/** -----------------------------------------------------------------------------------------------
+	 *  pop a message off the stack and return it
+	 * @return boolean
+	 */
 	public function getNextMessage() {
-		if ( self::$messageQueue->count() >0) {
+		if (self::$messageQueue->count() > 0) {
 			//$temp = array_shift( $this->message_stack);
 			$temp = self::$messageQueue->dequeue();
 			return $temp;
@@ -394,11 +511,13 @@ class MessageLog {
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	//  show the next item on the stack (causes a get_next_message which will remove it from the stack)
+	/** -----------------------------------------------------------------------------------------------
+	 *  show the next item on the stack (causes a get_next_message which will remove it from the stack)
+	 * @return boolean
+	 */
 	public function showNextMessage() {
 		$temp = $this->getNextMessage();
-		if (!empty( $temp)) {
+		if (!empty($temp)) {
 			$temp->show();
 			return true;
 		} else {
@@ -406,25 +525,28 @@ class MessageLog {
 		}
 	}
 
-
-	//-----------------------------------------------------------------------------------------------
-	// show all the messages on the stack (efectivey emptying the stack
-	public function showAllMessages( $messageText_after_each_line='<br>'){
-		while( $temp = $this->showNextMessage() ){
-			if ( !empty( $messageText_after_each_line)) {
+	/** -----------------------------------------------------------------------------------------------
+	 * show all the messages on the stack (effectivey emptying the stack
+	 * @param type $messageText_after_each_line
+	 */
+	public function showAllMessages($messageText_after_each_line = '<br>') {
+		while ($temp = $this->showNextMessage()) {
+			if (!empty($messageText_after_each_line)) {
 				echo $messageText_after_each_line;
 			}
 		}
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	// show all the messages on the stack (efectivey emptying the stack)
-	//  and do it in a pretty box :-)
-	public function showAllMessagesInBox( $includeFieldSet= true) {
+	/** -----------------------------------------------------------------------------------------------
+	 * show all the messages on the stack (effctivey emptying the stack)
+	 *  and do it in a pretty box :-)
+	 * @param type $includeFieldSet
+	 */
+	public function showAllMessagesInBox($includeFieldSet = true) {
 		if ($includeFieldSet) {
 			?><fieldset class="msg_fieldset"><Legend id="message_box_show_all_in_box" class="msg_legend">Messages</legend><?php
 		}
-		if ( $this->hasMessages()) {
+		if ($this->hasMessages()) {
 			$this->showAllMessages();
 		} else {
 			echo '&nbsp;';
@@ -433,8 +555,8 @@ class MessageLog {
 			?></fieldset><?php
 		}
 	}
-}
 
+}
 
 /// some usage examples  - now you should use GetRunTimeObject !!!!!!!!!!! so it returns something callable (even if it does nothing)
 

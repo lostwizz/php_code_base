@@ -1,16 +1,25 @@
 <?php
 
 /** * ********************************************************************************************
- * resolver.class.php
+ * myDBUtils.class.php
  *
- * Summary (no period for file headers)
+ * Summary  utiity functions related to databases
  *
  * @author mike.merrett@whitehorse.ca
  * @version 0.5.0
  * $Id$
  *
- * Description:
- * 		Database Utility Functions
+ * Description
+ * database utilty functions
+ *
+ *
+ *
+ * @package Utils
+ * @subpackage DBUtils
+ * @since 0.3.0
+ *
+ * @example
+ *
  *
  * @todo Description
  *
@@ -32,8 +41,6 @@ use \php_base\Utils\Dump\Dump as Dump;
 abstract Class myDBUtils {
 
 	protected static $currentPreparedStmt = null;
-
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 * @example
@@ -87,21 +94,15 @@ abstract Class myDBUtils {
 		$dsn = Settings::GetProtected('DB_DSN');
 		$options = Settings::GetProtected('DB_DSN_OPTIONS');
 		try {
-			$conn = new \PDO($dsn,
-					  Settings::GetProtected('DB_Username'),
-					  Settings::GetProtected('DB_Password'),
-					  $options
+			$conn = new \PDO($dsn, Settings::GetProtected('DB_Username'), Settings::GetProtected('DB_Password'), $options
 			);
 			$conn->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_UPPER);
 			$conn->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
-
-
 		} catch (\PDOException $e) {
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
 		}
 		return $conn;
 	}
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -127,14 +128,12 @@ abstract Class myDBUtils {
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);
 			$stmt->closeCursor();
 			return $data[0];
-
 		} catch (\PDOException $e) {
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
 		} catch (\Exception $e) {
 			throw new \Exception($e->getMessage(), (int) $e->getCode());
 		}
 	}
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -153,7 +152,7 @@ abstract Class myDBUtils {
 			$stmt = $conn->prepare($sql);
 
 			//dump::dump($stmt);
-			self::doBinding($params, $stmt );
+			self::doBinding($params, $stmt);
 			$stmt->execute();
 			$data = $stmt->fetchAll();
 //dump::dump($data);
@@ -163,75 +162,79 @@ abstract Class myDBUtils {
 
 			return $data;
 		} catch (\PDOException $e) {
-dump::dump($e->getMessage())	;
+//dump::dump($e->getMessage())	;
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
 		} catch (\Exception $e) {
-dump::dump($e->getMessage())	;
+//dump::dump($e->getMessage())	;
 			throw new \Exception($e->getMessage(), (int) $e->getCode());
 		}
 	}
 
-
 	// -----------------------------------------------------------------------------------------------
-	public static function doBinding( $params, $stmt){
-		if ( is_array($params) and !empty($params)  and !empty($stmt)){
-			foreach ($params as $key=> $value) {
-				if ( is_array( $value )) {
+	public static function doBinding($params, $stmt) {
+		if (is_array($params) and ! empty($params) and ! empty($stmt)) {
+			foreach ($params as $key => $value) {
+				if (is_array($value)) {
 					$stmt->bindParam($key, $value['val'], $value['type']);
 				} else {
 					$stmt->bindParam($key, $value);
 				}
 			}
 		}
-
 	}
 
-	//-----------------------------------------------------------------------------------------------
-	public static function doBindingSimple($params, $stmt){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $params
+	 * @param type $stmt
+	 */
+	public static function doBindingSimple($params, $stmt) {
 		if (is_array($paramas)) {
-			$i =1;
-			foreach($params as $value) {
+			$i = 1;
+			foreach ($params as $value) {
 				$stmt->bindParam($i, $value);
 				$i++;
 			}
 		}
 	}
 
-	// -----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $sql
+	 */
 	public static function BeginWriteOne($sql) {
 		$conn = myDBUtils::setupPDO();
 
-		if ( empty( self::$currentPreparedStmt)){
-			self::$currentPreparedStmt =  $conn->prepare($sql);
+		if (empty(self::$currentPreparedStmt)) {
+			self::$currentPreparedStmt = $conn->prepare($sql);
 		}
 	}
 
-	// -----------------------------------------------------------------------------------------------
-	public static function WriteOne( $params) {
-		if ( empty( self::$currentPreparedStmt)){
-			throw new \Exception( 'my prepared statment doesnt exist');
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $params
+	 * @return type
+	 * @throws \Exception
+	 */
+	public static function WriteOne($params) {
+		if (empty(self::$currentPreparedStmt)) {
+			throw new \Exception('my prepared statment doesnt exist');
 		}
-		self::doBinding($params,self::$currentPreparedStmt  );
+		self::doBinding($params, self::$currentPreparedStmt);
 		return self::$currentPreparedStmt->execute();
 	}
 
-
-	public static function EndWriteOne(){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public static function EndWriteOne() {
 		self::$currentPreparedStmt = null;
 	}
+
 	// -----------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------
 	// -----------------------------------------------------------------------------------------------
-
-
-
 }
-
-
-
-
-
-
 
 //
 //        self::DEBUG     => 'DEBUG',
