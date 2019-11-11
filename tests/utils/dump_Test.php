@@ -11,7 +11,7 @@ use \php_base\Utils\Dump\DumpData as DumpData;
 ////use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
 
-class DumpTest extends TestCase{
+class Dump_Test extends TestCase{
 
 
 	public function testDumpData() {
@@ -132,7 +132,7 @@ class DumpTest extends TestCase{
 		$dumpData = substr($dumpData,0,-1);   // have to remove the last character it is not quite a /r and cant quite match it properly
 
 		//$expectedData ='<div align=right><font style="font-size: small; font-style: italic; color:#FF8000">  server=-This is a Server Name- -this is a filename-</font><font style="font-style: italic; font-weight: bold; color:#FF8000"> (line: 9999)</font></div>';
-		$expectedData = '<div align=right><font style="font-size: small; font-style: italic; color:#417232"> </font><font style="font-size: small; font-style: italic; color:#FF8000">  server=-This is a Server Name- -this is a filename-</font><font style="font-style: italic; font-weight: bold; color:#FF8000"> (line: 9999)</font><BR><font style="font-size: small; font-style: italic; color:#417232"> </font></div';
+		$expectedData = '<div align=right><font style="font-size: small; font-style: italic; color:#417232"> </font><font style="font-size: small; font-style: italic; color:#FF8000">  server=-This is a Server Name- .\</font><font style="font-style: italic; font-weight: bold; color:#FF8000">-this is a filename- (line: 9999)</font><BR><font style="font-size: small; font-style: italic; color:#417232"> </font></div';
 		$this->assertEquals($expectedData, $dumpData );
 	}
 

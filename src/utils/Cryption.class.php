@@ -1,7 +1,7 @@
 <?php
 
 /** * ********************************************************************************************
- * myCryption.class.php
+ * Cryption.class.php
  *
  * Summary maintains 3 queues (Pre/Dispatcher/Post) and executes thing in the queues.
  *
@@ -32,12 +32,12 @@
 //			https://github.com/defuse/php-encryption
 //			https://deliciousbrains.com/php-encryption-methods/
 
-namespace php_base\utils\myCryption;
+namespace php_base\utils\Cryption;
 
 /** * ********************************************************************************************
  *
  */
-Class myCryption {
+Class Cryption {
 
 	protected $method = 'aes-128-ctr'; // default cipher method if none supplied
 	protected $key;

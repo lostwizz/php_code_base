@@ -5,7 +5,7 @@ use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
 use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
 
 
-class LogToDBTest extends TestCase {
+class LogToDB_Test extends TestCase {
 
 	protected static $dbh;
 

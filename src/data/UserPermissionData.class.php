@@ -41,9 +41,8 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-use \php_base\Utils\myUtils as myUtils;
-use \php_base\Utils\myDBUtils as myDBUtils;
-
+use \php_base\Utils\Utils as Utils;
+use \php_base\Utils\DBUtils as DBUtils;
 
 ////SELECT TOP (1000) [id]
 ////      ,[roleId]
@@ -100,7 +99,7 @@ class UserPermissionData {
 											. ')';
 
 			$paramas = array();
-			$data = myDBUtils::doDBSelectMulti($sql);
+			$data = DBUtils::doDBSelectMulti($sql);
 
 			$this->permissionList = $data;
 

@@ -37,8 +37,8 @@
 namespace php_base\data;
 
 use \php_base\Utils\Dump\Dump as Dump;
-use \php_base\Utils\myUtils as myUtils;
-use \php_base\Utils\myDBUtils as myDBUtils;
+use \php_base\Utils\Utils as Utils;
+use \php_base\Utils\DBUtils as DBUtils;
 
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
@@ -143,7 +143,7 @@ class UserAttributeData  extends data{
 					. ' WHERE  UserId = :userid';
 
 			$params = array( ':userid' =>$userID);
-			$data = myDBUtils::doDBSelectMulti($sql, $params) ;
+			$data = DBUtils::doDBSelectMulti($sql, $params) ;
 
 			$this->ProcessAttributes( $data);
 		} catch (\PDOException $e)				{

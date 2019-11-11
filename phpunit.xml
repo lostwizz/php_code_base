@@ -69,18 +69,18 @@
 
 
 		<testsuite name="Utils">
-			<file>Tests/utils/dumpTest.php</file>
-			<file>Tests/utils/SettingsClassTest.php</file>
+			<file>Tests/utils/dump_Test.php</file>
+			<file>Tests/utils/SettingsClass_Test.php</file>
 			<file>Tests/utils/Setup_Logging_Test.php</file>
-			<!-- <file>Tests/utils/log/LoggingToDBTest.php</file>   -->
+			<!-- <file>Tests/utils/log/LoggingToDB_Test.php</file>   -->
 
 			<file>Tests/utils/Message_Test.php</file>
 			<file>Tests/utils/MessageLog_Test.php</file>
 
 			<file>Tests/utils/HTML_Test.php</file>
-			<file>Tests/utils/myCryption_Test.php</file>
-			<file>Tests/utils/myUtils_Test.php</file>
-			<file>Tests/utils/ErrorHandlerTest.php</file>
+			<file>Tests/utils/Cryption_Test.php</file>
+			<file>Tests/utils/Utils_Test.php</file>
+			<file>Tests/utils/ErrorHandler_Test.php</file>
 		</testsuite>
 
 

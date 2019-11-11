@@ -9,7 +9,7 @@ class ARolePermission_Test extends TestCase {
 
 
 
-	public function  test_aPermissionPropertyConstructAndGet () 	{
+	public function  XXXXX_test_aPermissionPropertyConstructAndGet () 	{
 		//$this->assertTrue(false);
 
 		$ar = [ 'id' => 1001,
@@ -49,7 +49,7 @@ class ARolePermission_Test extends TestCase {
 
 	}
 
-	public function  test_aPermissionPropertySetAndGet () 	{
+	public function  XXX_test_aPermissionPropertySetAndGet () 	{
 		$ar = [ 'id' => 1001,
 				'roleid' => 1002,
 				'model' => 'modelName',

@@ -21,7 +21,7 @@ use \php_base\Utils\Settings as Settings;
 
 
 
-class SettingsTest extends TestCase{
+class Settings_Test extends TestCase{
 //
 
 	protected function setUp() :void {

@@ -1,7 +1,7 @@
 <?php
 
 /** * ********************************************************************************************
- * myNullAbsorber.class.php
+ * NullAbsorber.class.php
  *
  * Summary: return a class in which any method call just does nothing and does not give an error
  *
@@ -33,12 +33,12 @@
  *
  * @example
  *
- * $x = new myNullAbsorber();
+ * $x = new NullAbsorber();
  *
  * $x->fred_was_Herr( 17);
  * $x->SAmmy = 87;
  * $y = $x->john;
- * myNullAbsorber::tony();
+ * NullAbsorber::tony();
  *
  * @todo Description
  *
@@ -50,9 +50,9 @@ namespace php_base\Utils;
 
 
 /**
- * 
+ *
  */
-Class myNullAbsorber {
+Class NullAbsorber {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

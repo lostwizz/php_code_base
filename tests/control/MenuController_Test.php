@@ -12,11 +12,11 @@ use \php_base\Utils\Settings as Settings;
 class MenuController_Test extends TestCase{
 
 
-	public static function setUpBeforeClass(): void   {
+	public  function setUpBeforeClass(): void   {
 
 	}
 
-	public static function test_something(){
+	public  function test_something(){
 		$this->markTestIncomplete('This test has not been implemented yet' );
 	}
 }

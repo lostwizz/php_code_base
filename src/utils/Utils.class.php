@@ -1,7 +1,7 @@
 <?php
 
 /** * ********************************************************************************************
- * myUtils.class.php
+ * Utils.class.php
  *
  * Summary: static utility functions
  *
@@ -33,7 +33,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 /**
  *
  */
-abstract Class myUtils {
+abstract Class Utils {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * format a number in a currency format (i.e with dollar sign)

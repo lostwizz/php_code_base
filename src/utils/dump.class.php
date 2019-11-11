@@ -542,9 +542,10 @@ abstract class Dump {
 		$s .= '<font style="font-size: small; font-style: italic; color:#FF8000"> ';
 		$s .= ' server=' . $data->serverName;
 		$s .= ' ';
-		$s .= $data->fileName;
+		$s .= dirname($data->fileName) . DIRECTORY_SEPARATOR;
 		$s .= '</font>';
 		$s .= '<font style="font-style: italic; font-weight: bold; color:#FF8000">';
+		$s .= basename($data->fileName);
 		$s .= ' (line: ' . $data->lineNum . ')';
 		$s .= '</font><BR>';
 

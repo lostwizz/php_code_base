@@ -1,7 +1,7 @@
 <?php
 
 /** * ********************************************************************************************
- * myDBUtils.class.php
+ * DBUtils.class.php
  *
  * Summary  utiity functions related to databases
  *
@@ -38,13 +38,13 @@ use \php_base\Utils\Dump\Dump as Dump;
  *
  * @since 0.5.0
  */
-abstract Class myDBUtils {
+abstract Class DBUtils {
 
 	protected static $currentPreparedStmt = null;
 
 	/** -----------------------------------------------------------------------------------------------
 	 * @example
-	 * 		myDBUtils::setupPDO();
+	 * 		DBUtils::setupPDO();
 	 * @return boolean
 	 */
 	public static function setupPDO() {
@@ -118,7 +118,7 @@ abstract Class myDBUtils {
 //Settings::GetRunTimeObject('MessageLog')->addEmergency($params);
 
 		try {
-			$conn = myDBUtils::setupPDO();
+			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 			self::doBinding($params, $stmt);
 			$r = $stmt->execute();
@@ -148,7 +148,7 @@ abstract Class myDBUtils {
 //dump::dump($sql);
 //dump::dump($params);
 		try {
-			$conn = myDBUtils::setupPDO();
+			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
 			//dump::dump($stmt);
@@ -203,7 +203,7 @@ abstract Class myDBUtils {
 	 * @param type $sql
 	 */
 	public static function BeginWriteOne($sql) {
-		$conn = myDBUtils::setupPDO();
+		$conn = DBUtils::setupPDO();
 
 		if (empty(self::$currentPreparedStmt)) {
 			self::$currentPreparedStmt = $conn->prepare($sql);

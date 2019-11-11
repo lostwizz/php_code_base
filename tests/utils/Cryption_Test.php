@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 //use \php_base\Utils\Dump\Dump as Dump;
 //use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
-use \php_base\utils\myCryption\myCryption as myCryption;
+use \php_base\utils\Cryption\Cryption as Cryption;
 
 
 
@@ -24,7 +24,7 @@ use \php_base\utils\myCryption\myCryption as myCryption;
 //
 
 
-//$sodium = new myCryption();
+//$sodium = new Cryption();
 //
 //$key = $sodium->sodium_init();
 //Dump::dump(  $sodium->safe_b64encode( $key));
@@ -74,10 +74,10 @@ use \php_base\utils\myCryption\myCryption as myCryption;
 
 
 
-class myCryption_Test extends TestCase{
+class Cryption_Test extends TestCase{
 
 	function test_encrypt():void {
-		$encryptionClass = new myCryption();
+		$encryptionClass = new Cryption();
 		$str = 'This is some message to be encrypted and then decrypted for testng';
 		$ex  = $encryptionClass->encrypt($str);
 		$out = $encryptionClass->decrypt($ex);
@@ -86,7 +86,7 @@ class myCryption_Test extends TestCase{
 	}
 
 	function test_safe_b64():void{
-		$encryptionClass = new myCryption();
+		$encryptionClass = new Cryption();
 		$str = 'This is some message to be encrypted and then decrypted for testng';
 
 		$b64 = $encryptionClass->safe_b64encode( $str);
@@ -95,7 +95,7 @@ class myCryption_Test extends TestCase{
 	}
 
 	function test_sodium():void {
-		$sodium = new myCryption();
+		$sodium = new Cryption();
 		$key = $sodium->sodium_init();
 
 		$s = 'This is some message to be encrypted and then decrypted for testng';
@@ -121,7 +121,7 @@ class myCryption_Test extends TestCase{
 }
 
 
-//$sodium = new myCryption();
+//$sodium = new Cryption();
 //
 //$key = $sodium->sodium_init();
 //Dump::dump(  $sodium->safe_b64encode( $key));

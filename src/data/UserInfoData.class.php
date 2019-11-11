@@ -40,8 +40,8 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-use \php_base\Utils\myUtils as myUtils;
-use \php_base\Utils\myDBUtils as myDBUtils;
+use \php_base\Utils\Utils as Utils;
+use \php_base\Utils\DBUtils as DBUtils;
 
 
 
@@ -123,7 +123,7 @@ class UserInfoData extends data {
 									':uname' => ['val'=> $username, 'type'=>\PDO::PARAM_STR]
 				 );
 
-			$data = myDBUtils::doDBSelectSingle($sql, $params);
+			$data = DBUtils::doDBSelectSingle($sql, $params);
 			$this->UserInfo =  $data;
 
 		} catch (\PDOException $e)				{

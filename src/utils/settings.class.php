@@ -30,12 +30,12 @@
 
 namespace php_base\Utils;
 
-use \php_base\Utils\myCryption\myCryption as myCryption;
+use \php_base\Utils\Cryption\Cryption as Cryption;
 use \php_base\Utils\Dump\Dump as Dump;
-use \php_base\Utils\myNullAbsorber as myNullAbsorber;
-use \php_base\Utils\myDBUtils as myDBUtils;
+use \php_base\Utils\NullAbsorber as NullAbsorber;
+use \php_base\Utils\DBUtils as DBUtils;
 
-//Dump::dump(require_once(DIR . 'utils' . DS . 'myNullAbsorber.class.php'));
+//Dump::dump(require_once(DIR . 'utils' . DS . 'NullAbsorber.class.php'));
 ///echo 'xxxxx"', __NAMESPACE__, '"'; // outputs "MyProject"
 //
 //
@@ -87,7 +87,7 @@ abstract class Settings {
 	 * @return type
 	 */
 	public static function getProtectedObject($key) {
-		return isset(self::$protected[$key]) ? self::$protected[$key] : new myNullAbsorber();
+		return isset(self::$protected[$key]) ? self::$protected[$key] : new NullAbsorber();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ abstract class Settings {
 	 * @return type
 	 */
 	public static function getPublicObject($key) {
-		return isset(self::$public[$key]) ? self::$public[$key] : new myNullAbsorber();
+		return isset(self::$public[$key]) ? self::$public[$key] : new NullAbsorber();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ abstract class Settings {
 	 */
 	public static function getRunTimeObject($key) {
 //dump::dump(self::$runTime[$key]);
-		return isset(self::$runTime[$key]) ? self::$runTime[$key] : new myNullAbsorber();
+		return isset(self::$runTime[$key]) ? self::$runTime[$key] : new NullAbsorber();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -289,7 +289,7 @@ abstract class Settings {
 	 * @return string
 	 */
 	protected static function getINIProtected() {
-		$encryptionClass = new myCryption();
+		$encryptionClass = new Cryption();
 		$s = "\n";
 		$s .= '[PROTECTED]' . "\n";
 		foreach (self::$protected as $key => $val) {
@@ -311,7 +311,7 @@ abstract class Settings {
 	 * @return boolean
 	 */
 	protected static function readINI($fn) {
-		$encryptionClass = new myCryption();
+		$encryptionClass = new Cryption();
 
 		if (file_exists($fn)) {
 			$a = parse_ini_file($fn, true, INI_SCANNER_RAW);
@@ -470,7 +470,7 @@ abstract class Settings {
 				. " WHERE App = '" . Settings::GetPublic('App Name') . "'"
 				. " AND is_active = '1' "
 		;
-		$data = myDBUtils::doDBSelectMulti($sql);
+		$data = DBUtils::doDBSelectMulti($sql);
 		return $data;
 	}
 
@@ -501,7 +501,7 @@ abstract class Settings {
 				self::InsertOne($key, $value, $which);
 			}
 		}
-		myDBUtils::EndWriteOne();
+		DBUtils::EndWriteOne();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -533,8 +533,8 @@ abstract class Settings {
 			':active' => 1
 		];
 
-		myDBUtils::BeginWriteOne($sql);
-		myDBUtils::WriteOne($params);
+		DBUtils::BeginWriteOne($sql);
+		DBUtils::WriteOne($params);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
