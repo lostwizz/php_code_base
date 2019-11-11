@@ -75,7 +75,7 @@ abstract class MessageBase {
 	);
 	protected $text; // the messageText message
 	protected $timeStamp;  // time stamp for the message (for displaying the time)
-	protected $level;	// level of the message (see defines at top)
+	protected $level; // level of the message (see defines at top)
 
 	abstract function Show();
 
@@ -181,7 +181,7 @@ class AMessage extends MessageBase {
 			}
 		} else {
 			if (empty($timeStamp)) {
-				$this->timeStamp = date('g:i:s');	// current timestamp
+				$this->timeStamp = date('g:i:s'); // current timestamp
 			} else {
 				$this->timeStamp = $timeStamp;
 			}
@@ -194,11 +194,11 @@ class AMessage extends MessageBase {
 	 */
 	protected function setLevel($level = null) {
 		if (empty($level) or $level < 100) {
-			$this->level = AMessage::NOTICE;	  //Default
+			$this->level = AMessage::NOTICE;   //Default
 		} else if (array_key_exists($level, parent::$levels)) {
 			$this->level = $level;
 		} else {
-			$this->level = AMessage::NOTICE;	  //Default
+			$this->level = AMessage::NOTICE;   //Default
 		}
 	}
 
@@ -545,14 +545,14 @@ class MessageLog {
 	public function showAllMessagesInBox($includeFieldSet = true) {
 		if ($includeFieldSet) {
 			?><fieldset class="msg_fieldset"><Legend id="message_box_show_all_in_box" class="msg_legend">Messages</legend><?php
-		}
-		if ($this->hasMessages()) {
-			$this->showAllMessages();
-		} else {
-			echo '&nbsp;';
-		}
-		if ($includeFieldSet) {
-			?></fieldset><?php
+				}
+				if ($this->hasMessages()) {
+					$this->showAllMessages();
+				} else {
+					echo '&nbsp;';
+				}
+				if ($includeFieldSet) {
+					?></fieldset><?php
 		}
 	}
 

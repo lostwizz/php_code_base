@@ -33,14 +33,11 @@
  */
 //**********************************************************************************************
 
-
 namespace php_base\data;
-
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
-
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 
@@ -84,7 +81,7 @@ class UserPermissionData {
 	 * @throws \Exception
 	 */
 	protected function doReadFromDatabase($listOfRolesIDs) {
-		$ids =  implode( ', ' , $listOfRolesIDs) ;
+		$ids = implode(', ', $listOfRolesIDs);
 		try {
 			$sql = 'SELECT id
 						,roleId
@@ -93,20 +90,21 @@ class UserPermissionData {
 						,UPPER(action) as action
 						,UPPER(field) as field
 						,Permission
-					FROM ' .  Settings::GetProtected( 'DB_Table_PermissionsManager')
+					FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
 					. ' WHERE  RoleId in ('
-											. $ids
-											. ')';
+					. $ids
+					. ')';
 
 			$paramas = array();
 			$data = DBUtils::doDBSelectMulti($sql);
 
 			$this->permissionList = $data;
-
-		} catch (\PDOException $e)	{
-			throw new \PDOException($e->getMessage(), (int)$e->getCode());
-		} catch (\Exception $e){
-			throw new \Exception($e->getMessage(), (int)$e->getCode());
+//dump::dump($sql)	;
+//dump::dump($data);
+		} catch (\PDOException $e) {
+			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage(), (int) $e->getCode());
 		}
 	}
 

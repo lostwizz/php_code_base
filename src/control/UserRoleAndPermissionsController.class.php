@@ -152,8 +152,8 @@ Class UserRoleAndPermissionsController {
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
 
-			//$this->view->dumpState(null, null, true);
-			//$this->view->dumpPermissions();
+			$this->view->dumpState(null, null, true);
+			$this->view->dumpPermissions();
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
 		}
@@ -217,7 +217,8 @@ Class UserRoleAndPermissionsController {
 
 		$this->userPermissions = $DataUserPermissions->permissionList;
 
-		usort($this->userPermissions, function ($a, $b) {
+		usort($this->userPermissions,
+				function ($a, $b) {
 			$sA = $this->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
 			$sB = $this->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
 			return $sA <=> $sB;
