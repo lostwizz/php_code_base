@@ -127,6 +127,9 @@ abstract Class DBUtils {
 
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);
 			$stmt->closeCursor();
+			if (empty($data[0])) {
+				return null;
+			}
 			return $data[0];
 		} catch (\PDOException $e) {
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
@@ -229,6 +232,28 @@ abstract Class DBUtils {
 	 */
 	public static function EndWriteOne() {
 		self::$currentPreparedStmt = null;
+	}
+
+	public static function doDBUpdate($sql, $param){
+		try {
+			$conn = DBUtils::setupPDO();
+			$stmt = $conn->prepare($sql);
+
+			//dump::dump($stmt);
+			self::doBinding($param, $stmt);
+			$r = $stmt->execute();
+			if ($r != 1){
+				throw new Exception( 'did not get the proper number of updates returned');
+			}
+			return true;
+		} catch (\PDOException $e) {
+//dump::dump($e->getMessage())	;
+			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\Exception $e) {
+//dump::dump($e->getMessage())	;
+			throw new \Exception($e->getMessage(), (int) $e->getCode());
+		}
+
 	}
 
 	// -----------------------------------------------------------------------------------------------

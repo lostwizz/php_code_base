@@ -67,6 +67,7 @@ Settings::SetPublic( 'App Name', 'TestApp');
 Settings::SetPublic( 'App Version', '2.0.0');
 Settings::SetPublic( 'App Server', empty($_SERVER['SERVER_NAME']) ? 'aunknoen' : $_SERVER['SERVER_NAME']  );
 
+Settings::SetPublic('Email_From', 'no-reply@whitehorse.ca');
 
 /*
  * the file names for the Lot Files

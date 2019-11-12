@@ -115,7 +115,7 @@ class Dispatcher {
 	 */
 	private function RunThruTheQueue(\SplQueue $theQueue): Response {
 		/** this will dump the contents of the queue - for debugging
-		 *             $this->dumpQueue($theQueue);
+			$this->dumpQueue($theQueue);
 		 */
 		try {
 			$response = null;

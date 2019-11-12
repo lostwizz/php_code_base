@@ -48,141 +48,178 @@ use \php_base\Utils\Response as Response;
  */
 class AuthenticateController extends Controller {
 
-   public $process;
-   public $task;
-   public $action;
-   public $payload;
+	protected $UserInfoData = null;
+	public $process;
+	public $task;
+	public $action;
+	public $payload;
 
-   /**  -----------------------------------------------------------------------------------------------
-    *
-    * @param string $passedAction
-    * @param type $passedPayload
-    */
-   public function __construct(string $passedAction = '', $passedPayload = null) {
-      $this->model = new \php_base\model\AuthenticateModel($this);
-      $this->data = new \php_base\data\AuthenticateData($this);
-      $this->view = new \php_base\view\AuthenticateView($this);
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $passedAction
+	 * @param type $passedPayload
+	 */
+	public function __construct(string $passedAction = '', $passedPayload = null) {
+		$this->model = new \php_base\model\AuthenticateModel($this);
+		$this->data = new \php_base\data\AuthenticateData($this);
+		$this->view = new \php_base\view\AuthenticateView($this);
 
-      $this->action = $passedAction;
-      $this->payload = $passedPayload;
-   }
+		$this->action = $passedAction;
+		$this->payload = $passedPayload;
+	}
 
-   /**  -----------------------------------------------------------------------------------------------
-    *
-    * @param type $process
-    * @param type $task
-    */
-   public function setProcessAndTask($process, $task): void {
-      $this->process = $process;
-      $this->task = $task;
-   }
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $process
+	 * @param type $task
+	 */
+	public function setProcessAndTask($process, $task): void {
+		$this->process = $process;
+		$this->task = $task;
+	}
 
-   /**  -----------------------------------------------------------------------------------------------
-    *
-    * @return Response
-    */
-   public function doWork(): Response {
-      echo 'authenticationController doWork hi - i am here!!';
-      echo 'should never get here';
-      return Response::TODO_Error();
-   }
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	public function doWork(): Response {
+		echo 'authenticationController doWork hi - i am here!!';
+		echo 'should never get here';
+		return Response::TODO_Error();
+	}
 
-   /**  -----------------------------------------------------------------------------------------------
-    * get the username and password then call the appropriate method
-    * @param type $parent
-    * @return Response
-    */
-   public function checkLogin($parent): Response {
-      $username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
-      $password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
+	/**  -----------------------------------------------------------------------------------------------
+	 * get the username and password then call the appropriate method
+	 * @param type $parent
+	 * @return Response
+	 */
+	public function checkLogin($parent): Response {
+		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
+		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
 
-      if ( !empty($this->action) ){
-         $action = $this->action;
-      } else {
-         $action = 'Need_login';
-      }
+		if (!empty($this->action)) {
+			$action = $this->action;
+		} else {
+			$action = 'Need_login';
+		}
 
-      return $this->$action($parent, $username, $password);
-   }
+		return $this->$action($parent, $username, $password);
+	}
 
-   /**  -----------------------------------------------------------------------------------------------
-    * handle no logon yet -i.e. show the login page
-    *
-    * @see AuthenticateView
-    * @param type $parent
-    * @param type $username
-    * @param type $password
-    * @return Response
-    */
-   protected function Need_login($parent, $username = null, $password = null): Response {
-      return $this->view->showLoginPage();
-   }
+	/**  -----------------------------------------------------------------------------------------------
+	 * handle no logon yet -i.e. show the login page
+	 *
+	 * @see AuthenticateView
+	 * @param type $parent
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
+	protected function Need_login($parent, $username = null, $password = null): Response {
+		return $this->view->showLoginPage();
+	}
 
-   /**  -----------------------------------------------------------------------------------------------
-    *  verify password is good and therefor the user has logged on
-    *
-    * @see AuthenticateModel
-    *
-    * @param type $parent
-    * @param type $username
-    * @param type $password
-    * @return Response
-    */
-   protected function Submit_Logon($parent, $username = null, $password = null): Response {
-      return $this->model->tryToLogin($username, $password);
-   }
+	/**  -----------------------------------------------------------------------------------------------
+	 *  verify password is good and therefor the user has logged on
+	 *
+	 * @see AuthenticateModel
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
+	protected function Submit_Logon($parent, $username = null, $password = null): Response {
+		$this->UserInfoData = new \php_base\data\UserInfoData($username);
+//dump::dump($this->UserInfoData);
 
-   /**  -----------------------------------------------------------------------------------------------
-    * ask the user for the old password and 2 repeats of the new one
-    *
-    * @todo !!!!!!!!!!!!build this
-    *
-    * @param type $parent
-    * @param type $username
-    * @param type $password
-    * @return Response
-    */
-   protected function change_Password($parent, $username = null, $password = null): Response {
-      return Response::TODO_Error();
-   }
+		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
+			return $this->model->tryToLogin($username, $password, $this->UserInfoData);
+		}
+		return new Response('Username does not exist', -10);
+	}
 
-   /**  -----------------------------------------------------------------------------------------------
-    * user has entered the old passwords and two identical (?) new  ones - so change it
-    *
-    * @param type $parent
-    * @param type $username
-    * @param type $password
-    * @return Response
-    */
-   protected function password_change_submit($parent, $username = null, $password = null): Response {
-      return Response::TODO_Error();
-   }
+	/**  -----------------------------------------------------------------------------------------------
+	 * ask the user for the old password and 2 repeats of the new one
+	 *
+	 * @todo !!!!!!!!!!!!build this
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
+	protected function Change_Password($parent, $username = null, $password = null): Response {
+		dump::dump('hi ho');
+		// ask for the user id and the old password
+		$r = $this->view->showChangePassword();
 
-   /**  -----------------------------------------------------------------------------------------------
-    * add a new user to the authentication system
-    * @todo !!!!!!!!!!!!build this
-    *
-    * @param type $parent
-    * @param type $username
-    * @param type $password
-    * @return Response
-    */
-   protected function add_New_Account($parent, $username = null, $password = null): Response {
-      return Response::TODO_Error();
-   }
+		// check the old password matches
+		// save the new password
+		// send an email saying changed the password?
 
-   /**  -----------------------------------------------------------------------------------------------
-    * reset the password and email the user with the new one
-    *
-    * @todo !!!!!!!!!!!!build this
-    *
-    * @param type $parent
-    * @param type $username
-    * @param type $password
-    * @return Response
-    */
-   protected function forgot_Password($parent, $username = null, $password = null): Response {
-      return Response::TODO_Error();
-   }
+		return Response::TODO_Error();
+	}
+
+	/**  -----------------------------------------------------------------------------------------------
+	 * user has entered the old passwords and two identical (?) new  ones - so change it
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
+//	protected function password_change_submit($parent, $username = null, $password = null): Response {
+//		dump::dump('tony was here!!!!!!!');
+//		return Response::TODO_Error();
+//	}
+
+	/**  -----------------------------------------------------------------------------------------------
+	 * add a new user to the authentication system
+	 * @todo !!!!!!!!!!!!build this
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
+	protected function add_New_Account($parent, $username = null, $password = null): Response {
+		return Response::TODO_Error();
+	}
+
+	/**  -----------------------------------------------------------------------------------------------
+	 * reset the password and email the user with the new one
+	 *
+	 * @todo !!!!!!!!!!!!build this
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @param type $password
+	 * @return Response
+	 */
+	protected function forgot_Password($parent, $username = null, $password = null): Response {
+		$r = $this->view->showForgotPassword();
+		return $r;
+	}
+
+	public function Submit_Username_for_Forgot_Password($parent, $username): Response {
+		$this->UserInfoData = new \php_base\data\UserInfoData($username);
+		$r = $this->model->doPasswordForgot($username, $this->UserInfoData);
+		return $r;
+	}
+
+	public function Submit_Username_for_Password_Change($parent, $username): Response {
+//		dump::dump('Submit_Username_for_Password_Change');
+
+		$this->UserInfoData = new \php_base\data\UserInfoData($username);
+//dump::dump($this);
+		$r = $this->model->doChangePassword(
+				$username,
+				$this->payload['old_password'],
+				$this->payload['new_password'],
+				$this->UserInfoData
+				);
+		return $r;
+	}
 
 }

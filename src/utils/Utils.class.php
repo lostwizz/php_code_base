@@ -90,5 +90,21 @@ abstract Class Utils {
 		return $r;
 	}
 
+
+		//generate a new password
+	public static function makeRandomPassword($length = 8) : string {
+		$pass = "";
+		$salt = "abchefghjkmnpqrstuvwxyz0123456789ABCHEFGHJKMNPQRSTUVWXYZ0123456789";
+		srand((double)microtime()*1000314);
+		$i = 0;
+		while ($i <= $length) {
+			$num = rand() % strlen($salt);
+			$tmp = substr($salt, $num, 1);
+			$pass = $pass . $tmp;
+			$i++;
+		}
+		return $pass;
+	}
+
 	//-----------------------------------------------------------------------------------------------
 }

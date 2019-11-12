@@ -188,6 +188,8 @@ class Resolver {
 		$action = (!empty($vv2[self::REQUEST_ACTION])) ? $vv2[self::REQUEST_ACTION] : null;
 		$payload = (!empty($vv2[self::REQUEST_PAYLOAD])) ? $vv2[self::REQUEST_PAYLOAD] : null;
 
+
+
 		/** if the GET/POST are not an Authenticate PTAP then do what they are */
 		if (!( $process == 'Authenticate' and $task == 'CheckLogin' )) {
 			$this->dispatcher->addProcess($process, $task, $action, $payload);

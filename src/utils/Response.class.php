@@ -188,6 +188,10 @@ Class Response {
 		return $this->message . '(' . $this->errNum . ')';
 	}
 
+	public function giveErrorCode() {
+		return $this->errNum;
+	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 * give an array with process/task/activity/payload
 	 * @return type

@@ -101,6 +101,9 @@ class UserInfoData extends data {
 						,last_logon_time
 	 *
 	 */
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  read from the database table
 	 *
@@ -108,14 +111,12 @@ class UserInfoData extends data {
 	 * @throws \PDOException
 	 * @throws \Exception
 	 */
-	protected function doReadFromDatabase($username) {
+	protected function doReadFromDatabase( string $username) :bool {
 		try {
 			$sql = 'SELECT * '
-					. ' FROM ' .  Settings::GetProtected( 'DB_Table_UserManager')
+					. ' FROM ' . Settings::GetProtected( 'DB_Table_UserManager')
 					. ' WHERE username = :uname AND  app = :app ;';
-					//. ' WHERE  username = :uname ;';
-					//. ' WHERE  app = :app ';
-
+//dump::dump($sql);
 			$app = Settings::GetPublic( 'App Name');
 	  		$username = strtolower($username);
 
@@ -131,6 +132,31 @@ class UserInfoData extends data {
 		} catch (\Exception $e)				{
 			throw new \Exception($e->getMessage(), (int)$e->getCode());
 		}
+		return true;
+	}
+
+	/**
+	 *
+	 * @param int $userid
+	 * @param string $newPW
+	 */
+	public function doUpdatePassword(int $userid, string $newPW ) : bool {
+		$sql = 'UPDATE ' . Settings::GetProtected( 'DB_Table_UserManager')
+				. ' SET password = :password'
+				. ' WHERE userid = :userid'
+				;
+  		$userid = strtolower($userid);
+
+		$params = array( ':password' => ['val' =>$newPW,'type'=>\PDO::PARAM_STR],
+						':userid' => ['val'=> $userid, 'type'=>\PDO::PARAM_INT]
+				 );
+		$data = DBUtils::doDBUpdate($sql, $params);
+dump::dump( $data);
+		return ($data != null);
+	}
+
+	public function doUpdateLastLoginAndIP( int $userid, string $newTime, string $newIP) {
+
 	}
 
 }

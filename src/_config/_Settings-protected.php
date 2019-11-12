@@ -8,7 +8,7 @@
  *       - note that these settings  are not comprehensive - the app can create  and remove settings as it pleases
  *       - note that these settings  are not comprehensive - the app can create  and remove settings as it pleases
  *
- * 
+ *
  * @author mike.merrett@whitehorse.ca
  * @version 0.5.0
  * $Id$
@@ -51,3 +51,5 @@ Settings::SetProtected('Critical_email_TO_ADDR', 'mike.merrett@whitehorse.ca');
 $sub = Settings::GetPublic('App Name') . '@' . Settings::GetPublic( 'App Server');
 Settings::SetProtected('Critical_email_Subject', $sub);
 
+Settings::SetProtected('Password_for_merrem' , '$2y$10$hFTDIH6d4RVohnWCpY5sKOVrRCesQzYprbixGYBN.lcL96vfODdRa');
+Settings::SetProtected('Password_for_john'   , '$2y$10$DmWo6P2aZkZahtJwWMk5k.nUL8qsJoLwuy0ICZwgJqO5CIpMZ6XJC');

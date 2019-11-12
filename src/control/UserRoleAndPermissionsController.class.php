@@ -122,7 +122,7 @@ Class UserRoleAndPermissionsController {
 			// use this setting to check permissions
 			Settings::SetRunTime('userPermissions', $this->model);
 		} else {
-			$response = new Response('no username', -8, false, true);
+			$response = new Response('no username', -18, false, true);
 		}
 
 //Dump::dump(Settings::GetRunTime('userPermissions'));
@@ -152,8 +152,8 @@ Class UserRoleAndPermissionsController {
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
 
-			$this->view->dumpState(null, null, true);
-			$this->view->dumpPermissions();
+			//$this->view->dumpState(null, null, true);
+			//$this->view->dumpPermissions();
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
 		}
