@@ -38,7 +38,9 @@ spl_autoload_register('myAutoLoader');
 
 
 if (!defined('DIR')) {
-	define('DS', DIRECTORY_SEPARATOR);
+	if ( !defined('DS')){
+		define('DS', DIRECTORY_SEPARATOR);
+	}
 	if (strripos(realpath('.'), 'src') < 1) {
 		define('DIR', realpath('.') . DS . 'src' . DS);
 	} else {
