@@ -107,7 +107,7 @@ class Resolver {
 	public function doWork(): Response {
 
 		if (Settings::GetPublic('IS_DEBUGGING')) {
-			Dump::dump(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
+			Dump::dumpLong(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
 		}
 
 		$this->AddHeader();

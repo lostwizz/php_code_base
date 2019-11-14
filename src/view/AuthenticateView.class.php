@@ -128,9 +128,9 @@ class AuthenticateView extends View {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @return type
+	 * @return Response
 	 */
-	public function showForgotPassword(){
+	public function showForgotPassword() : Response {
 
 		echo HTML::FormOpen('index.php',
 				  'ForgotPasswordForm',
@@ -142,7 +142,6 @@ class AuthenticateView extends View {
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
 		echo HTML::Hidden(Resolver::REQUEST_TASK, 'ChangeForgotPassword');
 		//echo HTML::Hidden( Resolver::REQUEST_ACTION, 'Login_check');
-
 		//echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
 
 		echo '<center>';
@@ -154,17 +153,12 @@ class AuthenticateView extends View {
 		return Response::NoError();
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 */
-//	public function ChangeForgotPassword() {
-//
-//	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	protected function showUserNameBox(){
+	protected function showUserNameBox() {
 		?>
 		<table border=1 align=center>
 			<tr>
@@ -178,8 +172,10 @@ class AuthenticateView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	*/
-	public function showChangePassword() {
+	 *
+	 * @return Response
+	 */
+	public function showChangePassword() :Response {
 		echo HTML::FormOpen('index.php',
 				  'ChangePasswordForm',
 				  'POST',
@@ -190,7 +186,6 @@ class AuthenticateView extends View {
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
 		echo HTML::Hidden(Resolver::REQUEST_TASK, 'ChangePasswordTask');
 		//echo HTML::Hidden( Resolver::REQUEST_ACTION, 'Login_check');
-
 		//echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
 
 
@@ -201,10 +196,12 @@ class AuthenticateView extends View {
 		$this->showUserOldAndNewPassword();
 		echo HTML::FormClose();
 		return Response::NoError();
-
 	}
 
-	protected function showUserOldAndNewPassword(){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	protected function showUserOldAndNewPassword() {
 		?>
 		<table border=1 align=center>
 			<tr>
@@ -227,5 +224,61 @@ class AuthenticateView extends View {
 		</table>
 		<?php
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	public function showAddNewAccount() : Response{
+				echo HTML::FormOpen('index.php',
+				  'ChangePasswordForm',
+				  'POST',
+				  null,
+				  NULL,
+				  NULL
+		);
+		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
+		echo HTML::Hidden(Resolver::REQUEST_TASK, 'ChangePasswordTask');
+
+
+		echo '<center>';
+		echo 'Forgot Password Form for ', Settings::GetPublic('App Name');
+		echo '</center>';
+
+		$this->showNewAccountBox();
+		echo HTML::FormClose();
+		return Response::NoError();
+
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	protected function showNewAccountBox() {
+			?>
+		<table border="1" align=center>
+			<tr>
+				<td>Username: </td>
+				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array('maxlength' => 30, 'size' => 30)); ?>
+				</td>
+			</tr><tr>
+				<td>Password: </td>
+				<td>
+					<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+				</td>
+			</tr><tr>
+				<td>Email Address: </td>
+				<td>
+					<?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_email]', null, array('maxlength' => 255, 'size' => 30)); ?>
+				</td>
+			</tr><tr>
+				<td align=center colspan=2><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit New Account Info'); ?></td>
+			</tr>
+		</table>
+		<?php
+	}
+
+
+
 
 }

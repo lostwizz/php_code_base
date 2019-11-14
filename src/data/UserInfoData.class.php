@@ -58,7 +58,9 @@ class UserInfoData extends data {
 	 * @param type $username
 	 */
 	public function __construct($username) {
-		$this->doReadFromDatabase($username);
+		if (! empty($username)){
+			$this->doReadFromDatabase($username);
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -158,5 +160,16 @@ dump::dump( $data);
 	public function doUpdateLastLoginAndIP( int $userid, string $newTime, string $newIP) {
 
 	}
+
+	public function doInsertNewAccount( $username, $password, $email) : Response{
+		$sql = 'INSERT INTO ' . Settings::GetProtected( 'DB_Table_UserManager')
+				.' ( '
+	}
+
+
+
+
+
+
 
 }

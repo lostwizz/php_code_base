@@ -184,7 +184,9 @@ class AuthenticateController extends Controller {
 	 * @return Response
 	 */
 	protected function add_New_Account($parent, $username = null, $password = null): Response {
-		return Response::TODO_Error();
+		// show the page asking all the questions
+		$r = $this->view->showAddNewAccount();
+		return $r;
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -214,11 +216,19 @@ class AuthenticateController extends Controller {
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
 //dump::dump($this);
 		$r = $this->model->doChangePassword(
-				$username,
-				$this->payload['old_password'],
-				$this->payload['new_password'],
-				$this->UserInfoData
-				);
+				  $username,
+				  $this->payload['old_password'],
+				  $this->payload['new_password'],
+				  $this->UserInfoData
+		);
+		return $r;
+	}
+
+	public function Submit_New_Account_Info($parent, $username): Response {
+		dump::dump($this);
+
+		$r = $this->model->doNewAccountInfo($this->payload['entered_username'], $this->payload['entered_password'], $this->payload['entered_email']);
+
 		return $r;
 	}
 

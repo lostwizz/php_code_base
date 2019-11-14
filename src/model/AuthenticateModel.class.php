@@ -269,4 +269,21 @@ dump::dump( $newPW);
 
 		return $r;
 	}
+
+	public function doNewAccountInfo($username, $password, $email): Response {
+		if ( empty($username)){
+			return new Response('missing username for new account', -19);
+		}
+		if ( empty($password )) {
+			return new Response('Missing password for new account', -20);
+		}
+		if (empty($email)) {
+			return new Response('Missing email address for new account', -21)
+		}
+
+		$UserInfoData = new UserInfoData();
+		$rInsert = $UserInfoData->doInsertNewAccount( $username, $password, $email);
+
+	}
+
 }

@@ -117,6 +117,7 @@ class Dispatcher {
 		/** this will dump the contents of the queue - for debugging
 			$this->dumpQueue($theQueue);
 		 */
+
 		try {
 			$response = null;
 			while (!$theQueue->isEmpty()) {
@@ -201,6 +202,8 @@ class Dispatcher {
 		}
 
 		$class = '\\php_base\\' . $dir . '\\' . $class;
+
+
 		$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
 		//Settings::GetRunTimeObject('MessageLog')->addInfo( "dispatcher do execute - new $class ($action,  payload);");
@@ -234,6 +237,7 @@ class Dispatcher {
 			  $passedaction = null,
 			  $passedpayload = null
 	): string {
+
 		$process = (!empty($passedprocess)) ? $passedprocess . 'Controller' : '';
 		$task = (!empty($passedtask)) ? '.' . $passedtask : '';
 		$action = (!empty($passedaction)) ? '.' . $passedaction : '';
@@ -257,7 +261,9 @@ class Dispatcher {
 	 * @return the stringified version of the parameter
 	 */
 	protected function processPayloadForItem($payload): string {
-		return serialize($payload);
+		$newPayload = str_replace('.', '~!~', $payload );
+		$r =  serialize($newPayload);
+		return $r;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -273,7 +279,9 @@ class Dispatcher {
 	 * @return the unstringified version of the parameter
 	 */
 	protected function processPayloadFROMItem($payload) {
-		return unserialize($payload);
+		$r = unserialize($payload);
+		$newR = str_replace( '~!~', '.', $r );
+		return $newR;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

@@ -64,6 +64,10 @@ abstract class ResponseErrorCodes {
 		-16 => 'Old password did not match for Change Password',
 		-17 => 'New password was NOT saved for Change Password',
 		-18 => 'username has not been set',
+		-19 => 'missing username for new account',
+		-20 => 'Missing password for new account',
+		-21 => 'Missing email address for new account',
+		-22 => '',
 		-9999 => 'testing error',
 		-999999 => 'DODO'
 	);
