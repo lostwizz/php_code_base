@@ -48,7 +48,9 @@ namespace php_base\control;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+
 use \php_base\model\Permissions as Permissions;
+
 
 /** * **********************************************************************************************
  * controller for the user roles and permissions
@@ -85,7 +87,6 @@ Class UserRoleAndPermissionsController {
 		if (!empty($u)) {
 
 			$this->model = new \php_base\model\UserRoleAndPermissionsModel($this);
-			//$this->data = new \php_base\data\UserRoleAndPermissionsData($this);
 			$this->view = new \php_base\view\UserRoleAndPermissionsView($this);
 
 			$this->action = $action;
@@ -241,5 +242,15 @@ Class UserRoleAndPermissionsController {
 	public static function tryToLogin(string $username, string $password) {
 
 	}
+
+
+	public function doInsertNewAccount(string $username, string $password, string $email, string $primaryRole =null): bool {
+		$model = new \php_base\model\UserRoleAndPermissionsModel();
+
+		$r = $model->doInsertIfNotExists($username, $password, $email, $primaryRole);
+
+		return $r;
+	}
+
 
 }

@@ -33,30 +33,28 @@
  */
 //**********************************************************************************************
 
-
 namespace php_base\data;
 
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
-
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 
 /** * **********************************************************************************************
  * This any of the reads or writes to the UserAttributes table
  */
-class UserAttributeData  extends data{
+class UserAttributeData extends data {
 
-	public $UserAttributes= [];
-	public $roleNames =[];
+	public $UserAttributes = [];
+	public $roleNames = [];
 
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - starts of the reading of data for that User Id
 	 * @param type $userID
 	 */
 	public function __construct($userID) {
-		$this->doReadFromDatabase($userID);
+		$this->doReadFromDatabaseByUserID($userID);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -73,8 +71,8 @@ class UserAttributeData  extends data{
 	 *
 	 * @param type $roleName
 	 */
-	public function AddPrimaryRole($roleName){
-		if ( !in_array( $roleName, $this->roleNames ) and !empty($roleName)) {
+	public function AddPrimaryRole($roleName) {
+		if (!in_array($roleName, $this->roleNames) and ! empty($roleName)) {
 			$this->roleNames[] = $roleName;
 		}
 	}
@@ -85,19 +83,19 @@ class UserAttributeData  extends data{
 	 *
 	 * @param type $data
 	 */
-	public function ProcessAttributes( $data) {
+	public function ProcessAttributes($data) {
 
 //Dump::dump(	$this->roleNames);
-		foreach ($data as $record){
-			if (($record['ATTRIBUTENAME'] =='PrimaryRole' )
-			 or ($record['ATTRIBUTENAME'] =='SecondaryRole' )
-			 or ($record['ATTRIBUTENAME'] =='Role' )) {
+		foreach ($data as $record) {
+			if (($record['ATTRIBUTENAME'] == 'PrimaryRole' )
+					or ( $record['ATTRIBUTENAME'] == 'SecondaryRole' )
+					or ( $record['ATTRIBUTENAME'] == 'Role' )) {
 
-			 	if (!empty($record['ATTRIBUTEVALUE'])
-			 	and !in_array($record['ATTRIBUTEVALUE'] , $this->roleNames)){
+				if (!empty($record['ATTRIBUTEVALUE'])
+						and ! in_array($record['ATTRIBUTEVALUE'], $this->roleNames)) {
 
-			 		$this->roleNames[] = $record['ATTRIBUTEVALUE'];
-			 	}
+					$this->roleNames[] = $record['ATTRIBUTEVALUE'];
+				}
 			} else {
 				$this->UserAttributes[$record['ATTRIBUTENAME']] = $record['ATTRIBUTEVALUE'];
 			}
@@ -110,7 +108,6 @@ class UserAttributeData  extends data{
 ////			$this->UserAttributes;
 ////		}
 ////	}
-
 	//-----------------------------------------------------------------------------------------------
 	////  SELECT TOP (1000) [id]
 ////      ,[UserId]
@@ -125,33 +122,83 @@ class UserAttributeData  extends data{
 ////4	1	PrimaryRole	DBA
 ////5	1	SecondaryRole	Clerk
 ////6	1	SecondaryRole	ViewOnly
+
 	/** -----------------------------------------------------------------------------------------------
-	 * read the database for that user id
 	 *
 	 * @param type $userID
-	 * @throws \PDOException
-	 * @throws \Exception
+	 * @return bool
 	 */
-	protected function doReadFromDatabase($userID) {
+	protected function doReadFromDatabaseByUserID($userID) :bool{
 
-		try {
-			$sql = 'SELECT Id
+		$sql = 'SELECT Id
 						,UserId
 						,AttributeName
 						,AttributeValue
-					FROM ' .  Settings::GetProtected( 'DB_Table_UserAttributes')
-					. ' WHERE  UserId = :userid';
+					FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' WHERE  UserId = :userid';
 
-			$params = array( ':userid' =>$userID);
-			$data = DBUtils::doDBSelectMulti($sql, $params) ;
+		$params = array(':userid' => $userID);
+		$data = DBUtils::doDBSelectMulti($sql, $params);
 
-			$this->ProcessAttributes( $data);
-		} catch (\PDOException $e)				{
-			throw new \PDOException($e->getMessage(), (int)$e->getCode());
-		} catch (\Exception $e){
-			throw new \Exception($e->getMessage(), (int)$e->getCode());
-		}
+		$this->ProcessAttributes($data);
+		return true;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userID
+	 * @param string $attribName
+	 * @param string $attribValue
+	 * @return bool
+	 */
+	public function doAddAttribute(int $userID, string $attribName, string $attribValue): bool {
+		$sql = 'INSERT into ' . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' ( userid, AttributeName, AttributeValue )'
+				. ' VALUES '
+				. '( :userid, :attrib_name, :attrib_value )'
+		;
+		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR],
+			':attrib_name' => ['val' => $attribName, 'type' => \PDO::PARAM_STR],
+			':attrib_value' => ['val' => $attribValue, 'type' => \PDO::PARAM_STR]
+		);
+
+		$data = DBUtils::doDBInsertReturnID($sql, $params);
+		return true;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @param string $attribName
+	 * @return bool
+	 */
+	public function doRemoveAttribute( int $userid, string $attribName) : bool {
+		$sql = 'DELETE FROM '  . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' WHERE userid = :userid AND attributename = :attrib_name'
+				;
+		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR],
+			':attrib_name' => ['val' => $attribName, 'type' => \PDO::PARAM_STR]
+		);
+
+		$data = DBUtils::doDBDelete( $sql, $params);
+		return  ($data == 1);
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @return bool
+	 */
+	public function doRemoveAllAttributesForUserID( int $userid) :bool {
+		$sql = 'DELETE FROM '  . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' WHERE userid = :userid'
+				;
+		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR] );
+
+		$data = DBUtils::doDBDelete( $sql, $params);
+		return  ($data == 1);
+
+	}
 
 }

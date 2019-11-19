@@ -69,7 +69,7 @@ class UserPermissionData {
 	 * @param type $listOfRoleIDs
 	 */
 	public function __construct($listOfRoleIDs) {
-		$this->doReadFromDatabase($listOfRoleIDs);
+		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
 
 //dump::dump($this->permissionList);
 	}
@@ -77,12 +77,10 @@ class UserPermissionData {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $listOfRolesIDs
-	 * @throws \PDOException
-	 * @throws \Exception
 	 */
-	protected function doReadFromDatabase($listOfRolesIDs) {
+	protected function doReadFromDatabaseForRoles($listOfRolesIDs) {
 		$ids = implode(', ', $listOfRolesIDs);
-		try {
+
 			$sql = 'SELECT id
 						,roleId
 						,UPPER(process) as process
@@ -95,17 +93,54 @@ class UserPermissionData {
 					. $ids
 					. ')';
 
-			$paramas = array();
+			//$paramas = array();
 			$data = DBUtils::doDBSelectMulti($sql);
 
 			$this->permissionList = $data;
 //dump::dump($sql)	;
 //dump::dump($data);
-		} catch (\PDOException $e) {
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
-		} catch (\Exception $e) {
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
-		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $roleID
+	 * @param string $process
+	 * @param string $task
+	 * @param string $action
+	 * @param string $field
+	 * @param \php_base\data\Permission $permission
+	 * @return int
+	 */
+	public function doAddNewPermission( int $roleID, string $process, string $task, string $action, string $field, Permission $permission): int {
+		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_PermissionsManager')
+				. '( roleid, process, task, action, field, permission )'
+				. ' VALUES '
+				. '( :roleid, :process, :task, :action, :field, :permission )'
+				;
+		$params  = array(  ':roleid' =>  [ 'val' =>  $roleID   ,'type'=> \PDO::PARAM_INT],
+			':process' =>  [ 'val' =>  strtoupper($process)     ,'type'=> \PDO::PARAM_STR],
+			':task' =>  [ 'val' =>  strtoupper($task)     ,'type'=> \PDO::PARAM_str],;
+			':action' =>  [ 'val' =>  strtoupper($action)     ,'type'=> \PDO::PARAM_STR],
+			':field' =>  [ 'val' =>   strtoupper($field)    ,'type'=> \PDO::PARAM_STR],
+			':permission' =>  [ 'val' =>  $permission     ,'type'=> \PDO::PARAM_STR],
+
+			);
+		$data = DBUtils::doDBInsertReturnID( $sql, $params);
+		return $data;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $id
+	 * @return bool
+	 */
+	public function doDeletePermissionByID(int $id): bool {
+		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
+				. ' WHERE id = :id'
+			;
+		$params = array( ':id' => ['val' => $id, 'type'=> \PDO::PARAM_STR]);
+		$data = DBUtils::doDBDelete($sql, $params);
+		return ($data == 1);
 	}
 
 }

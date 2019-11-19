@@ -59,8 +59,8 @@ Class UserRoleData extends Data {
 	 *  constructor that initiates the reading of the database
 	 * @param type $ArrayOfNames
 	 */
-	public function __construct($ArrayOfNames) {
-		$this->doReadFromDatabase($ArrayOfNames);
+	public function __construct() {
+		$this->doReadFromDatabase();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -79,14 +79,11 @@ Class UserRoleData extends Data {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  read the data from the database
-	 *
-	 * @param type $ArrayOfNames
-	 * @throws \PDOException
-	 * @throws \Exception
+
+	 * @return bool
 	 */
-	protected function doReadFromDatabase($ArrayOfNames) {
+	protected function doReadFromDatabase() :bool {
 		$names = "'" . implode("', '", $ArrayOfNames) . "'";
-		try {
 			$sql = 'SELECT RoleId
 						,Name
 					FROM ' . Settings::GetProtected('DB_Table_RoleManager')
@@ -98,11 +95,26 @@ Class UserRoleData extends Data {
 			$data = DBUtils::doDBSelectMulti($sql, $params);
 
 			$this->ProcessRoleIDs($data);
-		} catch (\PDOException $e) {
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
-		} catch (\Exception $e) {
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
-		}
+			return true;
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $roleName
+	 * @return int
+	 */
+	public function doAddNewRole(string $roleName): int {
+		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_RoleManager')
+				. ' { name)'
+				. ' VALUES '
+				. '( :name )'
+				;
+		$params = array( ':name:' => [ 'val' => $roleName, 'type' => \PDO::PARAM_INT ] );
+
+		$data = DBUtils::doDBInsertReturnID( $sql, $params);
+		return $data;
+	}
+
+
 
 }

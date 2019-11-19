@@ -247,7 +247,7 @@ abstract Class DBUtils {
 	 * @throws \Exception
 	 * @throws Exception
 	 */
-	public static function doDBUpdate(string $sql, array $param): bool {
+	public static function doDBUpdateSingle(string $sql, array $param): bool {
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
@@ -288,6 +288,35 @@ abstract Class DBUtils {
 			$r = $stmt->execute();
 			$conn->commit();
 			return $conn->lastInsertId();
+		} catch (\PDOException $e) {
+//dump::dump($e->getMessage())	;
+			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\Exception $e) {
+//dump::dump($e->getMessage())	;
+			throw new \Exception($e->getMessage(), (int) $e->getCode());
+		}
+		return -1;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $sql
+	 * @param array $param
+	 * @return int
+	 * @throws \PDOException
+	 * @throws \Exception
+	 */
+	public static function doDBDelete(string $sql, array $param): int{
+		try {
+			$conn = DBUtils::setupPDO();
+			$stmt = $conn->prepare($sql);
+
+			//dump::dump($stmt);
+			self::doBinding($param, $stmt);
+			$conn->beginTransaction();
+			$r = $stmt->execute();
+			$conn->commit();
+			return $r;
 		} catch (\PDOException $e) {
 //dump::dump($e->getMessage())	;
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());

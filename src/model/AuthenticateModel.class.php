@@ -90,53 +90,6 @@ class AuthenticateModel extends Model {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @param type $userInfoData
-	 * @return Response
-	 */
-	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
-		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful DB_TABLE password for: ' . $username);
-			return Response::NoError();
-		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful DB_TABLE password for: ' . $username);
-		return new Response('db_table password failed', -11);
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @param type $userInfoData
-	 * @return Response
-	 */
-	public function LogonMethod_HardCoded(string $username, string $password, $userInfoData): Response {
-		//$pwd = \password_hash($password, PASSWORD_DEFAULT);
-//dump::dump($pwd);
-
-		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
-			return Response::NoError();
-		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful Hardcoded password for: ' . $username);
-		return new Response('HardCoded password failed', -9);
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @param type $userInfoData
-	 * @return Response
-	 */
-	public function LogonMethod_LDAP_CITY(string $username, string $password, $userInfoData): Response {
-
-		return Response::TODO_Error();
-	}
-
-	/** -----------------------------------------------------------------------------------------------
 	 * given a username and a password see if the password is valid for that username
 	 * @param type $username
 	 * @param type $password
@@ -156,7 +109,7 @@ class AuthenticateModel extends Model {
 			}
 		} else {
 			Settings::GetRunTimeObject('MessageLog')->addInfo('Authentication Method: ' . $method . 'Does NOT exist for:' . $username);
-			return new Response('Authentication Method doenst exist', -8);
+			$response = new Response('Authentication Method doenst exist', -8);
 		}
 		return $response;
 	}
@@ -168,12 +121,14 @@ class AuthenticateModel extends Model {
 	 */
 	public function isGoodAuthentication($passedUsername) {
 
+
+		return false;
 		///////////////////// DEBUG CODE
-		if ($passedUsername = self::Uname) {
-			return true;
-		} else {
-			return false;
-		}
+//		if ($passedUsername = self::Uname) {
+//			return true;
+//		} else {
+//			return false;
+//		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -286,12 +241,13 @@ class AuthenticateModel extends Model {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @param type $username
-	 * @param type $password
-	 * @param type $email
+	 * @param string $username
+	 * @param string $password
+	 * @param string $email
+	 * @param string|null $primaryRole
 	 * @return Response
 	 */
-	public function doNewAccountInfo($username, $password, $email): Response {
+	public function doNewAccountInfo( string $username, string $password, string $email, ?string $primaryRole =null): Response {
 		if (empty($username)) {
 			return new Response('missing username for new account', -19);
 		}
@@ -302,8 +258,69 @@ class AuthenticateModel extends Model {
 			return new Response('Missing email address for new account', -21);
 		}
 
-		$UserInfoData = new UserInfoData();
-		$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
+
+		$permController = new \php_base\control\UserRoleAndPermissionsController();
+				// not set yet so not relevan even if set //Settings::GetRunTime('userPermissionsController');
+dump::dump( $permController);
+		//$UserInfoData = new UserInfoData();
+		//$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
+		$permController->doInsertNewAccount($username, $password, $email, $primaryRole);
+		return Response::NoError();
 	}
+
+
+
+
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param type $userInfoData
+	 * @return Response
+	 */
+	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
+		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
+			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful DB_TABLE password for: ' . $username);
+			return Response::NoError();
+		}
+		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful DB_TABLE password for: ' . $username);
+		return new Response('db_table password failed', -11);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param type $userInfoData
+	 * @return Response
+	 */
+	public function LogonMethod_HardCoded(string $username, string $password, $userInfoData): Response {
+		//$pwd = \password_hash($password, PASSWORD_DEFAULT);
+//dump::dump($pwd);
+
+		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
+			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
+			return Response::NoError();
+		}
+		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful Hardcoded password for: ' . $username);
+		return new Response('HardCoded password failed', -9);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param type $userInfoData
+	 * @return Response
+	 */
+	public function LogonMethod_LDAP_CITY(string $username, string $password, $userInfoData): Response {
+
+		return Response::TODO_Error();
+	}
+
+
 
 }

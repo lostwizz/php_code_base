@@ -44,6 +44,9 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
+use \php_base\data\UserInfoData as UserInfoData;
+
+
 /** * **********************************************************************************************
  *
  */
@@ -80,9 +83,9 @@ Class Permissions {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $arRights
-	 * @return boolean
+	 * @return bool
 	 */
-	public static function areAllValidRights(array ...$arRights) :bool {
+	public static function areAllValidRights( ...$arRights) :bool {
 		foreach ($arRights as $right) {
 			if (!self::doesRightExists($right)) {
 				return false;
@@ -116,7 +119,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 *  constructor - basically keeps track of the controller
 	 * @param type $controller
 	 */
-	public function __construct($controller) {   //$action ='', $payload = null){
+	public function __construct($controller =null) {   //$action ='', $payload = null){
 		if (!empty($controller)) {
 			$this->controller = $controller;
 		}
@@ -322,6 +325,18 @@ Class UserRoleAndPermissionsModel extends Model {
 //		$s .= $r ? '^true^' : '^false^';
 //		Settings::GetRunTimeObject('MessageLog')->addNotice('checkPerm:' .  $s);
 		return $r;
+	}
+
+	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
+		$userInfoData = new UserInfoData();
+		$exists  = $userInfoData->doReadFromDatabaseByUserNameAndApp($username);
+		if (! $exists) {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('adding user');
+			$userInfoData->doInsertNewAccount( $username, $password, $email, $primaryRole);
+			return true;
+		}
+		Settings::GetRunTimeObject('MessageLog')->addNotice('NOT adding user');
+		return false;
 	}
 
 }
