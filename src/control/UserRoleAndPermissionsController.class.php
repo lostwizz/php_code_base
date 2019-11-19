@@ -13,6 +13,9 @@
  *    of the server does - it handles the POST/GET responses and passes the Dispatcher
  *    the Queue items. Process/Task/Action/Payload (PTAP)
  *
+ * the output of this controller is a link back in to do any of the tasks
+ * Settings::GetRunTime('userPermissionsController');      // $this
+ *
  *
  * @link URL
  *
@@ -21,6 +24,8 @@
  * @since 0.3.0
  *
  * @example
+ *  after things are setup the code is used to query if it has permissions or not
+ * Settings::GetRunTime('userPermissionsController')->is
  *
  * @see UserRoleAndPermissionsModel.class.php
  * @see UserInfoData.class.php
@@ -43,6 +48,7 @@ namespace php_base\control;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+use \php_base\model\Permissions as Permissions;
 
 /** * **********************************************************************************************
  * controller for the user roles and permissions
@@ -50,7 +56,7 @@ use \php_base\Utils\Response as Response;
 Class UserRoleAndPermissionsController {
 
 	/**
-	 * the usersname
+	 * the username
 	 *
 	 * @var string
 	 */
@@ -58,12 +64,10 @@ Class UserRoleAndPermissionsController {
 	public $userID;
 	public $userInfo = null;
 	public $userAttributes = null;
-	//public $roleNames = null;
 	public $userPermissions = null;
 	public $ArrayOfRoleNames = null;
-	// temp things
+// temp things
 	public $arOfRoleIDs = null;
-	//public $data;
 	public $view;
 	public $model;
 	public $process;
@@ -120,7 +124,7 @@ Class UserRoleAndPermissionsController {
 			$response = $this->LoadAllUserInformation($u);
 
 			// use this setting to check permissions
-			Settings::SetRunTime('userPermissions', $this->model);
+			Settings::SetRunTime('userPermissionsController', $this);
 		} else {
 			$response = new Response('no username', -18, false, true);
 		}
@@ -181,8 +185,8 @@ Class UserRoleAndPermissionsController {
 	protected function GetUSERAttributes(): bool {
 
 		$DataUserAttribute = new \php_base\data\UserAttributeData($this->userID);
+
 		// take the primary role from the user info and addit to the array of roles in the user attributes
-		//$primaryRole = $DataUserInfo->getPrimaryRole();
 		$primaryRole = $this->userInfo['PRIMARYROLENAME'];
 
 		$DataUserAttribute->AddPrimaryRole($primaryRole);  // add the userInfo PrimaryRole
@@ -191,9 +195,6 @@ Class UserRoleAndPermissionsController {
 
 		// get the array of all the roles this user has   (words i.e. Clerk)
 		$this->ArrayOfRoleNames = $DataUserAttribute->getArrayOfRoleNames();
-
-		//$this->roleNames = $DataUserAttribute->roleNames;
-
 
 		return (!empty($this->userAttributes));
 	}
@@ -217,14 +218,28 @@ Class UserRoleAndPermissionsController {
 
 		$this->userPermissions = $DataUserPermissions->permissionList;
 
-		usort($this->userPermissions,
-				function ($a, $b) {
-			$sA = $this->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
-			$sB = $this->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
-			return $sA <=> $sB;
-		});
 
+		/** DEBUG - dump the permissions prettily */
+		$this->view->dumpPermissions();
 		return (!empty($this->userPermissions));
+	}
+
+	public function hasRole(string $roleWanted): bool {
+		return $this->model->hasRolePermission($roleWanted);
+	}
+
+	public function isAllowed($permissionWanted = Permissions::NO_RIGHT,
+			string $process = Permissions::NO_RIGHT,
+			string $task = Permissions::NO_RIGHT,
+			string $action = Permissions::NO_RIGHT,
+			string $field = Permissions::NO_RIGHT
+	): bool {
+
+		return $this->model->isAllowed($permissionWanted, $process, $task, $action, $field);
+	}
+
+	public static function tryToLogin(string $username, string $password) {
+
 	}
 
 }

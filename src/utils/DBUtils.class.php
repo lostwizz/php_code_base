@@ -173,8 +173,12 @@ abstract Class DBUtils {
 		}
 	}
 
-	// -----------------------------------------------------------------------------------------------
-	public static function doBinding($params, $stmt) {
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $params
+	 * @param \PDOStatement|null $stmt
+	 */
+	public static function doBinding(?array $params, ?\PDOStatement $stmt) {
 		if (is_array($params) and ! empty($params) and ! empty($stmt)) {
 			foreach ($params as $key => $value) {
 				if (is_array($value)) {
@@ -191,7 +195,7 @@ abstract Class DBUtils {
 	 * @param type $params
 	 * @param type $stmt
 	 */
-	public static function doBindingSimple($params, $stmt) {
+	public static function doBindingSimple(array $params, \PDOStatement $stmt) {
 		if (is_array($paramas)) {
 			$i = 1;
 			foreach ($params as $value) {
@@ -205,7 +209,7 @@ abstract Class DBUtils {
 	 *
 	 * @param type $sql
 	 */
-	public static function BeginWriteOne($sql) {
+	public static function BeginWriteOne(string $sql) {
 		$conn = DBUtils::setupPDO();
 
 		if (empty(self::$currentPreparedStmt)) {
@@ -219,7 +223,7 @@ abstract Class DBUtils {
 	 * @return type
 	 * @throws \Exception
 	 */
-	public static function WriteOne($params) {
+	public static function WriteOne(array $params) {
 		if (empty(self::$currentPreparedStmt)) {
 			throw new \Exception('my prepared statment doesnt exist');
 		}
@@ -234,7 +238,16 @@ abstract Class DBUtils {
 		self::$currentPreparedStmt = null;
 	}
 
-	public static function doDBUpdate($sql, $param){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $sql
+	 * @param array $param
+	 * @return bool
+	 * @throws \PDOException
+	 * @throws \Exception
+	 * @throws Exception
+	 */
+	public static function doDBUpdate(string $sql, array $param): bool {
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
@@ -242,8 +255,8 @@ abstract Class DBUtils {
 			//dump::dump($stmt);
 			self::doBinding($param, $stmt);
 			$r = $stmt->execute();
-			if ($r != 1){
-				throw new Exception( 'did not get the proper number of updates returned');
+			if ($r != 1) {
+				throw new Exception('did not get the proper number of updates returned');
 			}
 			return true;
 		} catch (\PDOException $e) {
@@ -253,7 +266,36 @@ abstract Class DBUtils {
 //dump::dump($e->getMessage())	;
 			throw new \Exception($e->getMessage(), (int) $e->getCode());
 		}
+		return false;
+	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $sql
+	 * @param array $param
+	 * @return int
+	 * @throws \PDOException
+	 * @throws \Exception
+	 */
+	public static function doDBInsertReturnID(string $sql, array $param): int {
+		try {
+			$conn = DBUtils::setupPDO();
+			$stmt = $conn->prepare($sql);
+
+			//dump::dump($stmt);
+			self::doBinding($param, $stmt);
+			$conn->beginTransaction();
+			$r = $stmt->execute();
+			$conn->commit();
+			return $conn->lastInsertId();
+		} catch (\PDOException $e) {
+//dump::dump($e->getMessage())	;
+			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\Exception $e) {
+//dump::dump($e->getMessage())	;
+			throw new \Exception($e->getMessage(), (int) $e->getCode());
+		}
+		return -1;
 	}
 
 	// -----------------------------------------------------------------------------------------------

@@ -26,6 +26,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
 
+use \php_base\model\Permissions as Permissions;
+
 //***********************************************************************************************
 //***********************************************************************************************
 class TESTController extends Controller {
@@ -62,40 +64,41 @@ class TESTController extends Controller {
 		//$perms= UserRoleAndPermissionsModel
 //Dump::dump(Settings::GetRunTime('userPermissions'));
 
-		$perms = Settings::GetRunTime('userPermissions');
+		$perms = Settings::GetRunTime('userPermissionsController');
+
 //Dump::dumpLong( $perms);
 		//$p1 = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
-		$p1 = UserRoleAndPermissionsModel::WRITE_RIGHT;
+		$p1 = Permissions::WRITE_RIGHT;
 //Dump::dump($p1);
 		//$process = 'test';
 		//$task = 'testRead';
 		//$action = \php_base\model\UserRoleAndPermissionsModel::WRITE_RIGHT;
-		$action = UserRoleAndPermissionsModel::WRITE_RIGHT;
+		$action = Permissions::WRITE_RIGHT;
 
 //::WILDCARD_RIGHT
 		$x = $perms->isAllowed($p1, $this->process, $this->task, $action);
 //Dump::dump($x);
 
 
-		$x = $perms->isAllowed(UserRoleAndPermissionsModel::DBA_RIGHT, $this->process, $this->task, $action);
+		$x = $perms->isAllowed(Permissions::DBA_RIGHT, $this->process, $this->task, $action);
 //Dump::dump($x);
 
-		$x = $perms->isAllowed(UserRoleAndPermissionsModel::READ_RIGHT, $this->process, $this->task, 'actionfred');
+		$x = $perms->isAllowed(Permissions::READ_RIGHT, $this->process, $this->task, 'actionfred');
 //Dump::dump($x);
 
-		$x = Settings::GetRunTime('userPermissions')->isAllowed(UserRoleAndPermissionsModel::READ_RIGHT, '*', 'READ_OLD_PASSWORD', 'CHANGE_PASSWORD', 'PASSWORD'
+		$x = Settings::GetRunTime('userPermissionsController')->isAllowed(Permissions::READ_RIGHT, '*', 'READ_OLD_PASSWORD', 'CHANGE_PASSWORD', 'PASSWORD'
 		);
 
-		$x = Settings::GetRunTime('userPermissions')->isAllowed(UserRoleAndPermissionsModel::READ_RIGHT, 'FRED', '*', 'CHANGE_PASSWORD', '*'
+		$x = Settings::GetRunTime('userPermissionsController')->isAllowed(Permissions::READ_RIGHT, 'FRED', '*', 'CHANGE_PASSWORD', '*'
 		);
-		$x = Settings::GetRunTime('userPermissions')->isAllowed(UserRoleAndPermissionsModel::DBA_RIGHT, 'FRED', '*', 'CHANGE_PASSWORD', '*'
+		$x = Settings::GetRunTime('userPermissionsController')->isAllowed(Permissions::DBA_RIGHT, 'FRED', '*', 'CHANGE_PASSWORD', '*'
 		);
 
-		$x = Settings::GetRunTime('userPermissions')->hasRole('Clerk');
+		$x = Settings::GetRunTime('userPermissionsController')->hasRole('Clerk');
 
-		$x = Settings::GetRunTime('userPermissions')->hasRole('DBA');
-		$x = Settings::GetRunTime('userPermissions')->hasRole('GOD');
-		$x = Settings::GetRunTime('userPermissions')->hasRole('billybob');
+		$x = Settings::GetRunTime('userPermissionsController')->hasRole('DBA');
+		$x = Settings::GetRunTime('userPermissionsController')->hasRole('GOD');
+		$x = Settings::GetRunTime('userPermissionsController')->hasRole('billybob');
 
 
 		Settings::GetRunTimeObject('MessageLog')->addINFO('----------------');

@@ -97,10 +97,26 @@ class UserRoleAndPermissionsView extends View {
 		echo '</pre>';
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 * sort the permissions array
+	 */
+	protected function sortPermissionsArray( ){
+		usort($this->parent->userPermissions,
+			function ($a, $b) {
+			$sA = $this->parent->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
+			$sB = $this->parent->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
+			return $sA <=> $sB;
+		});
+	}
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * show a easily readable tabel with the permissions
 	 */
 	public function dumpPermissions() {
+		$this->sortPermissionsArray();
 		echo '<table border=1>';
 		ECHO '<Tr>';
 		echo '<th>', 'ROLEID', '</Th>';

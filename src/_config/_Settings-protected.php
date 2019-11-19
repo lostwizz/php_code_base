@@ -53,3 +53,5 @@ Settings::SetProtected('Critical_email_Subject', $sub);
 
 Settings::SetProtected('Password_for_merrem' , '$2y$10$hFTDIH6d4RVohnWCpY5sKOVrRCesQzYprbixGYBN.lcL96vfODdRa');
 Settings::SetProtected('Password_for_john'   , '$2y$10$DmWo6P2aZkZahtJwWMk5k.nUL8qsJoLwuy0ICZwgJqO5CIpMZ6XJC');
+
+

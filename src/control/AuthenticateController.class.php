@@ -39,6 +39,9 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
+use \php_base\data\UserInfoData as UserInfoData;
+
+
 /** * **********************************************************************************************
  * handles authentication and logon processes
  *
@@ -131,12 +134,14 @@ class AuthenticateController extends Controller {
 	 */
 	protected function Submit_Logon($parent, $username = null, $password = null): Response {
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-//dump::dump($this->UserInfoData);
+////dump::dump($this->UserInfoData);
 
 		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
 			return $this->model->tryToLogin($username, $password, $this->UserInfoData);
 		}
 		return new Response('Username does not exist', -10);
+
+/////		\php_base\control\UserRoleAndPermissionsController::tryToLogin( $username, $password);
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -216,10 +221,10 @@ class AuthenticateController extends Controller {
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
 //dump::dump($this);
 		$r = $this->model->doChangePassword(
-				  $username,
-				  $this->payload['old_password'],
-				  $this->payload['new_password'],
-				  $this->UserInfoData
+				$username,
+				$this->payload['old_password'],
+				$this->payload['new_password'],
+				$this->UserInfoData
 		);
 		return $r;
 	}

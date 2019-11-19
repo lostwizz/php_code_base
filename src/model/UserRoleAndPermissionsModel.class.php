@@ -44,12 +44,10 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-//***********************************************************************************************
-//***********************************************************************************************
-/**
- * handles the logic for user roles and permissions
+/** * **********************************************************************************************
+ *
  */
-Class UserRoleAndPermissionsModel extends Model {
+Class Permissions {
 	/*
 	 * theses the the constants for ALL the possible permissions i.e. none, read,  write, dba and god (in hirachial order)
 	 */
@@ -60,6 +58,55 @@ Class UserRoleAndPermissionsModel extends Model {
 	const READ_RIGHT = 'Read';
 	const WILDCARD_RIGHT = '*';
 	const NO_RIGHT = '__NO__RIGHT__';
+
+	protected static $permissions = array(
+		self::GOD_RIGHT,
+		self::DBA_RIGHT,
+		self::WRITE_RIGHT,
+		self::READ_RIGHT,
+		self::WILDCARD_RIGHT,
+		self::NO_RIGHT
+	);
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $theRight
+	 * @return bool
+	 */
+	public static function doesRightExists($theRight): bool {
+		return \in_array($theRight, self::$permissions);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $arRights
+	 * @return boolean
+	 */
+	public static function areAllValidRights(array ...$arRights) :bool {
+		foreach ($arRights as $right) {
+			if (!self::doesRightExists($right)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+}
+
+/** * **********************************************************************************************
+ * handles the logic for user roles and permissions
+ */
+Class UserRoleAndPermissionsModel extends Model {
+	/*
+	 * theses the the constants for ALL the possible permissions i.e. none, read,  write, dba and god (in hirachial order)
+	 */
+
+//	const GOD_RIGHT = 'GOD';
+//	const DBA_RIGHT = 'DBA';
+//	const WRITE_RIGHT = 'Write';
+//	const READ_RIGHT = 'Read';
+//	const WILDCARD_RIGHT = '*';
+//	const NO_RIGHT = '__NO__RIGHT__';
 
 	public $action;
 	public $payload;
@@ -80,9 +127,9 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @param string $roleWanted - string with the role wanted
 	 * @return type
 	 */
-	public function hasRole(string $roleWanted): bool {
+	public function hasRolePermission(string $roleWanted): bool {
 		$roleWanted = trim($roleWanted);
-		if (in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
+		if (\in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('has role wanted: ' . $roleWanted);
 			Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has role: ' . $roleWanted);
 			return true;
@@ -103,30 +150,30 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @param type $field
 	 * @return boolean
 	 */
-	public function isAllowed($wantedPermission = self::NO_RIGHT, $process = self::NO_RIGHT, $task = self::NO_RIGHT, $action = self::NO_RIGHT, $field = self::WILDCARD_RIGHT
+	public function isAllowed($wantedPermission = Permissions::NO_RIGHT, $process = Permissions::NO_RIGHT, $task = Permissions::NO_RIGHT, $action = Permissions::NO_RIGHT, $field = Permissions::WILDCARD_RIGHT
 	) {
-		if (empty($wantedPermission) or $wantedPermission == self::NO_RIGHT) {
+		if (empty($wantedPermission) or $wantedPermission == Permissions::NO_RIGHT) {
 			return false;
 		}
-		if (empty($process) or $process == self::NO_RIGHT) {
+		if (empty($process) or $process == Permissions::NO_RIGHT) {
 			return false;
 		}
-		if (empty($task) or $task == self::NO_RIGHT) {
+		if (empty($task) or $task == Permissions::NO_RIGHT) {
 			return false;
 		}
-		if (empty($action) or $action == self::NO_RIGHT) {
+		if (empty($action) or $action == Permissions::NO_RIGHT) {
 			return false;
 		}
 		$s = $wantedPermission . '<=' . $process . '.' . $task . '.' . $action . '.' . $field;
 
-		$arPermissions = $this->controller->userPermissions;
+		//$arPermissions = $this->controller->userPermissions;
 
 		$process = strtoupper($process);
 		$task = strtoupper($task);
 		$action = strtoupper($action);
 		$field = strtoupper($field);
 
-		foreach ($arPermissions as $value) {
+		foreach ($this->controller->userPermissions as $value) {
 			if ($this->checkRight($value, $wantedPermission, $process, $task, $action, $field)) {
 				Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
 				Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has permission: ' . $s);
@@ -176,9 +223,9 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkProcess($singleOfPermissions, $process) {
-		$r = (($process == self::WILDCARD_RIGHT)
+		$r = (($process == Permissions::WILDCARD_RIGHT)
 				or ( $process == $singleOfPermissions['PROCESS'])
-				or ( $singleOfPermissions['PROCESS'] == self::WILDCARD_RIGHT));
+				or ( $singleOfPermissions['PROCESS'] == Permissions::WILDCARD_RIGHT));
 		return $r;
 	}
 
@@ -189,9 +236,9 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkTask($singleOfPermissions, $task) {
-		$r = (($task == self::WILDCARD_RIGHT)
+		$r = (($task == Permissions::WILDCARD_RIGHT)
 				or ( $task == $singleOfPermissions['TASK'])
-				or ( $singleOfPermissions['TASK'] == self::WILDCARD_RIGHT));
+				or ( $singleOfPermissions['TASK'] == Permissions::WILDCARD_RIGHT));
 		return $r;
 	}
 
@@ -202,9 +249,9 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkAction($singleOfPermissions, $action) {
-		$r = (($action == self::WILDCARD_RIGHT)
+		$r = (($action == Permissions::WILDCARD_RIGHT)
 				or ( $action == $singleOfPermissions['ACTION'])
-				or ( $singleOfPermissions['ACTION'] == self::WILDCARD_RIGHT));
+				or ( $singleOfPermissions['ACTION'] == Permissions::WILDCARD_RIGHT));
 
 //		$s =$r ? '+true+':'+false+';
 //		Settings::GetRunTimeObject('MessageLog')->addNotice('checkAction:' .  $s);
@@ -219,9 +266,9 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkField($singleOfPermissions, $field) {
-		$r = (($field == self::WILDCARD_RIGHT)
+		$r = (($field == Permissions::WILDCARD_RIGHT)
 				or ( $field == $singleOfPermissions['FIELD'])
-				or ( $singleOfPermissions['FIELD'] == self::WILDCARD_RIGHT));
+				or ( $singleOfPermissions['FIELD'] == Permissions::WILDCARD_RIGHT));
 
 //		$s =$r ? '+true+':'+false+';
 //		Settings::GetRunTimeObject('MessageLog')->addNotice('checkField:' .  $s);
@@ -241,32 +288,32 @@ Class UserRoleAndPermissionsModel extends Model {
 	 */
 	protected function checkPermission($singleOfPermissions, $wantedPermission) {
 		switch ($wantedPermission) {
-			case self::GOD_RIGHT:
-				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT )
-						or ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+			case Permissions::GOD_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == Permissions::GOD_RIGHT )
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::WILDCARD_RIGHT));
 				break;
-			case self::DBA_RIGHT:
-				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::DBA_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+			case Permissions::DBA_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == Permissions::GOD_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::DBA_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::WILDCARD_RIGHT));
 				break;
-			case self::WRITE_RIGHT:
-				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::DBA_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::WRITE_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+			case Permissions::WRITE_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == Permissions::GOD_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::DBA_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::WRITE_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::WILDCARD_RIGHT));
 				break;
-			case self::READ_RIGHT:
-				$r = (( $singleOfPermissions['PERMISSION'] == self::GOD_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::DBA_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::WRITE_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::READ_RIGHT)
-						or ( $singleOfPermissions['PERMISSION'] == self::WILDCARD_RIGHT));
+			case Permissions::READ_RIGHT:
+				$r = (( $singleOfPermissions['PERMISSION'] == Permissions::GOD_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::DBA_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::WRITE_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::READ_RIGHT)
+						or ( $singleOfPermissions['PERMISSION'] == Permissions::WILDCARD_RIGHT));
 				break;
-			case self::NO_RIGHT:
+			case Permissions::NO_RIGHT:
 				$r = false;
 				break;
-			case self::WILDCARD_RIGHT;
+			case Permissions::WILDCARD_RIGHT;
 				$r = false;
 		}
 //		$s = 'wanted: ' . $wantedPermission;

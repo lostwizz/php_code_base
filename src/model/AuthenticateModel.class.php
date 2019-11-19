@@ -42,9 +42,7 @@ namespace php_base\Model;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
-
 use \php_base\Utils\Utils as Utils;
-
 
 /** * **********************************************************************************************
  * business logic for the authentication
@@ -99,7 +97,7 @@ class AuthenticateModel extends Model {
 	 * @return Response
 	 */
 	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
-		if (password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
+		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful DB_TABLE password for: ' . $username);
 			return Response::NoError();
 		}
@@ -115,10 +113,10 @@ class AuthenticateModel extends Model {
 	 * @return Response
 	 */
 	public function LogonMethod_HardCoded(string $username, string $password, $userInfoData): Response {
-		//$pwd = password_hash($password, PASSWORD_DEFAULT);
+		//$pwd = \password_hash($password, PASSWORD_DEFAULT);
 //dump::dump($pwd);
 
-		if (password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
+		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
 			return Response::NoError();
 		}
@@ -126,7 +124,17 @@ class AuthenticateModel extends Model {
 		return new Response('HardCoded password failed', -9);
 	}
 
-//	public function LogonMethod_LDAP_CITY
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param type $userInfoData
+	 * @return Response
+	 */
+	public function LogonMethod_LDAP_CITY(string $username, string $password, $userInfoData): Response {
+
+		return Response::TODO_Error();
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * given a username and a password see if the password is valid for that username
@@ -143,7 +151,7 @@ class AuthenticateModel extends Model {
 		if (method_exists($this, $method)) {
 			Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method);
 			$response = $this->$method($username, $password, $userInfoData);
-			if ($response->giveErrorCode() ==0){
+			if ($response->giveErrorCode() == 0) {
 				Settings::SetRunTime('Currently Logged In User', $username);
 			}
 		} else {
@@ -174,21 +182,21 @@ class AuthenticateModel extends Model {
 	 * @param type $UserInfoData
 	 * @return Response
 	 */
-	public function doPasswordForgot($passedUsername, $UserInfoData) :Response {
+	public function doPasswordForgot($passedUsername, $UserInfoData): Response {
 		// generate new password
 		$newPW = Utils::makeRandomPassword();
-dump::dump( $newPW);
+		dump::dump($newPW);
 		$pwd = password_hash($newPW, PASSWORD_DEFAULT);
 
 		// save the new password
 		if (!empty($UserInfoData->UserInfo['USERID'])) {
-			$r = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd );
+			$r = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd);
 		}
 
 		// send email with new password
 		$r = $this->sendEmailForPasswordForgot($newPW, $UserInfoData->UserInfo['EMAIL']);
 
-		if ($r ===false){
+		if ($r === false) {
 			Settings::GetRunTimeObject('MessageLog')->addError('Unable to email the new password');
 			return new Response('Unable to email the new password to the user', -12);
 		}
@@ -199,14 +207,14 @@ dump::dump( $newPW);
 	 *
 	 * @return bool
 	 */
-	protected function sendEmailForPasswordForgot ( string $newPW, string $emailAddr): bool {
-		dump::dump(ini_get('SMTP') );
+	protected function sendEmailForPasswordForgot(string $newPW, string $emailAddr): bool {
+		dump::dump(ini_get('SMTP'));
 		dump::dump(ini_get('smtp_port'));
 		//Settings::GetRunTimeObject('MessageLog')->addInfo( 'snmp: ' . ini_get('SMTP') );
 		//Settings::GetRunTimeObject('MessageLog')->addInfo( 'snmp_port: ' . ini_get('smtp_port') );
-		if (empty( ini_get('SMTP'))
+		if (empty(ini_get('SMTP'))
 				or empty(ini_get('smtp_port'))
-				or (ini_get('SMTP')== 'localhost')) {
+				or ( ini_get('SMTP') == 'localhost')) {
 			$r = false;
 		} else {
 			try {
@@ -218,15 +226,15 @@ dump::dump( $newPW);
 						. ' You can change it by using the "Change Password" button on the Logon Page'
 						. "\n\r"
 						. ' If you did not ask for this password change, please contact you application Administrator'
-						. "\n\r"	;
+						. "\n\r";
 
-				$r = mail( $emailAddr,
+				$r = mail($emailAddr,
 						'Application: ' . Settings::GetPublic('App Name'),
 						$message,
 						array(
 							'From' => Settings::GetPublic('Email_From')
-							)
-						);
+						)
+				);
 			} catch (Exception $e) {
 				Settings::GetRunTimeObject('MessageLog')->addError('Unable to email the new password');
 				return false;
@@ -235,19 +243,25 @@ dump::dump( $newPW);
 		return $r;
 	}
 
-
-	public function doChangePassword( $username, $old_password, $new_password, $UserInfoData) :Response {
-		if ( empty($username )){
-			return new Response( 'missing usernamefor change password', -13);
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $username
+	 * @param type $old_password
+	 * @param type $new_password
+	 * @param type $UserInfoData
+	 * @return Response
+	 */
+	public function doChangePassword($username, $old_password, $new_password, $UserInfoData): Response {
+		if (empty($username)) {
+			return new Response('missing usernamefor change password', -13);
 		}
-		if ( empty( $old_password)) {
-			return new Response( 'Missing old password for Change password', -14 );
+		if (empty($old_password)) {
+			return new Response('Missing old password for Change password', -14);
 		}
-		if ( empty( $new_password)) {
-			return new Response('Missing new password for Change password', -15 );
+		if (empty($new_password)) {
+			return new Response('Missing new password for Change password', -15);
 		}
 //dump::dump( $UserInfoData);
-
 		// verify old password
 		//if (password_verify($old_password, Settings::GetProtected('Password_for_' . $username))) {
 		if (password_verify($old_password, $UserInfoData->UserInfo['PASSWORD'])) {
@@ -256,7 +270,7 @@ dump::dump( $newPW);
 			$pwd = password_hash($new_password, PASSWORD_DEFAULT);
 
 			// save the new password
-			$rUpdate = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd );
+			$rUpdate = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd);
 			if ($rUpdate) {
 				$r = Response::NoError();
 			} else {
@@ -270,20 +284,26 @@ dump::dump( $newPW);
 		return $r;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $username
+	 * @param type $password
+	 * @param type $email
+	 * @return Response
+	 */
 	public function doNewAccountInfo($username, $password, $email): Response {
-		if ( empty($username)){
+		if (empty($username)) {
 			return new Response('missing username for new account', -19);
 		}
-		if ( empty($password )) {
+		if (empty($password)) {
 			return new Response('Missing password for new account', -20);
 		}
 		if (empty($email)) {
-			return new Response('Missing email address for new account', -21)
+			return new Response('Missing email address for new account', -21);
 		}
 
 		$UserInfoData = new UserInfoData();
-		$rInsert = $UserInfoData->doInsertNewAccount( $username, $password, $email);
-
+		$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
 	}
 
 }

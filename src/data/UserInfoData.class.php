@@ -50,7 +50,6 @@ use \php_base\Utils\DBUtils as DBUtils;
  */
 class UserInfoData extends data {
 
-
 	public $UserInfo;
 
 	/** -----------------------------------------------------------------------------------------------
@@ -59,7 +58,7 @@ class UserInfoData extends data {
 	 */
 	public function __construct($username) {
 		if (! empty($username)){
-			$this->doReadFromDatabase($username);
+			$this->doReadFromDatabaseByUserNameAndApp($username);
 		}
 	}
 
@@ -113,31 +112,25 @@ class UserInfoData extends data {
 	 * @throws \PDOException
 	 * @throws \Exception
 	 */
-	protected function doReadFromDatabase( string $username) :bool {
-		try {
-			$sql = 'SELECT * '
-					. ' FROM ' . Settings::GetProtected( 'DB_Table_UserManager')
-					. ' WHERE username = :uname AND  app = :app ;';
+	protected function doReadFromDatabaseByUserNameAndApp(string $username): bool {
+		$sql = 'SELECT * '
+				. ' FROM ' . Settings::GetProtected('DB_Table_UserManager')
+				. ' WHERE username = :uname AND  app = :app ;';
 //dump::dump($sql);
-			$app = Settings::GetPublic( 'App Name');
-	  		$username = strtolower($username);
+		$app = Settings::GetPublic('App Name');
+		$username = strtolower($username);
 
-			$params = array(  ':app' => ['val' =>$app,'type'=>\PDO::PARAM_STR],
-									':uname' => ['val'=> $username, 'type'=>\PDO::PARAM_STR]
-				 );
+		$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR],
+			':uname' => ['val' => $username, 'type' => \PDO::PARAM_STR]
+		);
 
-			$data = DBUtils::doDBSelectSingle($sql, $params);
-			$this->UserInfo =  $data;
+		$data = DBUtils::doDBSelectSingle($sql, $params);
+		$this->UserInfo = $data;
 
-		} catch (\PDOException $e)				{
-			throw new \PDOException($e->getMessage(), (int)$e->getCode());
-		} catch (\Exception $e)				{
-			throw new \Exception($e->getMessage(), (int)$e->getCode());
-		}
 		return true;
 	}
 
-	/**
+	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param int $userid
 	 * @param string $newPW
@@ -157,13 +150,54 @@ dump::dump( $data);
 		return ($data != null);
 	}
 
-	public function doUpdateLastLoginAndIP( int $userid, string $newTime, string $newIP) {
+		/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @param string $newTime
+	 * @param string $newIP
+	 */
+	public function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool{
+		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
+				. ' SET ip = :ip'
+				. ' , last_logon_time = :last_logon'
+				. '	WHERE userid = :userid'
+		;
 
+		$now = date('DD-MMM-YY g:i:s');
+
+		Settings::GetRunTimeObject('MessageLog')->addInfo('DT=' . $now);
+
+		$params = array( ':ip' => ['val' => $newIP, 'type' => \PDO::PARAM_STR],
+						':last_logon' => ['val' => $now, 'type' => \PDO::PARAM_STR],
+		':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT]
+		);
+		$data = DBUtils::doDBUpdate($sql, $params);
+		dump::dump($data);
 	}
 
-	public function doInsertNewAccount( $username, $password, $email) : Response{
+
+	public function doInsertNewAccount( $username, $password, $email, $primaryRole) : int{
 		$sql = 'INSERT INTO ' . Settings::GetProtected( 'DB_Table_UserManager')
-				.' ( '
+				. ' ( app, method, username, password, primaryRoleName)'
+				. ' VALUES '
+				. ' ( :app, :method, :username, :password, :primary_role_name )'
+				;
+
+		$app = Settings::GetPublic('App Name');
+		$username = strtolower($username);
+
+		$params = array( ':app' =>['val' => $app   , 'type'=> \PDO::PARAM_STR  ],
+							':method' =>['val' =>  'DB_Table' , 'type'=>  \PDO::PARAM_STR   ],
+			':username' =>['val' => $username  , 'type'=>   \PDO::PARAM_STR  ],
+			':password' =>['val' => $password  , 'type'=>   \PDO::PARAM_STR  ],
+			':primary_role_name' =>['val' => $primaryRole  , 'type'=>    \PDO::PARAM_STR ]
+			);
+
+		$data = DBUtils::doDBInsertReturnID($sql, $params);
+		dump::dump( $data);
+
+		return $data;
+
 	}
 
 
