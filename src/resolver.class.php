@@ -119,7 +119,7 @@ class Resolver {
 
 		$this->decodeRequestInfo();
 
-		$this->SetupDefaultController();	 // this would usually be the menu starter
+		$this->SetupDefaultController();  // this would usually be the menu starter
 		// $r should be a ResponseClass
 		$r = $this->StartDispatch();
 		return $r;
@@ -137,7 +137,7 @@ class Resolver {
 	 */
 	protected function startDispatch(): Response {
 
-		$r = $this->dispatcher->do_work($this);
+		$r = $this->dispatcher->doWork($this);
 		if ($r->hadFatalError()) {
 			//echo 'Loggon failed';
 			Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got: ' . $r->toString());
@@ -179,14 +179,14 @@ class Resolver {
 	 */
 	public function decodeRequestInfo(): void {
 
-		$vv2 = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
+		$postVars = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
 
 		//dump::dump($vv);
 //      dump::dump($vv2);
-		$process = (!empty($vv2[self::REQUEST_PROCESS])) ? $vv2[self::REQUEST_PROCESS] : null;
-		$task = (!empty($vv2[self::REQUEST_TASK])) ? $vv2[self::REQUEST_TASK] : null;
-		$action = (!empty($vv2[self::REQUEST_ACTION])) ? $vv2[self::REQUEST_ACTION] : null;
-		$payload = (!empty($vv2[self::REQUEST_PAYLOAD])) ? $vv2[self::REQUEST_PAYLOAD] : null;
+		$process = (!empty($postVars[self::REQUEST_PROCESS])) ? $postVars[self::REQUEST_PROCESS] : null;
+		$task = (!empty($postVars[self::REQUEST_TASK])) ? $postVars[self::REQUEST_TASK] : null;
+		$action = (!empty($postVars[self::REQUEST_ACTION])) ? $postVars[self::REQUEST_ACTION] : null;
+		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : null;
 
 
 
@@ -230,19 +230,18 @@ class Resolver {
 	 * @see Dispatcher
 	 */
 	protected function addSetupAuthenticateCheck(): void {
+		$postVars = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
 
 		$process = 'Authenticate';
 		$task = 'CheckLogin';
-
-		$vv = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
-
-		if (empty($vv[self::REQUEST_ACTION])) {
+		if (empty($postVars[self::REQUEST_ACTION])) {
 			$action = 'Need_Login';
 		} else {
-			$action = \str_replace(' ', '_', $vv[self::REQUEST_ACTION]);/** dont want spaces in the action name (methods cant have a space) so make them an Underline */
+			/** don't want spaces in the action name (methods cant have a space) so make them an Underline */
+			$action = \str_replace(' ', '_', $postVars[self::REQUEST_ACTION]);
 		}
 
-		$payload = (!empty($vv[self::REQUEST_PAYLOAD])) ? $vv[self::REQUEST_PAYLOAD] : array();
+		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : array();
 		if (!empty($action)) {
 			$payload = \array_merge($payload, array('authAction' => $action));
 		}

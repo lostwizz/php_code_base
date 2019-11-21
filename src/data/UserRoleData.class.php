@@ -51,7 +51,7 @@ Class UserRoleData extends Data {
 //	public $action;
 //	public $payload;
 
-	public $RoleIDData = [];	// array with the keys begin the name and the values being the roleID #
+	public $RoleIDData = []; // array with the keys begin the name and the values being the roleID #
 	//		- only needed this way because of the RolePermissions needing the the list of ids
 	public $RoleIDnames = []; // array with the keys being the roleID # and the values being the name
 
@@ -59,8 +59,10 @@ Class UserRoleData extends Data {
 	 *  constructor that initiates the reading of the database
 	 * @param type $ArrayOfNames
 	 */
-	public function __construct() {
-		$this->doReadFromDatabase();
+	public function __construct(?array $ArrayOfNames = null) {
+		if (!empty($ArrayOfNames)) {
+			self::doReadFromDatabase($ArrayOfNames);
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -79,23 +81,24 @@ Class UserRoleData extends Data {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  read the data from the database
-
+	 * @param type $ArrayOfNames
 	 * @return bool
 	 */
-	protected function doReadFromDatabase() :bool {
+	protected  function doReadFromDatabase($ArrayOfNames): bool {
 		$names = "'" . implode("', '", $ArrayOfNames) . "'";
-			$sql = 'SELECT RoleId
+		$sql = 'SELECT RoleId
 						,Name
 					FROM ' . Settings::GetProtected('DB_Table_RoleManager')
-					. ' WHERE  Name in ('
-					. $names
-					. ')';
+				. ' WHERE  Name in ('
+				. $names
+				. ')'
+		;
 
-			$params = null; ///array(Settings::GetPublic( 'RoleId') );
-			$data = DBUtils::doDBSelectMulti($sql, $params);
+		$params = null; ///array(Settings::GetPublic( 'RoleId') );
+		$data = DBUtils::doDBSelectMulti($sql, $params);
 
-			$this->ProcessRoleIDs($data);
-			return true;
+		$this->ProcessRoleIDs($data);
+		return true;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -103,18 +106,65 @@ Class UserRoleData extends Data {
 	 * @param string $roleName
 	 * @return int
 	 */
-	public function doAddNewRole(string $roleName): int {
+	public static function doAddNewRole(string $roleName): int {
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' { name)'
 				. ' VALUES '
 				. '( :name )'
-				;
-		$params = array( ':name:' => [ 'val' => $roleName, 'type' => \PDO::PARAM_INT ] );
+		;
+		$params = array(':name' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
 
-		$data = DBUtils::doDBInsertReturnID( $sql, $params);
+		$data = DBUtils::doDBInsertReturnID($sql, $params);
 		return $data;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $roleName
+	 * @return bool
+	 */
+	public static function doRemoveRoleByName(string $roleName): bool {
+		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
+				. ' WHERE name = :name'
+		;
+		$params = array(':name' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
 
+		$data = DBUtils::doDBDelete($sql, $params);
+		return ($data == 1);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $roleID
+	 * @return bool
+	 */
+	public static function doRemoveRoleByID(int $roleID): bool {
+		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
+				. ' WHERE roleid = :roleid'
+		;
+		$params = array(':roleid' => ['val' => $roleID, 'type' => \PDO::PARAM_INT]);
+
+		$data = DBUtils::doDBDelete($sql, $params);
+		return ($data == 1);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $roleName
+	 * @return int
+	 */
+	public static function getRoleIDByName(string $roleName): int {
+		$sql = 'SELECT roleid '
+				. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager')
+				. ' WHERE roleid = :roleid'
+		;
+		$params = array(':name' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
+		$data = DBUtils::doDBUpdateSingle($sql, $params);
+		if ($data > 0) {
+			return $data;
+		} else {
+			return -1;
+		}
+	}
 
 }

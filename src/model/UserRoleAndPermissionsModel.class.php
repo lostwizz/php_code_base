@@ -328,11 +328,14 @@ Class UserRoleAndPermissionsModel extends Model {
 	}
 
 	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
-		$userInfoData = new UserInfoData();
+		$userInfoData = new \php_base\data\UserInfoData();
+
 		$exists  = $userInfoData->doReadFromDatabaseByUserNameAndApp($username);
+
 		if (! $exists) {
 			Settings::GetRunTimeObject('MessageLog')->addNotice('adding user');
-			$userInfoData->doInsertNewAccount( $username, $password, $email, $primaryRole);
+			$pwd = password_hash($password, PASSWORD_DEFAULT);
+			UserInfoData::doInsertNewAccount( $username, $pwd, $email, $primaryRole);
 			return true;
 		}
 		Settings::GetRunTimeObject('MessageLog')->addNotice('NOT adding user');

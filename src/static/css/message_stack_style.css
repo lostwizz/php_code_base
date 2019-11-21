@@ -32,7 +32,9 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 }
 
 .msg_style_DEBUG {
-	color: #804040;
+	color: black;
+	background: coral;
+		font-size: small;
 	}
 
 .msg_style_INFO {

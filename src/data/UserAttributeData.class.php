@@ -84,8 +84,6 @@ class UserAttributeData extends data {
 	 * @param type $data
 	 */
 	public function ProcessAttributes($data) {
-
-//Dump::dump(	$this->roleNames);
 		foreach ($data as $record) {
 			if (($record['ATTRIBUTENAME'] == 'PrimaryRole' )
 					or ( $record['ATTRIBUTENAME'] == 'SecondaryRole' )
@@ -128,19 +126,20 @@ class UserAttributeData extends data {
 	 * @param type $userID
 	 * @return bool
 	 */
-	protected function doReadFromDatabaseByUserID($userID) :bool{
+	protected function doReadFromDatabaseByUserID($userID): bool {
 
 		$sql = 'SELECT Id
 						,UserId
 						,AttributeName
 						,AttributeValue
 					FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
-				. ' WHERE  UserId = :userid';
+				. ' WHERE  UserId = :userid'
+		;
 
 		$params = array(':userid' => $userID);
 		$data = DBUtils::doDBSelectMulti($sql, $params);
 
-		$this->ProcessAttributes($data);
+		self::ProcessAttributes($data);
 		return true;
 	}
 
@@ -151,7 +150,7 @@ class UserAttributeData extends data {
 	 * @param string $attribValue
 	 * @return bool
 	 */
-	public function doAddAttribute(int $userID, string $attribName, string $attribValue): bool {
+	public static function doAddAttribute(int $userID, string $attribName, string $attribValue): bool {
 		$sql = 'INSERT into ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' ( userid, AttributeName, AttributeValue )'
 				. ' VALUES '
@@ -172,33 +171,31 @@ class UserAttributeData extends data {
 	 * @param string $attribName
 	 * @return bool
 	 */
-	public function doRemoveAttribute( int $userid, string $attribName) : bool {
-		$sql = 'DELETE FROM '  . Settings::GetProtected('DB_Table_UserAttributes')
+	public static  function doRemoveAttribute(int $userid, string $attribName): bool {
+		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' WHERE userid = :userid AND attributename = :attrib_name'
-				;
+		;
 		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR],
 			':attrib_name' => ['val' => $attribName, 'type' => \PDO::PARAM_STR]
 		);
 
-		$data = DBUtils::doDBDelete( $sql, $params);
-		return  ($data == 1);
+		$data = DBUtils::doDBDelete($sql, $params);
+		return ($data == 1);
 	}
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param int $userid
 	 * @return bool
 	 */
-	public function doRemoveAllAttributesForUserID( int $userid) :bool {
-		$sql = 'DELETE FROM '  . Settings::GetProtected('DB_Table_UserAttributes')
+	public static function doRemoveAllAttributesForUserID(int $userid): bool {
+		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' WHERE userid = :userid'
-				;
-		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR] );
+		;
+		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR]);
 
-		$data = DBUtils::doDBDelete( $sql, $params);
-		return  ($data == 1);
-
+		$data = DBUtils::doDBDelete($sql, $params);
+		return ($data == 1);
 	}
 
 }

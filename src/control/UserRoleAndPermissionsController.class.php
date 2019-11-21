@@ -221,14 +221,28 @@ Class UserRoleAndPermissionsController {
 
 
 		/** DEBUG - dump the permissions prettily */
-		$this->view->dumpPermissions();
+		//$this->view->dumpPermissions();
 		return (!empty($this->userPermissions));
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $roleWanted
+	 * @return bool
+	 */
 	public function hasRole(string $roleWanted): bool {
 		return $this->model->hasRolePermission($roleWanted);
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $permissionWanted
+	 * @param string $process
+	 * @param string $task
+	 * @param string $action
+	 * @param string $field
+	 * @return bool
+	 */
 	public function isAllowed($permissionWanted = Permissions::NO_RIGHT,
 			string $process = Permissions::NO_RIGHT,
 			string $task = Permissions::NO_RIGHT,
@@ -239,11 +253,19 @@ Class UserRoleAndPermissionsController {
 		return $this->model->isAllowed($permissionWanted, $process, $task, $action, $field);
 	}
 
-	public static function tryToLogin(string $username, string $password) {
+//	public static function tryToLogin(string $username, string $password) {
+//
+//	}
 
-	}
 
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param string $email
+	 * @param string $primaryRole
+	 * @return bool
+	 */
 	public function doInsertNewAccount(string $username, string $password, string $email, string $primaryRole =null): bool {
 		$model = new \php_base\model\UserRoleAndPermissionsModel();
 
@@ -252,5 +274,19 @@ Class UserRoleAndPermissionsController {
 		return $r;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $roleName
+	 */
+	public function doRemoveRoleByName(string $roleName){
+		//$DataUserRoles = new \php_base\data\UserRoleData();
+
+		$roleID = \php_base\data\UserRoleData::getRoleIDByName($roleName);
+
+		//$DataPermissions = new \php_base\data\UserPermissionData();
+		\php_base\data\UserPermissionData::doDeletePermissionByRoleID( $roleID);
+
+		$DataUserRoles->doRemoveRoleByID($roleID);
+	}
 
 }

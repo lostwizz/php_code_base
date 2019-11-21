@@ -54,7 +54,7 @@ class UserInfoData extends data {
 	 */
 	public function __construct($username = null) {
 		if (!empty($username)) {
-			$this->doReadFromDatabaseByUserNameAndApp($username);
+			self::doReadFromDatabaseByUserNameAndApp($username);
 		}
 	}
 
@@ -93,29 +93,26 @@ class UserInfoData extends data {
 	public function doReadFromDatabaseByUserNameAndApp(string $username): bool {
 		$sql = 'SELECT * '
 				. ' FROM ' . Settings::GetProtected('DB_Table_UserManager')
-				. ' WHERE username = :uname AND  app = :app ;';
-dump::dump($sql);
+				. ' WHERE username = :uname AND  app = :app ;'
+				;
+
 		$app = Settings::GetPublic('App Name');
 		$username = strtolower($username);
 
-		dump::dump($app);
-		dump::dump($username);
 		$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR],
 			':uname' => ['val' => $username, 'type' => \PDO::PARAM_STR]
 		);
 
 		$data = DBUtils::doDBSelectSingle($sql, $params);
 		$this->UserInfo = $data;
-dump::dump($data);
 
 		if ($data ==false){
-			Settings::GetRunTimeObject('MessageLog')->addNotice('user does not exist');
+			//Settings::GetRunTimeObject('MessageLog')->addNotice('user does not exist');
 			return false;
 		} else {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('user was successfully read');
+			//Settings::GetRunTimeObject('MessageLog')->addNotice('user was successfully read');
 			return true;
 		}
-
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -123,7 +120,7 @@ dump::dump($data);
 	 * @param int $userid
 	 * @param string $newPW
 	 */
-	public function doUpdatePassword(int $userid, string $newPW): bool {
+	public static function doUpdatePassword(int $userid, string $newPW): bool {
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET password = :password'
 				. ' WHERE userid = :userid'
@@ -134,7 +131,6 @@ dump::dump($data);
 			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT]
 		);
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
-		//dump::dump($data);
 		return ($data != null);
 	}
 
@@ -144,7 +140,7 @@ dump::dump($data);
 	 * @param string $newTime
 	 * @param string $newIP
 	 */
-	public function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool {
+	public static function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool {
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET ip = :ip'
 				. ' , last_logon_time = :last_logon'
@@ -160,7 +156,7 @@ dump::dump($data);
 			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT]
 		);
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
-		//dump::dump($data);
+		return ($data ==1);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -171,7 +167,7 @@ dump::dump($data);
 	 * @param type $primaryRole
 	 * @return int
 	 */
-	public function doInsertNewAccount($username, $password, $email, $primaryRole = null): int {
+	public static function doInsertNewAccount($username, $password, $email, $primaryRole = null): int {
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' ( app, method, username, password, primaryRoleName)'
 				. ' VALUES '
@@ -189,8 +185,6 @@ dump::dump($data);
 		);
 
 		$data = DBUtils::doDBInsertReturnID($sql, $params);
-		//dump::dump($data);
-
 		return $data;
 	}
 
@@ -199,10 +193,11 @@ dump::dump($data);
 	 * @param string $username
 	 * @return bool
 	 */
-	public function doDeleteAccountByUserNameAndApp(string $username): bool {
+	public static function doDeleteAccountByUserNameAndApp(string $username): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' WHERE username = :username AND app = :app'
 		;
+		$app =  Settings::GetPublic('App Name');
 		$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR],
 			':username' => ['val' => $username, 'type' => \PDO::PARAM_STR]
 		);

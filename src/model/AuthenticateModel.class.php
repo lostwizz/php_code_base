@@ -258,13 +258,14 @@ class AuthenticateModel extends Model {
 			return new Response('Missing email address for new account', -21);
 		}
 
-
-		$permController = new \php_base\control\UserRoleAndPermissionsController();
+	//	$permController = new \php_base\control\UserRoleAndPermissionsController();
 				// not set yet so not relevan even if set //Settings::GetRunTime('userPermissionsController');
-dump::dump( $permController);
-		//$UserInfoData = new UserInfoData();
+//dump::dump( $permController);
+		$UserInfoData = new \php_base\data\UserInfoData();
 		//$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
-		$permController->doInsertNewAccount($username, $password, $email, $primaryRole);
+		$pwd = password_hash($password, PASSWORD_DEFAULT);
+
+		$UserInfoData->doInsertNewAccount($username, $pwd, $email, $primaryRole);
 		return Response::NoError();
 	}
 
@@ -283,10 +284,10 @@ dump::dump( $permController);
 	 */
 	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
 		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful DB_TABLE password for: ' . $username);
+			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful LOGON of ' . $username . ' using DB_TABLE password');
 			return Response::NoError();
 		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful DB_TABLE password for: ' . $username);
+		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
 		return new Response('db_table password failed', -11);
 	}
 

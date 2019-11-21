@@ -57,8 +57,11 @@ class Dispatcher {
 	protected $DISPATCHqueue;
 
 	//protected $payloads = array();
-	//-----------------------------------------------------------------------------------------------
-	public function __construct(bool $isHeaderAndFooterLess = false) {
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public function __construct() {       //bool $isHeaderAndFooterLess = false
 		$this->PREqueue = new \SplQueue();
 		$this->POSTqueue = new \SplQueue();
 		$this->DISPATCHqueue = new \SplQueue();
@@ -73,9 +76,11 @@ class Dispatcher {
 	 * Creates a new Dispatcher object and abort if anything returns FALSE
 	 *
 	 * @since 0.0.2
-	 *
+
+	 * @param type $parentResolver
+	 * @return Response
 	 */
-	public function do_work($parentResolver = null): Response {
+	public function doWork($parentResolver = null): Response {
 
 		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
 		$pre_result = $this->RunThruTheQueue($this->PREqueue);
@@ -110,32 +115,17 @@ class Dispatcher {
 	 * Creates a new Dispatcher object - which will execute the PTAP.
 	 *
 	 * @since 0.0.2
-	 * @param theQueue - this is a common method for all 3 queues - so just pass the queue wanted to run
-	 *
+	 * @param \SplQueue $theQueue - this is a common method for all 3 queues - so just pass the queue wanted to run
+	 * @return Response
 	 */
 	private function RunThruTheQueue(\SplQueue $theQueue): Response {
 		/** this will dump the contents of the queue - for debugging
-			$this->dumpQueue($theQueue);
+		  $this->dumpQueue($theQueue);
 		 */
-
 		try {
 			$response = null;
 			while (!$theQueue->isEmpty()) {
-				$item = $theQueue->dequeue();/** get the next item out of the queue */
-				//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
-				if (!empty($item)) {
-					//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
-					$response = $this->itemDecodeAndExecute($item);
-					if ($response->hadFatalError()) {
-						//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
-						return $response;
-					}
-
-					//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] '. $response->toString());
-				} else {
-					Settings::GetRunTimeObject('MessageLog')->addNotice('dispatcher - item is empty!! why!! -but ignoring');
-					$response = Response::GenericWarning();
-				}
+				$response = $this->processDetailsOfQueue($theQueue);
 			}
 			return $response;
 		} catch (\Exception $e) {
@@ -144,9 +134,33 @@ class Dispatcher {
 				$enum = -1;
 			}
 			return new Response('exception in running the Queue: ' . $e->getMessage(),
-					  (-1 * $enum),
-					  false);
+					   (-1 * $enum),
+					   false);
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $theQueue
+	 * @return Response
+	 */
+	protected function processDetailsOfQueue($theQueue): Response {
+
+		$item = $theQueue->dequeue();/** get the next item out of the queue */
+		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
+		if (!empty($item)) {
+			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
+			$response = $this->itemDecodeAndExecute($item);
+			if ($response->hadFatalError()) {
+				//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
+				return $response;
+			}
+			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] '. $response->toString());
+		} else {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('dispatcher - item is empty!! why!! -but ignoring');
+			$response = Response::GenericWarning();
+		}
+		return $response;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -162,13 +176,15 @@ class Dispatcher {
 		if (empty($passedProcess)) {
 			return true;
 		}
+		Settings::GetRunTimeObject('MessageLog')->addDEBUG('PTAP: ' . $passedProcess);
+
 		$exploded = \explode('.', $passedProcess);
 		$response = $this->doExecute('control',
-				  (empty($exploded[0]) ? null : $exploded[0]),
-				  (empty($exploded[1]) ? null : $exploded[1]),
-				  (empty($exploded[2]) ? '' : $exploded[2]),
-				  (empty($exploded[3]) ? null : $exploded[3]),
-		);
+								(empty($exploded[0]) ? null : $exploded[0]),
+								(empty($exploded[1]) ? null : $exploded[1]),
+								(empty($exploded[2]) ? '' : $exploded[2]),
+								(empty($exploded[3]) ? null : $exploded[3])
+								);
 
 		return $response;
 	}
@@ -189,11 +205,11 @@ class Dispatcher {
 	 * @return Response class
 	 */
 	private function doExecute(string $dir,
-			  string $class,
-			  string $task,
-			  string $action = '',
-			  $passedPayload = null
-	): Response {
+							string $class,
+							string $task,
+							string $action = '',
+							$passedPayload = null
+					): Response {
 
 		if (substr($class, -10) == 'Controller') {
 			$process = substr($class, 0, -10);
@@ -201,25 +217,27 @@ class Dispatcher {
 			$process = $class;
 		}
 
-		$class = '\\php_base\\' . $dir . '\\' . $class;
 
+		$class = '\\php_base\\' . $dir . '\\' . $class;
+		Settings::GetRunTimeObject('MessageLog')->addTODO('willhave to change this from php_base:' . $class);
 
 		$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
 		//Settings::GetRunTimeObject('MessageLog')->addInfo( "dispatcher do execute - new $class ($action,  payload);");
-		$x = new $class($action, $payload);				//instanciate the process  and pass it the payload
+		$x = new $class($action, $payload); //instanciate the process  and pass it the payload
 
 		$x->setProcessAndTask($process, $task); // sets the called class up with the Process
+
 		// now calls basically the task with this so it can look up the class and task
-		return $x->$task($this);	 //run the process's method
+		return $x->$task($this);  //run the process's method
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 * buildItem creats a PTAP item from the parameters
+	 * buildItem creates a PTAP item from the parameters
 	 * this is where the dispatcher gets called to run -- and any errors are passed back up the chain
 	 *
 	 * the item is basically the PTAP with periods between them into one string
-	 *   it will call for the paylaod to be serialized so it can be a string
+	 *   it will call for the payload to be serialized so it can be a string
 	 *
 	 * @since 0.0.2
 	 *
@@ -233,10 +251,10 @@ class Dispatcher {
 	 * @return the generate item
 	 */
 	protected function buildItem($passedprocess,
-			  $passedtask = null,
-			  $passedaction = null,
-			  $passedpayload = null
-	): string {
+							  $passedtask = null,
+							  $passedaction = null,
+							  $passedpayload = null
+							): string {
 
 		$process = (!empty($passedprocess)) ? $passedprocess . 'Controller' : '';
 		$task = (!empty($passedtask)) ? '.' . $passedtask : '';
@@ -261,8 +279,8 @@ class Dispatcher {
 	 * @return the stringified version of the parameter
 	 */
 	protected function processPayloadForItem($payload): string {
-		$newPayload = str_replace('.', '~!~', $payload );
-		$r =  serialize($newPayload);
+		$newPayload = str_replace( '.', '~!~', $payload);
+		$r = serialize($newPayload);
 		return $r;
 	}
 
@@ -280,7 +298,7 @@ class Dispatcher {
 	 */
 	protected function processPayloadFROMItem($payload) {
 		$r = unserialize($payload);
-		$newR = str_replace( '~!~', '.', $r );
+		$newR = str_replace('~!~', '.', $r);
 		return $newR;
 	}
 
@@ -314,8 +332,14 @@ class Dispatcher {
 	 * @param $action
 	 * @param $payload
 	 */
-	public function addPREProcess($process, $task = null, $action = null, $payload = null): void {
-		$item = $this->buildItem($process, $task, $action, $payload);
+	public function addPREProcess($process,
+							   $task = null,
+							   $action = null,
+							   $payload = null): void {
+		$item = $this->buildItem($process,
+						   $task,
+						   $action,
+						   $payload);
 		$this->addItemToQueue($this->PREqueue, $item);
 		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
 	}
@@ -334,8 +358,14 @@ class Dispatcher {
 	 * @param $action
 	 * @param $payload
 	 */
-	public function addPOSTProcess($process, $task = null, $action = null, $payload = null): void {
-		$item = $this->buildItem($process, $task, $action, $payload);
+	public function addPOSTProcess($process,
+								$task = null,
+								$action = null,
+								$payload = null): void {
+		$item = $this->buildItem($process,
+						   $task,
+						   $action,
+						   $payload);
 		$this->addItemToQueue($this->POSTqueue, $item);
 		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
 	}
@@ -353,12 +383,20 @@ class Dispatcher {
 	 * @param $task
 	 * @param $action
 	 * @param $payload
+	 * @return void
 	 */
-	public function addProcess($process, $task = null, $action = null, $payload = null) {
-		$item = $this->buildItem($process, $task, $action, $payload);
+	public function addProcess($process,
+							$task = null,
+							$action = null,
+							$payload = null) :void {
+		$item = $this->buildItem($process,
+						   $task,
+						   $action,
+						   $payload);
 		$this->addItemToQueue($this->DISPATCHqueue, $item);
 		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
 	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * dumpQueue - outputs the items in the queue (does not remove them from the queue
@@ -369,9 +407,10 @@ class Dispatcher {
 	 * @since 0.0.2
 	 *
 	 * @see SPLQueue
-	  @param $theQueue - the queue to be shown
+	 * @param \SPLQueue $theQueue - the queue to be shown
+	 * @return void
 	 */
-	public function dumpQueue($theQueue): void {
+	public function dumpQueue( \SPLQueue $theQueue): void {
 
 		echo '<pre class="pre_debug_queue">';
 		echo '@@@@@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';

@@ -61,38 +61,38 @@ class AuthenticateData extends Data {
 	public function doWork(): Response {
 
 	}
-
-	public function readUser() {
-
-		echo ' this gets the user info from the database ';
-	}
-
-	public function updateUserIPandTime() {
-		echo 'this will basically update the users ip address and login timestamp';
-	}
-
-	public function updateUserPassword() {
-		echo 'this will update the users password - pemission check prior to getting here';
-	}
-
-	public function addNewUser() {
-
-	}
-
-	public function removeUser() {
-
-	}
-
-	public function addUserDetail() {
-
-	}
-
-	public function removeUserDetail() {
-
-	}
-
-	public function updateUserDetail() {
-
-	}
+//
+//	public function readUser() {
+//
+//		echo ' this gets the user info from the database ';
+//	}
+//
+//	public function updateUserIPandTime() {
+//		echo 'this will basically update the users ip address and login timestamp';
+//	}
+//
+//	public function updateUserPassword() {
+//		echo 'this will update the users password - pemission check prior to getting here';
+//	}
+//
+//	public function addNewUser() {
+//
+//	}
+//
+//	public function removeUser() {
+//
+//	}
+//
+//	public function addUserDetail() {
+//
+//	}
+//
+//	public function removeUserDetail() {
+//
+//	}
+//
+//	public function updateUserDetail() {
+//
+//	}
 
 }

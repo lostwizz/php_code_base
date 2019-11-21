@@ -57,6 +57,15 @@
 			<file>Tests/menuController.php</file>
 		</testsuite>
 
+		<testsuite name="module_Permissions">
+			<file>Tests/control/UserRoleAndPermissionsControl.class.php</file>
+			<file>Tests/model/UserRoleAndPermissionsModel.class.php</file>
+
+			<file>Tests/data/UserAttributeData.class.php</file>
+			<file>Tests/data/UserInfoData.class.php</file>
+			<file>Tests/data/UserPermissionsData.class.php</file>
+			<file>Tests/data/UserRoleData.class.php</file>
+		</testsuite>
 
 		<testsuite name="headerAndFooter">
 			<file>Tests/control/HeaderController_Test.php</file>
@@ -65,8 +74,6 @@
 			<file>Tests/control/FooterController_Test.php</file>
 			<file>Tests/view/FooterView_Test.php</file>
 		</testsuite>
-
-
 
 		<testsuite name="Utils">
 			<file>Tests/utils/dump_Test.php</file>
@@ -87,9 +94,9 @@
 		<!--
 		<testsuite name="module_Authenticate">
 			<file>Tests/control/AuthenticateController_Test.php</file>
-			  <file>Tests/model/AuthenticateModel_Test.php</file>
- 			   <file>Tests/data/AuthenticateData_Test.php</file>
-			   <file>Tests/view/AuthenticateView_Test.php</file>
+			<file>Tests/model/AuthenticateModel_Test.php</file>
+ 			<file>Tests/data/AuthenticateData_Test.php</file>
+			<file>Tests/view/AuthenticateView_Test.php</file>
 
 			<file>Tests/model/arolepermission_Test.php</file>
 		</testsuite>

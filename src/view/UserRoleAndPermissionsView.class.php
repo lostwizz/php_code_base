@@ -97,7 +97,6 @@ class UserRoleAndPermissionsView extends View {
 		echo '</pre>';
 	}
 
-
 	/** -----------------------------------------------------------------------------------------------
 	 * sort the permissions array
 	 */
@@ -110,12 +109,12 @@ class UserRoleAndPermissionsView extends View {
 		});
 	}
 
-
-
 	/** -----------------------------------------------------------------------------------------------
 	 * show a easily readable tabel with the permissions
 	 */
 	public function dumpPermissions() {
+		$bt = debug_backtrace();
+
 		$this->sortPermissionsArray();
 		echo '<table border=1>';
 		ECHO '<Tr>';
@@ -137,6 +136,14 @@ class UserRoleAndPermissionsView extends View {
 			echo '</tr>';
 		}
 		echo '</table>';
+		echo '<font size="-1">';
+		echo HTML::Space(60);
+		echo basename($bt[0]['file']);
+		echo ': ';
+		echo $bt[0]['line'];
+		echo '</font>';
+		echo '<BR>' . PHP_EOL;
+
 	}
 
 }
