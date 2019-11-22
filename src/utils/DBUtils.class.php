@@ -23,6 +23,24 @@
  *
  * @todo Description
  *
+ * ---- this shows how to get some meta data about the columns
+ * echo '<pre>';
+print_r(\PDO::getAvailableDrivers());
+$stmt->debugDumpParams();
+
+for ($i =0; $i <= $stmt->columnCount(); $i++){
+			$metadata = $stmt->getColumnMeta($i);
+print_r($metadata);
+
+//print $metadata['table'] . "\n";
+//print $metadata['len'] . "\n";
+//print $metadata['pdo_type'] . "\n";
+//
+//print $metadata['sqlsrv:decl_type'] . "\n";
+//print $metadata['native_type'] . "\n";
+//print $metadata['name'];
+}
+echo '</pre>';
  */
 //**********************************************************************************************
 
@@ -159,6 +177,8 @@ abstract Class DBUtils {
 			$stmt->execute();
 			$data = $stmt->fetchAll();
 //dump::dump($data);
+
+
 
 			$stmt->closeCursor();
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);

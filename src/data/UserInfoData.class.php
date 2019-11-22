@@ -41,6 +41,8 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 
+use \php_base\Utils\DatabaseHandlers\Database as Database;
+
 /** * **********************************************************************************************
  * reads the info on a user - the id, password and last time they logged in and any other basic data
  */
@@ -48,15 +50,36 @@ class UserInfoData extends data {
 
 	public $UserInfo;
 
+	public static $databaseTable;
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  constructor - initiate the read from the database
 	 * @param type $username
 	 */
 	public function __construct($username = null) {
+		self::define_Database();
 		if (!empty($username)) {
 			self::doReadFromDatabaseByUserNameAndApp($username);
 		}
 	}
+
+
+	public static function define_Database() {
+		self::$databaseTable = new Database();
+		self::$databaseTable->setPrimaryKey( 'UserId');
+		self::$databaseTable->addFieldInt( 'UserId');
+		self::$databaseTable->addFieldText( 'app');
+		self::$databaseTable->addFieldText( 'method');
+		self::$databaseTable->addFieldText( 'username');
+		self::$databaseTable->addFieldText( 'password');
+		self::$databaseTable->addFieldText( 'PrimaryRoleName');
+		self::$databaseTable->addFieldText( 'ip');
+		self::$databaseTable->addFieldDateTime( 'last_logon_time');
+
+
+
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  give the user id (assuming the database has be read

@@ -108,6 +108,8 @@ function runTheChecks($base) {
 		return true;
 	////if (  tryFile( DIR . 'utils'  . DS . 'setup' . DS . $base ))	return true;
 	////if (  tryFile( DIR . 'utils'  . DS . 'log'   . DS . $base ))	return true;
+
+	if (tryFile(DIR . 'utils' . DS . 'DatabaseHandlers' . DS . $base )) return true;
 	if (tryFile(DIR . $base))
 		return true;
 	if (tryFile(DIR . 'static' . DS . $base))

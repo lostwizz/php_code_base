@@ -247,27 +247,29 @@ class AuthenticateModel extends Model {
 	 * @param string|null $primaryRole
 	 * @return Response
 	 */
-	public function doNewAccountInfo( string $username, string $password, string $email, ?string $primaryRole =null): Response {
-		if (empty($username)) {
-			return new Response('missing username for new account', -19);
-		}
-		if (empty($password)) {
-			return new Response('Missing password for new account', -20);
-		}
-		if (empty($email)) {
-			return new Response('Missing email address for new account', -21);
-		}
-
-	//	$permController = new \php_base\control\UserRoleAndPermissionsController();
-				// not set yet so not relevan even if set //Settings::GetRunTime('userPermissionsController');
-//dump::dump( $permController);
-		$UserInfoData = new \php_base\data\UserInfoData();
-		//$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
-		$pwd = password_hash($password, PASSWORD_DEFAULT);
-
-		$UserInfoData->doInsertNewAccount($username, $pwd, $email, $primaryRole);
-		return Response::NoError();
-	}
+//	public function doNewAccountInfo( string $username, string $password, string $email, ?string $primaryRole =null): Response {
+//		if (empty($username)) {
+//			return new Response('missing username for new account', -19);
+//		}
+//		if (empty($password)) {
+//			return new Response('Missing password for new account', -20);
+//		}
+//		if (empty($email)) {
+//			return new Response('Missing email address for new account', -21);
+//		}
+//
+//	//	$permController = new \php_base\control\UserRoleAndPermissionsController();
+//				// not set yet so not relevan even if set //Settings::GetRunTime('userPermissionsController');
+////dump::dump( $permController);
+//		$UserInfoData = new \php_base\data\UserInfoData();
+//		//$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
+//
+//
+//		$pwd = password_hash($password, PASSWORD_DEFAULT);
+//
+//		$UserInfoData->doInsertNewAccount($username, $pwd, $email, $primaryRole);
+//		return Response::NoError();
+//	}
 
 
 

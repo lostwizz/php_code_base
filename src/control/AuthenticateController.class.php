@@ -230,9 +230,16 @@ class AuthenticateController extends Controller {
 	}
 
 	public function Submit_New_Account_Info($parent, $username): Response {
-		dump::dump($this);
+//		dump::dump($this);
 
-		$r = $this->model->doNewAccountInfo($this->payload['entered_username'], $this->payload['entered_password'], $this->payload['entered_email']);
+		$uRAPController = new \php_base\control\UserRoleAndPermissionsController();
+
+		$r = $uRAPController->doInsertNewAccount($this->payload['entered_username'],
+												$this->payload['entered_password'],
+												$this->payload['entered_email']
+												);
+
+		//$r = $this->model->doNewAccountInfo($this->payload['entered_username'], $this->payload['entered_password'], $this->payload['entered_email']);
 
 		return $r;
 	}
