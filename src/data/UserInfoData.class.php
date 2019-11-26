@@ -30,6 +30,10 @@
  *
  * @todo Description
  *
+ *		$now = date('d-M-Y g:i:s');
+ * 		$dt = new \DateTime( $now);
+ *  	dump::dump($dt);
+ *
  */
 //**********************************************************************************************
 
@@ -41,7 +45,8 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 
-use \php_base\Utils\DatabaseHandlers\Database as Database;
+use \php_base\Utils\DatabaseHandlers\Table as Table;
+use \php_base\Utils\DatabaseHandlers\Field as Field;
 
 /** * **********************************************************************************************
  * reads the info on a user - the id, password and last time they logged in and any other basic data
@@ -50,33 +55,51 @@ class UserInfoData extends data {
 
 	public $UserInfo;
 
-	public static $databaseTable;
+	public static $Table;
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  constructor - initiate the read from the database
 	 * @param type $username
 	 */
 	public function __construct($username = null) {
-		self::define_Database();
+		self::defineTable();
 		if (!empty($username)) {
 			self::doReadFromDatabaseByUserNameAndApp($username);
 		}
 	}
 
 
-	public static function define_Database() {
-		self::$databaseTable = new Database();
-		self::$databaseTable->setPrimaryKey( 'UserId');
-		self::$databaseTable->addFieldInt( 'UserId');
-		self::$databaseTable->addFieldText( 'app');
-		self::$databaseTable->addFieldText( 'method');
-		self::$databaseTable->addFieldText( 'username');
-		self::$databaseTable->addFieldText( 'password');
-		self::$databaseTable->addFieldText( 'PrimaryRoleName');
-		self::$databaseTable->addFieldText( 'ip');
-		self::$databaseTable->addFieldDateTime( 'last_logon_time');
+	public static function defineTable() {
+		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'));
+		self::$Table->setPrimaryKey( 'UserId', ['prettyName' => 'User Id']);
+		self::$Table->addFieldInt( 'UserId' , [ 'prettyName' => 'User Id',
+												'alignment' => 'right']);
+		self::$Table->addFieldText( 'app', ['prettyName'=> 'App',
+											'isPassword'=> false,
+											'width'=> 20
+			]);
+		self::$Table->addFieldText( 'method', ['prettyName' => 'Authentication Method']);
+		self::$Table->addFieldText( 'username', [
+						 'subType' =>  Field::SUBTYPE_TEXTAREA,
+						 'prettyName' => 'User Name',
+						 'isShowable' => true,
+						 'isEditable' => true,
+						 'width' => 35,
+						 'height' => true,
+			]);
+		self::$Table->addFieldText( 'password', ['prettyName' => 'Password']);
+		self::$Table->addFieldText( 'PrimaryRoleName', ['prettyName' => 'Primary Role']);
+		self::$Table->addFieldText( 'ip', ['prettyName' => 'IP Address']);
+		self::$Table->addFieldDateTime( 'last_logon_time', ['prettyName' => 'Time/Date of Last Login']);
 
 
+
+		dump::dump( self::$Table->giveHeaderRow(true));
+		echo '<table border=1>';
+		echo '<tr>';
+		echo self::$Table->giveHeaderRow(true);
+		echo '</tr>';
+		echo '</table>';
 
 	}
 
@@ -170,7 +193,7 @@ class UserInfoData extends data {
 				. '	WHERE userid = :userid'
 		;
 
-		$now = date('DD-MMM-YY g:i:s');
+		$now = date('d-M-Y g:i:s');
 
 		Settings::GetRunTimeObject('MessageLog')->addInfo('DT=' . $now);
 

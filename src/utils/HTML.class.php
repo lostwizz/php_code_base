@@ -101,6 +101,14 @@ abstract Class HTML {
       return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle);
    }
 
+
+	public static function Button($name, $value = null, $arOptions = null, $arStyle = null) : string {
+	      $name = (!empty($name)) ? ' name="' . $name . '"' : '';
+	      $value = (!empty($value)) ? ' value="' . $value . '"' : '';
+	      return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle);
+
+	}
+
    //-----------------------------------------------------------------------------------------------
 //			<input type="submit" name="logon_action" value="Submit Logon" class="logon_submit_button">
 //							</td>
@@ -152,6 +160,75 @@ abstract Class HTML {
       return self::ShowInput('', $value, 'Reset', $arOptions, $arStyle);
    }
 
+
+
+
+
+   	/** -----------------------------------------------------------------------------------------------
+	// $arOptions should include rows=xx and cols=yy
+	 *
+	 * @param string $name
+	 * @param string|null $defaultText
+	 * @param array $arOptions
+	 * @param array $arStyle
+	 * @return string
+	 */
+   public static function TextArea( string $name, ?string $defaultText=null, ?array $arOptions=null, ?array $arStyle=null) : string {
+      $attr = self::parseOptions($arOptions);
+      $style = self::parseStyle($arStyle);
+		return '<textarea name="' . $name . '" ' . $attr . $style . '> ' . $defaultText . '</textarea>';
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+    * gives a radio selection
+	 *
+    * @static
+    * @param string $name
+    * @param string $val
+    * @param type $lable
+    * @param type $isChecked
+    * @param type $arOptions
+    * @param type $arStyle
+    * @return type
+    */
+   public static function Radio(string $name,
+           string $val,
+           $lable = null,
+           $isChecked = false,
+           $arOptions = null,
+           $arStyle = null) {
+      $lable = (!empty($lable)) ? $lable : '';
+      if ( $isChecked){
+      	$arOptions['checked'] = true;
+      }
+      return self::ShowInput ($name, $val, "RADIO", $arOptions, $arStyle );
+   }
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param string $val
+	 * @param type $lable
+	 * @param type $isChecked
+	 * @param boolean $arOptions
+	 * @param type $arStyle
+	 * @return type
+	 */
+	public static function CheckBox( string $name,
+           string $val,
+           $lable = null,
+           $isChecked = false,
+           $arOptions = null,
+           $arStyle = null) {
+      $lable = (!empty($lable)) ? $lable : '';
+      if ( $isChecked){
+      	$arOptions['checked'] = true;
+      }
+      return self::ShowInput ($name, $val, "CHECKBOX", $arOptions, $arStyle );
+    }
+
+
 	/** -----------------------------------------------------------------------------------------------
     * gives a text box for input
     * @static
@@ -162,11 +239,11 @@ abstract Class HTML {
     * @param type $arStyle
     * @return type
     */
-   protected static function ShowInput($name, $value, $type = 'TEXT', $arOptions = null, $arStyle = null) {
+   public static function ShowInput($name, $value, $type = 'TEXT', $arOptions = null, $arStyle = null) {
       $attr = self::parseOptions($arOptions);
       $style = self::parseStyle($arStyle);
 
-      return '<Input type="' . $type . '"' . $name . $value . $attr . $style . ' >'; //. PHP_EOL;
+      return '<Input type="' . $type . '" ' . $name . $value . $attr . $style . ' >'; //. PHP_EOL;
    }
 
    //-----------------------------------------------------------------------------------------------
@@ -251,32 +328,9 @@ abstract Class HTML {
       return $options;
    }
 
-	/** -----------------------------------------------------------------------------------------------
-    * gives a radio selection
-	 *
-    * @static
-    * @param string $name
-    * @param string $val
-    * @param type $lable
-    * @param type $isChecked
-    * @param type $arOptions
-    * @param type $arStyle
-    * @return type
-    */
-   public static function Radio(string $name,
-           string $val,
-           $lable = null,
-           $isChecked = false,
-           $arOptions = null,
-           $arStyle = null) {
-      $lable = (!empty($lable)) ? $lable : '';
-      $attr = self::parseOptions($arOptions);
-      $style = self::parseStyle($arStyle);
 
-      $r = '<Input type="radio" name="' . $name . '" value="' . $val . '"';
-      $r .= ($isChecked) ? ' checked' : '';
-      return $r . $attr . $style . '/>' . $lable;
-   }
+
+
 
 	/** -----------------------------------------------------------------------------------------------
     * Generates a HTML document type
@@ -574,7 +628,11 @@ abstract Class HTML {
       $attr = '';
       if (is_array($arOptions)) {
          foreach ($arOptions as $key => $val) {
-            $attr .= ' ' . $key . '="' . $val . '"';
+         	if ( strtolower($key =='checked')){
+         		$attr .= ' checked ';
+         	} else {
+            	$attr .= ' ' . $key . '="' . $val . '"';
+            }
          }
       }
       return $attr;
