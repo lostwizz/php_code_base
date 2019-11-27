@@ -50,5 +50,5 @@ abstract class View {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	abstract public function doWork($parent = null): Response;
+	abstract public function doWork($parent = null);
 }

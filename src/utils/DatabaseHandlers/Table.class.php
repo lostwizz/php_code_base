@@ -33,7 +33,7 @@ namespace php_base\Utils\DatabaseHandlers;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
-
+use \php_base\Utils\DBUtils as DBUtils;
 use php_base\Utils\DatabaseHandlers\Field as Field;
 use php_base\Utils\DatabaseHandlers\Field_Int as Field_Int;
 use php_base\Utils\DatabaseHandlers\Field_Text as Field_Text;
@@ -143,32 +143,84 @@ class Table {
 		$this->fields[$fieldName] = new Field_Boolean($fieldName, $attribs);
 	}
 
-	public function giveFieldNamesList() :string {
+	public function giveFieldNamesList(): string {
 		$flds = $this->giveField();
 		$s = implode(', ', $flds);
 		return $s;
 	}
 
-	public function giveFields() : array {
+	public function giveFields(): array {
 		return array_keys($this->fields);
 	}
 
-	public function giveHeaderRow(bool $withSortButtons= false) : string{
+	public function giveHeaderRow(bool $withSortButtons = false, bool $withFilterArea = false): string {
 		$s = '';
 		foreach ($this->fields as $fld => $value) {
-			$s .= '<th>';
-			$s .= $value->givePrettyName();
-			if ( $withSortButtons) {
-				$s .= $this->giveSortButtons($fld);
-			}
-			$s .= '</th>';
+			$s .= $this->giveHeaderForField($fld, $value, $withSortButtons, $withFilterArea);
 		}
 		return $s;
 	}
 
-	protected function giveSortButtons( $fldName ) : string  {
-		$s = HTML::Button('sortAsc[' . $fldName .']', '^');
-		$s .= HTML::Button('sortDesc[' . $fldName .']', 'v');
+	protected function giveHeaderForField(string $fldName, Field $fldValue, bool $withSortButtons = false, bool $withFilterArea = false): string {
+		$s = '<th>';
+		$s .= $fldValue->givePrettyName();
+		if ($withSortButtons) {
+			$s .= $this->giveSortButtons($fldName);
+		}
+		if ($withFilterArea) {
+			$s .= $this->giveFilterArea($fldName);
+		}
+		$s .= '</th>';
+		return $s;
+	}
+
+	protected function giveSortButtons(string $fldName): string {
+		$s = '<BR>';
+		$s .= HTML::Submit('sortAsc[' . $fldName . ']', '^');
+		$s .= HTML::Submit('sortDesc[' . $fldName . ']', 'v');
+		$s .= PHP_EOL;
+		return $s;
+	}
+
+	public function giveFilterArea(string $fldName): string {
+		$s = '<br>';
+		$s .= HTML::Text('filter[' . $fldName . ']');
+		$s .= PHP_EOL;
+		return $s;
+	}
+
+	public function readAllTableData(int $limit = PHP_INT_MAX, string $orderBy = ''): array {
+		$sql = 'SELECT * FROM ' . $this->tableName;
+		if (!empty($orderBy)) {
+			$sql .= ' ORDER BY ' . $orderBy;
+		}
+		$data = DBUtils::doDBSelectMulti($sql);
+		return $data;
+	}
+
+	public function showTable(array $data): string {
+		$s = '<table border=1>';
+		$s .= $this->giveHeaderRow(true, false);
+		foreach ($data as $key => $value) {
+			$s .= $this->showRowOfTable($value);
+		}
+		$s .= '</table>';
+		return $s;
+	}
+
+	protected function showRowOfTable(array $value) : string{
+		$s = '<tr>';
+		foreach ($value as $colName => $column) {
+			$s .= $this->showFieldOfRow($colName, $column);
+		}
+		$s .= '</tr>';
+		return $s;
+	}
+
+	protected function showFieldOfRow( string $colName,  $column) : string{
+		$s = '<td>';
+		$s .= $column;
+		$s .= '</td>';
 		return $s;
 	}
 

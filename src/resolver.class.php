@@ -108,6 +108,9 @@ class Resolver {
 
 		if (Settings::GetPublic('IS_DEBUGGING')) {
 			Dump::dumpLong(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
+
+			dump::dumpLong($_SESSION);
+			dump::dump( session_id());
 		}
 
 		$this->AddHeader();
@@ -235,6 +238,7 @@ class Resolver {
 		$process = 'Authenticate';
 		$task = 'CheckLogin';
 		if (empty($postVars[self::REQUEST_ACTION])) {
+		//if (empty($_SESSION['Authenticated_username'])){
 			$action = 'Need_Login';
 		} else {
 			/** don't want spaces in the action name (methods cant have a space) so make them an Underline */
@@ -245,7 +249,7 @@ class Resolver {
 		if (!empty($action)) {
 			$payload = \array_merge($payload, array('authAction' => $action));
 		}
-
+dump::dump($process . '.'  . $task .  '.' . $action  );
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 

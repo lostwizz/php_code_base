@@ -48,10 +48,6 @@ use \php_base\Utils\Dump\Dump as Dump;
  * @since 0.0.2
  */
 class AuthenticateView extends View {
-
-	/** @todo - use this and let the user try again   */
-	protected static $loginAttempts = 0;
-
 //	var $controller;
 //	//-----------------------------------------------------------------------------------------------
 //	public function __construct($controller) {
@@ -61,35 +57,28 @@ class AuthenticateView extends View {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $data
-	 * @return Response
+	 * @return bool
 	 */
-	public function doWork($data = null): Response {
+	public function doWork($data = null) {
 		return true;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @return Response
+	 * @return void
 	 */
-	public function showLoginPage(): Response {
-		self::$loginAttempts ++;
-
-		if (self::$loginAttempts > 4) {
-			echo 'Sorry to many login attempts';
-		}
-
+	public function showLoginPage(): void {
 		//echo 'This is the login page - aint it pretty?';
 		//echo 'uname = ', $this->controller->payload['username'];
 		echo HTML::FormOpen('index.php',
-				  'LoginForm',
-				  'POST',
-				  null,
-				  NULL,
-				  NULL
+				'LoginForm',
+				'POST',
+				null,
+				NULL,
+				NULL
 		);
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
 		echo HTML::Hidden(Resolver::REQUEST_TASK, 'CheckLogin');
-		//echo HTML::Hidden( Resolver::REQUEST_ACTION, 'Login_check');
 
 		echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
 
@@ -99,14 +88,13 @@ class AuthenticateView extends View {
 
 		$this->showLoginBox();
 		echo HTML::FormClose();
-		return Response::NoError();
-// new Response('ok', 0, true);
 	}
 
-	/** -----------------------------------------------------------------------------------------------
+	/** ----------------------------------------------------------------------------------------------
 	 *
+	 * @return void
 	 */
-	protected function showLoginBox() {
+	protected function showLoginBox(): void {
 		?>
 		<table border=1 align=center>
 			<tr>
@@ -128,21 +116,19 @@ class AuthenticateView extends View {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @return Response
+	 * @return void
 	 */
-	public function showForgotPassword() : Response {
+	public function showForgotPassword(): void {
 
 		echo HTML::FormOpen('index.php',
-				  'ForgotPasswordForm',
-				  'POST',
-				  null,
-				  NULL,
-				  NULL
+				'ForgotPasswordForm',
+				'POST',
+				null,
+				NULL,
+				NULL
 		);
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
 		echo HTML::Hidden(Resolver::REQUEST_TASK, 'ChangeForgotPassword');
-		//echo HTML::Hidden( Resolver::REQUEST_ACTION, 'Login_check');
-		//echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
 
 		echo '<center>';
 		echo 'Forgot Password Form for ', Settings::GetPublic('App Name');
@@ -150,15 +136,13 @@ class AuthenticateView extends View {
 
 		$this->showUserNameBox();
 		echo HTML::FormClose();
-		return Response::NoError();
 	}
-
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * @return void
 	 */
-	protected function showUserNameBox() {
+	protected function showUserNameBox(): void {
 		?>
 		<table border=1 align=center>
 			<tr>
@@ -173,21 +157,18 @@ class AuthenticateView extends View {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @return Response
+	 * @return void
 	 */
-	public function showChangePassword() :Response {
+	public function showChangePassword(): void {
 		echo HTML::FormOpen('index.php',
-				  'ChangePasswordForm',
-				  'POST',
-				  null,
-				  NULL,
-				  NULL
+				'ChangePasswordForm',
+				'POST',
+				null,
+				NULL,
+				NULL
 		);
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
 		echo HTML::Hidden(Resolver::REQUEST_TASK, 'ChangePasswordTask');
-		//echo HTML::Hidden( Resolver::REQUEST_ACTION, 'Login_check');
-		//echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
-
 
 		echo '<center>';
 		echo 'Forgot Password Form for ', Settings::GetPublic('App Name');
@@ -195,13 +176,13 @@ class AuthenticateView extends View {
 
 		$this->showUserOldAndNewPassword();
 		echo HTML::FormClose();
-		return Response::NoError();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * @return void
 	 */
-	protected function showUserOldAndNewPassword() {
+	protected function showUserOldAndNewPassword(): void {
 		?>
 		<table border=1 align=center>
 			<tr>
@@ -211,12 +192,12 @@ class AuthenticateView extends View {
 			</tr><tr>
 				<td>Old Password: </td>
 				<td>
-					<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[old_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[old_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
 				</td>
 			</tr><tr>
 				<td>New Password: </td>
 				<td>
-					<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[new_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[new_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
 				</td>
 			</tr><tr>
 				<td align=center colspan=2><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit Username for Password Change'); ?></td>
@@ -227,19 +208,18 @@ class AuthenticateView extends View {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @return Response
+	 * @return void
 	 */
-	public function showAddNewAccount() : Response{
-				echo HTML::FormOpen('index.php',
-				  'ChangePasswordForm',
-				  'POST',
-				  null,
-				  NULL,
-				  NULL
+	public function showAddNewAccount(): void {
+		echo HTML::FormOpen('index.php',
+				'ChangePasswordForm',
+				'POST',
+				null,
+				NULL,
+				NULL
 		);
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
 		echo HTML::Hidden(Resolver::REQUEST_TASK, 'ChangePasswordTask');
-
 
 		echo '<center>';
 		echo 'Forgot Password Form for ', Settings::GetPublic('App Name');
@@ -247,15 +227,14 @@ class AuthenticateView extends View {
 
 		$this->showNewAccountBox();
 		echo HTML::FormClose();
-		return Response::NoError();
-
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * @return void
 	 */
-	protected function showNewAccountBox() {
-			?>
+	protected function showNewAccountBox(): void {
+		?>
 		<table border="1" align=center>
 			<tr>
 				<td>Username: </td>
@@ -264,12 +243,12 @@ class AuthenticateView extends View {
 			</tr><tr>
 				<td>Password: </td>
 				<td>
-					<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
 				</td>
 			</tr><tr>
 				<td>Email Address: </td>
 				<td>
-					<?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_email]', null, array('maxlength' => 255, 'size' => 30)); ?>
+		<?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_email]', null, array('maxlength' => 255, 'size' => 30)); ?>
 				</td>
 			</tr><tr>
 				<td align=center colspan=2><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit New Account Info'); ?></td>
@@ -277,8 +256,5 @@ class AuthenticateView extends View {
 		</table>
 		<?php
 	}
-
-
-
 
 }

@@ -122,6 +122,8 @@ class Dispatcher {
 		/** this will dump the contents of the queue - for debugging
 		  $this->dumpQueue($theQueue);
 		 */
+		  $this->dumpQueue($theQueue);
+
 		try {
 			$response = null;
 			while (!$theQueue->isEmpty()) {
@@ -147,7 +149,7 @@ class Dispatcher {
 	protected function processDetailsOfQueue($theQueue): Response {
 
 		$item = $theQueue->dequeue();/** get the next item out of the queue */
-		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
+		Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
 		if (!empty($item)) {
 			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
 			$response = $this->itemDecodeAndExecute($item);
@@ -223,13 +225,15 @@ class Dispatcher {
 
 		$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
-		//Settings::GetRunTimeObject('MessageLog')->addInfo( "dispatcher do execute - new $class ($action,  payload);");
+		Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher do execute - new ' . $class . '->'  . $task . ' action=' . $action . ' payload='  . $passedPayload);
 		$x = new $class($action, $payload); //instanciate the process  and pass it the payload
 
 		$x->setProcessAndTask($process, $task); // sets the called class up with the Process
 
 		// now calls basically the task with this so it can look up the class and task
-		return $x->$task($this);  //run the process's method
+		$r = $x->$task($this);  //run the process's method
+		Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher got ' . $r->giveMessage());
+		return $r;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -413,7 +417,7 @@ class Dispatcher {
 	public function dumpQueue( \SPLQueue $theQueue): void {
 
 		echo '<pre class="pre_debug_queue">';
-		echo '@@@@@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';
+		echo '@@@@ -dispatcher queue dump -@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';
 		$theQueue->rewind();
 		while ($theQueue->valid()) {
 			echo $theQueue->current();  //;."-\n"; // Show the first one

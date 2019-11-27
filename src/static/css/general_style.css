@@ -79,7 +79,7 @@ body {
 }
 
 .pre_debug_queue {
-	color: violet;
+	color: black;
 	background-color: LightGreen;
 	font-size: 12pt;
 
@@ -865,4 +865,9 @@ header_td_app_name {
 	.UserStateDump{
 		color: blueviolet;
 		background-color: wheat;
+	}
+
+	.SettingsDump {
+		background-color: green;
+		color: black;
 	}

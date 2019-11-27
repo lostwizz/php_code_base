@@ -93,14 +93,6 @@ class UserInfoData extends data {
 		self::$Table->addFieldDateTime( 'last_logon_time', ['prettyName' => 'Time/Date of Last Login']);
 
 
-
-		dump::dump( self::$Table->giveHeaderRow(true));
-		echo '<table border=1>';
-		echo '<tr>';
-		echo self::$Table->giveHeaderRow(true);
-		echo '</tr>';
-		echo '</table>';
-
 	}
 
 

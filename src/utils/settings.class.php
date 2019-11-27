@@ -203,30 +203,36 @@ abstract class Settings {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param bool $show_protected
-	 * @param bool $show_runtime
+	 * just echo the results from this dump - it will make black on green text
+	 * 
+	 * @param bool $showPublic
+	 * @param bool $showProtected
+	 * @param bool $showRuntime
 	 * @return string
 	 */
-	public static function dump(bool $show_protected = false, bool $show_runtime = false): string {
-		$s = 'Settings::dump:<BR>';
-		if ($show_runtime) {
+	public static function dump(bool $showPublic = false, bool $showProtected = false, bool $showRuntime = false): string {
+		$s = '<div class="SettingsDump">';
+		$s .= 'Settings::dump:<BR>';
+		if ($showRuntime) {
 			foreach (self::$runTime as $key => $val) {
 				$s .= 'RunTime: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';
 			}
 		}
-		if ($show_protected) {
+		if ($showProtected) {
 			foreach (self::$protected as $key => $val) {
 				$s .= 'Protected: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';
 			}
 		}
-		foreach (self::$public as $key => $val) {
-			$s .= 'Public: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
-			$s .= '<Br>';
+		if ($showPublic) {
+			foreach (self::$public as $key => $val) {
+				$s .= 'Public: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
+				$s .= '<Br>';
+			}
 		}
 		//$s .= '<Br>';
+		$s .= '</div>';
 		return $s;
 	}
 

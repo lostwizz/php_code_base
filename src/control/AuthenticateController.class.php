@@ -99,6 +99,7 @@ class AuthenticateController extends Controller {
 	public function checkLogin($parent): Response {
 		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
+dump::dump($username);
 
 		if (!empty($this->action)) {
 			$action = $this->action;
@@ -106,7 +107,11 @@ class AuthenticateController extends Controller {
 			$action = 'Need_login';
 		}
 
-		return $this->$action($parent, $username, $password);
+		Settings::GetRunTimeObject('MessageLog')->addCritical( get_class() . '->' . $action . ' username='  . $username);
+
+		$r =$this->$action($parent, $username, $password);
+		Settings::GetRunTimeObject('MessageLog')->addCritical( get_class() . '->' . $action . ' username='  . $username . 'MSG=' . $r->giveMessage());
+		return $r;
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -119,7 +124,8 @@ class AuthenticateController extends Controller {
 	 * @return Response
 	 */
 	protected function Need_login($parent, $username = null, $password = null): Response {
-		return $this->view->showLoginPage();
+		 $this->view->showLoginPage();
+		 return Response::NoError();
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -133,13 +139,17 @@ class AuthenticateController extends Controller {
 	 * @return Response
 	 */
 	protected function Submit_Logon($parent, $username = null, $password = null): Response {
+
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-////dump::dump($this->UserInfoData);
+dump::dump($this->UserInfoData);
 
 		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
-			return $this->model->tryToLogin($username, $password, $this->UserInfoData);
+			$r = $this->model->tryToLogin($username, $password, $this->UserInfoData);
+		} else {
+			$r = new Response('Username does not exist', -10);
 		}
-		return new Response('Username does not exist', -10);
+dump::dump( $r);
+		return $r;
 
 /////		\php_base\control\UserRoleAndPermissionsController::tryToLogin( $username, $password);
 	}
@@ -155,14 +165,8 @@ class AuthenticateController extends Controller {
 	 * @return Response
 	 */
 	protected function Change_Password($parent, $username = null, $password = null): Response {
-		dump::dump('hi ho');
 		// ask for the user id and the old password
-		$r = $this->view->showChangePassword();
-
-		// check the old password matches
-		// save the new password
-		// send an email saying changed the password?
-
+		$this->view->showChangePassword();
 		return Response::TODO_Error();
 	}
 
@@ -190,8 +194,8 @@ class AuthenticateController extends Controller {
 	 */
 	protected function add_New_Account($parent, $username = null, $password = null): Response {
 		// show the page asking all the questions
-		$r = $this->view->showAddNewAccount();
-		return $r;
+		$this->view->showAddNewAccount();
+		return Response::NoError();
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -205,8 +209,8 @@ class AuthenticateController extends Controller {
 	 * @return Response
 	 */
 	protected function forgot_Password($parent, $username = null, $password = null): Response {
-		$r = $this->view->showForgotPassword();
-		return $r;
+		$this->view->showForgotPassword();
+		return Response::NoError();
 	}
 
 	public function Submit_Username_for_Forgot_Password($parent, $username): Response {
@@ -238,7 +242,11 @@ class AuthenticateController extends Controller {
 												$this->payload['entered_password'],
 												$this->payload['entered_email']
 												);
-
+		if ( $r ) {
+			return Response::NoError();
+		} else {
+			return Response::TODO_Error( ' do something here and create a proper error');
+		}
 		//$r = $this->model->doNewAccountInfo($this->payload['entered_username'], $this->payload['entered_password'], $this->payload['entered_email']);
 
 		return $r;

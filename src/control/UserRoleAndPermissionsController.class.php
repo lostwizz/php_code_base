@@ -119,8 +119,10 @@ Class UserRoleAndPermissionsController {
 	 * @return Response
 	 */
 	public function Setup($action = '', $payload = null): Response {
-
+//dump::dumpLong(Settings::dump(false,false, true));
+echo Settings::dump(false, false, true);
 		$u = Settings::GetRunTime('Currently Logged In User');
+
 		if (!empty($u)) {
 			$response = $this->LoadAllUserInformation($u);
 

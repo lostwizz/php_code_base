@@ -21,16 +21,22 @@
 
 namespace php_base\Control;
 
-use \php_base\Utils\Settings as Settings;
+use \php_base\Control;
+use \php_base\data;
+use \php_base\data\UserInfoData;
+use \php_base\model\Permissions as Permissions;
+use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
+use \php_base\Utils\DatabaseHandlers\Field as Field;
+use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
-use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
+use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\HTML\HTML as HTML;
 
-use \php_base\model\Permissions as Permissions;
 
 //***********************************************************************************************
 //***********************************************************************************************
-class TESTController extends Controller {
+class TESTController extends \php_base\Control\Controller {
 
 	public $model;
 	public $view;
@@ -103,6 +109,8 @@ class TESTController extends Controller {
 
 		Settings::GetRunTimeObject('MessageLog')->addINFO('----------------');
 
+		$this->demoTableFun();
+
 		//$this->view->doWork(  $this  );
 		//return new Resonse( 'ok', 0, true);
 		return Response::NoError();
@@ -112,4 +120,25 @@ class TESTController extends Controller {
 //	public static function controllerRequiredVars(){
 //		return [];
 //	}
+
+	public function demoTableFun() {
+		//
+//
+//		echo '<form method=post>';
+//		dump::dump( self::$Table->giveHeaderRow(true, true));
+//		echo '<table border=1>';
+//		echo '<tr>';
+//		echo self::$Table->giveHeaderRow(true, true);
+//		echo '</tr>';
+//		echo '</table>';
+//		echo '</form>';
+
+
+		echo HTML::FormOpen('tableFun');
+		$d = UserInfoData::$Table->readAllTableData();
+		//dump::dumpLong($d);
+		echo UserInfoData::$Table->showTable( $d);
+		echo HTML::FormClose();
+	}
+
 }

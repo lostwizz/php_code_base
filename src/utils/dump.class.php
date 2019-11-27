@@ -388,6 +388,7 @@ abstract class Dump {
 	protected static function SetVariableValue($data, $obj) {
 		if (is_string($obj)) {
 			$obj = htmlspecialchars($obj, ENT_NOQUOTES);
+			$obj = \wordwrap($obj, 80, "\n");
 			$data->variable = print_r($obj, true);
 		} elseif (is_bool($obj)) {
 			$data->variable = $obj ? "-=True=-" : "-=False=-";

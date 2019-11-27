@@ -63,31 +63,9 @@ class AuthenticateModel extends Model {
 		return Response::NoError();
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *  a check to see if the user is logged in (timeouts and bad passwords type situations may return basically  false
-	 * @param type $username
-	 * @param type $password
-	 * @return Response
-	 */
-	public function isLoggedIn($username, $password): Response {
 
-		if (!empty($username)) {
-			//echo 'Checking login:',  $username;
-			//echo '<br>';
-			if ($this->isGoodAuthentication($username, $password)) {
-				Settings::GetRunTimeObject('MessageLog')->addInfo('User: ' . $username . ' is logged on');
-				// user and password are good so they is logged in
-				self::$Uname - $password;
-				Settings::SetRunTime('Currently Logged In User', $username);
-			} else {
-				$username = null;
-			}
-		} else {
-			$username = null;
-		}
-		Settings::GetRunTimeObject('MessageLog')->addNotice('username=' . $username . (empty($username) ? 'NOT-logged in' : 'Seems to be Loggedin'));
-		return (!empty($username));
-	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * given a username and a password see if the password is valid for that username
@@ -96,7 +74,10 @@ class AuthenticateModel extends Model {
 	 * @return Response
 	 */
 	public function tryToLogin(string $username, string $password, $userInfoData): Response {
-
+		if ( $this->isGoodAuthentication()) {
+			Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
+			return Response::NoError();
+		}
 		$method = 'LogonMethod_' . $userInfoData->UserInfo['METHOD'];
 
 		//Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method );
@@ -106,6 +87,13 @@ class AuthenticateModel extends Model {
 			$response = $this->$method($username, $password, $userInfoData);
 			if ($response->giveErrorCode() == 0) {
 				Settings::SetRunTime('Currently Logged In User', $username);
+				$_SESSION['Authenticated_username'] = $username;
+				//$now = new \DateTime('now');
+				//$_SESSION['Authenticated_ExpireTime'] = $now->format( 'u'); //d-M-Y H:i:s' ); //date('d-M-Y g:i:s');
+				$exp = (new \DateTime('now'))->getTimestamp();
+				$_SESSION['Authenticated_ExpireTime'] =	(new \DateTime('now'))->getTimestamp();
+//dump::dump($_SESSION);
+
 			}
 		} else {
 			Settings::GetRunTimeObject('MessageLog')->addInfo('Authentication Method: ' . $method . 'Does NOT exist for:' . $username);
@@ -119,16 +107,25 @@ class AuthenticateModel extends Model {
 	 * @param type $passedUsername
 	 * @return boolean
 	 */
-	public function isGoodAuthentication($passedUsername) {
+	public function isGoodAuthentication() {
+		Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on');
 
+		if (empty( $_SESSION['Authenticated_username'])) {
+			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - NO not in session');
+			return false;
+		}
+		$now = (new \DateTime('now'))->getTimestamp();
+		$then = $_SESSION['Authenticated_ExpireTime'] ;
+		$diff = $now - $then;
+dump::dump($diff);
 
-		return false;
-		///////////////////// DEBUG CODE
-//		if ($passedUsername = self::Uname) {
-//			return true;
-//		} else {
-//			return false;
-//		}
+		if ($diff > 900) {
+			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - NO Timeout');
+			return false;
+		}
+		//fall through so it should be good to go
+			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - YES');
+		return true;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
