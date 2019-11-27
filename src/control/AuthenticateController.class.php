@@ -24,7 +24,6 @@
  *
  * @see AuthenticateModel
  * @see AuthenticateView
- * @see AuthenticateData
  *
  * @todo add forgot password
  * @todo add change password
@@ -64,7 +63,7 @@ class AuthenticateController extends Controller {
 	 */
 	public function __construct(string $passedAction = '', $passedPayload = null) {
 		$this->model = new \php_base\model\AuthenticateModel($this);
-		$this->data = new \php_base\data\AuthenticateData($this);
+		//$this->data = new \php_base\data\AuthenticateData($this);
 		$this->view = new \php_base\view\AuthenticateView($this);
 
 		$this->action = $passedAction;
@@ -85,22 +84,31 @@ class AuthenticateController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function doWork(): Response {
-		echo 'authenticationController doWork hi - i am here!!';
-		echo 'should never get here';
-		return Response::TODO_Error();
-	}
+//	public function doWork(): Response {
+//		echo 'authenticationController doWork hi - i am here!!';
+//		echo 'should never get here';
+//		return Response::TODO_Error();
+//	}
 
 	/**  -----------------------------------------------------------------------------------------------
 	 * get the username and password then call the appropriate method
 	 * @param type $parent
 	 * @return Response
 	 */
-	public function checkLogin($parent): Response {
+	public function checkAuthentication($parent): Response {
+dump::dump($this);
+		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
+
+		if ($isAlreadyLoggedOn) {
+			return Response::NoError();
+		}
+
+
+
 		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
-dump::dump($username);
 
+		//if ( !empty($action ) and $action != 'checkAuthentication'){
 		if (!empty($this->action)) {
 			$action = $this->action;
 		} else {
@@ -110,6 +118,7 @@ dump::dump($username);
 		Settings::GetRunTimeObject('MessageLog')->addCritical( get_class() . '->' . $action . ' username='  . $username);
 
 		$r =$this->$action($parent, $username, $password);
+
 		Settings::GetRunTimeObject('MessageLog')->addCritical( get_class() . '->' . $action . ' username='  . $username . 'MSG=' . $r->giveMessage());
 		return $r;
 	}

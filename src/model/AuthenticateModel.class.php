@@ -117,7 +117,6 @@ class AuthenticateModel extends Model {
 		$now = (new \DateTime('now'))->getTimestamp();
 		$then = $_SESSION['Authenticated_ExpireTime'] ;
 		$diff = $now - $then;
-dump::dump($diff);
 
 		if ($diff > 900) {
 			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - NO Timeout');

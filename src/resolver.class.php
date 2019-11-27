@@ -110,7 +110,7 @@ class Resolver {
 			Dump::dumpLong(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
 
 			dump::dumpLong($_SESSION);
-			dump::dump( session_id());
+			//dump::dump( session_id());
 		}
 
 		$this->AddHeader();
@@ -194,7 +194,7 @@ class Resolver {
 
 
 		/** if the GET/POST are not an Authenticate PTAP then do what they are */
-		if (!( $process == 'Authenticate' and $task == 'CheckLogin' )) {
+		if (!( $process == 'Authenticate' and $task == 'checkAuthentication' )) {
 			$this->dispatcher->addProcess($process, $task, $action, $payload);
 		}
 	}
@@ -236,20 +236,24 @@ class Resolver {
 		$postVars = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
 
 		$process = 'Authenticate';
-		$task = 'CheckLogin';
-		if (empty($postVars[self::REQUEST_ACTION])) {
-		//if (empty($_SESSION['Authenticated_username'])){
-			$action = 'Need_Login';
-		} else {
-			/** don't want spaces in the action name (methods cant have a space) so make them an Underline */
-			$action = \str_replace(' ', '_', $postVars[self::REQUEST_ACTION]);
-		}
-
+		$task = 'checkAuthentication';
+		//$action = 'checkAuthentication';
+		$action ='do_something';
+//		if (empty($postVars[self::REQUEST_ACTION])) {
+//			$action = 'Need_Login';
+//			//$action = 'checkAuthentication';
+//		} else {
+//			/** don't want spaces in the action name (methods cant have a space) so make them an Underline */
+//			$action = \str_replace(' ', '_', $postVars[self::REQUEST_ACTION]);
+//		}
+//
 		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : array();
-		if (!empty($action)) {
-			$payload = \array_merge($payload, array('authAction' => $action));
-		}
-dump::dump($process . '.'  . $task .  '.' . $action  );
+//		if (!empty($action)) {
+//			$payload = \array_merge($payload, array('authAction' => $action));
+//		}
+
+		$sPayload = \serialize( $payload);
+		Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 

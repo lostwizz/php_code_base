@@ -78,9 +78,9 @@ class AuthenticateView extends View {
 				NULL
 		);
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'Authenticate');
-		echo HTML::Hidden(Resolver::REQUEST_TASK, 'CheckLogin');
+		echo HTML::Hidden(Resolver::REQUEST_TASK, 'checkAuthentication');
 
-		echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
+		//echo HTML::HIDDEN(Resolver::REQUEST_PAYLOAD, Resolver::REQUEST_PAYLOAD . '[loginAttempts]');
 
 		echo '<center>';
 		echo 'Logon Form for ', Settings::GetPublic('App Name');
