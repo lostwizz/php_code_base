@@ -76,6 +76,8 @@ body {
 .responseError{
 	background-color: red;
 	color: white;
+	font-size: 24pt;
+
 }
 
 .pre_debug_queue {

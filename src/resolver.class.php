@@ -107,8 +107,8 @@ class Resolver {
 	public function doWork(): Response {
 
 		if (Settings::GetPublic('IS_DEBUGGING')) {
+			//dump::dumpLong( $_REQUEST);
 			Dump::dumpLong(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
-
 			dump::dumpLong($_SESSION);
 			//dump::dump( session_id());
 		}
@@ -164,11 +164,15 @@ class Resolver {
 	 * @see Dispatcher
 	 */
 	protected function setupDefaultController(): void {
-		$process = 'TEST';
-		$task = 'doWork';
-		$action = null;
-		$payload = ['username' => Settings::GetRunTime('Currently Logged In User')];
-		$this->dispatcher->addProcess($process, $task, $action, $payload);
+		if ( $this->dispatcher->getProcessQueueCount() <1) {
+			$process = 'TEST';
+			Settings::GetRunTimeObject('MessageLog')->addTODO('figure out what the default process is - probably menu system');
+
+			$task = 'doWork';
+			$action = null;
+			$payload = ['username' => Settings::GetRunTime('Currently Logged In User')];
+			$this->dispatcher->addProcess($process, $task, $action, $payload);
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -184,16 +188,14 @@ class Resolver {
 
 		$postVars = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
 
-		//dump::dump($vv);
-//      dump::dump($vv2);
+
 		$process = (!empty($postVars[self::REQUEST_PROCESS])) ? $postVars[self::REQUEST_PROCESS] : null;
 		$task = (!empty($postVars[self::REQUEST_TASK])) ? $postVars[self::REQUEST_TASK] : null;
 		$action = (!empty($postVars[self::REQUEST_ACTION])) ? $postVars[self::REQUEST_ACTION] : null;
 		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : null;
 
-
-
-		/** if the GET/POST are not an Authenticate PTAP then do what they are */
+		/** if the GET/POST are not an Authenticate PTAP then do what they are
+				as the checkAuthenticate is added below 		 */
 		if (!( $process == 'Authenticate' and $task == 'checkAuthentication' )) {
 			$this->dispatcher->addProcess($process, $task, $action, $payload);
 		}
@@ -237,23 +239,15 @@ class Resolver {
 
 		$process = 'Authenticate';
 		$task = 'checkAuthentication';
-		//$action = 'checkAuthentication';
-		$action ='do_something';
-//		if (empty($postVars[self::REQUEST_ACTION])) {
-//			$action = 'Need_Login';
-//			//$action = 'checkAuthentication';
-//		} else {
-//			/** don't want spaces in the action name (methods cant have a space) so make them an Underline */
-//			$action = \str_replace(' ', '_', $postVars[self::REQUEST_ACTION]);
-//		}
-//
+		$action =null;
+
 		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : array();
-//		if (!empty($action)) {
-//			$payload = \array_merge($payload, array('authAction' => $action));
-//		}
+		if ( !empty($postVars[self::REQUEST_ACTION ])){
+			$payload[self::REQUEST_ACTION] = $postVars[self::REQUEST_ACTION ];
+		}
 
 		$sPayload = \serialize( $payload);
-		Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
+//		Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 
@@ -295,5 +289,3 @@ class Resolver {
 	}
 
 }
-
-color: #FFD700;

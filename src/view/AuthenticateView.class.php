@@ -48,12 +48,16 @@ use \php_base\Utils\Dump\Dump as Dump;
  * @since 0.0.2
  */
 class AuthenticateView extends View {
-//	var $controller;
-//	//-----------------------------------------------------------------------------------------------
-//	public function __construct($controller) {
-//		$this->controller = $controller;
-//	}
 
+	public $parent = null;
+
+	/** -----------------------------------------------------------------------------------------------
+	 * constructor - the parent has the data
+	 * @param type $parentObj
+	 */
+	public function __construct($parentObj) {
+		$this->parent = $parentObj;
+	}
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $data
@@ -176,6 +180,17 @@ class AuthenticateView extends View {
 
 		$this->showUserOldAndNewPassword();
 		echo HTML::FormClose();
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
+	public function showNoEmailAddressError():void{
+		echo '<div class="responseError">';
+		echo 'Sorry Cannot Change Password - missing eMail address';
+		echo '</div>';
 	}
 
 	/** -----------------------------------------------------------------------------------------------

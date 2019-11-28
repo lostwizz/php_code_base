@@ -176,7 +176,8 @@ class HeaderView extends View {
 		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
 
 		return ['static\css\message_stack_style.css',
-			'static\css\general_style.css'
+			'static\css\general_style.css',
+			'static\css\animations_style.css'
 		];
 	}
 

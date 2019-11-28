@@ -204,7 +204,7 @@ abstract class Settings {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * just echo the results from this dump - it will make black on green text
-	 * 
+	 *
 	 * @param bool $showPublic
 	 * @param bool $showProtected
 	 * @param bool $showRuntime
@@ -214,18 +214,24 @@ abstract class Settings {
 		$s = '<div class="SettingsDump">';
 		$s .= 'Settings::dump:<BR>';
 		if ($showRuntime) {
+			$s .= '************ Runtime Settings *********************';
+			$s .= '<Br>';
 			foreach (self::$runTime as $key => $val) {
 				$s .= 'RunTime: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';
 			}
 		}
 		if ($showProtected) {
+			$s .= '************ Protected Settings *********************';
+			$s .= '<Br>';
 			foreach (self::$protected as $key => $val) {
 				$s .= 'Protected: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';
 			}
 		}
 		if ($showPublic) {
+			$s .= '************ Protected Settings *********************';
+			$s .= '<Br>';
 			foreach (self::$public as $key => $val) {
 				$s .= 'Public: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
 				$s .= '<Br>';

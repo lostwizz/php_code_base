@@ -122,7 +122,7 @@ class Dispatcher {
 		/** this will dump the contents of the queue - for debugging
 		  $this->dumpQueue($theQueue);
 		 */
-		  $this->dumpQueue($theQueue);
+ $this->dumpQueue($theQueue);
 
 		try {
 			$response = null;
@@ -181,6 +181,7 @@ class Dispatcher {
 		Settings::GetRunTimeObject('MessageLog')->addDEBUG('PTAP: ' . $passedProcess);
 
 		$exploded = \explode('.', $passedProcess);
+		//dump::dump($exploded);
 		$response = $this->doExecute('control',
 								(empty($exploded[0]) ? null : $exploded[0]),
 								(empty($exploded[1]) ? null : $exploded[1]),
@@ -208,8 +209,8 @@ class Dispatcher {
 	 */
 	private function doExecute(string $dir,
 							string $class,
-							string $task,
-							string $action = '',
+							?string $task,
+							?string $action = '',
 							$passedPayload = null
 					): Response {
 
@@ -218,7 +219,9 @@ class Dispatcher {
 		} else {
 			$process = $class;
 		}
-
+		if ( empty($task)) {
+			$task = 'doWork';            /* the default task */
+		}
 
 		$class = '\\php_base\\' . $dir . '\\' . $class;
 		Settings::GetRunTimeObject('MessageLog')->addTODO('willhave to change this from php_base:' . $class);
@@ -232,7 +235,7 @@ class Dispatcher {
 
 		// now calls basically the task with this so it can look up the class and task
 		$r = $x->$task($this);  //run the process's method
-		Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher got ' . $r->giveMessage());
+//		Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher got ' . $r->giveMessage());
 		return $r;
 	}
 
@@ -261,12 +264,13 @@ class Dispatcher {
 							): string {
 
 		$process = (!empty($passedprocess)) ? $passedprocess . 'Controller' : '';
-		$task = (!empty($passedtask)) ? '.' . $passedtask : '';
-		$action = (!empty($passedaction)) ? '.' . $passedaction : '';
+		$task = (!empty($passedtask)) ? '.' . $passedtask : '.';
+		$action = (!empty($passedaction)) ? '.' . $passedaction : '.';
 
 		$payload = (!empty($passedpayload)) ? '.' . $this->processPayloadForItem($passedpayload) : '';
 
 		$item = $process . $task . $action . $payload;
+
 		return $item;
 	}
 
@@ -344,8 +348,10 @@ class Dispatcher {
 						   $task,
 						   $action,
 						   $payload);
-		$this->addItemToQueue($this->PREqueue, $item);
-		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
+		if ( $item != '..') {
+			$this->addItemToQueue($this->PREqueue, $item);
+			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -370,8 +376,10 @@ class Dispatcher {
 						   $task,
 						   $action,
 						   $payload);
-		$this->addItemToQueue($this->POSTqueue, $item);
-		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
+		if ( $item != '..') {
+			$this->addItemToQueue($this->POSTqueue, $item);
+			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -397,10 +405,19 @@ class Dispatcher {
 						   $task,
 						   $action,
 						   $payload);
-		$this->addItemToQueue($this->DISPATCHqueue, $item);
-		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
+		if ( $item != '..') {
+			$this->addItemToQueue($this->DISPATCHqueue, $item);
+			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
+		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return int
+	 */
+	public function getProcessQueueCount(): int {
+		return $this->DISPATCHqueue->count();
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * dumpQueue - outputs the items in the queue (does not remove them from the queue

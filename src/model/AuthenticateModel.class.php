@@ -54,6 +54,17 @@ class AuthenticateModel extends Model {
 
 	protected static $User;
 
+		public $parent = null;
+
+	/** -----------------------------------------------------------------------------------------------
+	 * constructor - the parent has the data
+	 * @param type $parentObj
+	 */
+	public function __construct($parentObj) {
+		$this->parent = $parentObj;
+	}
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * default method called if something goes wrong - should never get here
 	 * @return Response
@@ -108,7 +119,7 @@ class AuthenticateModel extends Model {
 	 * @return boolean
 	 */
 	public function isGoodAuthentication() {
-		Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on');
+		//Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on');
 
 		if (empty( $_SESSION['Authenticated_username'])) {
 			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - NO not in session');
@@ -123,7 +134,9 @@ class AuthenticateModel extends Model {
 			return false;
 		}
 		//fall through so it should be good to go
-			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - YES');
+		Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - YES');
+		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
+
 		return true;
 	}
 
@@ -134,24 +147,31 @@ class AuthenticateModel extends Model {
 	 * @return Response
 	 */
 	public function doPasswordForgot($passedUsername, $UserInfoData): Response {
-		// generate new password
-		$newPW = Utils::makeRandomPassword();
-		dump::dump($newPW);
-		$pwd = password_hash($newPW, PASSWORD_DEFAULT);
 
-		// save the new password
-		if (!empty($UserInfoData->UserInfo['USERID'])) {
-			$r = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd);
-		}
+		if ( !empty( $UserInfoData->UserInfo['EMAIL'] )){
 
-		// send email with new password
-		$r = $this->sendEmailForPasswordForgot($newPW, $UserInfoData->UserInfo['EMAIL']);
+			// generate new password
+			$newPW = Utils::makeRandomPassword();
+			dump::dump($newPW);
+			$pwd = password_hash($newPW, PASSWORD_DEFAULT);
 
-		if ($r === false) {
-			Settings::GetRunTimeObject('MessageLog')->addError('Unable to email the new password');
+			// save the new password
+			if (!empty($UserInfoData->UserInfo['USERID'])) {
+				$r = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd);
+			}
+
+			// send email with new password
+			$r = $this->sendEmailForPasswordForgot($newPW, $UserInfoData->UserInfo['EMAIL']);
+			if ($r === false) {
+				Settings::GetRunTimeObject('MessageLog')->addError('Unable to email the new password');
+				return new Response('Unable to email the new password to the user', -12);
+			}
+			return Response::NoError();
+		} else {
+
+			$this->parent->view->showNoEmailAddressError();
 			return new Response('Unable to email the new password to the user', -12);
 		}
-		return Response::NoError();
 	}
 
 	/** -----------------------------------------------------------------------------------------------

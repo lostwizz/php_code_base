@@ -34,11 +34,13 @@
 
 namespace php_base\Control;
 
-use \php_base\Utils\Settings as Settings;
+use \php_base\data\UserInfoData as UserInfoData;
+use \php_base\Model\AuthenticateModel;
+use \php_base\Resolver;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
-
-use \php_base\data\UserInfoData as UserInfoData;
+use \php_base\Utils\Settings as Settings;
+use \php_base\View\AuthenticateView;
 
 
 /** * **********************************************************************************************
@@ -48,7 +50,7 @@ use \php_base\data\UserInfoData as UserInfoData;
  *
  * @since 0.0.2
  */
-class AuthenticateController extends Controller {
+class AuthenticateController extends \php_base\Control\Controller {
 
 	protected $UserInfoData = null;
 	public $process;
@@ -96,30 +98,62 @@ class AuthenticateController extends Controller {
 	 * @return Response
 	 */
 	public function checkAuthentication($parent): Response {
-dump::dump($this);
+//dump::dumpLong($this);
+
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
 
 		if ($isAlreadyLoggedOn) {
 			return Response::NoError();
 		}
 
-
-
-		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
+		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 
-		//if ( !empty($action ) and $action != 'checkAuthentication'){
-		if (!empty($this->action)) {
-			$action = $this->action;
-		} else {
-			$action = 'Need_login';
+		if (empty($this->payload[Resolver::REQUEST_ACTION])) {
+			$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
+		}
+		// not yet logged on
+		switch ($this->payload[Resolver::REQUEST_ACTION]) {
+			case 'Submit Logon':
+				$action = 'Submit_Logon';
+				break;
+			case 'Change Password':
+				$action = 'Change_Password';
+				break;
+			case 'Submit Username for Password Change':
+				$action = 'Submit_Username_for_Password_Change';
+				break;
+			case 'Add New Account':
+				$action = 'Add_New_Account';
+				break;
+			case 'Submit New Account Info':
+				$action = 'Submit_New_Account_Info';
+				break;
+			case 'Forgot Password':
+				$action = 'Forgot_Password';
+				break;
+			case 'Submit Username for Forgot Password':
+				$action = 'Submit_Username_for_Forgot_Password';
+				break;
+			case '':
+			default:
+				$action = 'Need_Login';
+				break;
 		}
 
-		Settings::GetRunTimeObject('MessageLog')->addCritical( get_class() . '->' . $action . ' username='  . $username);
 
-		$r =$this->$action($parent, $username, $password);
+		//if ( !empty($action ) and $action != 'checkAuthentication'){
+//		if (!empty($this->action)) {
+//			$action = $this->action;
+//		} else {
+//			$action = 'Need_login';
+//		}
 
-		Settings::GetRunTimeObject('MessageLog')->addCritical( get_class() . '->' . $action . ' username='  . $username . 'MSG=' . $r->giveMessage());
+		Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username);
+
+		$r = $this->$action($parent, $username, $password);
+
+		Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username . 'MSG=' . $r->giveMessage());
 		return $r;
 	}
 
