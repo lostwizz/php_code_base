@@ -30,17 +30,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 /*
  *
 
@@ -71,6 +60,8 @@ use php_base\Utils\DatabaseHandlers\Field as Field;
 
 Class Field_Int extends Field {
 
+	const TYPE = \PDO::PARAM_INT;
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -95,6 +86,39 @@ Class Field_Int extends Field {
 		$r .= '</div>';
 
 		return $r;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return string
+	 */
+	public function givePDOType(): string {
+		if (empty(self::TYPE)) {
+			return \PDO::PARAM_STR;
+		} else {
+			return self::TYPE;
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return array
+	 */
+	public function validateField($data): array {
+		$msg = array();
+		if (empty($data)) {
+			$msg[] = $this->giveAttrib('prettyName') . ': is Empty';
+		} else {
+			if (preg_match('/[^0-9\-]/', $data) > 0) {
+				$msg[] = $this->get_attribute('pretty_name') . ': Only numbers allowed';
+			}
+			if ($this->get_attribute('sub_type') == self::SUBTYPE_INT_GREATER_THAN_ZERO
+					AND $data < 0) {
+				$msg[] = $this->get_attribute('pretty_name') . ': Only numbers zero or greater allowed';
+			}
+		}
+		return $msg;
 	}
 
 }

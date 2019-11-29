@@ -92,7 +92,7 @@ Settings::SetRuntime( 'EmailLog', null);
  */
 Settings::SetPublic( 'Use_MessageLog', true );  //true
 Settings::SetPublic( 'Use_DBLog', false);
-Settings::SetPublic( 'Use_DBdataLog', false);
+Settings::SetPublic( 'Use_DBdataLog', true);
 Settings::SetPublic( 'Use_FileLog', false);  // true
 Settings::SetPublic( 'Use_SecurityLog', false);
 Settings::SetPublic( 'Use_EmailLog', false);      // true

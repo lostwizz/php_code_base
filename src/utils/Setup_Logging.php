@@ -80,10 +80,9 @@ $log_fn = Settings::GetPublic('Log_file' );
 
 if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 
-	/// setup database link
-	$conn = DBUtils::setupPDO();
-
 	if (Settings::GetPublic( 'Use_DBLog')) {
+		/// setup database link
+		$conn = DBUtils::setupPDO();
 
 		$dbLog = new Logger('DBLog');
 	//Dump::dump($dbLog);
@@ -103,6 +102,9 @@ if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 
 	}
 	if (Settings::GetPublic( 'Use_DBDataLog')) {
+		/// setup database link
+		$conn = DBUtils::setupPDO();
+
 		//////////////////////////////////////////////////////////////////////////////////////////
 		//create database logging
 		$dbDataLog = new Logger('DBData');

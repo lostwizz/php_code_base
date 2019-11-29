@@ -37,6 +37,8 @@ use \php_base\Utils\HTML\HTML as HTML;
 
 Class Field_Boolean extends Field {
 
+	const TYPE = \PDO::PARAM_BOOL;
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -84,6 +86,27 @@ Class Field_Boolean extends Field {
 				}
 				break;
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	public function givePDOType() {
+		if (empty(self::TYPE)) {
+			return \PDO::PARAM_STR;
+		} else {
+			return self::TYPE;
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return bool
+	 */
+	public function hasFilterValue($data): bool {
+		return ( $data == DB_NO or $data != -1);
 	}
 
 }

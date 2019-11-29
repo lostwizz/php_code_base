@@ -152,11 +152,12 @@ Class Response {
 		$this->$exception = $exception;
 	}
 
+
 	/** -----------------------------------------------------------------------------------------------
 	 * is this a fatal error
 	 * @return type
 	 */
-	public function hadFatalError() {
+	public function hadError() {
 		return (($this->errNum < -1) or $this->shouldThrow);
 	}
 
@@ -173,7 +174,7 @@ Class Response {
 	 * @return boolean
 	 */
 	public function hadRecoverableError() {
-		if ($this->hadFatalError()) {
+		if ($this->hadError()) {
 			return false;
 		} else {
 			return ($this->errNum > 1 );
@@ -188,6 +189,12 @@ Class Response {
 		return $this->message . '(' . $this->errNum . ')';
 	}
 
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
 	public function giveErrorCode() {
 		return $this->errNum;
 	}

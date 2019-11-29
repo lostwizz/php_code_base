@@ -153,7 +153,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 		$r = $this->$action($parent, $username, $password);
 
-		Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username . 'MSG=' . $r->giveMessage());
+		//Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username . 'MSG=' . $r->giveMessage());
+
 		return $r;
 	}
 

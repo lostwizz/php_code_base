@@ -45,11 +45,11 @@
 
 namespace php_base\control;
 
-use \php_base\Utils\Settings as Settings;
+use \php_base\model\Permissions as Permissions;
+use \php_base\Utils\Cache;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
-
-use \php_base\model\Permissions as Permissions;
+use \php_base\Utils\Settings as Settings;
 
 
 /** * **********************************************************************************************
@@ -145,27 +145,60 @@ Class UserRoleAndPermissionsController {
 		if (empty($username)) {
 			return new Response('Username not supplied to LoadPermissions', -6, false, true);
 		}
-		try {
 
-			// setup the user with the extra data in the users table and then get the attributes for that user
-			$this->username = $username;
 
-			$this->GetUSERinfo();
+		if (Cache::exists('UserRoleAndPermissions')) {
+			$this->getCached();
+			return Response::NoError();
+		} else {
 
-			$this->GetUSERAttributes();
+			try {
 
-			$this->GetUSERpermissions();
+				// setup the user with the extra data in the users table and then get the attributes for that user
+				$this->username = $username;
 
-			// clean up things not needed
-			unset($this->arOfRoleIDs);
+				$this->GetUSERinfo();
 
-			//$this->view->dumpState(null, null, true);
-			//$this->view->dumpPermissions();
-		} catch (\Exception $e) {
-			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
+				$this->GetUSERAttributes();
+
+				$this->GetUSERpermissions();
+
+				// clean up things not needed
+				unset($this->arOfRoleIDs);
+
+				$this->setCached();
+
+				//$this->view->dumpState(null, null, true);
+				//$this->view->dumpPermissions();
+			} catch (\Exception $e) {
+				return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
+			}
+
+			return Response::NoError();
 		}
+	}
 
-		return Response::NoError();
+	protected function getCached() {
+		$cacheVal = Cache::pull('UserRoleAndPermissions');
+dump::dump($cacheVal);
+		$this->username = $cacheVal['username'];
+		$this->userID = $cacheVal['userID'];
+		$this->userInfo = $cacheVal['userInfo'];
+		$this->userAttributes = $cacheVal['userAttributes'];
+		$this->userPermissions = $cacheVal['userPermissions'];
+		$this->ArrayOfRoleNames = $cacheVal['ArrayOfRoleNames'];
+	}
+
+	protected function setCached() {
+		$cacheVal = array();
+		$cacheVal['username'] = $this->username;
+		$cacheVal['userID'] = $this->userID;
+		$cacheVal['userInfo'] = $this->userInfo;
+		$cacheVal['userAttributes'] = $this->userAttributes;
+		$cacheVal['userPermissions'] = $this->userPermissions;
+		$cacheVal['ArrayOfRoleNames'] = $this->ArrayOfRoleNames;
+
+		Cache::addOrUpdate('UserRoleAndPermissions', $cacheVal, 900);
 	}
 
 	/** -----------------------------------------------------------------------------------------------

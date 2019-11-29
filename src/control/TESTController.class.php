@@ -33,7 +33,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
-
+use \php_code\utils\Cache as Cache;
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -108,9 +108,34 @@ class TESTController extends \php_base\Control\Controller {
 		$x = Settings::GetRunTime('userPermissionsController')->hasRole('billybob');
 
 
-		Settings::GetRunTimeObject('MessageLog')->addINFO('----------------');
+		//Settings::GetRunTimeObject('MessageLog')->addINFO('----------------');
 
-		$this->demoTableFun();
+		\php_base\Utils\Cache::add( 'test1', array(1=>2, 3=>4), 10);
+//dump::dump( $_SESSION);
+
+$x =\php_base\Utils\Cache::pull('test1');
+
+
+$x =\php_base\Utils\Cache::pull('test1');
+//dump::dump($x);
+
+//dump::dump( $_SESSION);
+
+
+//dump::dump(UserInfoData::$Table->fields['userid']);
+//UserInfoData::$Table->fields['userid']->giveBinding('x');
+//UserInfoData::$Table->fields['username']->giveBinding('c');
+
+
+//		$flds[0]->giveBinding();
+//		$flds[1]->giveBinding();
+//		$flds[2]->giveBinding();
+//		$flds[3]->giveBinding();
+
+
+
+
+//		$this->demoTableFun();
 
 		//$this->view->doWork(  $this  );
 		//return new Resonse( 'ok', 0, true);
@@ -123,6 +148,8 @@ class TESTController extends \php_base\Control\Controller {
 //	}
 
 	public function demoTableFun() {
+
+
 		//
 //
 //		echo '<form method=post>';
@@ -134,7 +161,7 @@ class TESTController extends \php_base\Control\Controller {
 //		echo '</table>';
 //		echo '</form>';
 
-dump::dump($this->payload);
+//dump::dump($this->payload);
 
 		echo HTML::FormOpen('tableFun');
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'test');
@@ -146,7 +173,7 @@ dump::dump($this->payload);
 		 $this->filterData($d);
 		//dump::dumpLong($d);
 		 $sortAr= $this->processPassedSort();
-dump::dumpLong($sortAr)	;
+//dump::dumpLong($sortAr)	;
 		 $filter = $this->processPassedFilter();
 		echo UserInfoData::$Table->showTable( $d, $sortAr, $filter);
 		echo HTML::FormClose();
@@ -155,6 +182,7 @@ dump::dumpLong($sortAr)	;
 	public function processPassedSort() : ?array{
 		$ar = array();
 		$flds = UserInfoData::$Table->giveFields();
+
 
 		if (!empty( $this->payload['sortAsc']) and  is_array($this->payload['sortAsc']) ) {
 			foreach ($flds as $fld) {

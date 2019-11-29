@@ -36,6 +36,8 @@ use php_base\Utils\DatabaseHandlers\Field as Field;
 
 Class Field_Text extends Field {
 
+	const TYPE = \PDO::PARAM_STR;
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -52,6 +54,45 @@ Class Field_Text extends Field {
 	 */
 	public function giveHTMLOutput(string $value): string {
 		return $value;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	public function givePDOType() {
+		if (empty(self::TYPE)) {
+			return \PDO::PARAM_STR;
+		} else {
+			return self::TYPE;
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return string
+	 */
+	public function validatField($data): string {
+		$msg = array();
+		if (empty($data)) {
+			$msg[] = $this->giveAttrib('prettyName');
+		}
+		switch ($this->giveAttrib('subType')) {
+			case SUBTYPE_PHONENUM:
+				if (preg_match('/[^0-9#@\-()x ]/', $data) > 0) {
+					$msg[] = $this->get_attribute('prettyName') . ': Only numbers, #-()x allowed';
+				}
+				break;
+			case SUBTYPE_POSTALCODE:
+				if (preg_match("/^[a-zA-Z][0-9][a-zA-Z] ?[0-9][a-zA-Z][0-9]$/", $data) == 0) {
+					$msg[] = $this->get_attribute('prettyName') . ': Format Error';
+				}
+
+				break;
+			default:
+				break;
+		}
 	}
 
 }

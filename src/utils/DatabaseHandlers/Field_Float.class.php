@@ -60,6 +60,8 @@ use php_base\Utils\DatabaseHandlers\Field as Field;
 
 Class Field_Float extends Field {
 
+	const TYPE = \PDO::PARAM_STR;
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -94,6 +96,18 @@ Class Field_Float extends Field {
 		$r .= '</div>';
 
 		return $r;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	public function givePDOType() {
+		if (empty(self::TYPE)) {
+			return \PDO::PARAM_STR;
+		} else {
+			return self::TYPE;
+		}
 	}
 
 }

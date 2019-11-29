@@ -144,6 +144,24 @@ class Table {
 		$this->fields[$fieldName] = new \php_base\Utils\DatabaseHandlers\Field_Boolean($fieldName, $attribs);
 	}
 
+
+
+
+
+
+
+	public function PrepareWhereClause( ?array $arWhereClause = null) : string{
+		if ( empty($arWhereClause) or !is_array($arWhereClause)){
+			return '1=1';
+		}
+		$whereResult = array();
+		foreach ($arWhereClause as $fld => $value) {
+
+		}
+	}
+
+
+
 	public function giveFieldNamesList(): string {
 		$flds = $this->giveField();
 		$s = implode(', ', $flds);

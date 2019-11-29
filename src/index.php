@@ -29,19 +29,23 @@
 define('DS', DIRECTORY_SEPARATOR);
 //define ('DIR', 'p:' . DS . 'Projects' . DS . 'MikesCommandAndControl2' . DS . 'src' . DS );
 if (strripos(realpath('.'), 'src') < 1) {
-	define('DIR', realpath('..') . DS . 'src' . DS);
+	define('DIR', realpath('..') . \DS . 'src' . \DS);
 } else {
-	define('DIR', realpath('.') . DS);
+	define('DIR', realpath('.') . \DS);
 }
 
-include_once( DIR . 'autoload.php');
+include_once( \DIR . 'autoload.php');
 
 // set some usefull usings
-use \php_base\Utils\Settings as Settings;
+
+//use \php_base\Authenticate as Authenticate;
+
+
+use \php_base\Resolver as Resolver;
+use \php_base\Utils\Cache;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\MessageLog as MessageLog;
-//use \php_base\Authenticate as Authenticate;
-use \php_base\Resolver as Resolver;
+use \php_base\Utils\Settings as Settings;
 
 //use \php_base\utils\myCryption\myCryption as myCryption;
 //use \php_base\Utils\HTML\HTML as HTML;
@@ -58,7 +62,7 @@ use \php_base\Resolver as Resolver;
 //
 
 
-include_once( DIR . 'SetupSystemDetail.php');
+include_once( \DIR . 'SetupSystemDetail.php');
 
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running
@@ -74,13 +78,15 @@ $response = $resolver->doWork();
 /**
  * handle the after effects
  */
-if ($response->hadFatalError() and $response->failNoisily()) {
+if ($response->hadError() and $response->failNoisily()) {
 	echo '<h2 class="responseError" >' . PHP_EOL;
 	echo 'Fatal Error: ' . $response->toString();
 	echo '</h2>' . PHP_EOL;
 	echo '<BR><BR>Exiting!';
 }
 
+
+Cache::CleanupBeforSessionWrite();
 
 session_write_close();
 //Dump::dump( $_SESSION); //dumpLong

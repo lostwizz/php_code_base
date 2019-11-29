@@ -72,6 +72,8 @@ Class Field {
 	const SUBTYPE_HIDDEN = 'HIDDEN';
 	const SUBTYPE_SELECTLIST = 'SELECT';
 	const SUBTYPE_PHONENUM = 'PHONENUM';
+	const SUBTYPE_POSTALCODE = 'POSTALCODE';
+	const SUBTYPE_FLAGS = 'FLAGS';
 	const SUBTYPE_MONEY = 'MONEY';
 	const SUBTYPE_YESNO = 'YESNO';
 	const SUBTYPE_CHECKMARK = 'CHECKMARK';
@@ -81,6 +83,7 @@ Class Field {
 	const SUBTYPE_DATENOTIME = 'DATENOTIME';
 	const SUBTYPE_TIMENODATE = 'TIMENODATE';
 	const SUBTYPE_DATETIME_RFC822 = 'DATETIME_RFC822';
+	const SUBTYPE_INT_GREATER_THAN_ZERO = 'SUBTYPE_INT_GREATER_THAN_ZERO';
 
 	public $fieldName;
 	public $attribs = array();
@@ -167,6 +170,10 @@ Class Field {
 		return $r;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
 	public function giveHTMLOptions(): ?array {
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
@@ -177,6 +184,11 @@ Class Field {
 		return $r;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $attribName
+	 * @return boolean
+	 */
 	public function giveAttrib(string $attribName) {
 		if (array_key_exists($attribName, $this->attribs)) {
 			return $this->attribs[$attribName];
@@ -185,6 +197,12 @@ Class Field {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $attribName
+	 * @param type $defaultValue
+	 * @return type
+	 */
 	public function giveAttribWithDefault(string $attribName, $defaultValue) {
 		$r = $this->giveAttrib($attribName);
 		if ($r == false) {
@@ -193,17 +211,20 @@ Class Field {
 		return $r;
 	}
 
-	public function givePrettyName(): string{
-		return $this->giveAttribWithDefault( 'prettyName',$this->fieldName );
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return string
+	 */
+	public function givePrettyName(): string {
+		return $this->giveAttribWithDefault('prettyName', $this->fieldName);
 	}
 
-
-
-
-
-
-	//<Input type="TEXT"  name="ACTION_PAYLOAD[entered_username]" maxlength="30" size="30" >
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param string $value
+	 * @return string
+	 */
 	public function giveHTMLInput(string $name, string $value = ''): string {
 		$arStyle = $this->giveHTMLstyle();
 		$arOptions = $this->giveHTMLOptions();
@@ -221,12 +242,124 @@ Class Field {
 		return $r;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $value
+	 * @return string
+	 */
 	public function giveHTMLOutput(string $value): string {
 		return $value;
 	}
 
-//	public static function dump(){
-//		$refl = new \ReflectionClass(__CLASS__);
-//		return $refl->getConstants();
-//	}
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return bool
+	 */
+	public function hasFilterValue($data): bool {
+		return (!empty($data) and $data != -1);
+	}
+
+	public function generateFilterWhereClause($data): string {
+		switch ($this->giveAttrib('subType')) {
+			case self::SUBTYPE_FLAGS:
+			case self::SUBTYPE_PHONENUM:
+			case self::SUBTYPE_POSTALCODE:
+				if (strncmp($data, '!', 1) == 0) {
+					return $this->fieldName . " NOT LIKE '%" . substr($data, 1) . "%'";
+				} else {
+					return $this->fieldName . " LIKE '%" . substr($data, 1) . "%'";
+				}
+				break;
+			default:
+				return $fldName . ' = ' . $this->giveQuotedWhere($data);
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $filter
+	 * @return string
+	 */
+	public function giveFilterBox(string $filter): string {
+		switch ($this->giveAttrib('subType')) {
+			case self::SUBTYPE_FLAGS:
+				$arOptions = array('size' => $this->giveAttribWithDefault('width', 10),
+					'maxlength' => $this->giveAttribWithDefault('length', 15)
+				);
+				break;
+			default:
+				$arOptions = array('size' => $this->giveAttribWithDefault('width', 15),
+					'maxlength' => $this->giveAttribWithDefault('length', 255)
+				);
+				break;
+		}
+		$s = HTML::Text(Resolver::REQUEST_PAYLOAD . '[filter][' . $fldName . ']', $filter);
+		$s .= HTML::Open('span', 'misc_small_text');
+		$s .= '(use ! for NOT IN)';
+		$s .= HTML::Close('span');
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	public function givePDOType() {
+		if (empty(self::TYPE)) {
+			return \PDO::PARAM_STR;
+		} else {
+			return self::TYPE;
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return type
+	 */
+	public function giveQuotedWhere($data) {
+		return "'" . $data . "'";
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return type
+	 */
+	public function giveBinding($data) {
+		//dump::dump($this->givePDOType());
+		return $this->givePDOType();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @param type $fldName
+	 * @return array
+	 */
+	public function validateField($data): array {
+		$msg = array();
+		if (empty($data)) {
+			$msg[] = $this->giveAttrib('prettyName') . ': is Empty';
+		}
+		switch ($this->giveAttrib('subType')) {
+			case self::SUBTYPE_PHONENUM:
+				if (preg_match('/[^0-9#@\-()x ]/', $data) > 0) {
+					$msg[] = $this->giveAttribWithDefault('prettyName', $this->fieldName) . ': Only numbers, #-()x allowed';
+				}
+				break;
+			case self::SUBTYPE_POSTALCODE:
+				if (preg_match("/^[a-zA-Z][0-9][a-zA-Z] ?[0-9][a-zA-Z][0-9]$/", $data) == 0) {
+					$msg[] = $this->giveAttribWithDefault('prettyName', $this->fieldName) . ': Format Error';
+				}
+				break;
+			case self::SUBTYPE_FLAGS:
+			default:
+				$msg[] = $this->giveAttrib('subType');
+				break;
+		}
+		return $msg;
+	}
+
 }

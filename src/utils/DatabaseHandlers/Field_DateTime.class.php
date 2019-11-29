@@ -36,6 +36,8 @@ use php_base\Utils\DatabaseHandlers\Field as Field;
 
 Class Field_DateTime extends Field {
 
+	const TYPE = \PDO::PARAM_STR;
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -63,6 +65,18 @@ Class Field_DateTime extends Field {
 				return date_format($value, 'g:i:s');
 			default:
 				return date_format($value, 'd-M-Y g:i:s');
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	public function givePDOType() {
+		if (empty(self::TYPE)) {
+			return \PDO::PARAM_STR;
+		} else {
+			return self::TYPE;
 		}
 	}
 

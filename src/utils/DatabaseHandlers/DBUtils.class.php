@@ -69,13 +69,18 @@ abstract Class DBUtils {
 		if (!self::checkPDOSettings()) {
 			return false;
 		}
-		$conn = Settings::getRunTime('PDO_Connection');
 
-		if ($conn == false) {
+		if ( Cache::exists('PDO_Connection')) {
+			$conn = Cache::pull('PDO_Connection');
+			Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn from cache');
+		} else {
+
+		//if ($conn == false) {
 			$conn = self::setupNewPDO();
-			self::EndWriteOne();
+			//self::EndWriteOne();
 
-			Settings::setRunTime('PDO_Connection', $conn);
+			Cache::add( 'PDO_Connection', $conn, 600);
+			Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn new create and add to cache');
 		}
 		return $conn;
 	}
@@ -108,7 +113,6 @@ abstract Class DBUtils {
 	 * @throws \PDOException
 	 */
 	public static function setupNewPDO(): \PDO {
-		//$conn = false;
 		$dsn = Settings::GetProtected('DB_DSN');
 		$options = Settings::GetProtected('DB_DSN_OPTIONS');
 		try {
