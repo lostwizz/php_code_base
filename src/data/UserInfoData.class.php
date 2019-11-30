@@ -168,6 +168,7 @@ class UserInfoData extends data {
 		$params = array(':password' => ['val' => $newPW, 'type' => \PDO::PARAM_STR],
 			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT]
 		);
+
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
 		return ($data != null);
 	}
@@ -186,13 +187,12 @@ class UserInfoData extends data {
 		;
 
 		$now = date('d-M-Y g:i:s');
-
-		Settings::GetRunTimeObject('MessageLog')->addInfo('DT=' . $now);
-
+		//Settings::GetRunTimeObject('MessageLog')->addInfo('DT=' . $now);
 		$params = array(':ip' => ['val' => $newIP, 'type' => \PDO::PARAM_STR],
 			':last_logon' => ['val' => $now, 'type' => \PDO::PARAM_STR],
 			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT]
 		);
+
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
 		return ($data ==1);
 	}
@@ -239,6 +239,7 @@ class UserInfoData extends data {
 		$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR],
 			':username' => ['val' => $username, 'type' => \PDO::PARAM_STR]
 		);
+
 		$data = DBUtils::doDBDelete($sql, $params);
 		return ($data == 1);
 	}

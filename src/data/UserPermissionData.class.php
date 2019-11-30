@@ -69,18 +69,18 @@ class UserPermissionData {
 	 * @param type $listOfRoleIDs
 	 */
 	public function __construct($listOfRoleIDs) {
-		self::doReadFromDatabaseForRoles($listOfRoleIDs);
-
-//dump::dump($this->permissionList);
+		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $listOfRolesIDs
 	 */
-	protected function doReadFromDatabaseForRoles($listOfRolesIDs) {
+	protected  function doReadFromDatabaseForRoles( array $listOfRolesIDs) {
+		if (empty( $listOfRolesIDs)){
+			return;
+		}
 		$ids = implode(', ', $listOfRolesIDs);
-
 			$sql = 'SELECT id
 						,roleId
 						,UPPER(process) as process

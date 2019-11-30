@@ -145,7 +145,14 @@ class Table {
 	}
 
 
+	public function dump():void {
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
+		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		echo '<BR>';
 
+		//  TODO: put some code here if there is useful info that doesnt show in a dump::dump($this)
+
+	}
 
 
 

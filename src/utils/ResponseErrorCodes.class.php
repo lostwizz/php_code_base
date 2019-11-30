@@ -67,7 +67,8 @@ abstract class ResponseErrorCodes {
 		-19 => 'missing username for new account',
 		-20 => 'Missing password for new account',
 		-21 => 'Missing email address for new account',
-		-22 => '',
+		-22 => 'LDAP not loaded in PHP - cant login' ,
+		-23 => '',
 		-9999 => 'testing error',
 		-999999 => 'DODO'
 	);

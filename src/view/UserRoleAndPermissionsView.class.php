@@ -84,6 +84,9 @@ class UserRoleAndPermissionsView extends View {
 		}
 		echo HTML::HR();
 		echo '<pre class="UserStateDump" >';
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
+		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		echo '<BR>';
 
 //		print_r($arRoleNames);
 //		print_r($arOfRoleIds);
@@ -101,19 +104,26 @@ class UserRoleAndPermissionsView extends View {
 	 * sort the permissions array
 	 */
 	protected function sortPermissionsArray( ){
-		usort($this->parent->userPermissions,
-			function ($a, $b) {
-			$sA = $this->parent->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
-			$sB = $this->parent->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
-			return $sA <=> $sB;
-		});
+		if (!empty($this->parent->userPermissions)){
+			usort($this->parent->userPermissions,
+				function ($a, $b) {
+				$sA = $this->parent->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
+				$sB = $this->parent->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
+				return $sA <=> $sB;
+			});
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * show a easily readable tabel with the permissions
 	 */
 	public function dumpPermissions() {
-		$bt = debug_backtrace();
+		//echo '--- ' . get_class() . '-dumpPermissions- -------------';
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
+		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		echo '<BR>';
+
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
 		$this->sortPermissionsArray();
 		echo '<table border=1>';
@@ -125,15 +135,17 @@ class UserRoleAndPermissionsView extends View {
 		echo '<th>', 'FIELD', '</Th>';
 		echo '<th>', 'PERMISSION', '</Th>';
 		echo '</tr>';
-		foreach ($this->parent->userPermissions as $perm) { /**/
-			echo '<tr>';
-			echo '<td>', $perm['ROLEID'], ': ', $this->parent->ArrayOfRoleNames[$perm['ROLEID']], '</TD>';
-			echo '<td>', $perm['PROCESS'], '</TD>';
-			echo '<td>', $perm['TASK'], '</TD>';
-			echo '<td>', $perm['ACTION'], '</TD>';
-			echo '<td>', $perm['FIELD'], '</TD>';
-			echo '<td>', $perm['PERMISSION'], '</TD>';
-			echo '</tr>';
+		if (!empty($this->parent->userPermissions )){
+			foreach ($this->parent->userPermissions as $perm) { /**/
+				echo '<tr>';
+				echo '<td>', $perm['ROLEID'], ': ', $this->parent->ArrayOfRoleNames[$perm['ROLEID']], '</TD>';
+				echo '<td>', $perm['PROCESS'], '</TD>';
+				echo '<td>', $perm['TASK'], '</TD>';
+				echo '<td>', $perm['ACTION'], '</TD>';
+				echo '<td>', $perm['FIELD'], '</TD>';
+				echo '<td>', $perm['PERMISSION'], '</TD>';
+				echo '</tr>';
+			}
 		}
 		echo '</table>';
 		echo '<font size="-1">';

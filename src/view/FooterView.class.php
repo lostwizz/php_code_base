@@ -52,7 +52,7 @@ class FooterView extends View {
 		echo '<div align=right class="footer_username">' . PHP_EOL;
 		//echo Settings::GetRunTime('userPermissions')['USERNAME'];
 		//dump::dump(Settings::GetRunTime('userPermissions'));
-		echo Settings::GetRunTime('Currently Logged In User');
+		echo 'Logged in as: ' , Settings::GetRunTime('Currently Logged In User');
 		echo '</div>'. PHP_EOL;
 		echo '<footer>'. PHP_EOL;
 		echo '<Br>--footer--<Br>'. PHP_EOL;

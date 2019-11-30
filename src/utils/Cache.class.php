@@ -51,11 +51,9 @@ Abstract class Cache {
 	 * @return bool
 	 */
 	public static function add(string $itemName, $data, int $secondToTimeout = DEFAULTTIMEOUTSECONDS): bool {
-
-//		if ( ! self::doesSerializeWorkOnThisObject($data)) {
-//			echo 'Sorry this object does not serialize';
-//			return false;
-//		}
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
 
 		$now = (new \DateTime('now'))->getTimestamp();
 		$timeoutStamp = $now + $secondToTimeout;
@@ -75,6 +73,9 @@ Abstract class Cache {
 	 * @return bool
 	 */
 	public static function addOrUpdate( string $itemName, $data, int $secondToTimeout = DEFAULTTIMEOUTSECONDS): bool {
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
 		$now = (new \DateTime('now'))->getTimestamp();
 		$timeoutStamp = $now + $secondToTimeout;
 //		if ( ! self::doesSerializeWorkOnThisObject($data)) {
@@ -94,6 +95,10 @@ Abstract class Cache {
 	 * @return type
 	 */
 	public static function pull($itemName) {
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return null;
+		}
+
 		$now = (new \DateTime('now'))->getTimestamp();
 
 		if ( !empty( $_SESSION['CACHE'][$itemName])  and $_SESSION['CACHE'][$itemName]['Expires'] > $now) {
@@ -109,6 +114,10 @@ Abstract class Cache {
 	 * @return boolean
 	 */
 	public static function delete(sting $itemName){
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return true;
+		}
+
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
 			unset ($_SESSION['CACHE'][$itemName]);
 			return true;
@@ -122,6 +131,10 @@ Abstract class Cache {
 	 * @return bool
 	 */
 	public static function changeExpires( int $secondsFromNow = DEFAULTTIMEOUTSECONDS): bool{
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
+
 		$now = (new \DateTime('now'))->getTimestamp();
 		$timeoutStamp = $now + $secondsFromNow;
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
@@ -135,6 +148,10 @@ Abstract class Cache {
 	 * @return bool
 	 */
 	public static function exists( string $itemName) : bool {
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
+
 		return  ( !empty( $_SESSION['CACHE'][$itemName]));
 	}
 
@@ -144,6 +161,10 @@ Abstract class Cache {
 	 * @return int
 	 */
 	public static function secondUntilExpire(string $itemName): int{
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return -1;
+		}
+
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
 			$then = $_SESSION['CACHE'][$itemName]['Expires'];
 			$now = (new \DateTime('now'))->getTimestamp();
@@ -158,6 +179,9 @@ Abstract class Cache {
 	 * @return bool
 	 */
 	public static function doesSerializeWorkOnThisObject($data) :bool {
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
 
 		if ( $data instanceof \PDO ) {
 			return false;
@@ -178,7 +202,7 @@ Abstract class Cache {
 	 * @return void
 	 */
 	public static function CleanupBeforSessionWrite(): void{
-		dump::dumpLong( $_SESSION);
+		//dump::dumpLong( $_SESSION);
 		if ( !empty( $_SESSION) and !empty($_SESSION['CACHE'] )) {
 			foreach ($_SESSION['CACHE'] as $key => $value) {
 				if ( !self::doesSerializeWorkOnThisObject($value['Data'])){
@@ -186,7 +210,7 @@ Abstract class Cache {
 				}
 			}
 		}
-		dump::dumpLong( $_SESSION);
+		//dump::dumpLong( $_SESSION);
 	}
 
 

@@ -580,6 +580,17 @@ abstract class Dump {
 	protected static function BeautifyBackTrace($data) {
 		$s = '<font color=#0000FF>';
 		$s .= $data->backTrace;
+
+		/*
+		self::dump( $data->backTrace);
+		foreach ($data->backTrace as $key => $value) {
+			$s .= $value['file'];
+			$s .= $value['line'];
+			$s .= $value['function'];
+			$s .= $value['class'];
+
+		}
+*/
 		$s .= '</font>' . "\n";
 		return $s;
 	}
@@ -762,10 +773,15 @@ abstract class BackTraceProcessor {
 			$output .= '(' . $btFunc['function'] . ')';
 		}
 		$args = array();
-		foreach ($btFunc['args'] as $anArg) {
-			$args[] = self::ProcessBTArgs($anArg);
+
+		if ( false) {   /** simplify the backtrace by ignoring the "Arguments" and/or variables */
+			foreach ($btFunc['args'] as $anArg) {
+
+				$args[] = self::ProcessBTArgs($anArg);
+			}
+			$output .= implode(', ', $args);
 		}
-		$output .= implode(', ', $args);
+
 		$output .= "\n";
 		return $output;
 	}

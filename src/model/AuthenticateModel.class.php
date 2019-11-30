@@ -39,15 +39,19 @@
 
 namespace php_base\Model;
 
-use \php_base\Utils\Settings as Settings;
+use \php_base\data\UserAttributeData;
+use \php_base\data\UserInfoData;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Utils as Utils;
+use \Swoole\MySQL\Exception;
+//use \Swoole\MySQL\Exception;
 
 /** * **********************************************************************************************
  * business logic for the authentication
  */
-class AuthenticateModel extends Model {
+class AuthenticateModel extends \php_base\Model\Model {
 	/*
 	 * the current user
 	 */
@@ -84,11 +88,18 @@ class AuthenticateModel extends Model {
 	 * @param type $password
 	 * @return Response
 	 */
-	public function tryToLogin(string $username, string $password, $userInfoData): Response {
+	public function tryToLogin(?string $username, ?string $password, ?UserInfoData $userInfoData): Response {
 		if ( $this->isGoodAuthentication()) {
 			Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 			return Response::NoError();
 		}
+		if (empty( $username)) {
+			return Response::GenericError();
+		}
+		if( empty( $password)) {
+			return Response::GenericError();
+		}
+
 		$method = 'LogonMethod_' . $userInfoData->UserInfo['METHOD'];
 
 		//Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method );
@@ -99,8 +110,6 @@ class AuthenticateModel extends Model {
 			if ($response->giveErrorCode() == 0) {
 				Settings::SetRunTime('Currently Logged In User', $username);
 				$_SESSION['Authenticated_username'] = $username;
-				//$now = new \DateTime('now');
-				//$_SESSION['Authenticated_ExpireTime'] = $now->format( 'u'); //d-M-Y H:i:s' ); //date('d-M-Y g:i:s');
 				$exp = (new \DateTime('now'))->getTimestamp();
 				$_SESSION['Authenticated_ExpireTime'] =	(new \DateTime('now'))->getTimestamp();
 //dump::dump($_SESSION);
@@ -122,7 +131,7 @@ class AuthenticateModel extends Model {
 		//Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on');
 
 		if (empty( $_SESSION['Authenticated_username'])) {
-			Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - NO not in session');
+			//Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - NO not in session');
 			return false;
 		}
 		$now = (new \DateTime('now'))->getTimestamp();
@@ -134,7 +143,7 @@ class AuthenticateModel extends Model {
 			return false;
 		}
 		//fall through so it should be good to go
-		Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on - YES');
+		Settings::GetRunTimeObject('MessageLog')->addCritical( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
 		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 
 		return true;
@@ -255,42 +264,6 @@ class AuthenticateModel extends Model {
 		return $r;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param string $username
-	 * @param string $password
-	 * @param string $email
-	 * @param string|null $primaryRole
-	 * @return Response
-	 */
-//	public function doNewAccountInfo( string $username, string $password, string $email, ?string $primaryRole =null): Response {
-//		if (empty($username)) {
-//			return new Response('missing username for new account', -19);
-//		}
-//		if (empty($password)) {
-//			return new Response('Missing password for new account', -20);
-//		}
-//		if (empty($email)) {
-//			return new Response('Missing email address for new account', -21);
-//		}
-//
-//	//	$permController = new \php_base\control\UserRoleAndPermissionsController();
-//				// not set yet so not relevan even if set //Settings::GetRunTime('userPermissionsController');
-////dump::dump( $permController);
-//		$UserInfoData = new \php_base\data\UserInfoData();
-//		//$rInsert = $UserInfoData->doInsertNewAccount($username, $password, $email);
-//
-//
-//		$pwd = password_hash($password, PASSWORD_DEFAULT);
-//
-//		$UserInfoData->doInsertNewAccount($username, $pwd, $email, $primaryRole);
-//		return Response::NoError();
-//	}
-
-
-
-
-
 
 
 	/** -----------------------------------------------------------------------------------------------
@@ -303,6 +276,9 @@ class AuthenticateModel extends Model {
 	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
 		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful LOGON of ' . $username . ' using DB_TABLE password');
+
+			self::DoFinshLoginUpdatebyName( $username, $userInfoData);
+
 			return Response::NoError();
 		}
 		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
@@ -322,11 +298,16 @@ class AuthenticateModel extends Model {
 
 		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
+
+			self::DoFinshLoginUpdatebyName( $username, $userInfoData);
+
 			return Response::NoError();
 		}
 		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful Hardcoded password for: ' . $username);
 		return new Response('HardCoded password failed', -9);
 	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -335,11 +316,99 @@ class AuthenticateModel extends Model {
 	 * @param type $userInfoData
 	 * @return Response
 	 */
-	public function LogonMethod_LDAP_CITY(string $username, string $password, $userInfoData): Response {
+	public function LogonMethod_LDAP(string $username, string $password, $userInfoData): Response {
+		if (!extension_loaded('LDAP')) {
+			return new Response('LDAP not loaded in PHP - cant login ', -22);
+		}
+		try {
+			$ldap_conn = @\ldap_connect("city.local");
+			if (!$ldap_conn){
+				return Response::GenericError();
+			}
 
-		return Response::TODO_Error();
+			$user_connect = @\ldap_bind($ldap_conn, 'city\\' . $username, $password);
+			if (!$user_connect) {
+				return Response::GenericError();
+			}
+
+			if (Utils::startsWith( strtolower($username), 'admin')){
+				$dn = "OU=Admins,DC=CITY,DC=local";
+			} else {
+				$dn = "OU=City Users,DC=CITY,DC=local";
+			}
+			$attributes = array("sn", "givenname",  "mail", "telephonenumber", "cn", "title", "department", "mobile");
+			///////, "memberOf");
+
+			$result = @\ldap_search($ldap_conn, $dn, "sAMAccountname=" . $username, $attributes);
+			if (!$result) {
+				return Response::GenericError();
+			}
+
+			$entries = @\ldap_get_entries($ldap_conn, $result);
+			if (!$entries or  empty( $entries['count']) or  $entries['count'] !==1) {
+				return Response::GenericError();
+			}
+
+			////dump::dump($entries);
+
+			@\ldap_close( $ldap_conn);
+			if ( !empty( $entries) and !empty( $entries[0])) {
+				$who = (empty($entries[0]['cn'][0]) ? '' : $entries[0]['cn'][0]);
+				$surname = (empty($entries[0]['sn'][0]) ? '' : $entries[0]['sn'][0]);
+				$telephonenumber = (empty($entries[0]['telephonenumber'][0]) ? '' : $entries[0]['telephonenumber'][0]);
+				$givenname = (empty($entries[0]['givenname'][0]) ? '' : $entries[0]['givenname'][0]);
+				$email = (empty($entries[0]['mail'][0]) ? '' : $entries[0]['mail'][0]);
+				$title = (empty($entries[0]['title'][0]) ? '' : $entries[0]['title'][0]);
+				$department = (empty($entries[0]['department'][0]) ? '' : $entries[0]['department'][0]);
+				$mobile = (empty($entries[0]['mobile'][0]) ? '' : $entries[0]['mobile'][0]);
+				$groups = (empty($entries[0]['memberOf'])  ? '' : $entries[0]['memberOf']);
+
+
+
+				$userid = $userInfoData->getUserID();
+
+				UserAttributeData::doInserOrUpdateAttributeForUserID( $userid, 'eMailAddress', $email );
+				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'GivenName', $givenname );
+				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'Surname', $surname );
+				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'PhoneNum', $telephonenumber );
+				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'Title', $title );
+				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'Department', $department );
+				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'CellNum', $mobile );
+
+			}
+			self::DoFinshLoginUpdate( $userid);
+
+//dump::dumpLong( $entries)			;
+		} catch (Exception $ex) {
+			throw new Exception('unable to connect to ldap');
+		}
+		return Response::NoError();
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @return void
+	 */
+	public static function DoFinshLoginUpdate( int $userid) : void{
+		$prettyNow = (new \DateTime('now'))->format( 'Y-m-d G:i:s');
 
+		$ip = \filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+		UserInfoData::doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param UserInfoData|null $userInfoData
+	 */
+	public static function DoFinshLoginUpdatebyName( string $username, ?UserInfoData $userInfoData){
+		if (!empty( $userInfoData) ){
+			$userid = $userInfoData->getUserID();
+			if ( !empty( $userid)) {
+				self::DoFinshLoginUpdate( $userid );
+			}
+		}
+	}
 
 }

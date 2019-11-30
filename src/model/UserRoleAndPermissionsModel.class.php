@@ -133,11 +133,15 @@ Class UserRoleAndPermissionsModel extends Model {
 	public function hasRolePermission(string $roleWanted): bool {
 		$roleWanted = trim($roleWanted);
 		if (\in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('has role wanted: ' . $roleWanted);
+			if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
+				Settings::GetRunTimeObject('MessageLog')->addAlert('has role wanted: ' . $roleWanted);
+			}
 			Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has role: ' . $roleWanted);
 			return true;
 		} else {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have role wanted: ' . $roleWanted);
+			if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
+				Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have role wanted: ' . $roleWanted);
+			}
 			Settings::GetRuntimeObject('SecurityLog')->addAlert(Settings::GetRunTime('Currently Logged In User') . ' Does NOT have role: ' . $roleWanted);
 			return false;
 		}
@@ -176,15 +180,23 @@ Class UserRoleAndPermissionsModel extends Model {
 		$action = strtoupper($action);
 		$field = strtoupper($field);
 
-		foreach ($this->controller->userPermissions as $value) {
-			if ($this->checkRight($value, $wantedPermission, $process, $task, $action, $field)) {
-				Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
-				Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has permission: ' . $s);
+		if (!empty($this->controller->userPermissions)) {
+			foreach ($this->controller->userPermissions as $value) {
+				if ($this->checkRight($value, $wantedPermission, $process, $task, $action, $field)) {
+					if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
+						Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
+					}
+					Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has permission: ' . $s);
 
-				return true;
+					return true;
+				}
 			}
+		} else {
+			return true;
 		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have permission wanted: ' . $s);
+		if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
+			Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have permission wanted: ' . $s);
+		}
 		Settings::GetRuntimeObject('SecurityLog')->addAlert(Settings::GetRunTime('Currently Logged In User') . ' Does NOT have permission: ' . $s);
 		return false;
 	}

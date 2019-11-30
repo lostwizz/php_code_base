@@ -149,7 +149,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 //			$action = 'Need_login';
 //		}
 
-		Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username);
+		//Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username);
 
 		$r = $this->$action($parent, $username, $password);
 
@@ -185,14 +185,14 @@ class AuthenticateController extends \php_base\Control\Controller {
 	protected function Submit_Logon($parent, $username = null, $password = null): Response {
 
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-dump::dump($this->UserInfoData);
+//dump::dump($this->UserInfoData);
 
 		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
 			$r = $this->model->tryToLogin($username, $password, $this->UserInfoData);
 		} else {
 			$r = new Response('Username does not exist', -10);
 		}
-dump::dump( $r);
+//dump::dump( $r);
 		return $r;
 
 /////		\php_base\control\UserRoleAndPermissionsController::tryToLogin( $username, $password);

@@ -148,8 +148,8 @@ class Resolver {
 			return $r;
 		}
 
-		Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got a true');
-		Settings::GetRuntimeObject('FileLog')->addNotice('resolver got a true');
+		//Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got a true');
+		//Settings::GetRuntimeObject('FileLog')->addNotice('resolver got a true');
 		return $r;
 	}
 

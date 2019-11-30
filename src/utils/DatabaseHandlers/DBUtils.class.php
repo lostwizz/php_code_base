@@ -116,15 +116,51 @@ abstract Class DBUtils {
 		$dsn = Settings::GetProtected('DB_DSN');
 		$options = Settings::GetProtected('DB_DSN_OPTIONS');
 		try {
-			$conn = new \PDO($dsn, Settings::GetProtected('DB_Username'), Settings::GetProtected('DB_Password'), $options
-			);
+			$conn = new \PDO($dsn, Settings::GetProtected('DB_Username'), Settings::GetProtected('DB_Password'), $options);
 			$conn->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_UPPER);
 			$conn->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+			$conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		} catch (\PDOException $e) {
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
 		}
 		return $conn;
 	}
+
+
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $sql
+	 * @param array $params
+	 * @return bool
+	 * @throws \PDOException
+	 * @throws \Exception
+	 */
+	public static function doExec( string $sql, array $params = null) :bool {
+		try {
+			$stmt =  $conn->prepare($sql);
+			self::doBinding($params, $stmt);
+
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump($sql, 'SQL',true);
+				dump::dump($params);
+			}
+
+			$result = $stmt->execute();
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump( $result);
+			}
+
+		} catch (\PDOException $e) {
+			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\Exception $e) {
+			throw new \Exception($e->getMessage(), (int) $e->getCode());
+		}
+		return $result;
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -136,16 +172,22 @@ abstract Class DBUtils {
 	 */
 	public static function doDBSelectSingle(string $sql, array $params = null) {
 
-//Settings::GetRunTimeObject('MessageLog')->addEmergency($sql);
-//Settings::GetRunTimeObject('MessageLog')->addEmergency($params);
-
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
+
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump($sql, 'SQL',true);
+				dump::dump($params);
+			}
+
 			self::doBinding($params, $stmt);
 			$r = $stmt->execute();
 
 			$data = $stmt->fetchAll();
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump( $data);
+			}
 
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);
 			$stmt->closeCursor();
@@ -170,20 +212,21 @@ abstract Class DBUtils {
 	 */
 	public static function doDBSelectMulti(string $sql, array $params = null) {
 		//Settings::GetRunTimeObject('MessageLog')->addEmergency($sql);
-//dump::dump($sql);
-//dump::dump($params);
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
+		if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+			dump::dump($sql, 'SQL',true);
+			dump::dump($params);
+		}
 			//dump::dump($stmt);
 			self::doBinding($params, $stmt);
 			$stmt->execute();
 			$data = $stmt->fetchAll();
-//dump::dump($data);
-
-
-
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump($data);
+			}
 			$stmt->closeCursor();
 			//Settings::GetRunTimeObject('MessageLog')->addCritical($data);
 
@@ -271,14 +314,22 @@ abstract Class DBUtils {
 	 * @throws \Exception
 	 * @throws Exception
 	 */
-	public static function doDBUpdateSingle(string $sql, array $param): bool {
+	public static function doDBUpdateSingle(string $sql, array $params): bool {
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump($sql, 'SQL',true);
+				dump::dump($params);
+			}
 			//dump::dump($stmt);
-			self::doBinding($param, $stmt);
+			self::doBinding($params, $stmt);
 			$r = $stmt->execute();
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump( $r);
+			}
+
 			if ($r != 1) {
 				throw new Exception('did not get the proper number of updates returned');
 			}
@@ -306,12 +357,26 @@ abstract Class DBUtils {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump($sql, 'SQL',true);
+				dump::dump($params);
+			}
+
 			//dump::dump($stmt);
 			self::doBinding($param, $stmt);
 			$conn->beginTransaction();
 			$r = $stmt->execute();
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump( $r);
+			}
+
 			$conn->commit();
-			return $conn->lastInsertId();
+			$last_id = $conn->lastInsertId();
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump( $last_id);
+			}
+
+			return $last_id;
 		} catch (\PDOException $e) {
 //dump::dump($e->getMessage())	;
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
@@ -334,12 +399,19 @@ abstract Class DBUtils {
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump($sql, 'SQL',true);
+				dump::dump($params);
+			}
 
 			//dump::dump($stmt);
 			self::doBinding($param, $stmt);
 			$conn->beginTransaction();
 			$r = $stmt->execute();
 			$conn->commit();
+			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+				dump::dump( $r);
+			}
 			return $r;
 		} catch (\PDOException $e) {
 //dump::dump($e->getMessage())	;

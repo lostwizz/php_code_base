@@ -146,12 +146,13 @@ Class UserRoleAndPermissionsController {
 			return new Response('Username not supplied to LoadPermissions', -6, false, true);
 		}
 
-
 		if (Cache::exists('UserRoleAndPermissions')) {
 			$this->getCached();
+			//$this->view->dumpState(null, null, true);
+			//$this->view->dumpPermissions();
+
 			return Response::NoError();
 		} else {
-
 			try {
 
 				// setup the user with the extra data in the users table and then get the attributes for that user
@@ -180,7 +181,7 @@ Class UserRoleAndPermissionsController {
 
 	protected function getCached() {
 		$cacheVal = Cache::pull('UserRoleAndPermissions');
-dump::dump($cacheVal);
+//dump::dump($cacheVal);
 		$this->username = $cacheVal['username'];
 		$this->userID = $cacheVal['userID'];
 		$this->userInfo = $cacheVal['userInfo'];
@@ -241,22 +242,21 @@ dump::dump($cacheVal);
 	 */
 	protected function GetUSERpermissions(): bool {
 
+
 		// take the list of roles (words i.e. Clerk) and get the role IDs
 		$DataUserRoles = new \php_base\data\UserRoleData($this->ArrayOfRoleNames);
 
 		// now we have an array of Role ids
 		$this->arOfRoleIDs = $DataUserRoles->RoleIDData;
-
 		// now with roleid go and get the permissions related to those role ids
 		$DataUserPermissions = new \php_base\data\UserPermissionData($this->arOfRoleIDs);
-
 		$this->ArrayOfRoleNames = $DataUserRoles->RoleIDnames;
 
 		$this->userPermissions = $DataUserPermissions->permissionList;
 
-
 		/** DEBUG - dump the permissions prettily */
-		//$this->view->dumpPermissions();
+		$this->view->dumpPermissions();
+
 		return (!empty($this->userPermissions));
 	}
 

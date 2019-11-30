@@ -198,4 +198,90 @@ class UserAttributeData extends data {
 		return ($data == 1);
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @param string $attribName
+	 * @param string $attribValue
+	 * @return bool
+	 */
+	public static function doInserOrUpdateAttributeForUserID(int $userid, string $attribName, string $attribValue): bool {
+		$val = self::getByUseridAndAttributeName($userid, $attribName, $attribValue);
+		if (empty($val['ATTRIBUTEVALUE']) and  empty($val['ATTRIBUTENAME']) ) {  // the value might be '' so make it do an update if it is
+			//insert
+			$val2 = self::insertUseridAndAttributeName($userid, $attribName, $attribValue);
+		} else {
+			//update
+			$val2 = self::updateByUseridAndAttributeName($userid, $attribName, $attribValue);
+		}
+		return $val2;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @param string $attribName
+	 * @return type
+	 */
+	public static function getByUseridAndAttributeName(int $userid, string $attribName) {
+		$sql = 'SELECT Id
+						,UserId
+						,AttributeName
+						,AttributeValue
+					FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' WHERE  UserId = :userid'
+				. ' AND AttributeName = :attribName'
+		;
+		$params = array(':userid' => ['val' => $userid, 'type' => \PDO::PARAM_STR],
+			':attribName' => ['val' => $attribName, 'type' => \PDO::PARAM_STR]);
+		$data = DBUtils::doDBSelectSingle($sql, $params);
+		return $data;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @param string $attribName
+	 * @param string $attribValue
+	 * @return bool
+	 */
+	public static function updateByUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
+		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' SET AttributeValue = :attribValue'
+				. ' WHERE userid = :userid'
+				. ' AND AttributeName = :attribName'
+		;
+		$params = array(':userid' => ['val' => $userid, 'type' => \PDO::PARAM_STR],
+			':attribName' => ['val' => $attribName, 'type' => \PDO::PARAM_STR],
+			':attribValue' => ['val' => $attribValue, 'type' => \PDO::PARAM_STR]
+		);
+
+		$data = DBUtils::doDBUpdateSingle($sql, $params);
+		return $data;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @param string $attribName
+	 * @param string $attribValue
+	 * @return bool
+	 */
+	public static function insertUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
+		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_UserAttributes')
+				. ' (Userid, AttributeName, AttributeValue)'
+				. ' VALUES '
+				. ' (:userid, :attribName, :attribValue) '
+		;
+		$params = array(':userid' => ['val' => $userid, 'type' => \PDO::PARAM_STR],
+			':attribName' => ['val' => $attribName, 'type' => \PDO::PARAM_STR],
+			':attribValue' => ['val' => $attribValue, 'type' => \PDO::PARAM_STR]
+		);
+		$data = DBUtils::doDBInsertReturnID($sql, $params);
+		Settings::GetRunTimeObject('MessageLog')->addNotice(' INsert by userid and attrib name'. $userid . '-' . $attribName);
+
+		return ($data > 0);
+	}
+
 }

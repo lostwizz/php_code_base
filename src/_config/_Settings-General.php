@@ -41,8 +41,14 @@ namespace php_base\Utils;
 /**
  * debugging type settings
  */
-Settings::SetPublic('IS_DEBUGGING', true);
 //Settings::SetPublic('IS_DEBUGGING', false);
+Settings::SetPublic('IS_DEBUGGING', true);
+Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
+Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
+Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
+
+
+
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 0); // debugging level is off
 Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 200);  // 200 = MessageLog::INFO;
@@ -56,6 +62,9 @@ Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 Settings::SetPublic('Show MessageLog Adds', true);
 Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
 //Settings::SetPublic('Show MessageLog Adds', false);
+
+
+Settings::SetPublic('CACHE_IS_ON', true);
 
 
 /**

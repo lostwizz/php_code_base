@@ -213,6 +213,10 @@ abstract class Settings {
 	public static function dump(bool $showPublic = false, bool $showProtected = false, bool $showRuntime = false): string {
 		$s = '<div class="SettingsDump">';
 		$s .= 'Settings::dump:<BR>';
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
+		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		$s .= '<BR>';
+
 		if ($showRuntime) {
 			$s .= '************ Runtime Settings *********************';
 			$s .= '<Br>';

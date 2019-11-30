@@ -90,8 +90,12 @@ abstract Class Utils {
 		return $r;
 	}
 
-
+	/** -----------------------------------------------------------------------------------------------
 		//generate a new password
+	 *
+	 * @param type $length
+	 * @return string
+	 */
 	public static function makeRandomPassword($length = 8) : string {
 		$pass = "";
 		$salt = "abchefghjkmnpqrstuvwxyz0123456789ABCHEFGHJKMNPQRSTUVWXYZ0123456789";
@@ -106,5 +110,15 @@ abstract Class Utils {
 		return $pass;
 	}
 
-	//-----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $string
+	 * @param type $startString
+	 * @return bool
+	 */
+	public static function startsWith ($string, $startString) :bool {
+		$len = strlen($startString);
+		return (substr($string, 0, $len) === $startString);
+	}
+
 }
