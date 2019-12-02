@@ -78,8 +78,8 @@ abstract Class HTML {
     * @return type
     */
    public static function Hidden(string $name, string $value, $arOptions = null, $arStyle = null) {
-      $n = (!empty($name)) ? ' name="' . $name . '"' : '';
-      $v = (!empty($value)) ? ' value="' . $value . '"' : '';
+      $n = (!empty($name)) ? 'name="' . $name . '"' : '';
+      $v = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($n, $v, 'HIDDEN', $arOptions, $arStyle);
    }
 
@@ -96,15 +96,15 @@ abstract Class HTML {
     * @return type
     */
    public static function Text($name, $value = null, $arOptions = null, $arStyle = null) {
-      $name = (!empty($name)) ? ' name="' . $name . '"' : '';
-      $value = (!empty($value)) ? ' value="' . $value . '"' : '';
+      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle);
    }
 
 
 	public static function Button($name, $value = null, $arOptions = null, $arStyle = null) : string {
-	      $name = (!empty($name)) ? ' name="' . $name . '"' : '';
-	      $value = (!empty($value)) ? ' value="' . $value . '"' : '';
+	      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
+	      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
 	      return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle);
 
 	}
@@ -126,8 +126,8 @@ abstract Class HTML {
     * @return type
     */
    public static function Submit($name, $value = null, $arOptions = null, $arStyle = null) {
-      $name = (!empty($name)) ? ' name="' . $name . '"' : '';
-      $value = (!empty($value)) ? ' value="' . $value . '"' : '';
+      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle);
    }
 
@@ -141,8 +141,8 @@ abstract Class HTML {
     * @return type
     */
    public static function Password($name, $value = null, $arOptions = null, $arStyle = null) {
-      $name = (!empty($name)) ? ' name="' . $name . '"' : '';
-      $value = (!empty($value)) ? ' value="' . $value . '"' : '';
+      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'Password', $arOptions, $arStyle);
    }
 
@@ -156,7 +156,7 @@ abstract Class HTML {
     * @return type
     */
    public static function Reset($value = 'reset', $arOptions = null, $arStyle = null) {
-      $value = (!empty($value)) ? ' value="' . $value . '"' : '';
+      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput('', $value, 'Reset', $arOptions, $arStyle);
    }
 
@@ -242,6 +242,7 @@ abstract Class HTML {
    public static function ShowInput($name, $value, $type = 'TEXT', $arOptions = null, $arStyle = null) {
       $attr = self::parseOptions($arOptions);
       $style = self::parseStyle($arStyle);
+	  $value = empty($value) ? '' : ' ' . $value;
 
       return '<Input type="' . $type . '" ' . $name . $value . $attr . $style . ' >'; //. PHP_EOL;
    }

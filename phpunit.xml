@@ -47,25 +47,25 @@
 		</testsuite>
 		-->
 
-
+		<!--
+		<testsuite name="config_Tests">
+			<file>Tests/_config/_Settings-Database_Test.php</file>
+			<file>Tests/_config/_Settings-Genral_Test.php</file>
+			<file>Tests/_config/_Settings-protected_Test.php</file>
+		</testsuite>
+		-->
 
 		<testsuite name="base_structure">
 			<file>Tests/DirectoryStructureTest.php</file>
 			<file>Tests/Resolver_Test.php</file>
 			<file>Tests/dispatcher_Test.php</file>
 
-			<file>Tests/menuController.php</file>
+			<file>Tests/control/controller_Test.php</file>
+			<file>Tests/model/model_Test.php</file>
+			<file>Tests/view/view_Test.php</file>
+			<file>Tests/data/data_Test.php</file>
 		</testsuite>
 
-		<testsuite name="module_Permissions">
-			<file>Tests/control/UserRoleAndPermissionsControl.class.php</file>
-			<file>Tests/model/UserRoleAndPermissionsModel.class.php</file>
-
-			<file>Tests/data/UserAttributeData.class.php</file>
-			<file>Tests/data/UserInfoData.class.php</file>
-			<file>Tests/data/UserPermissionsData.class.php</file>
-			<file>Tests/data/UserRoleData.class.php</file>
-		</testsuite>
 
 		<testsuite name="headerAndFooter">
 			<file>Tests/control/HeaderController_Test.php</file>
@@ -76,31 +76,48 @@
 		</testsuite>
 
 		<testsuite name="Utils">
-			<file>Tests/utils/dump_Test.php</file>
-			<file>Tests/utils/SettingsClass_Test.php</file>
-			<file>Tests/utils/Setup_Logging_Test.php</file>
+			<file>Tests/utils/Cache_Test.php</file>
+			<file>Tests/utils/Cryption_Test.php</file>
 			<!-- <file>Tests/utils/log/LoggingToDB_Test.php</file>   -->
+			<file>Tests/utils/EmailHtmlFormatter_Test.php</file>
 
+			<file>Tests/utils/ErrorHandler_Test.php</file>
+			<file>Tests/utils/HTML_Test.php</file>
 			<file>Tests/utils/Message_Test.php</file>
 			<file>Tests/utils/MessageLog_Test.php</file>
-
-			<file>Tests/utils/HTML_Test.php</file>
-			<file>Tests/utils/Cryption_Test.php</file>
+			<file>Tests/utils/NullAbsorber_Test.php</file>
+			<file>Tests/utils/Response_Test.php</file>
+			<file>Tests/utils/ResponseErrorCodes_Test.php</file>
+			<file>Tests/utils/Setup_Logging_Test.php</file>
 			<file>Tests/utils/Utils_Test.php</file>
-			<file>Tests/utils/ErrorHandler_Test.php</file>
+			<file>Tests/utils/dump_Test.php</file>
+			<file>Tests/utils/SettingsClass_Test.php</file>
 		</testsuite>
 
+		<testsuite name="Menu_Tests">
+			<file>Tests/control/MenuController_Test.php</file>
+		</testsuite>
 
-		<!--
 		<testsuite name="module_Authenticate">
 			<file>Tests/control/AuthenticateController_Test.php</file>
 			<file>Tests/model/AuthenticateModel_Test.php</file>
- 			<file>Tests/data/AuthenticateData_Test.php</file>
 			<file>Tests/view/AuthenticateView_Test.php</file>
 
 			<file>Tests/model/arolepermission_Test.php</file>
 		</testsuite>
-		-->
+
+		<testsuite name="module_RoleAndPermissions">
+			<file>Tests/control/UserRoleAndPermissionsControl.class.php</file>
+			<file>Tests/model/UserRoleAndPermissionsModel.class.php</file>
+
+			<file>Tests/data/UserAttributeData.class.php</file>
+			<file>Tests/data/UserInfoData.class.php</file>
+			<file>Tests/data/UserPermissionsData.class.php</file>
+			<file>Tests/data/UserRoleData.class.php</file>
+			
+			<file>Tests/view/UserRoleAndPermissionsView_Test.php</file>
+		</testsuite>
+
 
 		<!--
 		<testsuite name="Other_files">

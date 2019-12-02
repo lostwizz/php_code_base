@@ -6,10 +6,10 @@
 
 :do_tests
     rem @call  phpunit --check-version
-@call  phpunit --list-tests
-@call  phpunit --list-suites
+@call  phpunit --list-tests -c phpunit.xml
+@call  phpunit --list-suites -c phpunit.xml
 
 
 rem --debug
-phpunit --verbose --debug
+phpunit --verbose --debug -c phpunit.xml
 
