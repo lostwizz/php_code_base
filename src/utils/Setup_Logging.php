@@ -36,13 +36,13 @@ namespace php_base\Utils;
 
 //P:\Projects\php_code_base\src\..\vendor\autoload.php
 //echo   DIR . '..' . DS . 'vendor/autoload.php';
-require_once(  DIR . '..' . DS . 'vendor' . DS . 'autoload.php');
+require_once(  DIR . '..' . DSZ . 'vendor' . DSZ . 'autoload.php');
 
 //require_once(DIR . 'vendor\monolog\monolog\src\Monolog\Logger.php');
 
-require_once(DIR . 'utils' . DS . 'PDOHandler.php');
-require_once(DIR . 'utils' . DS . 'PDOdataHandler.php');
-require_once(DIR . 'utils' . DS . 'EmailHtmlFormatter.class.php');
+require_once(DIR . 'utils' . DSZ . 'PDOHandler.php');
+require_once(DIR . 'utils' . DSZ . 'PDOdataHandler.php');
+require_once(DIR . 'utils' . DSZ . 'EmailHtmlFormatter.class.php');
 
 use \PDO;
 
@@ -151,7 +151,10 @@ if (Settings::GetPublic( 'Use_SecurityLog') ) {
 
 	$securityLog->pushHandler( new StreamHandler( $security_log_fn, Logger::DEBUG));
 	Settings::SetRuntime('SecurityLog' , $securityLog);
-	//$securityLog->addRecord( Logger::ALERT, '-------------Starting Logging------------');
+
+	if ( defined("IS_PHPUNIT_TESTING")) {
+		$securityLog->addRecord( Logger::ALERT, '--------------Security UNIT TEST-------------');
+	}
 	//Settings::GetPublic('SecurityLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------');
 	//////////////////////////////////////////////////////////////////////////////////////////
 }

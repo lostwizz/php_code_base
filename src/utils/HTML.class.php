@@ -77,10 +77,13 @@ abstract Class HTML {
     * @param type $arStyle
     * @return type
     */
-   public static function Hidden(string $name, string $value, $arOptions = null, $arStyle = null) {
-      $n = (!empty($name)) ? 'name="' . $name . '"' : '';
-      $v = (!empty($value)) ? 'value="' . $value . '"' : '';
-      return self::ShowInput($n, $v, 'HIDDEN', $arOptions, $arStyle);
+   public static function Hidden(string $name,
+   			string $value,
+   			$arOptions = null,
+   			$arStyle = null) {
+      //$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
+      return self::ShowInput($name, $value, 'HIDDEN', $arOptions, $arStyle);
    }
 
    //-----------------------------------------------------------------------------------------------
@@ -96,15 +99,23 @@ abstract Class HTML {
     * @return type
     */
    public static function Text($name, $value = null, $arOptions = null, $arStyle = null) {
-      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
-      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
+      //$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle);
    }
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $name
+	 * @param type $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return string
+	 */
 	public static function Button($name, $value = null, $arOptions = null, $arStyle = null) : string {
-	      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
-	      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
+	      //$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+	      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
 	      return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle);
 
 	}
@@ -126,8 +137,8 @@ abstract Class HTML {
     * @return type
     */
    public static function Submit($name, $value = null, $arOptions = null, $arStyle = null) {
-      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
-      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
+      //$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle);
    }
 
@@ -141,8 +152,8 @@ abstract Class HTML {
     * @return type
     */
    public static function Password($name, $value = null, $arOptions = null, $arStyle = null) {
-      $name = (!empty($name)) ? 'name="' . $name . '"' : '';
-      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
+      //$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput($name, $value, 'Password', $arOptions, $arStyle);
    }
 
@@ -156,7 +167,7 @@ abstract Class HTML {
     * @return type
     */
    public static function Reset($value = 'reset', $arOptions = null, $arStyle = null) {
-      $value = (!empty($value)) ? 'value="' . $value . '"' : '';
+      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
       return self::ShowInput('', $value, 'Reset', $arOptions, $arStyle);
    }
 
@@ -192,17 +203,20 @@ abstract Class HTML {
     * @param type $arStyle
     * @return type
     */
-   public static function Radio(string $name,
-           string $val,
+   public static function Radio(
+   		   string $name,
+           string $value,
            $lable = null,
            $isChecked = false,
            $arOptions = null,
            $arStyle = null) {
+      //$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+      //$value = (!empty($value)) ? 'value="' . $value . '"' : '';
       $lable = (!empty($lable)) ? $lable : '';
       if ( $isChecked){
       	$arOptions['checked'] = true;
       }
-      return self::ShowInput ($name, $val, "RADIO", $arOptions, $arStyle );
+      return self::ShowInput ($name, $value, "RADIO", $arOptions, $arStyle, $lable );
    }
 
 	/** -----------------------------------------------------------------------------------------------
@@ -215,8 +229,9 @@ abstract Class HTML {
 	 * @param type $arStyle
 	 * @return type
 	 */
-	public static function CheckBox( string $name,
-           string $val,
+	public static function CheckBox(
+		   string $name,
+           string $value,
            $lable = null,
            $isChecked = false,
            $arOptions = null,
@@ -225,29 +240,38 @@ abstract Class HTML {
       if ( $isChecked){
       	$arOptions['checked'] = true;
       }
-      return self::ShowInput ($name, $val, "CHECKBOX", $arOptions, $arStyle );
+      return self::ShowInput ($name, $value, "CHECKBOX", $arOptions, $arStyle, $lable);
     }
 
 
 	/** -----------------------------------------------------------------------------------------------
-    * gives a text box for input
-    * @static
-    * @param type $name
-    * @param type $value
-    * @param type $type
-    * @param type $arOptions
-    * @param type $arStyle
-    * @return type
-    */
-   public static function ShowInput($name, $value, $type = 'TEXT', $arOptions = null, $arStyle = null) {
-      $attr = self::parseOptions($arOptions);
-      $style = self::parseStyle($arStyle);
-	  $value = empty($value) ? '' : ' ' . $value;
+		 * gives a text box for input
+		 * @static
+		 * @param type $name
+		 * @param type $value
+		 * @param type $type
+		 * @param type $arOptions
+		 * @param type $arStyle
+		 * @return type
+		 */
+		public static function ShowInput(
+					string $name,
+					string $value,
+					string $type = 'TEXT',
+					$arOptions = null,
+					$arStyle = null,
+					?string $lable = null
+				) {
+        $name = (!empty($name)) ? 'name="' . $name . '"' : '';
+        $value = (!empty($value)) ? 'value="' . $value . '"' : '';
+		$attr = self::parseOptions($arOptions);
+		$style = self::parseStyle($arStyle);
+		$value = empty($value) ? '' : ' ' . $value;
 
-      return '<Input type="' . $type . '" ' . $name . $value . $attr . $style . ' >'; //. PHP_EOL;
-   }
+		return '<Input type="' . $type . '" ' . $name . $value . $attr . $style . '>' . $lable; //. PHP_EOL;
+	}
 
-   //-----------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------
    //<select multiple name=text size=number  tabindex=number>
    //<option selected value=text>xxxxxxxxxxxx</option>
    //</select>
@@ -609,7 +633,7 @@ abstract Class HTML {
             foreach ($arStyle as $key => $val) {
                $style .= $key . ': ' . $val . '; ';
             }
-            return ' style="' . $style . '"';
+            return ' style="' . trim($style) . '"';
          }
       }
       return null;
@@ -630,7 +654,7 @@ abstract Class HTML {
       if (is_array($arOptions)) {
          foreach ($arOptions as $key => $val) {
          	if ( strtolower($key =='checked')){
-         		$attr .= ' checked ';
+         		$attr .= ' checked';
          	} else {
             	$attr .= ' ' . $key . '="' . $val . '"';
             }

@@ -8,8 +8,9 @@ use \php_base\utils;
 
 use \php_base\utils\MessageLog as MessageLog;
 use \php_base\utils\AMessage as AMessage;
+use \php_base\utils\MessageBase as MessageBase;
 
-include_once (DIR . 'utils' . DS . 'messagelog.class.php');
+include_once (DIR . 'utils' . DSZ . 'messagelog.class.php');
 
 
 ///		   fwrite(STDERR, print_r($input, TRUE));
@@ -19,10 +20,10 @@ include_once (DIR . 'utils' . DS . 'messagelog.class.php');
 class MessageLog_Test extends TestCase {
 
 	public static function setUpBeforeClass(): void   {
-		include_once( DIR . 'utils' . DS . 'settings.class.php');
-		require_once( DIR . '_config' . DS . '_Settings-General.php');
-		require_once( DIR . '_config' . DS . '_Settings-Database.php');
-		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+		include_once( DIR . 'utils' . DSZ . 'settings.class.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 
 		require_once( 'P:\Projects\_Private_Settings.php');
 
@@ -35,9 +36,9 @@ class MessageLog_Test extends TestCase {
 		Settings::SetPublic( 'Use_SecurityLog', false);
 		Settings::SetPublic( 'Use_EmailLog', false);      // true
 
-
         //require_once(DIR . 'utils\setup_Logging.php');
 
+		Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
 		Settings::SetPublic('Show MessageLog Adds', false);
 
     }
@@ -141,10 +142,10 @@ class MessageLog_Test extends TestCase {
 		//$nowIsh =  date( 'g:i:s');
 		$nowIsh = '23:55:30';
 		return [
-			[[null], $nowIsh . ' (Level: NOTICE) '],
+			//[[null], $nowIsh . ' (Level: NOTICE) '],
 			[['fred'], $nowIsh . ' (Level: NOTICE) fred'],
 			[['fred', 'faketimestamp'], 'faketimestamp (Level: NOTICE) fred'],
-			[['fred', 'faketimestamp', anExtendedMessage::EMERGENCY], 'faketimestamp (Level: EMERGENCY) fred'],
+			[['fred', 'faketimestamp', ExtendedMessageBase::EMERGENCY], 'faketimestamp (Level: EMERGENCY) fred'],
 
 		];
 	}
@@ -635,5 +636,14 @@ class ExtendedMessageLogTest extends MessageLog{
 	static function extendedMessageQueueStatic(){
 		return MessageLog::$messageQueue;
 	}
+
+}
+
+abstract class ExtendedMessageBase extends MessageBase {
+		abstract function Show();
+
+	abstract function Set($value = null);
+
+	abstract function Get();
 
 }

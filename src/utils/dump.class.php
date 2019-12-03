@@ -125,7 +125,7 @@ abstract class Dump {
 	 * @param type $bt
 	 * @param type $search
 	 */
-	protected static function DumpClassesHelper($data, $bt, $search) {
+	protected static function DumpClassesHelper($data, $bt, $search = null) {
 		self::SetBackTrace($data, $bt);
 		self::SetVariableName($data, 'DumpClasses', $bt);
 		self::SetVariableValue($data, 'DumpClasses');

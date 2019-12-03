@@ -3,7 +3,9 @@
 namespace Tests\Test;
 
 use PHPUnit\Framework\TestCase;
+
 use \php_base\Utils\HTML\HTML as HTML;
+
 use \php_base\Utils\Settings as Settings;
 
 //use \php_base\Settings\Settings as Settings;
@@ -61,10 +63,10 @@ use \php_base\Utils\Settings as Settings;
 class HTML_Test extends TestCase {
 
 	public static function setUpBeforeClass(): void {
-		include_once( DIR . 'utils' . DS . 'settings.class.php');
-		require_once( DIR . '_config' . DS . '_Settings-General.php');
-		require_once( DIR . '_config' . DS . '_Settings-Database.php');
-		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+		include_once( DIR . 'utils' . DSZ . 'settings.class.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 
 		require_once( 'P:\Projects\_Private_Settings.php');
 
@@ -78,6 +80,7 @@ class HTML_Test extends TestCase {
 		//require_once(DIR . 'utils\setup_Logging.php');
 
 		Settings::SetPublic('Use_MessageLog', false);  //true
+
 	}
 
 	function test_filter_XSS() {
@@ -149,7 +152,7 @@ class HTML_Test extends TestCase {
 				. '<option value="k3">v3</option>' . PHP_EOL
 				. '</select>' . PHP_EOL],
 			['FRED', array('k1' => 'v1', 0 => 'v2', 'k3' => 'v3'), 0, null, array('alt' => 'TONY'), array('backgroundcolor' => 'yellow'),
-				'<Select name="FRED"  alt="TONY" style="backgroundcolor: yellow; ">'   //15
+				'<Select name="FRED"  alt="TONY" style="backgroundcolor: yellow;">'   //15
 				. '<option value="k1">v1</option>' . PHP_EOL
 				. '<option value="0" selected>v2</option>' . PHP_EOL
 				. '<option value="k3">v3</option>' . PHP_EOL
@@ -291,55 +294,177 @@ class HTML_Test extends TestCase {
 		$out = HTML::DocType(null);
 	}
 
-	function test_radio() {
+
+
+	function radio_dataProvider(){
+		return [
+			//['Radio', ["fred"]],
+			//['Radio', ["FRED", 7],'<Input type="RADIO" name="FRED" value="7">'],
+			['Radio', ["FRED", 'somewhere over the rainbow'], '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">'],
+			['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],  '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			['Radio', ["FRED", 'somewhere over the rainbow', null, true],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>'],
+			['Radio', ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
+			['Radio', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'],
+			['Radio', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'],
+			['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'],
+
+			['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'],
+
+
+			['CheckBox', ["FRED", 'somewhere over the rainbow'],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked>'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'],
+
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'],
+
+
+			['ShowInput', ['FRED', 'somewhere over the rainbow'],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT' ],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', 'Where was Dorthy?' ],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" Where was Dorthy?>'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', null],   //, true,array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
+
+
+				];
+	}
+
+
+	/**
+	* @dataProvider radio_dataProvider
+	*/
+	function test_radio_button( $which, $in, $expected) {
+
+		switch ( count($in)) {
+//			case 0:
+//				$actual = HTML::$which();
+//				break;
+//			case 1:
+//				$actual = HTML::$which($in[0]);
+//				break;
+			case 2:
+				$actual = HTML::$which($in[0], $in[1]);
+				break;
+			case 3:
+				$actual = HTML::$which($in[0], $in[1], $in[2]);
+				break;
+			case 4:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3]);
+				break;
+			case 5:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4]);
+				break;
+			case 6:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4], $in[5]);
+				break;
+			case 7:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4], $in[5], $in[6]);
+				break;
+		}
+		$this->assertEquals( $expected, $actual );
+	}
+
+
+
+
+
+
+
+	function xtest_radio() {
 		//$this->markTestIncomplete('This test has not been implemented yet' );
+
+
+
+
 		$out = HTML::Radio("FRED", 7);
-		$expect = '<Input type="RADIO" name="FRED" value="7"/>';
+		$expect = '<Input type="RADIO" name="FRED" value="7">';
 		$this->assertEquals($expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow');
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow"/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">';
 		$this->assertEquals($expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?');
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow"/>Where was Dorthy?';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?';
 		$this->assertEquals($expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', true);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked/>Where was Dorthy?';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>Where was Dorthy?';
 		$this->assertEquals($expect, $out);
 
+//		['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+//			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+//		['Radio', ["FRED", 'somewhere over the rainbow', null, true],
+//			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>'],
+
+
+
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow"/>Where was Dorthy?';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?';
 		$this->assertEquals($expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>';
 		$this->assertEquals($expect, $out);
+
+
 
 
 		$options = array('alt' => 'TONY');
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked alt="TONY"/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>';
 		$this->assertEquals($expect, $out);
 
 		$options['snow'] = 'somesnow';
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow"/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked>';
 		$this->assertEquals($expect, $out);
+
+
+
+//		['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, $style],
+//			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">'],
+
+
+
 
 		$style = 'backgroundcolor: yellow';
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow" style="backgroundcolor: yellow"/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked style="backgroundcolor: yellow">';
 		$this->assertEquals($expect, $out);
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked alt="TONY" snow="somesnow" style="backgroundcolor: yellow; "/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked style="backgroundcolor: yellow; ">';
 		$this->assertEquals($expect, $out);
 
 		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, null, $style);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; "/>';
+		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">';
 		$this->assertEquals($expect, $out);
 	}
 
@@ -365,24 +490,24 @@ class HTML_Test extends TestCase {
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png', null, $style);
-		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" border="0"  style="backgroundcolor: yellow; "/>';
+		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" border="0"  style="backgroundcolor: yellow;"/>';
 		$this->assertEquals($expect, $out);
 
 
 		$style['foreground-color'] = 'blue';
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png', null, $style);
-		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" border="0"  style="backgroundcolor: yellow; foreground-color: blue; "/>';
+		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" border="0"  style="backgroundcolor: yellow; foreground-color: blue;"/>';
 		$this->assertEquals($expect, $out);
 
 		$options = array('tuesday' => 'isnext');
 		$style = array('sam' => 'red');
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png', $options, $style);
-		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" tuesday="isnext" border="0"  style="sam: red; "/>';
+		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" tuesday="isnext" border="0"  style="sam: red;"/>';
 		$this->assertEquals($expect, $out);
 
 		$style['foreground-color'] = 'blue';
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png', $options, $style);
-		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" tuesday="isnext" border="0"  style="sam: red; foreground-color: blue; "/>';
+		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" tuesday="isnext" border="0"  style="sam: red; foreground-color: blue;"/>';
 		$this->assertEquals($expect, $out);
 
 
@@ -391,12 +516,12 @@ class HTML_Test extends TestCase {
 
 		$style = array('one' => 'oneX', 'two' => 'twoX', 'three' => 'threeX', 'four' => 'fourX');
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png', $options, $style);
-		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" tuesday="isnext" border="0"  style="one: oneX; two: twoX; three: threeX; four: fourX; "/>';
+		$expect = '<img src="http://gis/cityofwhitehorseresources/Images/fire_icon.png" tuesday="isnext" border="0"  style="one: oneX; two: twoX; three: threeX; four: fourX;"/>';
 		$this->assertEquals($expect, $out);
 
 		$style = array('one' => 'oneX', 'two' => 'twoX', 'three' => 'threeX', 'four' => 'fourX');
 		$out = HTML::Image('c:\temp\fred.www', $options, $style);
-		$expect = '<img src="c:\temp\fred.www" tuesday="isnext" border="0"  style="one: oneX; two: twoX; three: threeX; four: fourX; "/>';
+		$expect = '<img src="c:\temp\fred.www" tuesday="isnext" border="0"  style="one: oneX; two: twoX; three: threeX; four: fourX;"/>';
 		$this->assertEquals($expect, $out);
 	}
 
@@ -452,17 +577,17 @@ class HTML_Test extends TestCase {
 		$options = array('alt' => 'FRED');
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Anchor('c:\temp\fred.www', null, $options, $style);
-		$expected = '<a href="c:\temp\fred.www" alt="FRED" style="backgroundcolor: yellow; ">c:\temp\fred.www</a>';
+		$expected = '<a href="c:\temp\fred.www" alt="FRED" style="backgroundcolor: yellow;">c:\temp\fred.www</a>';
 		$this->assertEquals($expected, $out);
 
 		$out = HTML::Anchor('c:\temp\fred.www', 'a_lbl', $options, $style);
-		$expected = '<a href="c:\temp\fred.www" alt="FRED" style="backgroundcolor: yellow; ">a_lbl</a>';
+		$expected = '<a href="c:\temp\fred.www" alt="FRED" style="backgroundcolor: yellow;">a_lbl</a>';
 		$this->assertEquals($expected, $out);
 
 
 		$style['foreground-color'] = 'blue';
 		$out = HTML::Anchor('c:\temp\fred.www', 'a_lbl', $options, $style);
-		$expected = '<a href="c:\temp\fred.www" alt="FRED" style="backgroundcolor: yellow; foreground-color: blue; ">a_lbl</a>';
+		$expected = '<a href="c:\temp\fred.www" alt="FRED" style="backgroundcolor: yellow; foreground-color: blue;">a_lbl</a>';
 		$this->assertEquals($expected, $out);
 	}
 
@@ -619,17 +744,17 @@ class HTML_Test extends TestCase {
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::FormOpen('FRED', 'SAM', 'GET', 'sometype', null, $style);
-		$expected = '<form action="FRED" name="SAM" method="GET" enctype="sometype" style="backgroundcolor: yellow; ">' . PHP_EOL . PHP_EOL;
+		$expected = '<form action="FRED" name="SAM" method="GET" enctype="sometype" style="backgroundcolor: yellow;">' . PHP_EOL . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$style['forground-color'] = 'blue';
 		$out = HTML::FormOpen('FRED', 'SAM', 'GET', 'sometype', null, $style);
-		$expected = '<form action="FRED" name="SAM" method="GET" enctype="sometype" style="backgroundcolor: yellow; forground-color: blue; ">' . PHP_EOL . PHP_EOL;
+		$expected = '<form action="FRED" name="SAM" method="GET" enctype="sometype" style="backgroundcolor: yellow; forground-color: blue;">' . PHP_EOL . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 
 		$out = HTML::FormOpen('FRED', 'SAM', 'GET', 'sometype', $options, $style);
-		$expected = '<form action="FRED" name="SAM" method="GET" enctype="sometype" alt="TONY" border="4" style="backgroundcolor: yellow; forground-color: blue; ">' . PHP_EOL . PHP_EOL;
+		$expected = '<form action="FRED" name="SAM" method="GET" enctype="sometype" alt="TONY" border="4" style="backgroundcolor: yellow; forground-color: blue;">' . PHP_EOL . PHP_EOL;
 		$this->assertEquals($expected, $out);
 	}
 
@@ -660,31 +785,31 @@ class HTML_Test extends TestCase {
 	function test_Hidden() {
 
 		$out = HTML::Hidden('SAM', 'FRED');
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" >'; //. PHP_EOL ;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED">'; //. PHP_EOL ;
 		$this->assertEquals($expected, $out);
 
 		$out = HTML::Hidden('SAM', 'FRED', null);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" >'; // . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED">'; // . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$options = array('alt' => 'TONY');
 		$out = HTML::Hidden('SAM', 'FRED', $options);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" alt="TONY" >'; // . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" alt="TONY">'; // . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$style = 'backgroundcolor: yellow';
 		$out = HTML::Hidden('SAM', 'FRED', null, $style);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow" >'; //. PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow">'; //. PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Hidden('SAM', 'FRED', null, $style);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow; " >'; // . PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; // . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
 		$options = array('alt' => 'TONY');
 		$style = array('backgroundcolor' => 'yellow');
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow; " >'; //. PHP_EOL;
+		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; //. PHP_EOL;
 		$this->assertEquals($expected, $out);
 	}
 
@@ -698,7 +823,7 @@ class HTML_Test extends TestCase {
 	}
 
 	function test_Open() {
-		$out = HTML::Open('SAMTAG');
+		$out = \php_base\Utils\HTML\HTML::Open('SAMTAG');
 		$expected = '<SAMTAG>' . PHP_EOL;
 		$this->assertEquals($expected, $out);
 
@@ -719,7 +844,7 @@ class HTML_Test extends TestCase {
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = HTML::Open('SAMTAG', null, $style);
-		$expected = '<SAMTAG style="backgroundcolor: yellow; ">' . PHP_EOL;
+		$expected = '<SAMTAG style="backgroundcolor: yellow;">' . PHP_EOL;
 		$this->assertEquals($expected, $out);
 	}
 
@@ -784,23 +909,23 @@ class HTML_Test extends TestCase {
 
 		$style = array('backgroundcolor' => 'yellow');
 		$out = $o->extended_parseStyle($style);
-		$this->assertEquals(' style="backgroundcolor: yellow; "', $out);
+		$this->assertEquals(' style="backgroundcolor: yellow;"', $out);
 
 		$style['forground-color'] = 'blue';
 		$out = $o->extended_parseStyle($style);
-		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; "', $out);
+		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue;"', $out);
 
 		$style['encode'] = 'cyan';
 		$out = $o->extended_parseStyle($style);
-		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; encode: cyan; "', $out);
+		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; encode: cyan;"', $out);
 
 		$style['font'] = '13px "Arial",sans-serif';
 		$out = $o->extended_parseStyle($style);
-		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; encode: cyan; font: 13px "Arial",sans-serif; "', $out);
+		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; encode: cyan; font: 13px "Arial",sans-serif;"', $out);
 
 		$style['padding'] = '4px 4px 4px 4px';
 		$out = $o->extended_parseStyle($style);
-		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; encode: cyan; font: 13px "Arial",sans-serif; padding: 4px 4px 4px 4px; "', $out);
+		$this->assertEquals(' style="backgroundcolor: yellow; forground-color: blue; encode: cyan; font: 13px "Arial",sans-serif; padding: 4px 4px 4px 4px;"', $out);
 	}
 
 	function test_version() {

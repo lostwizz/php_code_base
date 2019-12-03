@@ -21,7 +21,7 @@
 
 
 use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\Dump\Dump as Dump;
+//use \php_base\Utils\Dump\Dump as Dump;
 
 define('AUTOLOAD_LEVEL_NOTICE', 250);
 define('AUTOLOAD_LEVEL_INFO', 200);
@@ -38,13 +38,13 @@ spl_autoload_register('myAutoLoader');
 
 
 if (!defined('DIR')) {
-	if ( !defined('DS')){
-		define('DS', DIRECTORY_SEPARATOR);
+	if ( !defined('DSZ')){
+		define('DSZ', DIRECTORY_SEPARATOR);
 	}
 	if (strripos(realpath('.'), 'src') < 1) {
-		define('DIR', realpath('.') . DS . 'src' . DS);
+		define('DIR', realpath('.') . DSZ . 'src' . DSZ);
 	} else {
-		define('DIR', realpath('.') . DS);
+		define('DIR', realpath('.') . DSZ);
 	}
 }
 
@@ -96,26 +96,26 @@ function runTheChecks($base) {
 		echo "Looking for:" . $base . '<BR>' . PHP_EOL;
 		//fwrite(STDERR, "\n\rLooking for:". print_r($base, TRUE));
 	}
-	if (tryFile(DIR . 'model' . DS . $base))
+	if (tryFile(DIR . 'model' . DSZ . $base))
 		return true;
-	if (tryFile(DIR . 'view' . DS . $base))
+	if (tryFile(DIR . 'view' . DSZ . $base))
 		return true;
-	if (tryFile(DIR . 'control' . DS . $base))
+	if (tryFile(DIR . 'control' . DSZ . $base))
 		return true;
-	if (tryFile(DIR . 'data' . DS . $base))
+	if (tryFile(DIR . 'data' . DSZ . $base))
 		return true;
-	if (tryFile(DIR . 'utils' . DS . $base))
+	if (tryFile(DIR . 'utils' . DSZ . $base))
 		return true;
-	////if (  tryFile( DIR . 'utils'  . DS . 'setup' . DS . $base ))	return true;
-	////if (  tryFile( DIR . 'utils'  . DS . 'log'   . DS . $base ))	return true;
+	////if (  tryFile( DIR . 'utils'  . DSZ . 'setup' . DSZ . $base ))	return true;
+	////if (  tryFile( DIR . 'utils'  . DSZ . 'log'   . DSZ . $base ))	return true;
 
 	if (tryFile(DIR . $base))
 		return true;
-	if (tryFile(DIR . 'static' . DS . $base))
+	if (tryFile(DIR . 'static' . DSZ . $base))
 		return true;
-	if (tryFile(DIR . 'utils' . DS . 'DatabaseHandlers' . DS . $base))
+	if (tryFile(DIR . 'utils' . DSZ . 'DatabaseHandlers' . DSZ . $base))
 		return true;
-	if (tryFile(DIR . '..' . DS . 'vendor' . DS . 'monolog' . DS . 'monolog' . DS . 'src' . DS . $base))
+	if (tryFile(DIR . '..' . DSZ . 'vendor' . DSZ . 'monolog' . DSZ . 'monolog' . DSZ . 'src' . DSZ . $base))
 		return true;
 	return false;
 }

@@ -95,7 +95,7 @@ if (false) {
 	$mc->set("bar", "Memcached...");
 }
 
-if (true) {
+if (false) {
 	session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
 	session_start();
 

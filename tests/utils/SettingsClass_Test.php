@@ -26,10 +26,10 @@ class Settings_Test extends TestCase{
 
 	protected function setUp() :void {
 
-		include_once( DIR . 'utils' . DS . 'settings.class.php');
-		require_once( DIR . '_config' . DS . '_Settings-General.php');
-		require_once( DIR . '_config' . DS . '_Settings-Database.php');
-		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+		include_once( DIR . 'utils' . DSZ . 'settings.class.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 		require_once( 'P:\Projects\_Private_Settings.php');
 	}
 

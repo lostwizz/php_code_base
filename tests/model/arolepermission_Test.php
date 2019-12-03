@@ -7,7 +7,9 @@ use \php_base\model\ARolePermission as ARolePermission;
 
 class ARolePermission_Test extends TestCase {
 
-
+	function test_filter(){
+		$this->markTestIncomplete('This test has not been implemented yet' );
+	}
 
 	public function  XXXXX_test_aPermissionPropertyConstructAndGet () 	{
 		//$this->assertTrue(false);

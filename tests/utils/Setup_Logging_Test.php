@@ -11,12 +11,12 @@ use Monolog\Logger;
 class Logging_SetupTest extends TestCase{
 
 	public static function setUpBeforeClass(): void   {
-		include_once( DIR . 'utils' . DS . 'settings.class.php');
-		require_once( DIR . '_config' . DS . '_Settings-General.php');
-		require_once( DIR . '_config' . DS . '_Settings-Database.php');
-		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+		include_once( DIR . 'utils' . DSZ . 'settings.class.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 
-		require_once( 'P:\Projects\_Private_Settings.php');
+		//require_once( 'P:\Projects\_Private_Settings.php');
 
         // force everyhting to setup
         Settings::SetPublic( 'Use_MessageLog', true );  //true
@@ -26,6 +26,8 @@ class Logging_SetupTest extends TestCase{
 		Settings::SetPublic( 'Use_SecurityLog', true);
 		Settings::SetPublic( 'Use_EmailLog', true);      // true
 
+		Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+		Settings::SetPublic('Show MessageLog Adds', false);
 
         require_once(DIR . 'utils\setup_Logging.php');
     }
@@ -33,12 +35,12 @@ class Logging_SetupTest extends TestCase{
 
 
 	protected function setUp() :void {
-		//include_once( DIR . 'utils' . DS . 'Setup' . DS . 'settings.class.php');
-		require_once( DIR . '_config' . DS . '_Settings-General.php');
-		require_once( DIR . '_config' . DS . '_Settings-Database.php');
-		require_once( DIR . '_config' . DS . '_Settings-protected.php');
+		//include_once( DIR . 'utils' . DSZ . 'Setup' . DSZ . 'settings.class.php');
+		//require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+		//require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+		//require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 
-		require_once( 'P:\Projects\_Private_Settings.php');
+		//require_once( 'P:\Projects\_Private_Settings.php');
 	}
 
 
@@ -134,6 +136,9 @@ class Logging_SetupTest extends TestCase{
 		$file = Settings::GetPublic('Security_Log_file' );
 		$data = file($file);
 		$line = $data[count($data)-1];
+
+
+		///fwrite(STDERR, print_r($o, TRUE));
 
 		$this->assertStringContainsString(  $expected
 											, $line

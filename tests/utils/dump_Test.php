@@ -1,13 +1,11 @@
 <?php
 
 namespace Tests\Test;
-use PHPUnit\Framework\TestCase;
-
-
 
 use \php_base\Settings\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Dump\DumpData as DumpData;
+use \PHPUnit\Framework\TestCase;
 ////use \php_base\Utils\Dump\DumpExtendedClass as DumpExtendedClass;
 
 
@@ -46,10 +44,10 @@ class Dump_Test extends TestCase{
 		$data = new \php_base\Utils\Dump\DumpData();
 		$t ='-This is a Title-';
 
-		DumpExtendedClass::ExtendSetTitle($data, $t);
+		\Tests\Test\DumpExtendedClass::ExtendSetTitle($data, $t);
 		$this->assertEquals($t, $data->title );
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyTitle($data);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyTitle($data);
 		$expectedData = '<B><font color=green>-This is a Title-</B></font>' . "\n";
 		$this->assertEquals($expectedData, $dumpData );
 	}
@@ -58,27 +56,27 @@ class Dump_Test extends TestCase{
 		$data = new \php_base\Utils\Dump\DumpData();
 		//$data->variable ='-this is a single line variable output-';
 		$v  ='-this is a single line variable output-';
-		DumpExtendedClass::ExtendSetVariableValue( $data, $v);
+		\Tests\Test\DumpExtendedClass::ExtendSetVariableValue( $data, $v);
 		$this->assertEquals($v, $data->variable );
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyAreaStart($data);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyAreaStart($data);
 		$expectedData = "\n" . '<pre style="background-color: #FFFDCC; border-style: dashed; border-width: 1px; border-color: #950095;">'
 		              . "\n" ;
 		$this->assertEquals($expectedData, $dumpData );
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF');
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF');
 		$expectedData = "\n" . '<pre style="background-color: #FF00FF; border-style: dashed; border-width: 1px; border-color: #950095;">'
 		              . "\n" ;
 		$this->assertEquals($expectedData, $dumpData );
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF', true);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF', true);
 		$expectedData = "\n" . '<pre style="background-color: #FF00FF; border-style: dashed; border-width: 1px; border-color: #950095;">'
 		              . "\n" ;
 		$this->assertEquals($expectedData, $dumpData );
 
 
 		$data->variable ="\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";  //more than 10 lines (FLAT_WINDOW_LINES)
-		$dumpData = DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF', false);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF', false);
 		$expectedData = "\n\n"
 						. '<pre style="background-color: #FF00FF; border-style: dashed; border-width: 1px;'
 						. ' border-color: #950095;'
@@ -90,7 +88,7 @@ class Dump_Test extends TestCase{
 		$this->assertEquals($expectedData, $dumpData );
 
 		$data->variable ="\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";  //more than 10 lines (FLAT_WINDOW_LINES)
-		$dumpData = DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF', true);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyAreaStart($data, '#FF00FF', true);
 		$expectedData = "\n\n"
 						. '<pre style="background-color: #FF00FF; border-style: dashed; border-width: 1px; border-color: #950095;'
 						. ' overflow: auto;'
@@ -107,7 +105,7 @@ class Dump_Test extends TestCase{
 		$data->variableName = '-This is a variable Name-';
 
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyAreaEnd($data);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyAreaEnd($data);
 		$expectedData ='</pre>';
 		$this->assertEquals($expectedData, $dumpData );
 	}
@@ -116,7 +114,7 @@ class Dump_Test extends TestCase{
 		$data = new \php_base\Utils\Dump\DumpData();
 		$data->variableName = '-This is a variable Name-';
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyVariableName($data);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyVariableName($data);
 		$expectedData ='<font style="font-size: large; background-color: #7DEEA2; color: #950095"; font-weight: 999;>-This is a variable Name-</font>'
 				. "\n";
 		$this->assertEquals($expectedData, $dumpData );
@@ -128,7 +126,7 @@ class Dump_Test extends TestCase{
 		$data->fileName= '-this is a filename-';
 		$data->lineNum = 9999;
 
-		$dumpData = DumpExtendedClass::ExtendBeautifyLineData($data);
+		$dumpData = \Tests\Test\DumpExtendedClass::ExtendBeautifyLineData($data);
 		$dumpData = substr($dumpData,0,-1);   // have to remove the last character it is not quite a /r and cant quite match it properly
 
 		//$expectedData ='<div align=right><font style="font-size: small; font-style: italic; color:#FF8000">  server=-This is a Server Name- -this is a filename-</font><font style="font-style: italic; font-weight: bold; color:#FF8000"> (line: 9999)</font></div>';
@@ -136,7 +134,9 @@ class Dump_Test extends TestCase{
 		$this->assertEquals($expectedData, $dumpData );
 	}
 
-	public function testSetBackTrace()   :void {
+
+/*
+	public function te_SetBackTrace()   :void {
 		// this is very hard totest - the back trace is dependant on where you run it from
 		$bt = array( 0=> array (
 				    'file' => DIR .'index.php',
@@ -180,13 +180,13 @@ class Dump_Test extends TestCase{
 
 	}
 }
-
+*/
 //class BackTraceTests  extends TestCase{
 //
 //	public function testBacktraceProcessing() :void {
 //		$this->markTestIncomplete('This test has not been implemented yet' );
 //	}
-//}
+}
 
 //
 //namespace whitehorse\MikesCommandAndControl2\Utils;

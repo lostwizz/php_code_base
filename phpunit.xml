@@ -33,13 +33,14 @@
         <server name="REMOTE_ADDR" value="127.1.2.3"/>
     </php>
 
-	<testsuites>
+    <testsuites>
 
-		<!--
+
+<!--
 		<testsuite name="Wild_card_all_tests">
 			        <directory>Tests</directory>
 		</testsuite>
-		-->
+-->
 
 		<!--
 		<testsuite name="Vendor_Test_Suite">
@@ -47,16 +48,41 @@
 		</testsuite>
 		-->
 
-		<!--
+
 		<testsuite name="config_Tests">
 			<file>Tests/_config/_Settings-Database_Test.php</file>
 			<file>Tests/_config/_Settings-Genral_Test.php</file>
 			<file>Tests/_config/_Settings-protected_Test.php</file>
 		</testsuite>
-		-->
+
+		<testsuite name="Tests To FIX">
+			<file>Tests/utils/dump_Test.php</file>
+		</testsuite>
+
+		<testsuite name="Utils">
+
+			<file>Tests/utils/Cache_Test.php</file>
+			<file>Tests/utils/Cryption_Test.php</file>
+			<!-- <file>Tests/utils/log/LoggingToDB_Test.php</file>   -->
+			<file>Tests/utils/EmailHtmlFormatter_Test.php</file>
+
+			<file>Tests/utils/ErrorHandler_Test.php</file>
+			<file>Tests/utils/HTML_Test.php</file>
+			<file>Tests/utils/Message_Test.php</file>
+			<file>Tests/utils/MessageLog_Test.php</file>
+			<file>Tests/utils/NullAbsorber_Test.php</file>
+			<file>Tests/utils/Response_Test.php</file>
+			<file>Tests/utils/ResponseErrorCodes_Test.php</file>
+			<file>Tests/utils/Setup_Logging_Test.php</file>
+			<file>Tests/utils/Utils_Test.php</file>
+			<file>Tests/utils/SettingsClass_Test.php</file>
+		</testsuite>
+
+
 
 		<testsuite name="base_structure">
 			<file>Tests/DirectoryStructureTest.php</file>
+
 			<file>Tests/Resolver_Test.php</file>
 			<file>Tests/dispatcher_Test.php</file>
 
@@ -75,28 +101,22 @@
 			<file>Tests/view/FooterView_Test.php</file>
 		</testsuite>
 
-		<testsuite name="Utils">
-			<file>Tests/utils/Cache_Test.php</file>
-			<file>Tests/utils/Cryption_Test.php</file>
-			<!-- <file>Tests/utils/log/LoggingToDB_Test.php</file>   -->
-			<file>Tests/utils/EmailHtmlFormatter_Test.php</file>
-
-			<file>Tests/utils/ErrorHandler_Test.php</file>
-			<file>Tests/utils/HTML_Test.php</file>
-			<file>Tests/utils/Message_Test.php</file>
-			<file>Tests/utils/MessageLog_Test.php</file>
-			<file>Tests/utils/NullAbsorber_Test.php</file>
-			<file>Tests/utils/Response_Test.php</file>
-			<file>Tests/utils/ResponseErrorCodes_Test.php</file>
-			<file>Tests/utils/Setup_Logging_Test.php</file>
-			<file>Tests/utils/Utils_Test.php</file>
-			<file>Tests/utils/dump_Test.php</file>
-			<file>Tests/utils/SettingsClass_Test.php</file>
+		<testsuite name="Utils_DatabaseHanders">
+			<file>Tests/utils/DatabaseHandlers/DBUtils_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Field_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Field_Boolean_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Field_DateTime_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Field_Float_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Field_Int_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Field_Text_Tests.php</file>
+			<file>Tests/utils/DatabaseHandlers/Table_Tests.php</file>
 		</testsuite>
+
 
 		<testsuite name="Menu_Tests">
 			<file>Tests/control/MenuController_Test.php</file>
 		</testsuite>
+
 
 		<testsuite name="module_Authenticate">
 			<file>Tests/control/AuthenticateController_Test.php</file>
@@ -114,7 +134,7 @@
 			<file>Tests/data/UserInfoData.class.php</file>
 			<file>Tests/data/UserPermissionsData.class.php</file>
 			<file>Tests/data/UserRoleData.class.php</file>
-			
+
 			<file>Tests/view/UserRoleAndPermissionsView_Test.php</file>
 		</testsuite>
 

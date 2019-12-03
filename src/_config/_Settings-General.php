@@ -81,8 +81,8 @@ Settings::SetPublic('Email_From', 'no-reply@whitehorse.ca');
 /*
  * the file names for the Lot Files
  */
-Settings::SetPublic('Log_file',         DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log' );
-Settings::SetPublic('Security_Log_file',DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_security.log' );
+Settings::SetPublic('Log_file',         DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log' );
+Settings::SetPublic('Security_Log_file',DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_security.log' );
 
 
 /**

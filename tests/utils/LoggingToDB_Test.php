@@ -1,8 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-use \whitehorse\MikesCommandAndControl2\Settings\Settings as Settings;
-use \whitehorse\MikesCommandAndControl2\Utils\Dump\Dump as Dump;
+use \php_base\Utils\HTML\HTML as HTML;
+use \php_base\Utils\Settings as Settings;
 
 
 class LogToDB_Test extends TestCase {
@@ -20,26 +20,36 @@ class LogToDB_Test extends TestCase {
  	*/
 	public static function setUPBeforeClass() : void {
 
-		require_once( DIR . '_config' . DS . '_Settings-General.php');
-		require_once( DIR . '_config' . DS . '_Settings-Database.php');
-		require_once( DIR . '_config' . DS . '_Settings-protected.php');
-		include_once( DIR . 'utils' . DS . 'Setup' . DS . 'settings.class.php');
+		include_once( DIR . 'utils' . DSZ . 'settings.class.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+		require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
+
+		require_once( 'P:\Projects\_Private_Settings.php');
 
 		if ( ! extension_loaded('pdo_sqlsrv')) {
 			throw new Exception ('NOT loaded');
 		}
-		$dsn =  'sqlsrv:server=' .  Settings::GetProtected( 'Logging_Server')   . ';database=' .  Settings::GetProtected( 'Logging_Database');
-		$options = 	array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-							PDO::ATTR_CASE=> PDO::CASE_LOWER,
-							PDO::ATTR_ERRMODE =>PDO::ERRMODE_EXCEPTION
-							//PDO::ATTR_PERSISTENT => true
-							);
+//		$dsn =  'sqlsrv:server=' .  Settings::GetProtected( 'Logging_Server')   . ';database=' .  Settings::GetProtected( 'Logging_Database');
+//		$options = 	array( PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+//							PDO::ATTR_CASE=> PDO::CASE_LOWER,
+//							PDO::ATTR_ERRMODE =>PDO::ERRMODE_EXCEPTION
+//							//PDO::ATTR_PERSISTENT => true
+//							);
+		$dsn = Settings::GetProtected('DB_DSN');
+		$options = Settings::GetProtected('DB_DSN_OPTIONS');
+
 		try {
-			$mssql = new \PDO($dsn,
-							Settings::GetProtected('Logging_DB_Username'),
-							Settings::GetProtected('Logging_DB_Password'),
-							$options
-							);
+//			$mssql = new \PDO($dsn,
+//							Settings::GetProtected('Logging_DB_Username'),
+//							Settings::GetProtected('Logging_DB_Password'),
+//							$options
+//							);
+			$mssql = new \PDO($dsn, Settings::GetProtected('DB_Username'), Settings::GetProtected('DB_Password'), $options);
+			$mssql->setAttribute(\PDO::ATTR_CASE, \PDO::CASE_UPPER);
+			$mssql->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+			$mssql->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
 		} catch (\PDOException $e)				{
 			throw new \PDOException($e->getMessage(), (int)$e->getCode());
 		}

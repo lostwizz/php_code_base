@@ -30,7 +30,7 @@
  */
 //**********************************************************************************************
 
-namespace php_base;
+namespace php_base\Control;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
@@ -38,11 +38,7 @@ use \php_base\Utils\Response as Response;
 
 
 
-namespace php_base\Control;
-
-
-use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Control;
 
 /** * **********************************************************************************************
  *   MenuController
@@ -82,9 +78,10 @@ class MenuController extends Controller {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	public function doWork(){
+	public function doWork(): Response {
 		echo 'menuController doWork hi - i am here!!';
 		echo 'should never get here';
+		return Response::NoError();
 	}
 
 

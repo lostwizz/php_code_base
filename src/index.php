@@ -26,12 +26,12 @@
  */
 //**********************************************************************************************
 // setup the Directory Root
-define('DS', DIRECTORY_SEPARATOR);
-//define ('DIR', 'p:' . DS . 'Projects' . DS . 'MikesCommandAndControl2' . DS . 'src' . DS );
+define('DSZ', DIRECTORY_SEPARATOR);
+//define ('DIR', 'p:' . DSZ . 'Projects' . DSZ . 'MikesCommandAndControl2' . DSZ . 'src' . DSZ );
 if (strripos(realpath('.'), 'src') < 1) {
-	define('DIR', realpath('..') . \DS . 'src' . \DS);
+	define('DIR', realpath('..') . \DSZ . 'src' . \DSZ);
 } else {
-	define('DIR', realpath('.') . \DS);
+	define('DIR', realpath('.') . \DSZ);
 }
 
 include_once( \DIR . 'autoload.php');
@@ -47,13 +47,9 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\MessageLog as MessageLog;
 use \php_base\Utils\Settings as Settings;
 
-//use \php_base\utils\myCryption\myCryption as myCryption;
-//use \php_base\Utils\HTML\HTML as HTML;
-//use \php_base\Utils\myUtils\myUtils as myUtils;
-//
-//
-//
-//
+
+
+////
 //
 ////////!!!!!!!!!!!!!this line #5 must alwaygs be this for the unit tests to work
 //Dump::dump(__LINE__, '-This is a Title-',true);

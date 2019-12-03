@@ -8,7 +8,7 @@ use \php_base\utils;
 
 use \php_base\utils\AMessage as AMessage;
 
-include_once (DIR . 'utils' . DS . 'messagelog.class.php');
+include_once (DIR . 'utils' . DSZ . 'messagelog.class.php');
 
 
 
