@@ -297,68 +297,21 @@ class HTML_Test extends TestCase {
 
 
 	function radio_dataProvider(){
-		return [
-			//['Radio', ["fred"]],
-			//['Radio', ["FRED", 7],'<Input type="RADIO" name="FRED" value="7">'],
-			['Radio', ["FRED", 'somewhere over the rainbow'], '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">'],
-			['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],  '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
-			['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
-			['Radio', ["FRED", 'somewhere over the rainbow', null, true],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>'],
-			['Radio', ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
-			['Radio', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'],
-			['Radio', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'],
-			['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'],
-
-			['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
-						'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'],
-
-
-			['CheckBox', ["FRED", 'somewhere over the rainbow'],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked>'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'],
-			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'],
-
-			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
-						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'],
-
-
-			['ShowInput', ['FRED', 'somewhere over the rainbow'],
-						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
-			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT' ],
-						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
-			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', 'Where was Dorthy?' ],
-						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" Where was Dorthy?>'],
-
-			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', null],   //, true,array('alt' => 'TONY')],
-						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
-
-
-				];
+		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'FFRREEDD'];
+		$obj = new ArrayObject($possibleTypes);
+		$it = $obj->getIterator;
+		return $obj->getIterator();
 	}
 
 
 	/**
 	* @dataProvider radio_dataProvider
 	*/
-	function test_radio_button( $which, $in, $expected) {
+	function test_arrayitorator( $which, $a){
+		$this->assertEquals( $which, $a);
+	}
+
+	function xtest_radio_button( $which, $in, $expected) {
 
 		switch ( count($in)) {
 //			case 0:
@@ -951,3 +904,133 @@ class ExtendedHTML extends HTML {
 	}
 
 }
+
+
+/*
+
+class HTML_x_input implements Iterator {
+
+	public $possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN'];
+	public $obj;
+
+
+	//$it = $obj->getIterator();
+	//$key =0;
+	$position = 0;
+
+	public function __construct(){
+		$this->obj = new ArrayObject($possibleTypes);
+	}
+	public function __destruct() {
+		unset( $this->obj );
+	}
+
+	public function rewind() {
+
+	}
+	public function valid(){
+
+	}
+
+	public function key(){
+
+	}
+
+	public function current(){
+
+	}
+	public function next() {
+
+
+	}
+}
+
+/*
+
+		foreach ($possibeTypes as $id => $type) {
+
+		return [
+			//['Radio', ["fred"]],
+			//['Radio', ["FRED", 7],'<Input type="RADIO" name="FRED" value="7">'],
+			[$type, ["FRED", 'somewhere over the rainbow'],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'],
+			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			[$type, ["FRED", 'somewhere over the rainbow', null, true],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked>'],
+			[$type, ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'],
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'],
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'],
+
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'],
+			];
+		}
+
+	}
+
+			['CheckBox', ["FRED", 'somewhere over the rainbow'],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked>'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'],
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'],
+
+			['CheckBox', ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+						'<Input type="CHECKBOX" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'],
+
+
+			['ShowInput', ['FRED', 'somewhere over the rainbow'],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT' ],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', 'Where was Dorthy?' ],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" Where was Dorthy?>'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', null],   //, true,array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" alt="TONY">'],
+
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', null, true], //,array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow">'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', null, array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" style="alt: TONY;">'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', array(  'bob'=> 'george'), array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" bob="george" style="alt: TONY;">'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', array(  'bob'=> 'george','bob2'=> 'george2'), array('alt' => 'TONY')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" bob="george" bob2="george2" style="alt: TONY;">'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', array(  'bob'=> 'george'), array('alt' => 'TONY', 'alt2' => 'TONY2')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" bob="george" style="alt: TONY; alt2: TONY2;">'],
+
+			['ShowInput', ["FRED", 'somewhere over the rainbow', 'TEXT', array(  'bob'=> 'george','bob2'=> 'george2'), array('alt' => 'TONY', 'alt2' => 'TONY2')],
+						'<Input type="TEXT" name="FRED" value="somewhere over the rainbow" bob="george" bob2="george2" style="alt: TONY; alt2: TONY2;">'],
+
+				];
+	}
+*/
+
+
+

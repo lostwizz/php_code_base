@@ -44,20 +44,20 @@ date_default_timezone_set('Canada/Yukon');
 //include_once( DIR . 'utils' . DS . 'dump.class.php');
 
 
-require_once( DIR . '..' . DS . 'vendor' . DS . 'autoload.php');
+require_once( DIR . '..' . DSZ . 'vendor' . DSZ . 'autoload.php');
 
-include_once( DIR . 'utils' . DS . 'settings.class.php');
+include_once( DIR . 'utils' . DSZ . 'settings.class.php');
 
-require_once( DIR . '_config' . DS . '_Settings-General.php');
-require_once( DIR . '_config' . DS . '_Settings-Database.php');
-require_once( DIR . '_config' . DS . '_Settings-protected.php');
+require_once( DIR . '_config' . DSZ . '_Settings-General.php');
+require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
+require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 
 require_once( 'P:\Projects\_Private_Settings.php');
 
-include_once( DIR . 'utils' . DS . 'ErrorHandler.php');		   // has to be after the settings are initialized
+include_once( DIR . 'utils' . DSZ . 'ErrorHandler.php');		   // has to be after the settings are initialized
 
-Settings::SetPublic('Log_file', DIR . 'logs' . DS . Settings::GetPublic('App Name') . '_app.log');
-include_once( DIR . 'utils' . DS . 'Setup_Logging.php');
+Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
+include_once( DIR . 'utils' . DSZ . 'Setup_Logging.php');
 
 
 
