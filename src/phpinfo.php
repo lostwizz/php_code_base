@@ -14,7 +14,14 @@ class HTML_x_input implements \Iterator {
 
 
 	public function __construct(){
-		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN'];
+		$possibeTypes = ['CHECKBOX'=> ['a','b'],
+			'RADIO'=> ['c','d'],
+			'Reset'=> ['e','f'],
+			'Password'=> ['g','h'],
+			'Submit'=> ['i','j'],
+			'BUTTON'=> ['k','l'],
+			'TEXT'=> ['m','n'],
+			'HIDDEN'=> ['o','p']];
 		$this->obj = new ArrayObject($possibeTypes);
 		$position =0;
 	}
@@ -41,11 +48,23 @@ class HTML_x_input implements \Iterator {
 	}
 }
 
+$possibleTypes = ['CHECKBOX'=> ['a','b'],
+			'RADIO'=> ['c','d'],
+			'Reset'=> ['e','f'],
+			'Password'=> ['g','h'],
+			'Submit'=> ['i','j'],
+			'BUTTON'=> ['k','l'],
+			'TEXT'=> ['m','n'],
+			'HIDDEN'=> ['o','p']];
 
-$x = new HTML_x_input();
+
+$x = new ArrayIterator($possibleTypes);
+//$x = new HTML_x_input();
 echo '<pre>';
 print_r( $x);
 echo '</pre>';
+
+echo '--------------<br>';
 foreach( $x as $k => $v ){
 
 	echo '<pre>';

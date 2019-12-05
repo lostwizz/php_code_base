@@ -297,18 +297,69 @@ class HTML_Test extends TestCase {
 
 
 	function radio_dataProvider(){
-		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'FFRREEDD'];
-		$obj = new ArrayObject($possibleTypes);
-		$it = $obj->getIterator;
-		return $obj->getIterator();
+		//$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'FFRREEDD'];
+		$possibleTypes = [
+			'CHECKBOX',
+			'RADIO',
+			'Reset',
+			'Password',
+			'Submit',
+			'BUTTON',
+			'TEXT',
+			'HIDDEN'
+			];
+
+		$outArray = array();
+
+		$i =0;
+		foreach($possibleTypes as $type ){
+			//$a = [$k, ["FRED", 'somewhere over the rainbow'],
+			//	'<Input type="' . $k . '" name="FRED" value="somewhere over the rainbow">'];
+			//		;
+
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow'],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
+
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, true],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked>'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'];
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'];
+
+		}
+
+
+		$obj = new \ArrayIterator($outArray);
+		return	$obj;
 	}
 
 
 	/**
 	* @dataProvider radio_dataProvider
 	*/
-	function test_arrayitorator( $which, $a){
-		$this->assertEquals( $which, $a);
+	function test_arrayitorator( $which, $in, $expected){
+		//$this->assertEquals( $in, $which);
+		$this->assertNotEquals( $in, $which);
 	}
 
 	function xtest_radio_button( $which, $in, $expected) {
