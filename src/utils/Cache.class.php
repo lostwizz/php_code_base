@@ -50,7 +50,7 @@ Abstract class Cache {
 	 * @param int $secondToTimeout
 	 * @return bool
 	 */
-	public static function add(string $itemName, $data, int $secondToTimeout = DEFAULTTIMEOUTSECONDS): bool {
+	public static function add(string $itemName, $data, int $secondToTimeout = self::DEFAULTTIMEOUTSECONDS): bool {
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return false;
 		}

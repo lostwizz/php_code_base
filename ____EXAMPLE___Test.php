@@ -76,4 +76,73 @@ class ExampleController_Test extends TestCase {
 
 
 
+
+
+
+	// iterate thru an array dynamically
+	function radio_dataProvider(){
+		//$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'FFRREEDD'];
+		$possibleTypes = [
+			'CHECKBOX',
+			'RADIO',
+			'Reset',
+			'Password',
+			'Submit',
+			'BUTTON',
+			'TEXT',
+			'HIDDEN'
+			];
+
+		$outArray = array();
+
+		$i =0;
+		foreach($possibleTypes as $type ){
+
+			$outArray[$i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow'],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
+		}
+
+		$obj = new \ArrayIterator($outArray);
+		return	$obj;
+	}
+
+
+		/**
+	* @dataProvider radio_dataProvider
+	*/
+	function test_radio_button( $which, $in, $expected) {
+
+		switch ( count($in)) {
+//			case 0:
+//				$actual = HTML::$which();
+//				break;
+//			case 1:
+//				$actual = HTML::$which($in[0]);
+//				break;
+			case 2:
+				$actual = HTML::$which($in[0], $in[1]);
+				break;
+			case 3:
+				$actual = HTML::$which($in[0], $in[1], $in[2]);
+				break;
+			case 4:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3]);
+				break;
+			case 5:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4]);
+				break;
+			case 6:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4], $in[5]);
+				break;
+			case 7:
+				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4], $in[5], $in[6]);
+				break;
+		}
+		$this->assertEquals( $expected, $actual );
+	}
+
+
+
+
 }

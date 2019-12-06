@@ -83,12 +83,50 @@ class HTML_Test extends TestCase {
 
 	}
 
-	function test_filter_XSS() {
-		$this->markTestIncomplete('This test has not been implemented yet');
+//	function test_filter_XSS() {
+//		$this->markTestIncomplete('This test has not been implemented yet');
+//	}
+
+
+
+	function Filter_DataProvider(){
+		return [
+			's a' => [ 'strip', 'sam', 'sam'],
+			's b' => [ 'strip', '<B>sam', 'sam'],
+			's c' => [ 'strip', '<B>sam</B>', 'sam'],
+			's d' => [ 'strip', '<HR>sam', 'sam'],
+			's e' => [ 'strip', '<div>sam</div>', 'sam'],
+			's f' => [ 'strip', 'sam<br>', 'sam'],
+			's g' => [ 'strip', 'sam<\br>', 'sam'],
+			's g' => [ 'strip', 'sam "fred"', 'sam "fred"'],
+
+			'ea a' => [ 'escapeAll', 'sam', 'sam'],
+			'ea b' => [ 'escapeAll', "fred saw 'sam'", 'fred saw &#039;sam&#039;'],
+			'ea c' => [ 'escapeAll', '<b>sam</b>', '&lt;b&gt;sam&lt;/b&gt;'],
+
+			'e a' => [ 'escape', 'sam', 'sam'],
+			'e b' => [ 'escape', 'sam "fred"', 'sam "fred"'],
+			'e c' => [ 'escape', 'sam <BR>', 'sam &lt;BR&gt;'],
+
+			'u a' => [ 'url', 'sam', 'sam'],
+			'u b' => [ 'url', 'sam@', 'sam%40'],
+			'u c' => [ 'url', 'sam\bob', 'sam%5Cbob'],
+			'u d' => [ 'url', 'http://merrett.ca/sam', 'http%3A%2F%2Fmerrett.ca%2Fsam'],
+
+			'f a' => [ 'filename', 'sam', 'sam'],
+			'f b' => [ 'filename', 'c:\city\sam', 'c--city-sam'],
+			'f c' => [ 'filename', 'c:\city\sam.txt', 'c--city-sam.txt'],
+			'f d' => [ 'filename', '/etc/city/sam', '-etc-city-sam'],
+			'f e' => [ 'filename', '/etc/city/sam.txt', '-etc-city-sam.txt'],
+			];
 	}
 
-	function test_filter() {
-		$this->markTestIncomplete('This test has not been implemented yet');
+	/**
+	* @dataProvider Filter_DataProvider
+	*/
+	function test_filter($mode, $input, $expected) {
+		$actual = HTML::filter($mode, $input);
+		$this->assertEquals($expected, $actual);
 	}
 
 	function Select_DataProvider() {
@@ -301,53 +339,73 @@ class HTML_Test extends TestCase {
 		$possibleTypes = [
 			'CHECKBOX',
 			'RADIO',
-			'Reset',
-			'Password',
-			'Submit',
-			'BUTTON',
-			'TEXT',
-			'HIDDEN'
 			];
+
+		$possibleTypes2 = [
+			'Password',
+			'TEXT',
+			'Submit',
+			'HIDDEN',
+			'BUTTON',
+		/*	'Reset',*/
+			];
+
+/*			'Reset',
+ *
+ */
 
 		$outArray = array();
 
 		$i =0;
 		foreach($possibleTypes as $type ){
-			//$a = [$k, ["FRED", 'somewhere over the rainbow'],
-			//	'<Input type="' . $k . '" name="FRED" value="somewhere over the rainbow">'];
-			//		;
 
-			$outArray[$i++]   =
+			$outArray['2_a' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow'],
 				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
 
-			$outArray[$i++]   =
+			$outArray['2_b' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
 				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
-			$outArray[$i++]   =
+			$outArray['2_c' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
-			$outArray[$i++]   =
+			$outArray['2_d' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', null, true],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked>'];
-			$outArray[$i++]   =
+			$outArray['2_e' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'];
-			$outArray[$i++]   =
+			$outArray['2_f' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'];
-			$outArray[$i++]   =
+			$outArray['2_g' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'];
-			$outArray[$i++]   =
+			$outArray['2_h' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'];
-			$outArray[$i++]   =
+			$outArray['2_i' . $i++]   =
 			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'];
 
 		}
 
+		foreach($possibleTypes2 as $type ){
+			$outArray['4_a' . $i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow'],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
+
+			$outArray['4_b' . $i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null,null, 'Where was Dorthy?' ],
+				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
+
+			$outArray['4_c' . $i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, 'backgroundcolor: yellow;'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" style="backgroundcolor: yellow;">'];
+			$outArray['4_d' . $i++]   =
+			[$type, ["FRED", 'somewhere over the rainbow', null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" style="backgroundcolor: yellow; color: blue;">'];
+		}
 
 		$obj = new \ArrayIterator($outArray);
 		return	$obj;
@@ -357,12 +415,7 @@ class HTML_Test extends TestCase {
 	/**
 	* @dataProvider radio_dataProvider
 	*/
-	function test_arrayitorator( $which, $in, $expected){
-		//$this->assertEquals( $in, $which);
-		$this->assertNotEquals( $in, $which);
-	}
-
-	function xtest_radio_button( $which, $in, $expected) {
+	function test_radio_button( $which, $in, $expected) {
 
 		switch ( count($in)) {
 //			case 0:
@@ -398,7 +451,7 @@ class HTML_Test extends TestCase {
 
 
 
-
+/*
 	function xtest_radio() {
 		//$this->markTestIncomplete('This test has not been implemented yet' );
 
@@ -471,6 +524,7 @@ class HTML_Test extends TestCase {
 		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">';
 		$this->assertEquals($expect, $out);
 	}
+*/
 
 	function test_Image() {
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png');
@@ -786,6 +840,7 @@ class HTML_Test extends TestCase {
 		$out = HTML::Hidden('SAM');
 	}
 
+	/*
 	function test_Hidden() {
 
 		$out = HTML::Hidden('SAM', 'FRED');
@@ -816,7 +871,7 @@ class HTML_Test extends TestCase {
 		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; //. PHP_EOL;
 		$this->assertEquals($expected, $out);
 	}
-
+*/
 	function test_1_Open() {
 		$this->expectException(\ArgumentCountError::class);
 		$this->expectExceptionMessage('Too few arguments to function php_base\Utils\HTML\HTML::Open(), 0 passed');

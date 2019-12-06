@@ -68,9 +68,10 @@ abstract Class HTML {
 			string $name,
 			string $value,
 			$arOptions = null,
-			$arStyle = null
+			$arStyle = null,
+			?string $lable = null
 	): ?string {
-		return self::ShowInput($name, $value, 'HIDDEN', $arOptions, $arStyle);
+		return self::ShowInput($name, $value, 'HIDDEN', $arOptions, $arStyle, $lable);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -87,9 +88,10 @@ abstract Class HTML {
 			string $name,
 			?string $value = null,
 			$arOptions = null,
-			$arStyle = null
+			$arStyle = null,
+			?string $lable = null
 	): ?string {
-		return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle);
+		return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle, $lable);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -104,9 +106,10 @@ abstract Class HTML {
 			string $name,
 			?string $value = null,
 			$arOptions = null,
-			$arStyle = null
-	): ?string {
-		return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle);
+			$arStyle = null,
+			?string $lable = null
+		): ?string {
+		return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle, $lable);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -122,9 +125,10 @@ abstract Class HTML {
 			string $name,
 			?string $value = null,
 			$arOptions = null,
-			$arStyle = null
+			$arStyle = null,
+			?string $lable = null
 	) : ?string {
-		return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle);
+		return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle, $lable);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -140,9 +144,10 @@ abstract Class HTML {
 			string $name,
 			?string $value = null,
 			$arOptions = null,
-			$arStyle = null
+			$arStyle = null,
+			?string $lable = null
 	): ?string {
-		return self::ShowInput($name, $value, 'Password', $arOptions, $arStyle);
+		return self::ShowInput($name, $value, 'Password', $arOptions, $arStyle, $lable);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -235,13 +240,13 @@ abstract Class HTML {
 		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN'];
 
 		if ( in_array($type, $possibeTypes) ){
-			$name = (!empty($name)) ? 'name="' . $name . '"' : '';
+			$name = (!empty($name)) ? ' name="' . $name . '"' : '';
 			$value = (!empty($value)) ? 'value="' . $value . '"' : '';
 			$attr = self::parseOptions($arOptions);
 			$style = self::parseStyle($arStyle);
 			$value = empty($value) ? '' : ' ' . $value;
 
-			return '<Input type="' . $type . '" ' . $name . $value . $attr . $style . '>' . $lable; //. PHP_EOL;
+			return '<Input type="' . $type . '"' . $name . $value . $attr . $style . '>' . $lable; //. PHP_EOL;
 		} else {
 			return null;
 		}
@@ -536,44 +541,44 @@ abstract Class HTML {
 	 * @param 	array $args The array with the parameters
 	 * @return 	string The safe string.
 	 */
-	public static function Filter_XSS($str, $args) {
-		/* Loop trough the args and apply the filters. */
-
-		//while(list($name, $data) = each($args)) {
-		foreach ($args as $name => $data) {
-
-			$safe = false;
-			$type = mb_substr($name, 0, 1);
-			switch ($type) {
-				case '%':
-					/* %variables: HTML tags are stripped of from the string
-					  before it's inserted. */
-					$safe = self::filter($data, 'strip');
-					break;
-				case '!':
-					/* !variables: HTML and special characters are escaped from the string
-					  before it is used. */
-					$safe = self::filter($data, 'escapeAll');
-					break;
-				case '@':
-					/* @variables: Only HTML is escaped from the string. Special characters
-					  is kept as it is. */
-					$safe = self::filter($data, 'escape');
-					break;
-				case '&':
-					/* Encode a string according to RFC 3986 for use in a URL. */
-					$safe = self::filter($data, 'url');
-					break;
-				default:
-					return null;
-					break;
-			}
-			if ($safe !== false) {
-				$str = str_replace($name, $safe, $str);
-			}
-		}
-		return $str;
-	}
+//	public static function Filter_XSS($str, $args) {
+//		/* Loop trough the args and apply the filters. */
+//
+//		//while(list($name, $data) = each($args)) {
+//		foreach ($args as $name => $data) {
+//
+//			$safe = false;
+//			$type = mb_substr($name, 0, 1);
+//			switch ($type) {
+//				case '%':
+//					/* %variables: HTML tags are stripped of from the string
+//					  before it's inserted. */
+//					$safe = self::filter($data, 'strip');
+//					break;
+//				case '!':
+//					/* !variables: HTML and special characters are escaped from the string
+//					  before it is used. */
+//					$safe = self::filter($data, 'escapeAll');
+//					break;
+//				case '@':
+//					/* @variables: Only HTML is escaped from the string. Special characters
+//					  is kept as it is. */
+//					$safe = self::filter($data, 'escape');
+//					break;
+//				case '&':
+//					/* Encode a string according to RFC 3986 for use in a URL. */
+//					$safe = self::filter($data, 'url');
+//					break;
+//				default:
+//					return null;
+//					break;
+//			}
+//			if ($safe !== false) {
+//				$str = str_replace($name, $safe, $str);
+//			}
+//		}
+//		return $str;
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * ONLY FOR THIS CLASS (self)
@@ -585,7 +590,7 @@ abstract Class HTML {
 	 * @param  	string $mode The filter mode
 	 * @return 	mixed May return the filtered string or may return null if the $mode variable isn't set
 	 */
-	protected static function filter($str, $mode) {
+	public static function filter( $mode, $str) {
 		switch ($mode) {
 			case 'strip':
 				/* HTML tags are stripped from the string
@@ -604,7 +609,9 @@ abstract Class HTML {
 				return rawurlencode($str);
 			case 'filename':
 				/* Escape a string so it's safe to be used as filename. */
-				return str_replace('/', '-', $str);
+				$s = str_replace('/', '-', $str);
+				$s2= str_replace(':', '-', $s);
+				return str_replace( DIRECTORY_SEPARATOR,'-', $s2);
 			default:
 				return null;
 		}
