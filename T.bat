@@ -1,3 +1,4 @@
+@echo off
 @p:
 @cd P:\Projects\NB_projects\php_code_base\
 
@@ -8,9 +9,9 @@ pause
 
 :do_tests
     rem @call  phpunit --check-version
-@call  phpunit --list-tests -c phpunit.xml
-@call  phpunit --list-suites -c phpunit.xml
 
+REM @call  phpunit --list-tests -c phpunit.xml
+REM @call  phpunit --list-suites -c phpunit.xml
 
 rem phpunit --verbose --debug -c phpunit.xml --coverage-php P:\Projects\NB_projects\php_code_base\tests\generated_coverage.html
 
@@ -18,6 +19,20 @@ rem phpunit --dump-xdebug-filter build/xdebug-filter.php
 
 rem phpunit --prepend build/xdebug-filter.php --coverage-html build/coverage-report
 
+Set opt=
+@if (%1)==(d) set opt= --debug
+
 rem --debug
-phpunit --verbose --debug -c phpunit.xml
+@echo .
+@echo .
+@echo .
+@echo .
+@echo .
+@echo *******************************************************************************************************************
+
+@echo on
+cmd /c phpunit --verbose %opt% -c phpunit.xml
+
+
+type f:\temp\data.txt
 

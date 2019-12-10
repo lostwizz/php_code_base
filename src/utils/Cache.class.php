@@ -1,7 +1,6 @@
 <?php
-
 /** * ********************************************************************************************
- * CacheHandler.class.php
+ * Cache.class.php
  *
  * Summary: static class wrapper for the html code
  *
@@ -11,7 +10,7 @@
  *
  * Description: static wrapper for the html code
  *
- *
+ * @Note:   some items will not be cacheable over a session start and stop (such as a PDO instance )
  *
  * @package utils
  * @subpackage Cache
@@ -32,7 +31,6 @@ namespace php_base\Utils;
 
 use \php_base\Utils\Dump\Dump as Dump;
 
-
 /** * ********************************************************************************************
 
  * Description of CacheHandler
@@ -41,7 +39,7 @@ use \php_base\Utils\Dump\Dump as Dump;
  */
 Abstract class Cache {
 
-	const DEFAULTTIMEOUTSECONDS = 600;
+	public const DEFAULTTIMEOUTSECONDS = 600;
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -54,8 +52,11 @@ Abstract class Cache {
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return false;
 		}
-
-		$now = (new \DateTime('now'))->getTimestamp();
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$now = 1575920000;
+		} else {
+			$now = (new \DateTime('now'))->getTimestamp();
+		}
 		$timeoutStamp = $now + $secondToTimeout;
 		$value = array('Data' => $data,
 			'Expires' => $timeoutStamp
@@ -72,17 +73,20 @@ Abstract class Cache {
 	 * @param int $secondToTimeout
 	 * @return bool
 	 */
-	public static function addOrUpdate( string $itemName, $data, int $secondToTimeout = DEFAULTTIMEOUTSECONDS): bool {
+	public static function addOrUpdate( string $itemName, $data, int $secondToTimeout = self::DEFAULTTIMEOUTSECONDS): bool {
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return false;
 		}
-		$now = (new \DateTime('now'))->getTimestamp();
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$now = 1575940000;
+		} else {
+			$now = (new \DateTime('now'))->getTimestamp();
+		}
 		$timeoutStamp = $now + $secondToTimeout;
-//		if ( ! self::doesSerializeWorkOnThisObject($data)) {
-//			echo 'Sorry this object does not serialize';
-//			return false;
-//		}
 
+		if ( self::hasExpired( $itemName)) {
+			return false;             /* expired before you got here */
+		}
 		$_SESSION['CACHE'][$itemName]['Data'] = $data;
 		$_SESSION['CACHE'][$itemName]['Expires'] = $timeoutStamp;
 		return true;
@@ -98,22 +102,102 @@ Abstract class Cache {
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return null;
 		}
+		if ( ! self::exists($itemName)){
+			return null;
+		}
 
-		$now = (new \DateTime('now'))->getTimestamp();
 
-		if ( !empty( $_SESSION['CACHE'][$itemName])  and $_SESSION['CACHE'][$itemName]['Expires'] > $now) {
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$now = 1575920000;
+		} else {
+			$now = (new \DateTime('now'))->getTimestamp();
+		}
+
+		if ( self::hasExpired( $itemName)) {
+			return false;
+		} else {
 			return $_SESSION['CACHE'][$itemName]['Data'];
-		} elseif ( !empty( $_SESSION['CACHE'][$itemName])  and $_SESSION['CACHE'][$itemName]['Expires'] < $now) {
-			unset ($_SESSION['CACHE'][$itemName]);
 		}
 	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $secondsFromNow
+	 * @return bool
+	 */
+	public static function changeExpires(string $itemName, int $secondsFromNow = DEFAULTTIMEOUTSECONDS): bool{
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$now = 1575950000;
+		} else {
+			$now = (new \DateTime('now'))->getTimestamp();
+		}
+
+		$timeoutStamp = $now + $secondsFromNow;
+		if ( !empty( $_SESSION['CACHE'][$itemName])) {
+			$_SESSION['CACHE'][$itemName]['Expires'] = $timeoutStamp;
+			return true;
+		}
+		return false;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $itemName
+	 * @return bool
+	 */
+	public static function exists( string $itemName) : bool {
+		if ( self::hasExpired( $itemName)) {
+			return false;
+		}
+		if (empty( $_SESSION['CACHE'][$itemName]) ){
+			return false;
+		}
+		if ( !empty( $_SESSION['CACHE'][$itemName]['Data'] ) and !empty(  $_SESSION['CACHE'][$itemName]['Expires'])){
+			return true;
+		}
+		return false;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $itemName
+	 * @return bool
+	 */
+	public static function hasExpired(string $itemName): bool{
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return false;
+		}
+
+		if (empty( $_SESSION['CACHE'][$itemName]['Expires'])){
+			self::delete( $itemName);   /* not expires time so no timehout which is not allowed */
+			return true;
+		}
+
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$now = 1575920000;
+		} else {
+			$now = (new \DateTime('now'))->getTimestamp();
+		}
+
+		if ( $_SESSION['CACHE'][$itemName]['Expires'] <= $now) {
+			self::delete( $itemName);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param \php_base\Utils\sting $itemName
 	 * @return boolean
 	 */
-	public static function delete(sting $itemName){
+	public static function delete(string $itemName){
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return true;
 		}
@@ -125,50 +209,32 @@ Abstract class Cache {
 		return false;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param int $secondsFromNow
-	 * @return bool
-	 */
-	public static function changeExpires( int $secondsFromNow = DEFAULTTIMEOUTSECONDS): bool{
-		if (!Settings::GetPublic('CACHE_IS_ON')) {
-			return false;
-		}
-
-		$now = (new \DateTime('now'))->getTimestamp();
-		$timeoutStamp = $now + $secondsFromNow;
-		if ( !empty( $_SESSION['CACHE'][$itemName])) {
-			$_SESSION['CACHE'][$itemName]['Expires'] = $timeoutStamp;
-		}
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param string $itemName
-	 * @return bool
-	 */
-	public static function exists( string $itemName) : bool {
-		if (!Settings::GetPublic('CACHE_IS_ON')) {
-			return false;
-		}
-
-		return  ( !empty( $_SESSION['CACHE'][$itemName]));
-	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $itemName
 	 * @return int
 	 */
-	public static function secondUntilExpire(string $itemName): int{
+	public static function secondsUntilExpire(string $itemName): int{
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return -1;
 		}
 
+		if ( self::hasExpired($itemName)){
+			return -1;
+		}
+
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$now = 1575930000;
+		} else {
+			$now = (new \DateTime('now'))->getTimestamp();
+		}
+
+
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
 			$then = $_SESSION['CACHE'][$itemName]['Expires'];
-			$now = (new \DateTime('now'))->getTimestamp();
-			return ($then - $now);
+			return ($now - $then);
+
 		}
 		return 0;
 	}
@@ -183,6 +249,9 @@ Abstract class Cache {
 			return false;
 		}
 
+		if ( empty($data)) {
+			return true;
+		}
 		if ( $data instanceof \PDO ) {
 			return false;
 		}

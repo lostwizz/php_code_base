@@ -22,11 +22,20 @@ class ExampleController_Test extends TestCase {
 
 	public static function setUpBeforeClass(): void   {
 		// do things before any tests start -- like change some settings
+		unlink('f:\temp\data.txt');
 	}
 
-	public function setup(){}
+	public static function tearDownAfterClass(): void {
 
-   protected function tearDown(){}
+	}
+
+
+	 public  function setup(): void{
+		$this->fp = fopen('f:\temp\data.txt', 'a');
+	 }
+	protected   function tearDown(): void{
+		 fclose($this->fp);
+	}
 
 
 	public static function test_something(){
