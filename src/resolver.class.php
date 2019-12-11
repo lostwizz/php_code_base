@@ -143,8 +143,8 @@ class Resolver {
 		$r = $this->dispatcher->doWork($this);
 		if ($r->hadError()) {
 			//echo 'Loggon failed';
-			Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got: ' . $r->toString());
-			Settings::GetRuntimeObject('FileLog')->addNotice('resolver got:' . $r->toString());
+			Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got: ' . $r);
+			Settings::GetRuntimeObject('FileLog')->addNotice('resolver got:' . $r);
 			return $r;
 		}
 

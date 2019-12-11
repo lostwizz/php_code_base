@@ -33,7 +33,13 @@ namespace php_base;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Utils as Utils;
+
 use \php_base\Utils\Response as Response;
+
+use \php_base\utils\MessageLog as MessageLog;
+use \php_base\utils\AMessage as AMessage;
+use \php_base\utils\MessageBase as MessageBase;
 
 /** * **********************************************************************************************
  *  Dispatcher executes items in the queue.
@@ -56,6 +62,8 @@ class Dispatcher {
 	protected $POSTqueue;
 	protected $DISPATCHqueue;
 
+	public $PHPUNIT_tempArray = array();
+
 	//protected $payloads = array();
 
 	/** -----------------------------------------------------------------------------------------------
@@ -67,13 +75,77 @@ class Dispatcher {
 		$this->DISPATCHqueue = new \SplQueue();
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $whichQueue
+	 * @return \SpqQueue
+	 */
+	public function getQueue( string $whichQueue ='PRE') : \SplQueue {
+		switch ($whichQueue) {
+			case 'PRE':
+				return $this->PREqueue;
+			case 'POST':
+				return $this->POSTqueue;
+			default:
+			case 'DISPATCH':
+				return $this->DISPATCHqueue;
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $msg
+	 * @param type $var
+	 */
+	public function debug($msg, $var = null, $level = 'Notice') {
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
+		$s = Utils::backTraceHelper($bt, 0);
+
+		//$s .= Utils::backTraceHelper($bt, 1);
+		//	$s = '<BR>' . PHP_EOL . $s; // . '<BR>' . PHP_EOL;
+		$s = '     - ' . $s;
+
+		//$s .= ($var instanceof \php_base\Utils\Repsonse) ? '-=YES=-' : '-=NO=-' ;
+		//if ( $var instanceof \php_base\Utils\Repsonse){
+		//$s .= (is_a($var, 'php_base\Utils\Response')) ? '-=YES=-' : '-=NO=-' ;
+		//$s .= get_class($var);
+		if ( is_a($var, 'php_base\Utils\Response')) {
+			$v = empty($var) ? '' : $var->toString() ;
+
+			if ( $var->hadError() ){
+				$level = AMessage::EMERGENCY;
+			} else {
+				$level = AMessage::INFO;
+			}
+		} else {
+		//	$level = AMessage::ALERT;
+			$v = empty($var) ? '' : print_r($var, true);
+		}
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
+			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+
+
+			$msg = Settings::GetRunTimeObject('MessageLog')->add( $msg . $v . $s, null, $level);
+
+			Settings::SetPublic('Show MessageLog Adds_FileAndLine', $old);
+		}
+			//$this->dumpQueue($theQueue);
+		if ( defined("IS_PHPUNIT_TESTING")) {
+
+		}
+
+	}
+
+
 	//-----------------------------------------------------------------------------------------------
 	// abort if anything returns FALSE
 
 	/** -----------------------------------------------------------------------------------------------
-	 * object constructor.
-	 *
-	 * Creates a new Dispatcher object and abort if anything returns FALSE
 	 *
 	 * @since 0.0.2
 
@@ -82,27 +154,31 @@ class Dispatcher {
 	 */
 	public function doWork($parentResolver = null): Response {
 
-		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting prequeue' );
+		$this->debug('dispatcher starting prequeue' );
 		$pre_result = $this->RunThruTheQueue($this->PREqueue);
 
 		if ($pre_result->hadError()) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('dispatcher got an error from the running pre queue' . $pre_result->toString());
+			$this->debug('dispatcher got an error from the running pre queue' . $pre_result);
 			return $pre_result;
 		} else {
 			// the pre queue contains authentication - so if it returns false then dont do any actuall work
-			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting normal queue' );
+			$this->debug('dispatcher starting normal queue'   );
+
 			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue);
+
 			if ($dispatch_result->hadError()) {
-				Settings::GetRunTimeObject('MessageLog')->addNotice('dispatcher got an error from the running normal queue' . $dispatch_result);
+				$this->debug('dispatcher got an error from the running normal queue' . $dispatch_result);
 				return $dispatch_result;
 			}
 		}
 
+		$this->debug('dispatcher starting postqueue');
+
 		// show the footer in all cases (it has the message stack for one- so you know what happend)
-		//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher starting postqueue' );
 		$post_result = $this->RunThruTheQueue($this->POSTqueue);
+
 		if ($post_result->hadError()) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('dispatcher got an error from the running post queue' . $post_result);
+			$this->debug('dispatcher got an error from the running post queue' . $post_result);
 			return $post_result;
 		}
 
@@ -110,30 +186,21 @@ class Dispatcher {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 * object constructor.
-	 *
-	 * Creates a new Dispatcher object - which will execute the PTAP.
 	 *
 	 * @since 0.0.2
 	 * @param \SplQueue $theQueue - this is a common method for all 3 queues - so just pass the queue wanted to run
 	 * @return Response
 	 */
-	private function RunThruTheQueue(\SplQueue $theQueue): Response {
-		/** this will dump the contents of the queue - for debugging
-		  $this->dumpQueue($theQueue);
-		 */
-
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-			$this->dumpQueue($theQueue);
-		}
+	protected function RunThruTheQueue(\SplQueue $theQueue): Response {
+		$this->debug( 'the current Queue', $this->dumpQueue($theQueue, false) );
 
 		try {
-			$response = null;
-			while (!$theQueue->isEmpty()) {
+			$response = Response::NoError();
+			while ( ! $theQueue->isEmpty()) {
+
 				$response = $this->processDetailsOfQueue($theQueue);
-				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-					dump::dump( $response);
-				}
+
+				$this->debug(' result of running the Queue: ' , $response);
 			}
 			return $response;
 		} catch (\Exception $e) {
@@ -141,6 +208,7 @@ class Dispatcher {
 			if (!is_numeric($enum)) {
 				$enum = -1;
 			}
+			$this->debug('exception in running the Queue');
 			return new Response('exception in running the Queue: ' . $e->getMessage(),
 					   (-1 * $enum),
 					   false);
@@ -155,22 +223,21 @@ class Dispatcher {
 	protected function processDetailsOfQueue($theQueue): Response {
 
 		$item = $theQueue->dequeue();/** get the next item out of the queue */
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-			Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 1');
-		}
+
+		$this->debug( 'dispatcher executing [' . $item . '] 1');
 		if (!empty($item)) {
-			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher executing [' . $item . '] 2');
+
 			$response = $this->itemDecodeAndExecute($item);
+
 			if ($response->hadError()) {
-				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-					Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher recieved an error:' . $response->toString() );
-				}
-				return $response;
+				$this->debug( 'dispatcher recieved an error:' , $response);
+
+				//return $response;
 			}
-			//Settings::GetRunTimeObject('MessageLog')->addNotice( 'dispatcher done executing [' . $item . '] '. $response->toString());
+
 		} else {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('dispatcher - item is empty!! why!! -but ignoring');
 			$response = Response::GenericWarning();
+			$this->debug('dispatcher - item is empty!! why!! -but ignoring', $response);
 		}
 		return $response;
 	}
@@ -249,14 +316,15 @@ class Dispatcher {
 
 		// now calls basically the task with this so it can look up the class and task
 		$r = $x->$task($this);  //run the process's method
-		if ( $r->hadError() ) {
-			Settings::GetRunTimeObject('MessageLog')->addEmergency( 'dispatcher got ' . $r->giveMessage());
-
-		} else {
-			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-				Settings::GetRunTimeObject('MessageLog')->addInfo( 'dispatcher got ' . $r->giveMessage());
-			}
-		}
+		$this->debug( 'after running process got result', $r);
+//		if ( $r->hadError() ) {
+//			Settings::GetRunTimeObject('MessageLog')->addEmergency( 'dispatcher got ' . $r->giveMessage());
+//
+//		} else {
+//			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+//				Settings::GetRunTimeObject('MessageLog')->addInfo( 'dispatcher got ' . $r->giveMessage());
+//			}
+//		}
 		return $r;
 	}
 
@@ -460,23 +528,28 @@ class Dispatcher {
 	 * @param \SPLQueue $theQueue - the queue to be shown
 	 * @return void
 	 */
-	public function dumpQueue( \SPLQueue $theQueue): void {
-
-		echo '<pre class="pre_debug_queue">';
+	public function dumpQueue( \SPLQueue $theQueue, bool $doEcho = true): string {
+		$s = '';
+		$s .= '<pre class="pre_debug_queue">';
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
-		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
-		echo '<BR>';
+		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		$s .= '<BR>';
 
-		echo '@@@@ -dispatcher queue dump -@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';
+		$s .= '@@@@ -dispatcher queue dump -@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';
 		$theQueue->rewind();
 		while ($theQueue->valid()) {
-			echo $theQueue->current();  //;."-\n"; // Show the first one
-			echo '<br>';
+			$s .= $theQueue->current();  //;."-\n"; // Show the first one
+			$s .= '<br>';
 			$theQueue->next(); // move the cursor to the next element
 		}
 		$theQueue->rewind();
-		echo '@@@@@@@@@@@@@%%%%%%%%%%%';
-		echo '</pre>';
+		$s .= '@@@@@@@@@@@@@%%%%%%%%%%%';
+		$s .= '</pre>';
+		if ( $doEcho ){
+			echo $s;
+		}
+		return $s;
+
 	}
 
 }

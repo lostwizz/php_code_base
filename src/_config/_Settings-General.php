@@ -44,7 +44,7 @@ namespace php_base\Utils;
 //Settings::SetPublic('IS_DEBUGGING', false);
 Settings::SetPublic('IS_DEBUGGING', true);
 Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
-Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
+Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', true);
 Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 
 

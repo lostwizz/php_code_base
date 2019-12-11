@@ -69,7 +69,7 @@ Class Response {
 	 * quick way to give a no error message
 	 * @return \php_base\Utils\Response
 	 */
-	public static function NoError() {
+	public static function NoError():self {
 		return new Response('ok', 0, true);
 	}
 
@@ -77,7 +77,7 @@ Class Response {
 	 * quick way to give a generic warning
 	 * @return \php_base\Utils\Response
 	 */
-	public static function GenericWarning() {
+	public static function GenericWarning() :self{
 		return new Response('Generic Warning', -1, true);
 	}
 
@@ -85,7 +85,7 @@ Class Response {
 	 * a quick way of giving a generic error
 	 * @return \php_base\Utils\Response
 	 */
-	public static function GenericError() {
+	public static function GenericError() :  self{
 		return new Response('Generic Error', -2, true);
 	}
 
@@ -94,7 +94,7 @@ Class Response {
 	 * give a TODO error message (just a notification that some code still needs to be writen
 	 * @return \php_base\Utils\Response
 	 */
-	public static function TODO_Error() {
+	public static function TODO_Error() : self{
 		return new Response('- TODO -', ResponseErrorCodes::TODO);
 	}
 
@@ -105,7 +105,7 @@ Class Response {
 	 * @param type $action
 	 * @param type $payload
 	 */
-	public function setProcessTaskActionPayload($process, $task, $action = null, $payload = null) {
+	public function setProcessTaskActionPayload(string $process, string $task, ?string $action = null, $payload = null) :void{
 		$this->process = $process;
 		$this->task = $task;
 		$this->action = $action;
@@ -119,11 +119,17 @@ Class Response {
 	 * @param type $canContinue
 	 * @param type $failSilently
 	 */
-	public function setMessage($message, $errNum = -1, $canContinue = false, $failSilently = false) {
+	public function setMessage(string $message, ?int $errNum = null, ?bool $canContinue = null, ?bool $failSilently = null) :void {
 		$this->message = $message;
-		$this->errNum = $errNum;
-		$this->canContinue = $canContinue;
-		$this->failSilently = $failSilently;
+		if ( !is_null($errNum)) {
+			$this->errNum = $errNum;
+		}
+		if ( !is_null( $canContinue)){
+			$this->canContinue = $canContinue;
+		}
+		if ( !is_null( $failSilently)){
+			$this->failSilently = $failSilently;
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -134,12 +140,20 @@ Class Response {
 	 * @param type $cAction
 	 * @param type $cPayload
 	 */
-	public function setContinue($canContinue, $cProcess = null, $cTask = null, $cAction = null, $cPayload = null) {
+	public function setContinue( bool $canContinue, ?string $cProcess = null, ?string $cTask = null, ?string $cAction = null, $cPayload = null) :void{
 		$this->canContinue = $canContinue;
-		$this->continueProcess = $cProcess;
-		$this->continueTask = $cTask;
-		$this->continueAction = $cAction;
-		$this->continuePayload = $cPayload;
+		if ( !is_null($cProcess)) {
+			$this->continueProcess = $cProcess;
+		}
+		if (!is_null( $cTask)){
+			$this->continueTask = $cTask;
+		}
+		if (!is_null($cAction)) {
+			$this->continueAction = $cAction;
+		}
+		if (!is_null($cPayload)) {
+			$this->continuePayload = $cPayload;
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -147,9 +161,9 @@ Class Response {
 	 * @param type $shouldThrow
 	 * @param type $exception
 	 */
-	public function setException($shouldThrow = true, $exception = null) {
-		$this->$shouldThrow = $shouldThrow;
-		$this->$exception = $exception;
+	public function setException(bool $shouldThrow = true, \Exception $exception = null)  :void{
+		$this->shouldThrow = $shouldThrow;
+		$this->exceptionToThrow = $exception;
 	}
 
 
@@ -157,7 +171,7 @@ Class Response {
 	 * is this a fatal error
 	 * @return type
 	 */
-	public function hadError() {
+	public function hadError() :bool {
 		return (($this->errNum < -1) or $this->shouldThrow);
 	}
 
@@ -165,7 +179,7 @@ Class Response {
 	 * is the a noisy fail or silent fail - silent means dont output anything
 	 * @return type
 	 */
-	public function failNoisily() {
+	public function failNoisily() :bool{
 		return !$this->failSilently;
 	}
 
@@ -173,7 +187,7 @@ Class Response {
 	 * is this a recoverable error
 	 * @return boolean
 	 */
-	public function hadRecoverableError() {
+	public function hadRecoverableError() :bool{
 		if ($this->hadError()) {
 			return false;
 		} else {
@@ -213,9 +227,9 @@ Class Response {
 	 * give an array with process/task/activity/payload
 	 * @return type
 	 */
-	public function giveProcessTaskActivityPayload() {
-		if (!empty($this - process)) {
-			return array($this->process, $this->task, $this->activity, $this->payload);
+	public function giveProcessTaskActivityPayload() : ?array{
+		if (!empty($this->process)) {
+			return array($this->process, $this->task, $this->action, $this->payload);
 		} else {
 			return null;
 		}
@@ -227,17 +241,21 @@ Class Response {
 	 */
 	public function giveContinueProcessTaskActivityPayload() {
 		if ($this->canContinue and ! empty($this->continueProcess)) {
-			return array($this->continueProcess, $this->continueTask, $this->continueActivity, $this->continuePayload);
+			return array($this->continueProcess, $this->continueTask, $this->continueAction, $this->continuePayload);
 		} else {
 			return null;
 		}
+	}
+
+	public function toString() {
+		return $this->__toString();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * convert to a string
 	 * @return string
 	 */
-	public function toString() {
+	public function __toString() {
 		if (!empty($this->message) and $this->errNum != 0) {
 			return 'Response: ' . $this->errNum . ': ' . $this->message;
 		} else {

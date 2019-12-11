@@ -42,16 +42,14 @@ class Cache_Test extends TestCase{
 		session_destroy();
 	 }
 
-	 public  function setup(): void{
+	 public function setup(): void {
 		$this->fp = fopen('f:\temp\data.txt', 'a');
-	 }
-
-	protected   function tearDown(): void{
-		fclose($this->fp);
-		unset( $_SESSION['CACHE']);
 	}
 
-
+	protected function tearDown(): void {
+		fclose($this->fp);
+		unset($_SESSION['CACHE']);
+	}
 
 	function test_StartsEmpty(){
 		Settings::SetPublic('CACHE_IS_ON', true);
@@ -336,5 +334,6 @@ class Cache_Test extends TestCase{
 		$this->assertFalse( Cache::doesSerializeWorkOnThisObject('twoKey'));
 		$this->assertFalse( Cache::doesSerializeWorkOnThisObject(''));
 	}
+
 
 }

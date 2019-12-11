@@ -349,7 +349,6 @@ class MessageLog {
 	 * @param type $level
 	 */
 	public function add($obj_or_array = null, $timestamp = null, $level = null) {
-
 		if (is_object($obj_or_array) and ( $obj_or_array instanceof AMessage )) {
 			self::$messageQueue->enqueue($obj_or_array);
 		} else {

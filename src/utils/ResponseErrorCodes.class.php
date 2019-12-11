@@ -48,6 +48,7 @@ abstract class ResponseErrorCodes {
 		0 => 'Not an Error',
 		-1 => 'Generic Warning something might be wrong',
 		-2 => 'Generic Error',
+
 		-3 => 'Invalid Login',
 		-4 => 'Failed login attempt',
 		-5 => 'Missing Username or Password trying to login',
