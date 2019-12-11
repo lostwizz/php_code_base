@@ -2,14 +2,15 @@
 
 //phpinfo();
 
-print_r (include_once( 'P:\Projects\NB_projects\php_code_base\src\utils\Cache.class.php'));
+//print_r (include_once( 'P:\Projects\NB_projects\php_code_base\src\utils\Cache.class.php'));
+
 
 
 //echo '<pre>';
 //print_r ( get_declared_classes());
 //echo '</pre>';
 
-php_base\Utils\Cache::Add('fred', 'sam');
+//php_base\Utils\Cache::Add('fred', 'sam');
 
 //
 //class HTML_x_input implements \Iterator {

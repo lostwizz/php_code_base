@@ -95,7 +95,7 @@ Class Response {
 	 * @return \php_base\Utils\Response
 	 */
 	public static function TODO_Error() {
-		return new Response('- TODO-', ResponseErrorCodes::TODO);
+		return new Response('- TODO -', ResponseErrorCodes::TODO);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -186,7 +186,8 @@ Class Response {
 	 * @return type
 	 */
 	public function giveMessage() {
-		return $this->message . '(' . $this->errNum . ')';
+		//return $this->message . '(' . $this->errNum . ')';
+		return $this->message;
 	}
 
 
@@ -198,6 +199,15 @@ Class Response {
 	public function giveErrorCode() {
 		return $this->errNum;
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array
+	 */
+	public function giveArrayOfEverything(): array {
+		return get_object_vars($this);
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * give an array with process/task/activity/payload
