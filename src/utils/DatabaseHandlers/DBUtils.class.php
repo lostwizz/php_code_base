@@ -72,7 +72,7 @@ abstract Class DBUtils {
 
 		if ( Cache::exists('PDO_Connection')) {
 			$conn = Cache::pull('PDO_Connection');
-			Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn from cache');
+			//Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn from cache');
 		} else {
 
 		//if ($conn == false) {
@@ -80,7 +80,7 @@ abstract Class DBUtils {
 			//self::EndWriteOne();
 
 			Cache::add( 'PDO_Connection', $conn, 600);
-			Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn new create and add to cache');
+			//Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn new create and add to cache');
 		}
 		return $conn;
 	}
@@ -144,7 +144,7 @@ abstract Class DBUtils {
 			self::doBinding($params, $stmt);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL',true);
+				dump::dump($sql, 'SQL',5);
 				dump::dump($params);
 			}
 
@@ -177,7 +177,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL',true);
+				dump::dump($sql, 'SQL', 5);
 				dump::dump($params);
 			}
 
@@ -217,7 +217,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 		if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-			dump::dump($sql, 'SQL',true);
+			dump::dump($sql, 'SQL', 5);
 			dump::dump($params);
 		}
 			//dump::dump($stmt);
@@ -320,7 +320,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL',true);
+				dump::dump($sql, 'SQL', 5);
 				dump::dump($params);
 			}
 			//dump::dump($stmt);
@@ -358,7 +358,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL',true);
+				dump::dump($sql, 'SQL', 5);
 				dump::dump($params);
 			}
 
@@ -400,7 +400,7 @@ abstract Class DBUtils {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL',true);
+				dump::dump($sql, 'SQL', 5);
 				dump::dump($params);
 			}
 

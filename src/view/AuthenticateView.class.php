@@ -63,8 +63,9 @@ class AuthenticateView extends View {
 	 * @param type $data
 	 * @return bool
 	 */
-	public function doWork($data = null) {
-		return true;
+	public function doWork($data = null) : Response {
+		//return true;
+		return Response::GenericError();
 	}
 
 	/** -----------------------------------------------------------------------------------------------

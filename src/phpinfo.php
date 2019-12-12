@@ -1,6 +1,6 @@
 <?php
 
-//phpinfo();
+phpinfo();
 
 //print_r (include_once( 'P:\Projects\NB_projects\php_code_base\src\utils\Cache.class.php'));
 

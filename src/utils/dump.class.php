@@ -105,7 +105,7 @@ abstract class Dump {
 	 * @return nothing
 	 */
 	public static function dumpClasses($search = null) {
-		$bt = debug_backtrace(true);
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
 		$data = new DumpData();
 
 		self::DumpClassesHelper($data, $bt, $search);
@@ -190,8 +190,8 @@ abstract class Dump {
 	 *
 	 * @return either true or a string that can be printed for pretty (dependand on param $onlyReturnValue
 	 */
-	public static function dump($obj, $title = '', $showBT = false, $onlyReturnValue = false, $noBeautify = false) {
-		$bt = debug_backtrace(true);  // get it early
+	public static function dump($obj, $title = '', int $showBT = 0, $onlyReturnValue = false, $noBeautify = false) {
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $showBT);  // get it early
 		return SELF::dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify);
 	}
 
@@ -415,7 +415,7 @@ abstract class Dump {
 		$output .= '<BR>';
 		$output .= $data->fileName . ' (Line:' . $data->lineNum . ') '; // . $data->codeLine;
 		$output .= '<BR>';
-		if ($showBT) {
+		if ($showBT >0 ) {
 			$output .= $data->backTrace;
 			$output .= '<BR>';
 		}
@@ -437,7 +437,7 @@ abstract class Dump {
 		$output .= self::BeautifyVariableName($data);
 		$output .= self::BeautifyVariableData($data);
 		$output .= self::BeautifyLineData($data);
-		if ($showBT) {
+		if ($showBT > 0) {
 			$output .= self::BeautifyBackTrace($data);
 		}
 		$output .= self::BeautifyAreaEnd();

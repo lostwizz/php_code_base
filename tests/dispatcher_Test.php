@@ -57,6 +57,11 @@ class Dispatcher_Test extends TestCase {
 		fwrite($this->fp, print_r($dispatcher->PHPUNIT_tempArray, TRUE));
 	}
 
+	function test_something(){
+		$this->markTestIncomplete('This test has not been implemented yet' );
+	}
+
+
 }
 
 class Extended_Dispatcher extends \php_base\Dispatcher {

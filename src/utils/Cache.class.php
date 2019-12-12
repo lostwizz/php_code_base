@@ -62,7 +62,9 @@ Abstract class Cache {
 			'Expires' => $timeoutStamp
 		);
 		$_SESSION['CACHE'][$itemName] = $value;
-
+		if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('Cache added: ' . $itemName );
+		}
 		return true;
 	}
 
@@ -89,6 +91,10 @@ Abstract class Cache {
 		}
 		$_SESSION['CACHE'][$itemName]['Data'] = $data;
 		$_SESSION['CACHE'][$itemName]['Expires'] = $timeoutStamp;
+		if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('Cache addOrUpdate: ' . $itemName );
+		}
+
 		return true;
 	}
 
@@ -116,6 +122,10 @@ Abstract class Cache {
 		if ( self::hasExpired( $itemName)) {
 			return false;
 		} else {
+			if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+				Settings::GetRunTimeObject('MessageLog')->addNotice('Cache pull: ' . $itemName );
+			}
+
 			return $_SESSION['CACHE'][$itemName]['Data'];
 		}
 	}
@@ -173,7 +183,7 @@ Abstract class Cache {
 		}
 
 		if (empty( $_SESSION['CACHE'][$itemName]['Expires'])){
-			self::delete( $itemName);   /* not expires time so no timehout which is not allowed */
+			self::delete( $itemName, true);   /* not expires time so no timehout which is not allowed */
 			return true;
 		}
 
@@ -184,7 +194,7 @@ Abstract class Cache {
 		}
 
 		if ( $_SESSION['CACHE'][$itemName]['Expires'] <= $now) {
-			self::delete( $itemName);
+			self::delete( $itemName, true);
 			return true;
 		} else {
 			return false;
@@ -197,12 +207,16 @@ Abstract class Cache {
 	 * @param \php_base\Utils\sting $itemName
 	 * @return boolean
 	 */
-	public static function delete(string $itemName){
+	public static function delete(string $itemName, bool $fromExpired = false){
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return true;
 		}
 
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
+			if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+				Settings::GetRunTimeObject('MessageLog')->addNotice('Cache deleted' . ($fromExpired ? 'Expired':'') .': ' . $itemName );
+			}
+
 			unset ($_SESSION['CACHE'][$itemName]);
 			return true;
 		}
@@ -273,9 +287,12 @@ Abstract class Cache {
 	public static function CleanupBeforSessionWrite(): void{
 		//dump::dumpLong( $_SESSION);
 		if ( !empty( $_SESSION) and !empty($_SESSION['CACHE'] )) {
-			foreach ($_SESSION['CACHE'] as $key => $value) {
+			foreach ($_SESSION['CACHE'] as $itemName => $value) {
 				if ( !self::doesSerializeWorkOnThisObject($value['Data'])){
-					unset ( $_SESSION['CACHE'][$key]);
+					if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+						Settings::GetRunTimeObject('MessageLog')->addNotice('Cache Cleanup : ' . $itemName );
+					}
+					unset ( $_SESSION['CACHE'][$itemName]);
 				}
 			}
 		}

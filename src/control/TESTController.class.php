@@ -65,7 +65,7 @@ class TESTController extends \php_base\Control\Controller {
 	//-----------------------------------------------------------------------------------------------
 	public function doWork(): Response {
 
-		Dump::dump('!!!!!!!!!!!!! at TestController', 'now at', true );
+		Dump::dump('!!!!!!!!!!!!! at TestController', 'now at', 99 );
 
 		//$perms=Settings::GetRunTime('userPermissions');
 		//$perms= UserRoleAndPermissionsModel

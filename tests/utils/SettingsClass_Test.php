@@ -54,7 +54,7 @@ class Settings_Test extends TestCase{
 		$this->assertEquals('TestApp', $x1 );
 
 		$x2 = Settings::GetPublic('App Version');
-		$this->assertEquals( '2.0.0', $x2 );
+		$this->assertEquals( '0.3.0', $x2 );
 
 		$x3 = Settings::GetPublic('App Server');
 		$this->assertEquals('localhost', $x3);

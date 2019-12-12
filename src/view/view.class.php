@@ -35,7 +35,8 @@ use \php_base\Utils\Response as Response;
 /** * **********************************************************************************************
  * base class for all the views - which handle the output (screen or printer or pdf etc. (not database output))
  */
-abstract class View {
+//abstract
+class View {
 
 	public $controller;
 
@@ -50,5 +51,8 @@ abstract class View {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	abstract public function doWork($parent = null);
+	//abstract public function doWork($parent = null);
+	public function doWork() : Response {
+		return Response::GenericError();
+	}
 }

@@ -44,8 +44,9 @@ namespace php_base\Utils;
 //Settings::SetPublic('IS_DEBUGGING', false);
 Settings::SetPublic('IS_DEBUGGING', true);
 Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
-Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', true);
+Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
 Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
+Settings::SetPublic('IS_DETAILED_	CACHE_DEBUGGING', true);
 
 
 
@@ -73,7 +74,7 @@ Settings::SetPublic('CACHE_IS_ON', true);
 //Settings::SetPublic( 'App Name', 'MikesCommandAndControl2');
 Settings::SetPublic( 'App Name', 'TestApp');
 
-Settings::SetPublic( 'App Version', '2.0.0');
+Settings::SetPublic( 'App Version', '0.3.0');
 Settings::SetPublic( 'App Server', empty($_SERVER['SERVER_NAME']) ? 'aunknoen' : $_SERVER['SERVER_NAME']  );
 
 Settings::SetPublic('Email_From', 'no-reply@whitehorse.ca');
