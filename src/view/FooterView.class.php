@@ -46,28 +46,24 @@ class FooterView extends View {
 	 * @return Response
 	 */
 	public function doWork($parent = null): Response {
-		if (! defined("IS_PHPUNIT_TESTING")) {
-			echo '<div class="footer_hr ">' . PHP_EOL;
-			echo HTML::HR();
-			echo '</div>'. PHP_EOL;
-			echo '<div align=right class="footer_username">' . PHP_EOL;
-			//echo Settings::GetRunTime('userPermissions')['USERNAME'];
-			//dump::dump(Settings::GetRunTime('userPermissions'));
-			echo 'Logged in as: ' , Settings::GetRunTime('Currently Logged In User');
-			echo '</div>'. PHP_EOL;
-		}
-		echo '<footer>'. PHP_EOL;
-		echo '<Br>--footer--<Br>'. PHP_EOL;
 
-		if (defined("IS_PHPUNIT_TESTING")) {
-			//Settings::GetRunTimeObject('MessageLog')->addERROR('some error message');
+		echo '<div class="footer_hr ">' . PHP_EOL;
+		echo HTML::HR();
+		echo '</div>' . PHP_EOL;
+		echo '<div align=right class="footer_username">' . PHP_EOL;
+		//echo Settings::GetRunTime('userPermissions')['USERNAME'];
+		//dump::dump(Settings::GetRunTime('userPermissions'));
+		echo 'Logged in as: ', Settings::GetRunTime('Currently Logged In User');
+		echo '</div>' . PHP_EOL;
 
-			$exec_time = microtime(true) - Settings::GetRunTime('Benchmarks.start.executionTime');
-			Settings::GetRunTimeObject('MessageLog')->addINFO('Execution Time was: ' . $exec_time);
-		}
+		echo '<footer>' . PHP_EOL;
+		echo '<Br>--footer--<Br>' . PHP_EOL;
+
+		$exec_time = microtime(true) - Settings::GetRunTime('Benchmarks.start.executionTime');
+		Settings::GetRunTimeObject('MessageLog')->addINFO('Execution Time was: ' . $exec_time);
 		Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!
-		echo '</footer>'. PHP_EOL;
-		echo '</body>'. PHP_EOL;
+		echo '</footer>' . PHP_EOL;
+		echo '</body>' . PHP_EOL;
 
 		return Response::NoError();
 	}

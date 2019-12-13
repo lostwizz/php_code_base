@@ -9,9 +9,9 @@ use \php_base\Utils\Response as Response;
 
 class View_Test extends TestCase{
 
-	function test_filter(){
-		$this->markTestIncomplete('This test has not been implemented yet' );
-	}
+//	function test_filter(){
+//		$this->markTestIncomplete('This test has not been implemented yet' );
+//	}
 
 	function test_view() {
 		$x= new View(null);

@@ -55,7 +55,7 @@ class Data {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *  the defaul method used to doanyhing (unless a method is supplied )
+	 *  the default method used to doanyhing (unless a method is supplied )
 	 * @return Response
 	 */
 	public function doWork() : Response {

@@ -29,10 +29,13 @@ class ExampleController_Test extends TestCase {
 
 	}
 
-
+	public $fp;
 	 public  function setup(): void{
 		$this->fp = fopen('f:\temp\data.txt', 'a');
+
+		fwrite($this->fp, print_r($_SESSION, TRUE));
 	 }
+
 	protected   function tearDown(): void{
 		 fclose($this->fp);
 	}

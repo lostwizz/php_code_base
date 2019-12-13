@@ -63,7 +63,7 @@ class HeaderView extends View {
 					echo '<h1>We is Debugging!!! </h1><br>';
 				}
 			}
-			//return new Response('ok', 0, true);
+			echo PHP_EOL;
 			return Response::NoError();
 		}
 
@@ -173,8 +173,6 @@ class HeaderView extends View {
 	 * @return type
 	 */
 	public function giveStyleSheets() {
-		//<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
-
 		return ['static\css\message_stack_style.css',
 			'static\css\general_style.css',
 			'static\css\animations_style.css'
