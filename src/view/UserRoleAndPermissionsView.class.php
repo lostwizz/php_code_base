@@ -53,12 +53,27 @@ class UserRoleAndPermissionsView extends View {
 
 	public $parent = null;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - the parent has the data
 	 * @param type $parentObj
 	 */
 	public function __construct($parentObj) {
 		$this->parent = $parentObj;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

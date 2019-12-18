@@ -58,6 +58,12 @@ class AuthenticateController extends \php_base\Control\Controller {
 	public $action;
 	public $payload;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/**  -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $passedAction
@@ -70,6 +76,15 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -98,7 +113,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	public function checkAuthentication($parent): Response {
-//dump::dumpLong($this);
 
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
 

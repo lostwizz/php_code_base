@@ -64,12 +64,27 @@ class UserPermissionData {
 
 	public $permissionList;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  basic constructor that initiates the reading from the database
 	 * @param type $listOfRoleIDs
 	 */
 	public function __construct($listOfRoleIDs) {
 		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

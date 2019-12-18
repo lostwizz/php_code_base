@@ -40,12 +40,28 @@ class View {
 
 	public $controller;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $controller
 	 */
 	public function __construct($controller =null) {
 		$this->controller = $controller;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

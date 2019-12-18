@@ -38,6 +38,12 @@ Class Field_DateTime extends Field {
 
 	const TYPE = \PDO::PARAM_STR;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -45,6 +51,15 @@ Class Field_DateTime extends Field {
 	 */
 	public function __construct(string $fieldName, ?array $attribs = null) {
 		parent::__construct($fieldName, $attribs);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

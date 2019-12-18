@@ -151,4 +151,18 @@ class Utils_Test extends TestCase{
 
 	}
 
+	function test_isVersionGood(){
+		//$req = '1.0.0';
+		//$act = '1.0.0';
+		$this->assertTrue( Utils::isVersionGood('1.0.0', '1.0.0') );
+		$this->assertTrue( Utils::isVersionGood('1.0.0', '1.99.0') );
+		$this->assertTrue( Utils::isVersionGood('1.0.0', '2.99.0') );
+		$this->assertTrue( Utils::isVersionGood('1.99.0', '2.99.0') );
+		$this->assertTrue( Utils::isVersionGood('1.0.0', '1.99.0') );
+
+
+		$this->assertFalse( Utils::isVersionGood('1.0.0', '0.99.0') );
+
+	}
+
 }

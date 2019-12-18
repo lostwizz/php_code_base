@@ -65,6 +65,20 @@ Class Response {
 		$this->setMessage($message, $errno, $canContinue, $failSilently);
 	}
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * quick way to give a no error message
 	 * @return \php_base\Utils\Response

@@ -58,7 +58,12 @@ class AuthenticateModel extends \php_base\Model\Model {
 
 	protected static $User;
 
-		public $parent = null;
+	public $parent = null;
+
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
 
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - the parent has the data
@@ -68,6 +73,14 @@ class AuthenticateModel extends \php_base\Model\Model {
 		$this->parent = $parentObj;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * default method called if something goes wrong - should never get here
@@ -90,7 +103,9 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 */
 	public function tryToLogin(?string $username, ?string $password, ?UserInfoData $userInfoData): Response {
 		if ( $this->isGoodAuthentication()) {
-			Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
+			if (Settings::GetPublic('Show_Debug_Authenticate')) {
+				Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
+			}
 			return Response::NoError();
 		}
 		if (empty( $username)) {
@@ -105,7 +120,9 @@ class AuthenticateModel extends \php_base\Model\Model {
 		//Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method );
 
 		if (method_exists($this, $method)) {
-			Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method);
+			if (Settings::GetPublic('Show_Debug_Authenticate')) {
+				Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method);
+			}
 			$response = $this->$method($username, $password, $userInfoData);
 			if ($response->giveErrorCode() == 0) {
 				Settings::SetRunTime('Currently Logged In User', $username);
@@ -116,7 +133,9 @@ class AuthenticateModel extends \php_base\Model\Model {
 
 			}
 		} else {
-			Settings::GetRunTimeObject('MessageLog')->addInfo('Authentication Method: ' . $method . 'Does NOT exist for:' . $username);
+			if (Settings::GetPublic('Show_Debug_Authenticate')) {
+				Settings::GetRunTimeObject('MessageLog')->addInfo('Authentication Method: ' . $method . 'Does NOT exist for:' . $username);
+			}
 			$response = new Response('Authentication Method doenst exist', -8);
 		}
 		return $response;
@@ -275,13 +294,17 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 */
 	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
 		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful LOGON of ' . $username . ' using DB_TABLE password');
+			if (Settings::GetPublic('Show_Debug_Authenticate')) {
+				Settings::GetRunTimeObject('MessageLog')->addAlert('Successful LOGON of ' . $username . ' using DB_TABLE password');
+			}
 
 			self::DoFinshLoginUpdatebyName( $username, $userInfoData);
 
 			return Response::NoError();
 		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
+		if (Settings::GetPublic('Show_Debug_Authenticate')) {
+			Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
+		}
 		return new Response('db_table password failed', -11);
 	}
 

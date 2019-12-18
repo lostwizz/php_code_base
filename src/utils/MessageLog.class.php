@@ -49,6 +49,7 @@ define('AR_LEVEL', 2);
 abstract class MessageBase {
 
 	const DEBUG = 100;
+	const TODO = 150;
 	const INFO = 200;
 	const NOTICE = 250;
 	const WARNING = 300;
@@ -56,7 +57,6 @@ abstract class MessageBase {
 	const CRITICAL = 500;
 	const ALERT = 550;
 	const EMERGENCY = 600;
-	const TODO = 999;
 
 	/**
 	 *
@@ -302,6 +302,12 @@ class MessageLog {
 	/** the queue static so there is only one */
 	protected static $messageQueue;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * construct a message log - i.e. the queue
 	 */
@@ -309,6 +315,15 @@ class MessageLog {
 		if (empty(self::$messageQueue)) {
 			self::$messageQueue = new \SplQueue();
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

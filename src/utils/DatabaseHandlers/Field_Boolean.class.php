@@ -38,6 +38,11 @@ use \php_base\Utils\HTML\HTML as HTML;
 Class Field_Boolean extends Field {
 
 	const TYPE = \PDO::PARAM_BOOL;
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -46,6 +51,15 @@ Class Field_Boolean extends Field {
 	 */
 	public function __construct(string $fieldName, ?array $attribs = null) {
 		parent::__construct($fieldName, $attribs);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

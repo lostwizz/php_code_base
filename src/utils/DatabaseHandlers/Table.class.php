@@ -49,6 +49,11 @@ class Table {
 	public $fields = array();
 	public $primaryKeyFieldName;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $tableName
@@ -60,6 +65,15 @@ class Table {
 		if (is_array($attribs) && count($attribs) > 0) {
 			$this->tableName->setAttribs($attribs);
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

@@ -36,8 +36,10 @@
 namespace php_base;
 
 use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\DebugHandler as DebugHandler;
 
 /** * **********************************************************************************************
  * takes the input and makes a process/task/action out of it and Dispatcher executes
@@ -81,6 +83,12 @@ class Resolver {
 	 */
 	public $dispatcher;
 
+		/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * object constructor.
 	 *
@@ -91,6 +99,15 @@ class Resolver {
 	 */
 	public function __construct() {
 		$this->dispatcher = new Dispatcher();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -287,5 +304,27 @@ class Resolver {
 
 		$this->dispatcher->addPOSTProcess($process, $task, $action, $payload);
 	}
+
+
+
+	private function debugy( int $ref, $msg, $var=null, $level = DebugHandler::NOTICE){
+		if(  Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING')) {
+			$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
+			$s = Utils::backTraceHelper($bt, 0);
+			$s = '     - ' . $s;
+
+			if ( is_a($var, 'php_base\Utils\Response')) {
+				$v = empty($var) ? '' : $var->toString() ;
+
+				if ( $var->hadError() ){
+					$level = DebugHandler::EMERGENCY;
+				} else {
+					$level = DebugHandler::INFO;
+				}
+			}
+		}
+
+	}
+
 
 }

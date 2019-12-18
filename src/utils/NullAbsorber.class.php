@@ -54,6 +54,20 @@ namespace php_base\Utils;
  */
 Class NullAbsorber {
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $method

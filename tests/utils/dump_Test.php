@@ -135,6 +135,13 @@ class Dump_Test extends TestCase{
 	}
 
 
+	public function test_dumpSettings() {
+		$this->markTestIncomplete('This test has not been implemented yet' );
+	}
+
+
+
+
 /*
 	public function te_SetBackTrace()   :void {
 		// this is very hard totest - the back trace is dependant on where you run it from

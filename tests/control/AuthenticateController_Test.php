@@ -50,10 +50,10 @@ class AuthenticateController_Test extends TestCase {
 	function test_setProcessAndTask() {
 		$ac = new AuthenticateController('processOne', 'taskOne');
 
-		$this->assertEquals( 'processOne', $ac->process);
-		$this->assertEquals( 'taskOne', $ac->task);
-		$this->assertEmpty( $ac->action);
-		$this->assertEmpty( $ac->payload);
+		$this->assertEquals( 'processOne', $ac->action );
+		$this->assertEquals( 'taskOne', $ac->payload);
+		//$this->assertEmpty( $ac->action);
+		//$this->assertEmpty( $ac->payload);
 	}
 
 }

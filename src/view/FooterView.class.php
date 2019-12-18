@@ -39,6 +39,19 @@ use \php_base\Utils\HTML\HTML as HTML;
  *  show all the stuff at the bottom of the page
  */
 class FooterView extends View {
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

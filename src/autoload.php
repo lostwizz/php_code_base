@@ -36,9 +36,25 @@ DEFINE('AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_NONE);
 //DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_NOTICE);
 //DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_INFO);
 //DEFINE( 'AUTOLOAD_OUTPUT_LEVEL', AUTOLOAD_LEVEL_DEBUG);
+
+
 //********************************************************************************
 spl_autoload_register('myAutoLoader');
 
+
+	/**
+	 * @var version number
+	 */
+	const AUTOLOAD_VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	function Version() {
+		return AUTOLOAD_VERSION;
+	}
 
 
 if (!defined('DIR')) {

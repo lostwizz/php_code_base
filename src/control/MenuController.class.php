@@ -50,6 +50,11 @@ class MenuController extends Controller {
 	public $action;
 	public $payload;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $passedAction
@@ -62,6 +67,15 @@ class MenuController extends Controller {
 
 		$this->action = $action;
 		$this->payload = $payload;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

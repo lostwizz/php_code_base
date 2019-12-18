@@ -42,6 +42,12 @@ Class Cryption {
 	protected $method = 'aes-128-ctr'; // default cipher method if none supplied
 	protected $key;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 //	function __construct() {
 //		if(defined("CRYPT_BLOWFISH") && CRYPT_BLOWFISH) {
 //			//echo "CRYPT_BLOWFISH is enabled!";
@@ -73,6 +79,15 @@ Class Cryption {
 				die(__METHOD__ . ": unrecognised cipher method: {$method}");
 			}
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

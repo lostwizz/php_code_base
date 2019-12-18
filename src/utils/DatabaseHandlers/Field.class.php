@@ -90,6 +90,11 @@ Class Field {
 	protected $styleAttribs = ['alignment'];
 	protected $optionAttribs = ['isWrapable', 'maxlength', 'size', 'rows', 'cols'];
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -102,6 +107,16 @@ Class Field {
 		if (is_array($attribs) && count($attribs)) {
 			$this->setAttribs($attribs);
 		}
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

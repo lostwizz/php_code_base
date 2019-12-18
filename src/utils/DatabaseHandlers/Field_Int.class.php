@@ -62,6 +62,12 @@ Class Field_Int extends Field {
 
 	const TYPE = \PDO::PARAM_INT;
 
+		/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $fieldName
@@ -69,6 +75,15 @@ Class Field_Int extends Field {
 	 */
 	public function __construct(string $fieldName, ?array $attribs = null) {
 		parent::__construct($fieldName, $attribs);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

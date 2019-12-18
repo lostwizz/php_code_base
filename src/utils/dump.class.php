@@ -6,7 +6,7 @@
  * Summary maintains 3 queues (Pre/Dispatcher/Post) and executes thing in the queues.
  *
  * @author mike.merrett@whitehorse.ca
- * @version 0.5.0
+ * @version 0.4.0
  * $Id$
  *
  * Description.
@@ -17,7 +17,7 @@
  *
  * @package ModelViewController - Dispatcher
  * @subpackage Dispatcher
- * @since 0.3.0
+ * @since 0.4.0
  *
  * @example
  *        use \php_base\Utils\Dump\Dump as Dump;
@@ -90,14 +90,73 @@ class DumpData {
   dumpClasses
   arrayDisplayCompactor
  * @category Utility
- * @version 4.0.0
+ * @version 0.4.0
  */
 abstract class Dump {
 
 	// own big a output block can be before adding scrollbars
-	protected static $FLAT_WINDOW_LINES = 10;
-	protected static $PRE_CodeLines = 0;
-	protected static $POST_CodeLines = 0;
+//	protected static $FLAT_WINDOW_LINES = 10;
+//	protected static $PRE_CodeLines = 0;
+//	protected static $POST_CodeLines = 0;
+
+	public static $settings =null;
+
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.4.0';
+
+	/** ----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $array
+	 */
+	public static function initSettings( $array = null){
+		self::$settings = new dumpSettings();
+		if (!empty( $array)){
+			self::$settings->addArray($array);
+		}
+		self::setDefaultSettings();
+	}
+
+	/** ----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public static function setDefaultSettings() {
+		self::$settings->add( 'FLAT_WINDOWS_LINES', 10);
+		self::$settings->add( 'PRE_CodeLines', 0);
+		self::$settings->add( 'POST_CodeLines', 0);
+		self::$settings->add( 'Show BackTrace Num Lines', 0);
+		self::$settings->add( 'Only Return Output String', false);
+		self::$settings->add( 'skipNumLines', false);
+		self::$settings->add( 'Beautify is On', true );
+		self::$settings->add( 'Beautify_BackgroundColor', '#FFFDCC'); //'#E3FCFD');
+
+
+		self::$settings->dump();
+	}
+
+	public static function setLongSettings() {
+		self::$settings->update( 'FLAT_WINDOWS_LINES', 50);
+		self::$settings->update( 'Beautify_BackgroundColor', '#EED6FE');
+
+		self::$settings->dump();
+	}
+
+	public static function set3Pre3PostSettings() {
+		self::$settings->update( 'PRE_CodeLines', 3);
+		self::$settings->update( 'POST_CodeLines', 3);
+		self::$settings->update( 'Beautify_BackgroundColor', '#F0FFD5');
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * method to dump an array of declared classes and to optionally search for a string in the list
@@ -143,11 +202,11 @@ abstract class Dump {
 	 * @return type
 	 */
 	protected static function DumpClassBeautifierPRE($data) {
-		$old = self::$FLAT_WINDOW_LINES;
-		self::$FLAT_WINDOW_LINES = -1; // fake out the ten line scroll area - to show the whole array
-		$b = self::BeautifyAreaStart($data, '#E3FCFD', true);
+		$old = self::$settings->get( 'FLAT_WINDOWS_LINES');
+		self::$settings->update( 'FLAT_WINDOWS_LINES' , -1);    // fake out the ten line scroll area - to show the whole array
+		$b = self::BeautifyAreaStart($data, /*'#E3FCFD',*/ true);
 		$t = self::BeautifyTitle($data);
-		self::$FLAT_WINDOW_LINES = $old;
+		self::$settings->update( 'FLAT_WINDOWS_LINES', $old);
 		return $b . $t;
 	}
 
@@ -190,9 +249,13 @@ abstract class Dump {
 	 *
 	 * @return either true or a string that can be printed for pretty (dependand on param $onlyReturnValue
 	 */
-	public static function dump($obj, $title = '', int $showBT = 0, $onlyReturnValue = false, $noBeautify = false) {
-		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $showBT);  // get it early
-		return SELF::dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify);
+	public static function dump($obj, $title = ''){   //, int $showBT = 0, $onlyReturnValue = false, $noBeautify = false) {
+		if (empty(self::$settings)){
+			self::initSettings();
+		}
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$settings->get( 'Show BackTrace Num Lines')  );  // get it early
+
+		return SELF::dumpHelper($bt, $obj, $title); //, $showBT, $onlyReturnValue, $noBeautify);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -206,7 +269,11 @@ abstract class Dump {
 	 * @return either true or a string that can be printed for pretty (dependand on param $onlyReturnValue
 	 *
 	 */
-	protected static function dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify, $bgColor = '#FFFDCC', $skipNumLines = false) {
+	protected static function dumpHelper($bt, $obj, $title ){//, $showBT, $onlyReturnValue, $noBeautify, /*$bgColor = '#FFFDCC',*/ $skipNumLines = false) {
+		if (empty(self::$settings)){
+			self::initSettings();
+		}
+
 		$data = new DumpData($obj, $title);
 		self::SetBackTrace($data, $bt);
 
@@ -214,13 +281,13 @@ abstract class Dump {
 		self::SetTitle($data, $title);
 		self::SetVariableValue($data, $obj);
 
-		if ($noBeautify) {
-			$s = self::plainOutput($data, $showBT);
+		if ( self::$settings->get( 'Beautify is On')) {
+			$s = self::BeautifyOutput($data );  //, $showBT,/*$bgColor,*/ $skipNumLines);
 		} else {
-			$s = self::BeautifyOutput($data, $showBT, $bgColor, $skipNumLines);
+			$s = self::plainOutput($data); //, $showBT);
 		}
 
-		if ($onlyReturnValue) {
+		if (self::$settings->get( 'Only Return Output String')) {
 			return $s;
 		} else {
 			echo $s;
@@ -239,15 +306,21 @@ abstract class Dump {
 	 * @return either true or a string that can be printed for pretty (dependand on param $onlyReturnValue
 	 *
 	 */
-	public static function dumpLong($obj, $title = '', $showBT = false, $onlyReturnValue = false, $noBeautify = false) {
-		$bt = debug_backtrace(true);  // get it early
+	public static function dumpLong($obj, $title = ''){ //, $showBT = false, $onlyReturnValue = false, $noBeautify = false) {
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$settings->get( 'Show BackTrace Num Lines'));  // get it early
 
-		$old = SELF::$FLAT_WINDOW_LINES;
-		SELF::$FLAT_WINDOW_LINES = 50;
+		if (empty(self::$settings)){
+			self::initSettings();
+		}
+		self::setLongSettings();
 
-		$r = SELF::dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify, '#FFFDCC', true);
 
-		SELF::$FLAT_WINDOW_LINES = $old;
+		//$old = self::$settings->get( 'FLAT_WINDOWS_LINES');
+		//self::$settings->update( 'FLAT_WINDOWS_LINES', 50);
+
+		$r = SELF::dumpHelper($bt, $obj, $title); //, $showBT, $onlyReturnValue, $noBeautify, '#FFFDCC', true);
+
+		//self::$settings->update( 'FLAT_WINDOWS_LINES',  $old);
 		return $r;
 	}
 
@@ -263,18 +336,22 @@ abstract class Dump {
 	 *
 	 */
 	public static function dump3PrePost($obj, $title = '', $showBT = false, $onlyReturnValue = false, $noBeautify = false) {
-		$bt = debug_backtrace(true);  // get it early
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$settings->get( 'Show BackTrace Num Lines'));  // get it early
 
-		$old_pre = SELF::$PRE_CodeLines;
-		$old_post = SELF::$POST_CodeLines;
-		SELF::$PRE_CodeLines = 3;
-		SELF::$POST_CodeLines = 3;
+		if (empty(self::$settings)){
+			self::initSettings();
+		}
+		self::set3Pre3PostSettings();
 
+		//$old_pre = self::$settings->get( 'PRE_CodeLines');
+		//$old_post = self::$settings->get( 'POST_CodeLines');
+		//self::$settings->update( 'PRE_CodeLines', 3);
+		//self::$settings->update( 'POST_CodeLines', 3);
 
-		$r = SELF::dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify);
+		$r = SELF::dumpHelper($bt, $obj, $title);//, $showBT, $onlyReturnValue, $noBeautify);
 
-		SELF::$PRE_CodeLines = $old_pre;
-		SELF::$POST_CodeLines = $old_post;
+		//self::$settings->update( 'PRE_CodeLines', $old_pre);
+		//self::$settings->update( 'POST_CodeLines', $old_post);
 
 		return $r;
 	}
@@ -289,7 +366,12 @@ abstract class Dump {
 	 * @return type
 	 */
 	public static function dumpLong3PrePost($obj, $title = '', $showBT = false, $onlyReturnValue = false, $noBeautify = false) {
-		$bt = debug_backtrace(true);  // get it early
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$settings->get( 'Show BackTrace Num Lines'));  // get it early
+
+		if (empty(self::$settings)){
+			self::initSettings();
+		}
+
 
 		$old_pre = SELF::$PRE_CodeLines;
 		$old_post = SELF::$POST_CodeLines;
@@ -358,8 +440,9 @@ abstract class Dump {
 		$varName = self::ExtractVariableName($obj, $codeLine);
 		$data->variableName = $varName;
 
-		$data->preCodeLines = BackTraceProcessor::ExtractPreLines($fn, $lineNum, SELF::$PRE_CodeLines);
-		$data->postCodeLines = BackTraceProcessor::ExtractPostLines($fn, $lineNum, SELF::$POST_CodeLines);
+
+		$data->preCodeLines = BackTraceProcessor::ExtractPreLines($fn, $lineNum, self::$settings->get( 'PRE_CodeLines') );
+		$data->postCodeLines = BackTraceProcessor::ExtractPostLines($fn, $lineNum, self::$settings->get( 'POST_CodeLines'));
 
 		//echo 'PRELINES<pre>'; print_r( $data->preCodeLines);echo '</pre>';
 		//echo 'POSTLINES<pre>'; print_r( $data->postCodeLines);echo '</pre>';
@@ -430,14 +513,14 @@ abstract class Dump {
 
 	 * @return - string with html formated output
 	 */
-	protected static function BeautifyOutput($data, $showBT, $bgColor = '#FFFDCC', $skipNumLines = false) {
+	protected static function BeautifyOutput($data ){ //, $showBT, $bgColor = '#FFFDCC', $skipNumLines = false) {
 		$output = '';
-		$output .= self::BeautifyAreaStart($data, $bgColor, $skipNumLines);
+		$output .= self::BeautifyAreaStart($data, self::$settings->get( 'Beautify_BackgroundColor'), self::$settings->get( 'skipNumLines') );
 		$output .= self::BeautifyTitle($data);
 		$output .= self::BeautifyVariableName($data);
 		$output .= self::BeautifyVariableData($data);
 		$output .= self::BeautifyLineData($data);
-		if ($showBT > 0) {
+		if (self::$settings->get( 'Show BackTrace Num Lines') > 0) {
 			$output .= self::BeautifyBackTrace($data);
 		}
 		$output .= self::BeautifyAreaEnd();
@@ -451,22 +534,24 @@ abstract class Dump {
 
 	 * @return - string with html formated output
 	 */
-	protected static function BeautifyAreaStart($data, $bgColor = '#FFFDCC', $skipNumLines = false) {
+	protected static function BeautifyAreaStart($data) {  //, /*$bgColor = '#FFFDCC',*/ $skipNumLines = false) {
 		$numLinesInVariable = substr_count($data->variable, "\n");
 
-		if ($numLinesInVariable > self::$FLAT_WINDOW_LINES) {
-			$s = "\n\n" . '<pre style="background-color: ' . $bgColor . '; border-style: dashed; border-width: 1px; border-color: #950095;'
+		if ($numLinesInVariable > self::$settings->get( 'FLAT_WINDOWS_LINES')) {
+			$s = "\n\n" . '<pre style="background-color: ' . self::$settings->get( 'Back') . '; border-style: dashed; border-width: 1px; border-color: #950095;'
 					. ' overflow: auto;'
 					. ' padding-bottom: 0px;'
 					. ' margin-bottom: 0px;'
 					. ' width: 100%;';
 			if (!$skipNumLines) {
-				$s .= ' height: ' . self::$FLAT_WINDOW_LINES . 'em;';
+				$s .= ' height: ' . self::$settings->get( 'FLAT_WINDOWS_LINES') . 'em;';
 			}
 			$s .= '"' . ">\n";
 			return $s;
 		} else {
-			return "\n" . '<pre style="background-color: ' . $bgColor . '; border-style: dashed; border-width: 1px; border-color: #950095;">' . "\n";
+			//self::$settings->dump( 'Beautify_BackgroundColor');
+			//self::$settings->dump( (self::$settings->get( 'Beautify_BackgroundColor')));
+			return "\n" . '<pre style="background-color: ' . (self::$settings->get( 'Beautify_BackgroundColor')) . '; border-style: dashed; border-width: 1px; border-color: #950095;">' . "\n";
 		}
 	}
 
@@ -724,7 +809,7 @@ abstract class BackTraceProcessor {
 	 * @param type $lineNum
 	 * @return type
 	 */
-	public static function ExtractCodeLine($fn, $lineNum) {
+	public static function ExtractCodeLine($fn, int $lineNum) {
 		$lines = file($fn);
 		return $lines[$lineNum - 1];   //zero based lines
 	}
@@ -736,7 +821,7 @@ abstract class BackTraceProcessor {
 	 * @param type $preLines
 	 * @return type
 	 */
-	public static function ExtractPreLines($fn, $lineNum, $preLines) {
+	public static function ExtractPreLines($fn, int $lineNum, int $preLines) {
 		$lines = file($fn);
 		$r = array();
 		for ($i = ($lineNum - $preLines - 1); $i < ($lineNum - 1); $i++) {
@@ -754,7 +839,7 @@ abstract class BackTraceProcessor {
 	 * @param type $postLines
 	 * @return type
 	 */
-	public static function ExtractPostLines($fn, $lineNum, $postLines) {
+	public static function ExtractPostLines($fn, int $lineNum, int $postLines) {
 		//echo 'X=', 		$lineNum + $postLines+1,' - ' ,$postLines , '<br>';
 		return SELF::ExtractPreLines($fn, $lineNum + $postLines + 1, $postLines);
 	}
@@ -819,5 +904,144 @@ abstract class BackTraceProcessor {
 		}
 		return $output;
 	}
+
+}
+
+
+
+
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+//***********************************************************************************************************
+
+class dumpSettings {
+	private $settings = array();
+
+
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	function __construct(){
+		$settings = array();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param type $value
+	 * @param bool $force
+	 * @return bool
+	 */
+
+	public function add( string $name, $val ) :bool{
+		if ($this->isSet($name)) {
+			return false;
+		} else {
+			$this->settings[$name] = $val;
+			return $this->settings[$name] == $val;
+		}
+		return false;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param type $val
+	 * @return bool
+	 */
+	public function update( string $name, $val): bool {
+		$this->settings[$name] = $val;
+		return $this->settings[$name] == $val;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $array
+	 * @param bool $force
+	 */
+	public function addArray( array $array, bool $force=false) {
+		foreach ($array as $key => $value) {
+			$this->add ( $key, $value, $force );
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function remove( string $name) :bool {
+		if ( $this->isSet($name)) {
+			unset($this->settings[$name]);
+			return ( ! $this->isSet($name));
+		}
+		return false;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return bool
+	 */
+	public function removeAll( ): bool{
+		$this->settings = array();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function isSet(string  $name ) : bool{
+		return array_key_exists($name, $this->settings );
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function get(string $name){
+		if ( isSet($name)) {
+			return $this->settings[$name];
+		} else {
+			return false;
+		}
+	}
+
+
+	public function dump($var=null) {
+		echo '<pre style="background-color: #E3FCFD">' ;
+		if( empty( $var) ) {
+			print_r ( $this->settings);
+		} else {
+				print_r ( $var);
+		}
+		echo '</pre>';
+	}
+
+
 
 }

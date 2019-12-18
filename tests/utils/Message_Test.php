@@ -25,6 +25,7 @@ class AMessageTest extends TestCase {
 
 		$expected =  array(
 	        100     => 'DEBUG',
+	        150 => 'TODO',
 	        200      => 'INFO',
 	        250    => 'NOTICE',
 	        300   => 'WARNING',
@@ -32,7 +33,6 @@ class AMessageTest extends TestCase {
 	        500  => 'CRITICAL',
 	        550     => 'ALERT',
 	        600 => 'EMERGENCY',
-	        999 => 'TODO'
            );
       $this->assertEquals($expected, $a);
 
@@ -54,6 +54,7 @@ class AMessageTest extends TestCase {
 	//-----------------------------------------------------------------------------------------------
 	public function test_constants() {
 		$this->assertEquals(100 , anExtendedMessage::DEBUG);
+		$this->assertEquals(150 , anExtendedMessage::TODO);
 		$this->assertEquals(200 , anExtendedMessage::INFO);
 		$this->assertEquals(250 , anExtendedMessage::NOTICE);
 		$this->assertEquals(300 , anExtendedMessage::WARNING);

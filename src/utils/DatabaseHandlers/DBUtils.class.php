@@ -60,6 +60,20 @@ abstract Class DBUtils {
 
 	protected static $currentPreparedStmt = null;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 * @example
 	 * 		DBUtils::setupPDO();

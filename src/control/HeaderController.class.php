@@ -52,6 +52,12 @@ class HeaderController extends Controller {
 	public $action;
 	public $payload;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $action
@@ -63,6 +69,15 @@ class HeaderController extends Controller {
 		$this->view = new \php_base\view\HeaderView($this);
 
 		$this->payload = $payload;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

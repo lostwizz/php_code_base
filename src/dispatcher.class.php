@@ -32,14 +32,16 @@
 namespace php_base;
 
 use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Utils as Utils;
 
 use \php_base\Utils\Response as Response;
 
-use \php_base\utils\MessageLog as MessageLog;
-use \php_base\utils\AMessage as AMessage;
-use \php_base\utils\MessageBase as MessageBase;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\DebugHandler as DebugHandler;
+
+//use \php_base\utils\MessageLog as MessageLog;
+//use \php_base\utils\AMessage as AMessage;
+//use \php_base\utils\MessageBase as MessageBase;
 
 /** * **********************************************************************************************
  *  Dispatcher executes items in the queue.
@@ -95,52 +97,6 @@ class Dispatcher {
 
 	/** -----------------------------------------------------------------------------------------------
 	/** -----------------------------------------------------------------------------------------------
-	/** -----------------------------------------------------------------------------------------------
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $msg
-	 * @param type $var
-	 */
-	public function debug($msg, $var = null, $level = 'Notice') {
-		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
-		$s = Utils::backTraceHelper($bt, 0);
-
-		//$s .= Utils::backTraceHelper($bt, 1);
-		//	$s = '<BR>' . PHP_EOL . $s; // . '<BR>' . PHP_EOL;
-		$s = '     - ' . $s;
-
-		//$s .= ($var instanceof \php_base\Utils\Repsonse) ? '-=YES=-' : '-=NO=-' ;
-		//if ( $var instanceof \php_base\Utils\Repsonse){
-		//$s .= (is_a($var, 'php_base\Utils\Response')) ? '-=YES=-' : '-=NO=-' ;
-		//$s .= get_class($var);
-		if ( is_a($var, 'php_base\Utils\Response')) {
-			$v = empty($var) ? '' : $var->toString() ;
-
-			if ( $var->hadError() ){
-				$level = AMessage::EMERGENCY;
-			} else {
-				$level = AMessage::INFO;
-			}
-		} else {
-		//	$level = AMessage::ALERT;
-			$v = empty($var) ? '' : print_r($var, true);
-		}
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
-			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
-
-
-			$msg = Settings::GetRunTimeObject('MessageLog')->add( $msg . $v . $s, null, $level);
-
-			Settings::SetPublic('Show MessageLog Adds_FileAndLine', $old);
-		}
-			//$this->dumpQueue($theQueue);
-		if ( defined("IS_PHPUNIT_TESTING")) {
-
-		}
-
-	}
-
 
 	//-----------------------------------------------------------------------------------------------
 	// abort if anything returns FALSE
@@ -551,5 +507,52 @@ class Dispatcher {
 		return $s;
 
 	}
+
+		/** -----------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $msg
+	 * @param type $var
+	 */
+	public function debug($msg, $var = null, $level = 'Notice') {
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
+		$s = Utils::backTraceHelper($bt, 0);
+
+		//$s .= Utils::backTraceHelper($bt, 1);
+		//	$s = '<BR>' . PHP_EOL . $s; // . '<BR>' . PHP_EOL;
+		$s = '     - ' . $s;
+
+		//$s .= ($var instanceof \php_base\Utils\Repsonse) ? '-=YES=-' : '-=NO=-' ;
+		//if ( $var instanceof \php_base\Utils\Repsonse){
+		//$s .= (is_a($var, 'php_base\Utils\Response')) ? '-=YES=-' : '-=NO=-' ;
+		//$s .= get_class($var);
+		if ( is_a($var, 'php_base\Utils\Response')) {
+			$v = empty($var) ? '' : $var->toString() ;
+
+			if ( $var->hadError() ){
+				$level = DebugHandler::EMERGENCY;
+			} else {
+				$level = DebugHandler::INFO;
+			}
+		} else {
+		//	$level = AMessage::ALERT;
+			$v = empty($var) ? '' : print_r($var, true);
+		}
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
+			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+
+
+			$msg = Settings::GetRunTimeObject('MessageLog')->add( $msg . $v . $s, null, $level);
+
+			Settings::SetPublic('Show MessageLog Adds_FileAndLine', $old);
+		}
+			//$this->dumpQueue($theQueue);
+		if ( defined("IS_PHPUNIT_TESTING")) {
+
+		}
+
+	}
+
 
 }

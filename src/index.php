@@ -46,6 +46,7 @@ use \php_base\Utils\Cache;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\MessageLog as MessageLog;
 use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\DebugHandler as DebugHandler;
 
 
 
@@ -57,10 +58,38 @@ use \php_base\Utils\Settings as Settings;
 //************************************************************************************
 //
 
-
-
-
 include_once( \DIR . 'SetupSystemDetail.php');
+
+
+////DebugHandler::setCurrentLevel(DebugHandler::NOTICE);
+//echo 'a<br>';
+//echo DebugHandler::getCurrentLevel();
+//echo 'b<br>';
+//
+//echo DebugHandler::isShow( DebugHandler::DEBUG) ? 'DEBUG Show YES' : 'DEBUG Show NO' , '<br>';
+//echo DebugHandler::isShow( DebugHandler::INFO) ? 'DEBUG Show YES' : 'DEBUG Show NO' , '<br>';
+//echo DebugHandler::isShow( DebugHandler::ERROR) ? 'DEBUG Show YES' : 'DEBUG Show NO' , '<br>';
+//echo DebugHandler::isShow( DebugHandler::ALERT) ? 'DEBUG Show YES' : 'DEBUG Show NO' , '<br>';
+//echo DebugHandler::isShow( DebugHandler::EMERGENCY) ? 'DEBUG Show YES' : 'DEBUG Show NO' , '<br>';
+//
+//DebugHandler::doShow(DebugHandler::TODO, 'test msg', 44 );
+//DebugHandler::doShow(DebugHandler::TODO, 'test msg', 45, DebugHandler::STYLE_ECHO );
+//
+//DebugHandler::doShow(DebugHandler::TODO, 'test msg', 46, DebugHandler::STYLE_MESSAGE_LOG );
+
+
+
+
+dump::dump('hi');
+
+
+die;
+
+
+
+
+
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running

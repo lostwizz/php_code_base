@@ -33,27 +33,35 @@ use \php_base\Utils\Dump\Dump as Dump;
 /**
  *  setup for debugging or production
  */
-if ( Settings::GetPublic('IS_DEBUGGING') or defined( "IS_PHPUNIT_TESTING") ) {
-	ini_set( "display_startup_errors", 1);
+if (Settings::GetPublic('IS_DEBUGGING') or defined("IS_PHPUNIT_TESTING")) {
+	ini_set("display_startup_errors", 1);
 	ini_set('display_errors', 1);
-	$x = error_reporting( ~0 );              /////////0xFFFFFFF  );
+	$x = error_reporting(~0);			  /////////0xFFFFFFF  );
 	Settings::SetProtected('SurpressErrorHandlerDetails', 'NO');
 } else {
 	// not debugging
-	ini_set( "display_startup_errors", false);
-	$x = error_reporting( E_ALL ^ E_NOTICE );          ///0xFFFFFFF ^ E_NOTICE );
+	ini_set("display_startup_errors", false);
+	$x = error_reporting(E_ALL ^ E_NOTICE);		  ///0xFFFFFFF ^ E_NOTICE );
 	Settings::SetProtected('SurpressErrorHandlerDetails', 'YES');
 
-	// for some wierd reason theys seem to only work on the second try
-	Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
-	Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
 
-	Dump::dump(set_exception_handler( 'myException_handler'));
-	Dump::dump(set_exception_handler( 'myException_handler'));
+
+	if (Settings::GetPublic('IS_DEBUGGING')) {
+		// for some wierd reason theys seem to only work on the second try
+		Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
+		Dump::dump(set_error_handler('UserErrorHandler', E_ALL));
+
+		Dump::dump(set_exception_handler('myException_handler'));
+		Dump::dump(set_exception_handler('myException_handler'));
+	} else {
+		// for some wierd reason theys seem to only work on the second try
+		set_error_handler('UserErrorHandler', E_ALL);
+		set_error_handler('UserErrorHandler', E_ALL);
+
+		set_exception_handler('myException_handler');
+		set_exception_handler('myException_handler');
+	}
 }
-
-
-
 
 /** * ********************************************************************************************
  * my exception handler which calls the error handler

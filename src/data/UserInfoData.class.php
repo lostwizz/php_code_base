@@ -57,6 +57,11 @@ class UserInfoData extends data {
 
 	public static $Table;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  constructor - initiate the read from the database
 	 * @param type $username
@@ -66,6 +71,15 @@ class UserInfoData extends data {
 		if (!empty($username)) {
 			self::doReadFromDatabaseByUserNameAndApp($username);
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 

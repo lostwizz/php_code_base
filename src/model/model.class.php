@@ -40,6 +40,10 @@ use \php_base\Utils\Response as Response;
 class Model {
    	public $controller;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
 
 	/** -----------------------------------------------------------------------------------------------
 		 * basic constructor - we track where the controller is because it has the links to the data and view classes
@@ -47,6 +51,15 @@ class Model {
 		 */
 	public function __construct($controller) {
 		$this->controller = $controller;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 

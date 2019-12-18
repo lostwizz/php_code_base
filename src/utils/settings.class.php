@@ -53,6 +53,19 @@ abstract class Settings {
 
 	//static public INI_RESTORE_ONLYNEW = 'n';
 	//
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

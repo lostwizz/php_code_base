@@ -20,9 +20,10 @@ class NullAbsorber_Test extends TestCase {
 		$this->assertFalse($x->anymethod());
 
 		$expected = array(
-			0 => '__call',
-			1 => '__get',
-			2 => '__set',
+			0 => 'Version',
+			1 => '__call',
+			2 => '__get',
+			3 => '__set',
 			);
 		$class_methods = \get_class_methods($x);
 		$this->assertEquals($expected, $class_methods);

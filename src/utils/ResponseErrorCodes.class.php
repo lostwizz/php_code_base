@@ -39,6 +39,19 @@ abstract class ResponseErrorCodes {
 	const TestingError = -9999;
 
 	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
+	/**
 	 *
 	 * @var array of possible errors
 	 */

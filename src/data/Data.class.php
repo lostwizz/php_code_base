@@ -43,6 +43,12 @@ class Data {
 	public $action;
 	public $payload;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  basic constructor for a data class
 	 *
@@ -52,6 +58,15 @@ class Data {
 	public function __construct($action ='', $payload = null){
 		$this->action = $action;
 		$this->payload = $payload;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

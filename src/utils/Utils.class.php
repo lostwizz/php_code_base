@@ -35,6 +35,48 @@ use \php_base\Utils\Dump\Dump as Dump;
  */
 abstract Class Utils {
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * requried			actual		result
+	 * 1.0.0			1.0.0		true
+	 * 1.0.0			0.99.0		false
+	 * 1.0.0			1.99.0		true
+	 * 1.0.0
+	 * @param string $requiredVersion
+	 * @param string $actualVersion
+	 * @return bool
+	 */
+	public static function isVersionGood( string $requiredVersion, string $actualVersion) : bool {
+		$required = \explode('.', $requiredVersion);
+		$actual = \explode('.', $actualVersion);
+		if ( $required[0] > $actual[0]) {
+			return false;
+		}
+		if ( $required[1] > $actual[1]) {
+			return false;
+		}
+		return true;
+	}
+
+
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * format a number in a currency format (i.e with dollar sign)
 	 * @param type $val
@@ -144,4 +186,9 @@ abstract Class Utils {
 		return $s;
 	}
 
+
+
+
 }
+
+

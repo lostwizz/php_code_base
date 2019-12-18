@@ -62,6 +62,13 @@ Class Permissions {
 	const WILDCARD_RIGHT = '*';
 	const NO_RIGHT = '__NO__RIGHT__';
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
+
 	protected static $permissions = array(
 		self::GOD_RIGHT,
 		self::DBA_RIGHT,
@@ -70,6 +77,15 @@ Class Permissions {
 		self::WILDCARD_RIGHT,
 		self::NO_RIGHT
 	);
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -115,6 +131,12 @@ Class UserRoleAndPermissionsModel extends Model {
 	public $payload;
 	public $controller;
 
+		/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  constructor - basically keeps track of the controller
 	 * @param type $controller
@@ -123,6 +145,15 @@ Class UserRoleAndPermissionsModel extends Model {
 		if (!empty($controller)) {
 			$this->controller = $controller;
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

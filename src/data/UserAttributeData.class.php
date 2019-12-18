@@ -49,12 +49,27 @@ class UserAttributeData extends data {
 	public $UserAttributes = [];
 	public $roleNames = [];
 
+		/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - starts of the reading of data for that User Id
 	 * @param type $userID
 	 */
 	public function __construct($userID) {
 		$this->doReadFromDatabaseByUserID($userID);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

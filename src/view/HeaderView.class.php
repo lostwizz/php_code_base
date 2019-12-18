@@ -43,6 +43,19 @@ class HeaderView extends View {
 //	public function __construct($controller) {
 //	}
 //
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * this is the method that gets called to output the header

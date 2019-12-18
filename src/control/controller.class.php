@@ -50,10 +50,24 @@ abstract class Controller {
 	public $action;
 	public $payload;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 * basic form of the constructor
 	 */
 	abstract public function __construct(string $passedAction = '', $passedPayload = null);
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
 
 
 	/** -----------------------------------------------------------------------------------------------

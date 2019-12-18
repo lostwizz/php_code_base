@@ -55,6 +55,11 @@ Class UserRoleData extends Data {
 	//		- only needed this way because of the RolePermissions needing the the list of ids
 	public $RoleIDnames = []; // array with the keys being the roleID # and the values being the name
 
+		/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  constructor that initiates the reading of the database
 	 * @param type $ArrayOfNames
@@ -63,6 +68,15 @@ Class UserRoleData extends Data {
 		if (!empty($ArrayOfNames)) {
 			self::doReadFromDatabase($ArrayOfNames);
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

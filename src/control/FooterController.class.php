@@ -54,6 +54,10 @@ class FooterController extends Controller {
 	public $action = null;
 	public $payload = null;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
 
 	/** -----------------------------------------------------------------------------------------------
 	 * initializes the footer view class and sets up the payload
@@ -65,6 +69,15 @@ class FooterController extends Controller {
 		$this->view = new \php_base\view\FooterView($this);
 
 		$this->payload = $payload;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

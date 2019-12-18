@@ -77,6 +77,12 @@ Class UserRoleAndPermissionsController {
 	public $action;
 	public $payload;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $action
@@ -92,6 +98,15 @@ Class UserRoleAndPermissionsController {
 			$this->action = $action;
 			$this->payload = $payload;
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -254,8 +269,10 @@ Class UserRoleAndPermissionsController {
 
 		$this->userPermissions = $DataUserPermissions->permissionList;
 
-		/** DEBUG - dump the permissions prettily */
-		$this->view->dumpPermissions();
+		if ( Settings::GetPublic('Show_Debug_UserRoleAndPermissiosn')){
+			/** DEBUG - dump the permissions prettily */
+			$this->view->dumpPermissions();
+		}
 
 		return (!empty($this->userPermissions));
 	}
