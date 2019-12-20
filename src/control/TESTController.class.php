@@ -65,7 +65,10 @@ class TESTController extends \php_base\Control\Controller {
 	//-----------------------------------------------------------------------------------------------
 	public function doWork(): Response {
 
-		Dump::dump('!!!!!!!!!!!!! at TestController', 'now at', 99 );
+		Dump::dump('!!!!!!!!!!!!! at TestController', 'now at', array('Show BackTrace Num Lines' => 5,'Beautify_BackgroundColor' => '#FFAA55') );
+
+
+		dump::Dump('array("1"=>4)',null,array('Show BackTrace Num Lines' => 5,'Beautify_BackgroundColor' => '#FFAA55') );
 
 		//$perms=Settings::GetRunTime('userPermissions');
 		//$perms= UserRoleAndPermissionsModel

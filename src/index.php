@@ -83,7 +83,7 @@ include_once( \DIR . 'SetupSystemDetail.php');
 dump::dump('hi');
 
 
-die;
+//die;
 
 
 

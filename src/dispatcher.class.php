@@ -215,7 +215,8 @@ class Dispatcher {
 
 		$exploded = \explode('.', $passedProcess);
 		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-			dump::dump($exploded);
+
+			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
 		}
 		$response = $this->doExecute('control',
 								(empty($exploded[0]) ? null : $exploded[0]),
