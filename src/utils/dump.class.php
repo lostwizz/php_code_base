@@ -3,7 +3,9 @@
 /** * ********************************************************************************************
  * dump.class.php
  *
- * Summary maintains 3 queues (Pre/Dispatcher/Post) and executes thing in the queues.
+ * Summary maintains 3 queues (Pre/Dispatcher/Post) and executes thing in the queues.  These classes should not depend on anything else
+ *
+ *
  *
  * @author mike.merrett@whitehorse.ca
  * @version 0.4.0
@@ -92,6 +94,7 @@ abstract class Dump {
 	const LONG =2;
 	const PRE3POST3=3;
 	const LONGPRE3POST3=4;
+	const CLASSES_LOADED = 5;
 
 
 	/**
@@ -110,7 +113,7 @@ abstract class Dump {
 	 * @param type $array   - custom config settings that can be passed in the dump call
 	 * @param type $whichPreset   - some presets
 	 */
-	public static function initSettings( $array = null, $whichPreset= 1){
+	public static function initConfig( $array = null, $whichPreset= 1){
 
 		// if the config is not instantiated then do so
 		if (empty(self::$config )) {
@@ -131,10 +134,6 @@ abstract class Dump {
 	 */
 	protected static function decodeAuxSettings( int $whichPreset) {
 			switch ($whichPreset){
-			default:
-			case self::NORMAL:  // default
-				$auxArray = array();
-				break;
 			case self::LONG:  // long
 				$auxArray = array( 'FLAT_WINDOWS_LINES' => 50,
 					'Beautify_BackgroundColor'=> '#F0FFD5',
@@ -149,6 +148,17 @@ abstract class Dump {
 									'POST_CodeLines'=> 3,
 									'FLAT_WINDOWS_LINES' => 50);
 				break;
+			case self::CLASSES_LOADED:
+				$auxArray = array(
+					'Beautify_BackgroundColor'=> '#E3FCFD',
+					'FLAT_WINDOWS_LINES' => -1,
+					);
+				break;
+			default:
+			case self::NORMAL:  // default
+				$auxArray = array(
+				);
+				break;
 		}
 		return $auxArray;
 	}
@@ -161,14 +171,41 @@ abstract class Dump {
 	public static function setDefaultSettings(?array $configPreset) {
 		$defaults = array(
 			'FLAT_WINDOWS_LINES' => 5, //  big a output block can be before adding scrollbars
-			'PRE_CodeLines' => 0, // show the number of lines before the call
-			'POST_CodeLines' => 0, // show the number of lines after the call
-			'Show BackTrace Num Lines' => 0, // show the backtrace calls (how many lines in the history
+		/* 0 */	'PRE_CodeLines' => 3, // show the number of lines before the call
+		/* 0 */	'POST_CodeLines' => 3, // show the number of lines after the call
+		/* 0 */	'Show BackTrace Num Lines' => 3, // show the backtrace calls (how many lines in the history
 			'Only Return Output String' => false, // dont print/echo anything just return a string with it all
 			'skipNumLines' => false,
-			'Beautify is On' => true, // make the output look pretty
-			'Beautify_BackgroundColor' => '#FFFDCC', //'#E3FCFD');		// set the background color
 			'Area Border Color'=> '#950095',
+			'Beautify is On' => true, // make the output look pretty
+			'Beautify_BackgroundColor' => '#FFFDCC', //'#E3FCFD',		// set the background color
+			'Beautify Text Color' =>  '#0000FF',
+			'Beautify PreWidth' => '95%',
+			'Beautify Padding-bottom' => '1px',
+			'Beautify Margin-bottom' => '1px',
+			'Beautify Overflow' => 'auto',
+			'Beautify Border-style' => 'dashed',
+			'Beautify Border-width' => '1px',
+			'Beautify Var Name Font-size' => 'large',
+			'Beautify Var Name BackgroundColor' => '#7DEEA2',
+			'Beautify Var Text Color' => '#950095',
+			'Beautify Var Font-weight' => '100',
+			'Beautify Title Color' => 'green',
+			'Beautify Var Data Font-size' => 'large',
+			'Beautify Var Data Font background Color' => '#7DEEA2',
+			'Beautify Var Data Text Color' => '#950095',
+			'Beautify Var Data Font-weight' => 'normal',
+			'Beautify Line Data Font-size' => 'small',
+			'Beautify Line Data Font-style' => 'normal',  //italic
+			'Beautify Line Data Text Color' => '#FF8000',
+			'Beautify Line Data Basename Font-size' => 'medium',
+			'Beautify Line Data Basename Font-style' => 'bold',
+			'Beautify Line Data Basename Text Color' => '#8266F2', //#FF8000',
+			'Beautify Line Data Basename Font-weight' => 'bolder',
+			'Beautify PrePost Line Font-size' => 'small',
+			'Beautify PrePost Line Font-style' => 'italic',
+			'Beautify PrePost Line Text Color' => '#417232',
+
 		);
 		self::$config->updateFromArray($defaults);
 		self::$config->updateFromArray($configPreset);
@@ -190,9 +227,11 @@ abstract class Dump {
 	 * @param string $search
 	 * @return nothing
 	 */
-	public static function dumpClasses($search = null) {
+	public static function dumpClasses($search = null, ?array $options=null) {
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT);
 		$data = new DumpData();
+
+		self::initConfig($options, self::CLASSES_LOADED);
 
 		self::DumpClassesHelper($data, $bt, $search);
 
@@ -229,11 +268,8 @@ abstract class Dump {
 	 * @return type
 	 */
 	protected static function DumpClassBeautifierPRE($data) {
-		$old = self::$config->get( 'FLAT_WINDOWS_LINES');
-		self::$config->update( 'FLAT_WINDOWS_LINES' , -1);    // fake out the ten line scroll area - to show the whole array
 		$b = self::BeautifyAreaStart($data, true);
 		$t = self::BeautifyTitle($data);
-		self::$config->update( 'FLAT_WINDOWS_LINES', $old);
 		return $b . $t;
 	}
 
@@ -282,10 +318,10 @@ abstract class Dump {
 	 *
 	 */
 	public static function dump($obj, ?string $title = '', ?array $options=null){
-		self::initSettings($options, self::NORMAL);
+		self::initConfig($options, self::NORMAL);
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines')  );  // get it early
 
-		return SELF::dumpHelper($bt, $obj, $title); //, $showBT, $onlyReturnValue, $noBeautify);
+		return SELF::dumpHelper($bt, $obj, $title);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -302,7 +338,7 @@ abstract class Dump {
 	 *              $s = self::plainOutput($data, $showBT);
 	*		dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify, $bgColor = '#FFFDCC', $skipNumLines = false) {
 	 */
-	protected static function dumpHelper($bt, $obj, $title, ?array $options=null ){
+	protected static function dumpHelper($bt, $obj, $title ) {  //, ?array $options=null ){
 		$data = new DumpData($obj, $title);
 		self::SetBackTrace($data, $bt);
 
@@ -338,9 +374,9 @@ abstract class Dump {
 	public static function dumpLong($obj, ?string $title = '', ?array $options=null){
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines'));  // get it early
 
-		self::initSettings($options, self::LONG);
+		self::initConfig($options, self::LONG);
 
-		$r = SELF::dumpHelper($bt, $obj, $title); //, $showBT, $onlyReturnValue, $noBeautify, '#FFFDCC', true);
+		$r = SELF::dumpHelper($bt, $obj, $title);
 
 		return $r;
 	}
@@ -359,8 +395,7 @@ abstract class Dump {
 	public static function dump3PrePost($obj, ?string $title = '', ?array $options=null) {
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines'));  // get it early
 
-		self::initSettings($options, self::PRE3POST3);
-		self::set3Pre3PostSettings();
+		self::initConfig($options, self::PRE3POST3);
 
 		$r = SELF::dumpHelper($bt, $obj, $title);//, $showBT, $onlyReturnValue, $noBeautify);
 
@@ -379,7 +414,7 @@ abstract class Dump {
 	public static function dumpLong3PrePost($obj, ?string $title = '', ?array $options=null) {
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines'));  // get it early
 
-		self::initSettings($options, self::LONGPRE3POST3 );
+		self::initConfig($options, self::LONGPRE3POST3 );
 
 		$r = SELF::dumpHelper($bt, $obj, $title, $showBT, $onlyReturnValue, $noBeautify);
 
@@ -533,25 +568,30 @@ abstract class Dump {
 		$numLinesInVariable = substr_count($data->variable, "\n");
 
 		if ($numLinesInVariable > self::$config->get( 'FLAT_WINDOWS_LINES')) {
-			$s = "\n\n"
-					. '<pre style="background-color: '
-					. self::$config->get( 'Beautify_BackgroundColor')
-					. '; border-style: dashed; border-width: 1px; border-color: ' . self::$config->get( 'Area Border Color') .';'
-					. ' overflow: auto;'
-					. ' padding-bottom: 0px;'
-					. ' margin-bottom: 0px;'
-					. ' width: 100%;';
+			$s = PHP_EOL . PHP_EOL
+					. '<pre id="dumpAreaStart_a"'
+					. ' style="background-color: ' . self::$config->get( 'Beautify_BackgroundColor') . ';'
+					. ' border-style: ' . self::$config->get( 'Beautify Border-style') . ';'
+					. ' border-width: ' . self::$config->get( 'Beautify Border-width') . ';'
+					. ' border-color: ' . self::$config->get( 'Area Border Color') .';'
+					. ' overflow: ' . self::$config->get('Beautify Overflow')  .';'
+					. ' padding-bottom: ' . self::$config->get( 'Beautify Margin-bottom' ) . ';'
+					. ' margin-bottom: ' . self::$config->get( 'Beautify Padding-bottom' ) . ';'
+					. ' width: ' . self::$config->get( 'Beautify PreWidth' ) . ';'
+					;
 			if (!self::$config->get( 'skipNumLines')) {
 				$s .= ' height: ' . self::$config->get( 'FLAT_WINDOWS_LINES') . 'em;';
 			}
-			$s .= '"' . ">\n";
+			$s .= '"' . ">";
 			return $s;
 		} else {
-			return "\n"
-				. '<pre style="background-color: '
-				. (self::$config->get( 'Beautify_BackgroundColor'))
-				. '; border-style: dashed; border-width: 1px; border-color: ' . self::$config->get( 'Area Border Color') . ';">'
-				. "\n";
+			return PHP_EOL
+				. '<pre id="dumpAreaStart_b"'
+				. ' style="background-color: ' . (self::$config->get( 'Beautify_BackgroundColor')) . ';'
+				. ' border-style: ' . self::$config->get( 'Beautify Border-style') . ';'
+				. ' border-width: ' . self::$config->get( 'Beautify Border-width') . ';'
+				. ' border-color: ' . self::$config->get( 'Area Border Color') . ';'
+				. '">';
 		}
 	}
 
@@ -562,7 +602,7 @@ abstract class Dump {
 	 * @return - string with html formated output to end the dump block
 	 */
 	protected static function BeautifyAreaEnd() {
-		return '</pre>';
+		return '</pre>' . PHP_EOL;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -573,9 +613,17 @@ abstract class Dump {
 	 * @return - string with html formated output
 	 */
 	protected static function BeautifyVariableName($data) {
-		$s = '<font style="font-size: large; background-color: #7DEEA2; color: #950095"; font-weight: 999;>';
+		$s = '<span id="varName"'
+				. ' style="font-size: ' . self::$config->get( 'Beautify Var Name Font-size') . ';'
+				. ' background-color: ' . self::$config->get( 'Beautify Var Name BackgroundColor' ) . ';'
+				. ' color: ' . self::$config->get('Beautify Var Text Color' ) . ';'
+				. ' font-weight: ' . self::$config->get('Beautify Var Font-weight' ) .';">'
+				;
+		//$s .= PHP_EOL;
 		$s .= $data->variableName;
-		$s .= '</font>' . "\n";
+		//$s .= PHP_EOL;
+		$s .= '</span>';
+		//$s .= PHP_EOL;
 		return $s;
 	}
 
@@ -590,9 +638,19 @@ abstract class Dump {
 		if (empty($data->title)) {
 			return '';
 		} else {
-			$s = '<B><font color=green>';
+			$s ='';
+			//$s  = '<B>';
+			//$s .= PHP_EOL;
+			$s .= '<span id="title" style="font-weight: bold; color=' . self::$config->get('Beautify Title Color') . ';">';
+			//$s .= PHP_EOL;
+			//$s .= 'Title(';
 			$s .= $data->title;
-			$s .= '</B></font>' . "\n";
+			//$s .= ')';
+			//$s .= PHP_EOL;
+			$s .= '</span>';
+			//$s .= PHP_EOL;
+			//$s .= '</B>';
+			//$s .= PHP_EOL;
 			return $s;
 		}
 	}
@@ -605,11 +663,19 @@ abstract class Dump {
 	 * @return - string with html formated output
 	 */
 	protected static function BeautifyVariableData($data) {
-		$s = '<font style="fine-size: large; background-color: #7DEEA2; color: #950095">';
-		$s .= " ==>";
-		$s .= "</font>";
+		//$s = " ==>";
+		$s = '<span id="varData"'
+				. ' style="font-size: ' . self::$config->get('Beautify Var Data Font-size') . ';'
+				. ' background-color: ' . self::$config->get('Beautify Var Data Font background Color') . ';'
+				. ' color: ' . self::$config->get('Beautify Var Data Text Color') . ';'
+				. ' font-weight: ' . self::$config->get('Beautify Var Data Font-weight') . ';'
+				. '">';
+		//$s .= PHP_EOL;
+		//$s .= PHP_EOL;
+		//$s .= "</span>";
 		$s .= $data->variable;
-		$s .= '</font>' . "\n";
+		$s .= '</span>';
+		$s .= PHP_EOL;
 		return $s;
 	}
 
@@ -621,23 +687,44 @@ abstract class Dump {
 	 * @return - string with html formated output
 	 */
 	protected static function BeautifyLineData($data) {
-		$s = '<div align=right>';
+		$s ='';
+		$s = '<p style="text-align: right;">';
 
 		$s .= self::BeautifyPrePostLineData($data->preCodeLines);
 
-		$s .= '<font style="font-size: small; font-style: italic; color:#FF8000"> ';
+		$s .= '<span id="LineData_A"'
+				. ' style="font-size: ' . self::$config->get('Beautify Line Data Font-size') . ';'
+				. ' font-style: ' . self::$config->get('Beautify Line Data Font-style') . ';'
+				. ' color:' . self::$config->get('Beautify Line Data Text Color') . ';'
+				//. ' float: right;'
+				//. ' text-align: right;'
+				. '">';
+//		$s .= PHP_EOL;
 		$s .= ' server=' . $data->serverName;
 		$s .= ' ';
+//		$s .= PHP_EOL;
 		$s .= dirname($data->fileName) . DIRECTORY_SEPARATOR;
-		$s .= '</font>';
-		$s .= '<font style="font-style: italic; font-weight: bold; color:#FF8000">';
+//		$s .= PHP_EOL;
+		$s .= '</span>';
+		//$s .= PHP_EOL;
+		$s .= '<span id="LineData_B"'
+				. ' style="font-size: ' . self::$config->get('Beautify Line Data Basename Font-size') . ';'
+				. ' font-style: ' . self::$config->get('Beautify Line Data Basename Font-style') . ';'
+				. ' color:' . self::$config->get('Beautify Line Data Basename Text Color') .';'
+				. ' font-weight:'  . self::$config->get(  'Beautify Line Data Basename Font-weight') . ';'
+				//. ' float: right;'
+				. ' text-align: right;'
+				. '">';
+		//$s .= PHP_EOL;
 		$s .= basename($data->fileName);
 		$s .= ' (line: ' . $data->lineNum . ')';
-		$s .= '</font><BR>';
+		$s .= '</span>';
+		$s .= '</p>';
+		//$s .= PHP_EOL;
+		$s .= '<BR>';
+		//$s .= PHP_EOL;
 
 		$s .= self::BeautifyPrePostLineData($data->postCodeLines);
-
-		$s .= '</div>'; // . "\n";
 		return $s;
 	}
 
@@ -647,11 +734,18 @@ abstract class Dump {
 	 * @return string
 	 */
 	protected static function BeautifyPrePostLineData($ar) {
-		$s = '<font style="font-size: small; font-style: italic; color:#417232"> ';
+		$s = '<span id="PrePostLineData"'
+				. ' style="font-size:' . self::$config->get('Beautify PrePost Line Font-size') . ';'
+				. ' font-style: ' . self::$config->get('Beautify PrePost Line Font-style') . ';'
+				. ' color:' . self::$config->get('Beautify PrePost Line Text Color') . ';'
+				. '"> ';
+		$s .= PHP_EOL;
 		foreach ($ar as $line => $aLine) {
 			$s .= $aLine;
 		}
-		$s .= '</font>';
+		$s .= PHP_EOL;
+		$s .= '</span>';
+		$s .= PHP_EOL;
 		return $s;
 	}
 
@@ -663,10 +757,13 @@ abstract class Dump {
 	 * @return - string with html formated output
 	 */
 	protected static function BeautifyBackTrace($data) {
-		$s = '<font color=#0000FF>';
+		$s = '<span id="BackTrace"'
+				. ' style="color=' .  self::$config->get( 'Beautify Text Color') . ';">';
+		$s .= PHP_EOL;
 		$s .= $data->backTrace;
-
-		$s .= '</font>' . "\n";
+		$s .= PHP_EOL;
+		$s .= '</span>';
+		$s .= PHP_EOL;
 		return $s;
 	}
 
@@ -767,6 +864,20 @@ abstract class Dump {
  */
 abstract class BackTraceProcessor {
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $bt
@@ -847,13 +958,12 @@ abstract class BackTraceProcessor {
 		}
 		$args = array();
 
-		if ( false) {   /** simplify the backtrace by ignoring the "Arguments" and/or variables */
-			foreach ($btFunc['args'] as $anArg) {
-
-				$args[] = self::ProcessBTArgs($anArg);
-			}
-			$output .= implode(', ', $args);
-		}
+		//if ( false) {   /** simplify the backtrace by ignoring the "Arguments" and/or variables */
+		//	foreach ($btFunc['args'] as $anArg) {
+		//		$args[] = self::ProcessBTArgs($anArg);
+		//	}
+		//	$output .= implode(', ', $args);
+		//}
 
 		$output .= "\n";
 		return $output;
@@ -1040,6 +1150,11 @@ class dumpConfig {
 		echo '</pre>';
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $var
+	 * @param string $title
+	 */
 	public function dump($var=null, string $title = '') {
 		echo '<pre style="background-color: #E3FCFD">' ;
 		echo $title , ': ';

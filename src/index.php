@@ -82,13 +82,7 @@ include_once( \DIR . 'SetupSystemDetail.php');
 
 dump::dump('hi');
 
-
-//die;
-
-
-
-
-
+//dump::dumpClasses(null, array('Beautify_BackgroundColor' => '#FFAA55') );
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------
