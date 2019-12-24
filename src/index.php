@@ -82,8 +82,9 @@ include_once( \DIR . 'SetupSystemDetail.php');
 
 dump::dump('hi');
 
-//dump::dumpClasses(null, array('Beautify_BackgroundColor' => '#FFAA55') );
+dump::dumpClasses(null, array('Beautify_BackgroundColor' => '#FFAA55') );
 
+dump::dumpClasses( );
 
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running
