@@ -34,7 +34,7 @@
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\MessageLog as MessageLog;
-
+use \php_base\Utils\Utils as Utils;
 
 //************************************************************************************
 // setup everything
@@ -61,6 +61,20 @@ include_once( DIR . 'utils' . DSZ . 'Setup_Logging.php');
 
 
 
+///////////////////////////////////////////////////////////////////////////////
+// verify versions of a few key items
+if (Utils::Version() != '0.3.0'){
+	die;
+}
+if (Utils::isVersionGood( '0.3.0', Dump::Version()) ) {
+	//echo 'good dump version';
+} else {
+	echo 'bad dump version';
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+
 //echo serialize(array('fred'=>'johnny', 'bob'=> 'house'));
 
 
@@ -80,9 +94,6 @@ if (Settings::GetRuntimeObject('FileLog') == null) {
 
 
 
-
-
-//phpinfo();
 if (false) {
 	//https://libmemcached.org/libMemcached.html
 	//https://www.php.net/manual/en/book.memcached.php
@@ -95,7 +106,7 @@ if (false) {
 	$mc->set("bar", "Memcached...");
 }
 
-if (false) {
+if (true) {
 	session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
 	session_start();
 
@@ -104,22 +115,13 @@ if (false) {
 	// https://www.php.net/manual/en/function.session-destroy.php
 }
 
-//$tt = new \php_base\UtilsmyNullAbsorber();
-//$h = new \php_base\View\HeaderView($tt );
-//$h->doWork($tt);
+
 
 if (Settings::GetPublic('Use_MessageLog')) {
 	$mLog = new MessageLog();
 	Settings::SetRunTime('MessageLog', $mLog);
 }
 
-
-//echo '<BR>';
-//echo  '\php_code_base\src\static\css\message_stack_style.css';
-//echo '<br>';
-//Dump::dumpLong($_SERVER);
-//echo $_SERVER['HTTP_HOST'] . '\php_code_base\src\static\css\message_stack_style.css';
-//echo '<BR>';
 
 
 if (Settings::GetPublic('Use_MessageLog')) {
@@ -137,20 +139,6 @@ if (Settings::GetPublic('Use_MessageLog')) {
 Settings::SetRunTime('Benchmarks.start.executionTime', microtime(true));
 
 
-//if ( Settings::GetPublic('IS_DEBUGGING')) {
-//	echo '<br>--Starting... :-) ...<br>';
-//	Dump::dumpLong( $_REQUEST);
-//	if ( !empty($_SESSION) ){
-//		Dump::dump( $_SESSION); //dumpLong
-//	}
-//	if ( !empty( $GLOBALS)) {
-////		Dump::dump($GLOBALS); //dumpLong
-//	}
-//	if ( ! empty($_COOKIES)){
-//		Dump::dump( $_COOKIES);
-//	}
-//}
-//Dump::dump(Settings::GetProtected('database_extension_needed'));
 if (extension_loaded(Settings::GetProtected('database_extension_needed'))) {
 	Settings::GetRuntimeObject('DBLog')->addInfo('Starting....');
 } else {

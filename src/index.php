@@ -80,11 +80,17 @@ include_once( \DIR . 'SetupSystemDetail.php');
 
 
 
-dump::dump('hi');
+//dump::Dump('array("1"=>4)',null,array('Show BackTrace Num Lines' => 5,'Beautify_BackgroundColor' => '#FFAA55') );
+//Dump::dump('hello world', 'the world');
+//
+//dump::dump('hi');
+//debug_zval_dump(Settings::GetPublic('IS_DEBUGGING'));
+//
+//dump::dumpLong( get_defined_vars());
+//
+//dump::dumpClasses(null, array('Beautify_BackgroundColor' => '#FFAA55') );
 
-dump::dumpClasses(null, array('Beautify_BackgroundColor' => '#FFAA55') );
-
-dump::dumpClasses( );
+//dump::dumpClasses( );
 
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running

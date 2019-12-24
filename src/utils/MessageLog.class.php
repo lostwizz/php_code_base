@@ -256,11 +256,13 @@ class AMessage extends MessageBase {
 			$lineStyle = $this->getShowStyle($this->level);
 		}
 
-		$s .= '<span class="' . $lineStyle . '">';
 		if (!empty($this->timeStamp)) {
 			$s .= '[' . $this->timeStamp . '] ';
 		}
+		$s .= '<span class="' . $lineStyle . '">';
 		$s .= $textLeader;
+		$s .= '</span>';
+		$s .= ': ';
 
 		if (is_array($this->text)) {
 			$this->text = \print_r($this->text, true);
@@ -271,7 +273,6 @@ class AMessage extends MessageBase {
 		$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 		$s .= $z;
 
-		$s .= '</span>';
 		return $s;
 	}
 

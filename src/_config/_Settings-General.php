@@ -40,8 +40,14 @@ namespace php_base\Utils;
 /**
  * debugging type settings
  */
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// you can use a flag file in the c:\city directory to turn on debugging for only this PC
+
+Settings::SetPublic('IS_DEBUGGING', checkLocalEnvIfDebugging());
+
 //Settings::SetPublic('IS_DEBUGGING', false);
-Settings::SetPublic('IS_DEBUGGING', true);
+//Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
@@ -76,7 +82,7 @@ Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 Settings::SetPublic('CACHE_IS_ON', true);
 
 
-/**
+/**--------------------------------------------------------
  * details on the app
  */
 //Settings::SetPublic( 'App Name', 'MikesCommandAndControl2');
@@ -87,14 +93,14 @@ Settings::SetPublic('App Server', empty($_SERVER['SERVER_NAME']) ? 'aunknoen' : 
 
 Settings::SetPublic('Email_From', 'no-reply@whitehorse.ca');
 
-/*
+/**--------------------------------------------------------
  * the file names for the Lot Files
  */
 Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
 Settings::SetPublic('Security_Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_security.log');
 
 
-/**
+/**--------------------------------------------------------
  * initialize the Runtime settings for the logging to DB/Files/Email
  */
 // these will be set in the "/Setup.php/SetupLogging.php"
@@ -105,7 +111,7 @@ Settings::SetRuntime('SecurityLog', null);
 Settings::SetRuntime('EmailLog', null);
 
 
-/**
+/**--------------------------------------------------------
  * this indicates which of the logging is active (true) and which are basically left turned off
  */
 Settings::SetPublic('Use_MessageLog', true);  //true
@@ -116,10 +122,33 @@ Settings::SetPublic('Use_SecurityLog', false);
 Settings::SetPublic('Use_EmailLog', false);	  // true
 
 
-/**
+/**--------------------------------------------------------
  * initialize a setting (basically a reminder that this setting exists outside of the loggin
  *      - used for the email log event (usually Critical, Emergency and Errors events
  */
 //////////Settings::SetPublic( 'CRITICAL_EMAIL_PAYLOAD', 'CRITICAL_EMAIL_PAYLOAD');
 Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_CONTEXT', false);  // could be string or array
 Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_EXTRA', false);  // could be string or array
+
+
+function checkLocalEnvIfDebugging(){
+
+	$get = filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
+	if ( !empty( $get) and in_array('DEBUG', $get) and $get['DEBUG']== 78 ){
+		//echo '-debug true-'	;
+		return true;
+	}
+	$cookie = filter_input_array(\INPUT_COOKIE,\FILTER_SANITIZE_STRING);
+
+	echo '<pre>';
+	print_r ($cookie);
+	echo '</pre>';
+
+	if ( !empty( $cookie['DEBUG']) and ($cookie['DEBUG'] == '78') ){
+		echo '-debug true by cookie-'	;
+		return true;
+	}
+
+	echo '-debug false-'	;
+	return false;
+}
