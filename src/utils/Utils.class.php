@@ -160,12 +160,16 @@ abstract Class Utils {
 	 * @param type $startString
 	 * @return bool
 	 */
-	public static function startsWith (string $string, string $startString) :bool {
+	public static function startsWith (string $string, string $startString, bool $ignoreCase = false) :bool {
 		$len = strlen($startString);
 		if ($len <1) {
 			return false;
 		}
-		return (substr($string, 0, $len) === $startString);
+		if ( $ignoreCase){
+			return (substr(strtolower($string), 0, $len) === strtolower($startString));
+		} else {
+			return (substr($string, 0, $len) === $startString);
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------

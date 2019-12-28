@@ -77,6 +77,21 @@ abstract class MessageBase {
 	protected $timeStamp;  // time stamp for the message (for displaying the time)
 	protected $level; // level of the message (see defines at top)
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
+
 	abstract function Show();
 
 	abstract function Set($value = null);
@@ -94,6 +109,11 @@ class AMessage extends MessageBase {
 
 	public $timestamp;
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
 	/** -----------------------------------------------------------------------------------------------
 	 * construct a message
 	 * @param type $text
@@ -105,6 +125,17 @@ class AMessage extends MessageBase {
 		$this->setTimeStamp($timestamp);
 		$this->setLevel($level);
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
+	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * converts the message into a string which is formatted [time] level - text

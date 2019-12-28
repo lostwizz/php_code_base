@@ -84,6 +84,11 @@ include_once( \DIR . 'SetupSystemDetail.php');
 //Dump::dump('hello world', 'the world');
 //
 //dump::dump('hi');
+//dump::dump('one',null, array('Beautify is On'=>false));
+//
+//$s =dump::dump('hi',null, array('Only Return Output String' => true, 'Beautify is On'=>false));
+//echo $s;
+
 //debug_zval_dump(Settings::GetPublic('IS_DEBUGGING'));
 //
 //dump::dumpLong( get_defined_vars());

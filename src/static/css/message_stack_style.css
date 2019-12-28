@@ -34,43 +34,72 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 .msg_style_DEBUG {
 	color: black;
 	background: coral;
-		font-size: small;
+	font-size: small;
 	}
 
 .msg_style_INFO {
 	color: #D3D3D3;
 	background: black;
+	border-radius: 4px;
 	}
 
 .msg_style_NOTICE {
 	color: #84308F;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 }
 .msg_style_WARNING {
 	 color: orange;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	 }
 
 .msg_style_ERROR {
 	color: red;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 .msg_style_CRITICAL {
 	color: #FFD700;
 	background: black;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 .msg_style_ALERT {
 	color: DarkRed;
 	background: Yellow;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 .msg_style_EMERGENCY {
 	color: YellowGreen;
 	background: Red
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 .msg_style_TODO {
 	color: Orange;
 	background: white; /* gray;*/
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 
@@ -78,13 +107,25 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 
 .msg_style_UNKNOWN {
 	color: black;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 .msg_style_default {
 	color: black;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 	}
 
 
 .msg_style_fn {
 	color: green;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
 }

@@ -29,7 +29,10 @@ use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
 use \php_base\Resolver;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
+use \php_base\Utils\TableFun as TableFun;
+
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
@@ -122,10 +125,10 @@ $x =\php_base\Utils\Cache::pull('test1');
 $x =\php_base\Utils\Cache::pull('test1');
 //dump::dump($x);
 
-//dump::dump( $_SESSION);
-
-
-//dump::dump(UserInfoData::$Table->fields['userid']);
+////dump::dump( $_SESSION);
+//
+//
+//dump::dumpLong(UserInfoData::$Table->fields['userid']);
 //UserInfoData::$Table->fields['userid']->giveBinding('x');
 //UserInfoData::$Table->fields['username']->giveBinding('c');
 
@@ -138,7 +141,12 @@ $x =\php_base\Utils\Cache::pull('test1');
 
 
 
-//		$this->demoTableFun();
+		//$this->demoTableFun();
+
+///Dump::dumpClasses();
+//$x = new TableFun();
+//$x->demoTableFun();
+
 
 		//$this->view->doWork(  $this  );
 		//return new Resonse( 'ok', 0, true);
@@ -150,117 +158,4 @@ $x =\php_base\Utils\Cache::pull('test1');
 //		return [];
 //	}
 
-	public function demoTableFun() {
-
-
-		//
-//
-//		echo '<form method=post>';
-//		dump::dump( self::$Table->giveHeaderRow(true, true));
-//		echo '<table border=1>';
-//		echo '<tr>';
-//		echo self::$Table->giveHeaderRow(true, true);
-//		echo '</tr>';
-//		echo '</table>';
-//		echo '</form>';
-
-//dump::dump($this->payload);
-
-		echo HTML::FormOpen('tableFun');
-		echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'test');
-
-		$d = UserInfoData::$Table->readAllTableData();
-
-		 $this->sortData($d);
-
-		 $this->filterData($d);
-		//dump::dumpLong($d);
-		 $sortAr= $this->processPassedSort();
-//dump::dumpLong($sortAr)	;
-		 $filter = $this->processPassedFilter();
-		echo UserInfoData::$Table->showTable( $d, $sortAr, $filter);
-		echo HTML::FormClose();
-	}
-
-	public function processPassedSort() : ?array{
-		$ar = array();
-		$flds = UserInfoData::$Table->giveFields();
-
-
-		if (!empty( $this->payload['sortAsc']) and  is_array($this->payload['sortAsc']) ) {
-			foreach ($flds as $fld) {
-				if ( !empty($this->payload['sortAsc'][$fld])) {
-					$ar[$fld] = 'Asc';
-				} else {
-					$ar[$fld] =null;
-				}
-			}
-		}
-		if (!empty( $this->payload['sortDesc']) and  is_array($this->payload['sortDesc']) ) {
-			foreach ($flds as $fld) {
-				if ( !empty($this->payload['sortDesc'][$fld])) {
-					$ar[$fld] = 'Desc';
-				}
-			}
-		}
-		return $ar;
-	}
-
-	public function processPassedFilter(): ?array {
-		if ( !empty($this->payload['filter']) and is_array($this->payload['filter'])) {
-			$filter = $this->payload['filter'];
-		} else  {
-			$filter = null;
-		}
-		return $filter;
-	}
-
-	public function filterData( array &$data) {
-		if ( !empty($this->payload['filter']) and is_array($this->payload['filter'])) {
-			foreach ($this->payload['filter'] as $fld => $value) {
-				//dump::dump($value, $fld);
-				if ( !empty($value )) {
-					$this->filterOn($data, strtoupper($fld), $value);
-				}
-			}
-		}
-	}
-
-	function startsWith ($string, $startString) {
-		$len = strlen($startString);
-		return (substr($string, 0, $len) === $startString);
-	}
-
-
-	public function filterOn( &$data, $fld, $filter) {
-		foreach ($data as $key => $value) {
-			if ( $this->startsWith ( $value[$fld] , $filter)) {
-				unset( $data[$key]);
-			}
-		}
-	}
-
-
-	public $key='';
-
-
-	public function sortData( array &$data){
-		//figure out what to sort and in which direction
-
-		if ( !empty( $this->payload['sortAsc']) ) {
-			$this->key = strtoupper (array_keys( $this->payload['sortAsc'])[0]);
-			uasort($data, function($a, $b) {
-				return $a[ $this->key ] <=> $b[$this->key];}
-				);
-		}
-
-		if ( !empty( $this->payload['sortDesc']) ) {
-			$this->key = strtoupper(array_keys( $this->payload['sortDesc'])[0]);
-			uasort($data, function($a, $b) {
-				return $b[$this->key] <=> $a[$this->key];}
-				);
-		}
-
-		return;
-	}
 }

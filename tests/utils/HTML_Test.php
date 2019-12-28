@@ -3,9 +3,7 @@
 namespace Tests\Test;
 
 use PHPUnit\Framework\TestCase;
-
 use \php_base\Utils\HTML\HTML as HTML;
-
 use \php_base\Utils\Settings as Settings;
 
 //use \php_base\Settings\Settings as Settings;
@@ -76,11 +74,14 @@ class HTML_Test extends TestCase {
 		Settings::SetPublic('Use_DBdataLog', true);
 		Settings::SetPublic('Use_FileLog', true);  // true
 		Settings::SetPublic('Use_SecurityLog', true);
-		Settings::SetPublic('Use_EmailLog', true);	  // true
+		Settings::SetPublic('Use_EmailLog', true);   // true
 		//require_once(DIR . 'utils\setup_Logging.php');
 
 		Settings::SetPublic('Use_MessageLog', false);  //true
+	}
 
+	public function test_Versions() {
+		$this->assertEquals('0.3.0', HTML::Version());
 	}
 
 //	function test_filter_XSS() {
@@ -89,41 +90,37 @@ class HTML_Test extends TestCase {
 
 
 
-	function Filter_DataProvider(){
+	function Filter_DataProvider() {
 		return [
-			's a' => [ 'strip', 'sam', 'sam'],
-			's b' => [ 'strip', '<B>sam', 'sam'],
-			's c' => [ 'strip', '<B>sam</B>', 'sam'],
-			's d' => [ 'strip', '<HR>sam', 'sam'],
-			's e' => [ 'strip', '<div>sam</div>', 'sam'],
-			's f' => [ 'strip', 'sam<br>', 'sam'],
-			's g' => [ 'strip', 'sam<\br>', 'sam'],
-			's g' => [ 'strip', 'sam "fred"', 'sam "fred"'],
-
-			'ea a' => [ 'escapeAll', 'sam', 'sam'],
-			'ea b' => [ 'escapeAll', "fred saw 'sam'", 'fred saw &#039;sam&#039;'],
-			'ea c' => [ 'escapeAll', '<b>sam</b>', '&lt;b&gt;sam&lt;/b&gt;'],
-
-			'e a' => [ 'escape', 'sam', 'sam'],
-			'e b' => [ 'escape', 'sam "fred"', 'sam "fred"'],
-			'e c' => [ 'escape', 'sam <BR>', 'sam &lt;BR&gt;'],
-
-			'u a' => [ 'url', 'sam', 'sam'],
-			'u b' => [ 'url', 'sam@', 'sam%40'],
-			'u c' => [ 'url', 'sam\bob', 'sam%5Cbob'],
-			'u d' => [ 'url', 'http://merrett.ca/sam', 'http%3A%2F%2Fmerrett.ca%2Fsam'],
-
-			'f a' => [ 'filename', 'sam', 'sam'],
-			'f b' => [ 'filename', 'c:\city\sam', 'c--city-sam'],
-			'f c' => [ 'filename', 'c:\city\sam.txt', 'c--city-sam.txt'],
-			'f d' => [ 'filename', '/etc/city/sam', '-etc-city-sam'],
-			'f e' => [ 'filename', '/etc/city/sam.txt', '-etc-city-sam.txt'],
-			];
+			's a' => ['strip', 'sam', 'sam'],
+			's b' => ['strip', '<B>sam', 'sam'],
+			's c' => ['strip', '<B>sam</B>', 'sam'],
+			's d' => ['strip', '<HR>sam', 'sam'],
+			's e' => ['strip', '<div>sam</div>', 'sam'],
+			's f' => ['strip', 'sam<br>', 'sam'],
+			's g' => ['strip', 'sam<\br>', 'sam'],
+			's g' => ['strip', 'sam "fred"', 'sam "fred"'],
+			'ea a' => ['escapeAll', 'sam', 'sam'],
+			'ea b' => ['escapeAll', "fred saw 'sam'", 'fred saw &#039;sam&#039;'],
+			'ea c' => ['escapeAll', '<b>sam</b>', '&lt;b&gt;sam&lt;/b&gt;'],
+			'e a' => ['escape', 'sam', 'sam'],
+			'e b' => ['escape', 'sam "fred"', 'sam "fred"'],
+			'e c' => ['escape', 'sam <BR>', 'sam &lt;BR&gt;'],
+			'u a' => ['url', 'sam', 'sam'],
+			'u b' => ['url', 'sam@', 'sam%40'],
+			'u c' => ['url', 'sam\bob', 'sam%5Cbob'],
+			'u d' => ['url', 'http://merrett.ca/sam', 'http%3A%2F%2Fmerrett.ca%2Fsam'],
+			'f a' => ['filename', 'sam', 'sam'],
+			'f b' => ['filename', 'c:\city\sam', 'c--city-sam'],
+			'f c' => ['filename', 'c:\city\sam.txt', 'c--city-sam.txt'],
+			'f d' => ['filename', '/etc/city/sam', '-etc-city-sam'],
+			'f e' => ['filename', '/etc/city/sam.txt', '-etc-city-sam.txt'],
+		];
 	}
 
 	/**
-	* @dataProvider Filter_DataProvider
-	*/
+	 * @dataProvider Filter_DataProvider
+	 */
 	function test_filter($mode, $input, $expected) {
 		$actual = HTML::filter($mode, $input);
 		$this->assertEquals($expected, $actual);
@@ -162,18 +159,18 @@ class HTML_Test extends TestCase {
 				. '<option value="k2">v2</option>' . PHP_EOL
 				. '<option value="k3">v3</option>' . PHP_EOL
 				. '</select>' . PHP_EOL],
-			['FRED', array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3'), 'k1', true, null, null, '<Select name="FRED" >'		 //10
+			['FRED', array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3'), 'k1', true, null, null, '<Select name="FRED" >'   //10
 				. '<option value="-1">- Select -</option>' . PHP_EOL
 				. '<option value="k1" selected>v1</option>' . PHP_EOL
 				. '<option value="k2">v2</option>' . PHP_EOL
 				. '<option value="k3">v3</option>' . PHP_EOL
 				. '</select>' . PHP_EOL],
-			['FRED', array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3'), 'k1', false, null, null, '<Select name="FRED" >'	  ///11
+			['FRED', array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3'), 'k1', false, null, null, '<Select name="FRED" >'   ///11
 				. '<option value="k1" selected>v1</option>' . PHP_EOL
 				. '<option value="k2">v2</option>' . PHP_EOL
 				. '<option value="k3">v3</option>' . PHP_EOL
 				. '</select>' . PHP_EOL],
-			['FRED', array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3'), -1, true, null, null, '<Select name="FRED" >'		/// 12
+			['FRED', array('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3'), -1, true, null, null, '<Select name="FRED" >'  /// 12
 				. '<option value="-1" selected>- Select -</option>' . PHP_EOL
 				. '<option value="k1">v1</option>' . PHP_EOL
 				. '<option value="k2">v2</option>' . PHP_EOL
@@ -332,14 +329,12 @@ class HTML_Test extends TestCase {
 		$out = HTML::DocType(null);
 	}
 
-
-
-	function radio_dataProvider(){
+	function radio_dataProvider() {
 		//$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'FFRREEDD'];
 		$possibleTypes = [
 			'CHECKBOX',
 			'RADIO',
-			];
+		];
 
 		$possibleTypes2 = [
 			'Password',
@@ -347,77 +342,62 @@ class HTML_Test extends TestCase {
 			'Submit',
 			'HIDDEN',
 			'BUTTON',
-		/*	'Reset',*/
-			];
+				/* 	'Reset', */
+		];
 
-/*			'Reset',
- *
- */
+		/* 			'Reset',
+		 *
+		 */
 
 		$outArray = array();
 
-		$i =0;
-		foreach($possibleTypes as $type ){
+		$i = 0;
+		foreach ($possibleTypes as $type) {
 
-			$outArray['2_a' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow'],
-				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
+			$outArray['2_a' . $i++] = [$type, ["FRED", 'somewhere over the rainbow'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
 
-			$outArray['2_b' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?' ],
-				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
-			$outArray['2_c' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+			$outArray['2_b' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?'],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
-			$outArray['2_d' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, true],
+			$outArray['2_c' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
+			$outArray['2_d' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, true],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked>'];
-			$outArray['2_e' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, true,array('alt' => 'TONY')],
+			$outArray['2_e' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, true, array('alt' => 'TONY')],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>'];
-			$outArray['2_f' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
+			$outArray['2_f' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow']],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked>'];
-			$outArray['2_g' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
+			$outArray['2_g' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, true, ['snow' => 'somesnow'], 'backgroundcolor: yellow;'],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" snow="somesnow" checked style="backgroundcolor: yellow;">'];
-			$outArray['2_h' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
+			$outArray['2_h' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, true, null, 'backgroundcolor: yellow;'],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow;">'];
-			$outArray['2_i' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+			$outArray['2_i' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, true, null, ['backgroundcolor' => 'yellow', 'color' => 'blue']],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; color: blue;">'];
-
 		}
 
-		foreach($possibleTypes2 as $type ){
-			$outArray['4_a' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow'],
-				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
+		foreach ($possibleTypes2 as $type) {
+			$outArray['4_a' . $i++] = [$type, ["FRED", 'somewhere over the rainbow'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">'];
 
-			$outArray['4_b' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null,null, 'Where was Dorthy?' ],
-				'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
+			$outArray['4_b' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, null, 'Where was Dorthy?'],
+						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'];
 
-			$outArray['4_c' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, 'backgroundcolor: yellow;'],
+			$outArray['4_c' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, 'backgroundcolor: yellow;'],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" style="backgroundcolor: yellow;">'];
-			$outArray['4_d' . $i++]   =
-			[$type, ["FRED", 'somewhere over the rainbow', null, ['backgroundcolor' => 'yellow', 'color' =>'blue']],
+			$outArray['4_d' . $i++] = [$type, ["FRED", 'somewhere over the rainbow', null, ['backgroundcolor' => 'yellow', 'color' => 'blue']],
 						'<Input type="' . $type . '" name="FRED" value="somewhere over the rainbow" style="backgroundcolor: yellow; color: blue;">'];
 		}
 
 		$obj = new \ArrayIterator($outArray);
-		return	$obj;
+		return $obj;
 	}
 
-
 	/**
-	* @dataProvider radio_dataProvider
-	*/
-	function test_radio_button( $which, $in, $expected) {
+	 * @dataProvider radio_dataProvider
+	 */
+	function test_radio_button($which, $in, $expected) {
 
-		switch ( count($in)) {
+		switch (count($in)) {
 //			case 0:
 //				$actual = HTML::$which();
 //				break;
@@ -443,88 +423,83 @@ class HTML_Test extends TestCase {
 				$actual = HTML::$which($in[0], $in[1], $in[2], $in[3], $in[4], $in[5], $in[6]);
 				break;
 		}
-		$this->assertEquals( $expected, $actual );
+		$this->assertEquals($expected, $actual);
 	}
 
+	/*
+	  function xtest_radio() {
+	  //$this->markTestIncomplete('This test has not been implemented yet' );
 
 
 
 
+	  $out = HTML::Radio("FRED", 7);
+	  $expect = '<Input type="RADIO" name="FRED" value="7">';
+	  $this->assertEquals($expect, $out);
 
-/*
-	function xtest_radio() {
-		//$this->markTestIncomplete('This test has not been implemented yet' );
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow');
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">';
+	  $this->assertEquals($expect, $out);
 
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?');
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?';
+	  $this->assertEquals($expect, $out);
 
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', true);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>Where was Dorthy?';
+	  $this->assertEquals($expect, $out);
 
-
-		$out = HTML::Radio("FRED", 7);
-		$expect = '<Input type="RADIO" name="FRED" value="7">';
-		$this->assertEquals($expect, $out);
-
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow');
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">';
-		$this->assertEquals($expect, $out);
-
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?');
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?';
-		$this->assertEquals($expect, $out);
-
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', true);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>Where was Dorthy?';
-		$this->assertEquals($expect, $out);
-
-//		['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
-//			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
-//		['Radio', ["FRED", 'somewhere over the rainbow', null, true],
-//			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>'],
+	  //		['Radio', ["FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false],
+	  //			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?'],
+	  //		['Radio', ["FRED", 'somewhere over the rainbow', null, true],
+	  //			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>'],
 
 
 
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?';
-		$this->assertEquals($expect, $out);
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', 'Where was Dorthy?', false);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow">Where was Dorthy?';
+	  $this->assertEquals($expect, $out);
 
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>';
-		$this->assertEquals($expect, $out);
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked>';
+	  $this->assertEquals($expect, $out);
 
 
 
 
-		$options = array('alt' => 'TONY');
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>';
-		$this->assertEquals($expect, $out);
+	  $options = array('alt' => 'TONY');
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" checked>';
+	  $this->assertEquals($expect, $out);
 
-		$options['snow'] = 'somesnow';
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked>';
-		$this->assertEquals($expect, $out);
-
-
-
-//		['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, $style],
-//			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">'],
+	  $options['snow'] = 'somesnow';
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked>';
+	  $this->assertEquals($expect, $out);
 
 
 
+	  //		['Radio', ["FRED", 'somewhere over the rainbow', null, true, null, $style],
+	  //			'<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">'],
 
-		$style = 'backgroundcolor: yellow';
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked style="backgroundcolor: yellow">';
-		$this->assertEquals($expect, $out);
 
-		$style = array('backgroundcolor' => 'yellow');
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked style="backgroundcolor: yellow; ">';
-		$this->assertEquals($expect, $out);
 
-		$out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, null, $style);
-		$expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">';
-		$this->assertEquals($expect, $out);
-	}
-*/
+
+	  $style = 'backgroundcolor: yellow';
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked style="backgroundcolor: yellow">';
+	  $this->assertEquals($expect, $out);
+
+	  $style = array('backgroundcolor' => 'yellow');
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, $options, $style);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" alt="TONY" snow="somesnow" checked style="backgroundcolor: yellow; ">';
+	  $this->assertEquals($expect, $out);
+
+	  $out = HTML::Radio("FRED", 'somewhere over the rainbow', null, true, null, $style);
+	  $expect = '<Input type="RADIO" name="FRED" value="somewhere over the rainbow" checked style="backgroundcolor: yellow; ">';
+	  $this->assertEquals($expect, $out);
+	  }
+	 */
 
 	function test_Image() {
 		$out = HTML::Image('http://gis/cityofwhitehorseresources/Images/fire_icon.png');
@@ -841,37 +816,38 @@ class HTML_Test extends TestCase {
 	}
 
 	/*
-	function test_Hidden() {
+	  function test_Hidden() {
 
-		$out = HTML::Hidden('SAM', 'FRED');
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED">'; //. PHP_EOL ;
-		$this->assertEquals($expected, $out);
+	  $out = HTML::Hidden('SAM', 'FRED');
+	  $expected = '<Input type="HIDDEN" name="SAM" value="FRED">'; //. PHP_EOL ;
+	  $this->assertEquals($expected, $out);
 
-		$out = HTML::Hidden('SAM', 'FRED', null);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED">'; // . PHP_EOL;
-		$this->assertEquals($expected, $out);
+	  $out = HTML::Hidden('SAM', 'FRED', null);
+	  $expected = '<Input type="HIDDEN" name="SAM" value="FRED">'; // . PHP_EOL;
+	  $this->assertEquals($expected, $out);
 
-		$options = array('alt' => 'TONY');
-		$out = HTML::Hidden('SAM', 'FRED', $options);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" alt="TONY">'; // . PHP_EOL;
-		$this->assertEquals($expected, $out);
+	  $options = array('alt' => 'TONY');
+	  $out = HTML::Hidden('SAM', 'FRED', $options);
+	  $expected = '<Input type="HIDDEN" name="SAM" value="FRED" alt="TONY">'; // . PHP_EOL;
+	  $this->assertEquals($expected, $out);
 
-		$style = 'backgroundcolor: yellow';
-		$out = HTML::Hidden('SAM', 'FRED', null, $style);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow">'; //. PHP_EOL;
-		$this->assertEquals($expected, $out);
+	  $style = 'backgroundcolor: yellow';
+	  $out = HTML::Hidden('SAM', 'FRED', null, $style);
+	  $expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow">'; //. PHP_EOL;
+	  $this->assertEquals($expected, $out);
 
-		$style = array('backgroundcolor' => 'yellow');
-		$out = HTML::Hidden('SAM', 'FRED', null, $style);
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; // . PHP_EOL;
-		$this->assertEquals($expected, $out);
+	  $style = array('backgroundcolor' => 'yellow');
+	  $out = HTML::Hidden('SAM', 'FRED', null, $style);
+	  $expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; // . PHP_EOL;
+	  $this->assertEquals($expected, $out);
 
-		$options = array('alt' => 'TONY');
-		$style = array('backgroundcolor' => 'yellow');
-		$expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; //. PHP_EOL;
-		$this->assertEquals($expected, $out);
-	}
-*/
+	  $options = array('alt' => 'TONY');
+	  $style = array('backgroundcolor' => 'yellow');
+	  $expected = '<Input type="HIDDEN" name="SAM" value="FRED" style="backgroundcolor: yellow;">'; //. PHP_EOL;
+	  $this->assertEquals($expected, $out);
+	  }
+	 */
+
 	function test_1_Open() {
 		$this->expectException(\ArgumentCountError::class);
 		$this->expectExceptionMessage('Too few arguments to function php_base\Utils\HTML\HTML::Open(), 0 passed');
@@ -1010,7 +986,6 @@ class ExtendedHTML extends HTML {
 	}
 
 }
-
 
 /*
 

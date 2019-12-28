@@ -182,11 +182,16 @@ class Resolver {
 	 */
 	protected function setupDefaultController(): void {
 		if ( $this->dispatcher->getProcessQueueCount() <1) {
-			$process = 'TEST';
+			///$process = 'TEST';
+			//$task = 'doWork';
+			//$action = null;
 			Settings::GetRunTimeObject('MessageLog')->addTODO('figure out what the default process is - probably menu system');
 
-			$task = 'doWork';
+			$process = 'UserRoleAndPermissions';
+			$task = 'doEdit';
 			$action = null;
+
+
 			$payload = ['username' => Settings::GetRunTime('Currently Logged In User')];
 			$this->dispatcher->addProcess($process, $task, $action, $payload);
 		}

@@ -522,7 +522,7 @@ abstract class Dump {
 	 * @param type $showBT
 	 * @return string
 	 */
-	protected static function plainOutput($data, $showBT) {
+	protected static function plainOutput($data) {
 		$output = '';
 		$output .= $data->title;
 		$output .= '<BR>';
@@ -532,7 +532,7 @@ abstract class Dump {
 		$output .= '<BR>';
 		$output .= $data->fileName . ' (Line:' . $data->lineNum . ') ';
 		$output .= '<BR>';
-		if ($showBT >0 ) {
+		if (self::$config->get( 'Show BackTrace Num Lines') >0 ) {
 			$output .= $data->backTrace;
 			$output .= '<BR>';
 		}

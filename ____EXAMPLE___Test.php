@@ -157,4 +157,17 @@ class ExampleController_Test extends TestCase {
 
 
 
+/////////////////////////////////
+// example of php doc string setup
+$x = <<<'EOD'
+<BR>
+<div id="dumpAreaStart_b" style="background-color: #FFFDCC; border-style: dashed; border-width: 1px; border-color: #950095;"><span id="varName" style="font-size: large; background-color: #7DEEA2; color: #950095; font-weight: 100;">'one',null, array('Only Return Output String' => true)</span><pre id="varData" style="font-size: large; background-color: ; color: #950095; font-weight: normal;">one</pre>
+<div style="text-align: right;"><span id="LineData_A" style="font-size: small; font-style: normal; color:#FF8000; text-align: right;"> server=localhost P:\Projects\NB_projects\php_code_base\tests\utils\</span>
+<span id="LineData_B" style="font-size: medium; font-style: bold; color:#8266F2; font-weight:bolder; text-align: right;">dump_Test.php (line: 61)</span></div>
+</div>
+EOD;
+/////////////////////////////////
+
+
+
 }

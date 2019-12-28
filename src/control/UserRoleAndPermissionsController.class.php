@@ -341,4 +341,22 @@ Class UserRoleAndPermissionsController {
 		$DataUserRoles->doRemoveRoleByID($roleID);
 	}
 
+
+
+	public function doEdit( $whichTbl) : Response{
+		$DataUserInfo = new \php_base\data\UserInfoData();
+dump::dumpLong( $DataUserInfo);
+
+$y = UserInfoData::$Table;
+dump::dumpLong( $y);
+
+		$x =  UserInfoData::$Table ;
+
+dump::dumpLong($x);
+		$editorSession = new \php_base\Utils\DatabaseHandlers\SimpleTableEditor($x);
+
+		$result = $editorSession->runTableDisplayAndEdit( true );
+		return $result;
+	}
+
 }

@@ -82,7 +82,9 @@ class UserInfoData extends data {
 		return self::VERSION;
 	}
 
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public static function defineTable() {
 		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'));
 		self::$Table->setPrimaryKey( 'UserId', ['prettyName' => 'User Id']);
