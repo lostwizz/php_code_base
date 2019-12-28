@@ -194,6 +194,9 @@ Class UserRoleAndPermissionsController {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	protected function getCached() {
 		$cacheVal = Cache::pull('UserRoleAndPermissions');
 //dump::dump($cacheVal);
@@ -205,6 +208,9 @@ Class UserRoleAndPermissionsController {
 		$this->ArrayOfRoleNames = $cacheVal['ArrayOfRoleNames'];
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	protected function setCached() {
 		$cacheVal = array();
 		$cacheVal['username'] = $this->username;
