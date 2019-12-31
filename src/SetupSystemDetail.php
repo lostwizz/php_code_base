@@ -107,8 +107,10 @@ if (false) {
 }
 
 if (true) {
-	session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
-	session_start();
+	if ( session_status() == \PHP_SESSION_NONE AND !headers_sent()){
+		session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
+		session_start();
+	}
 
 	//think about how to use   session_regenerate_id(true);
 	//    and/or session_destroy()

@@ -80,13 +80,19 @@ abstract Class DBUtils {
 	 * @return boolean
 	 */
 	public static function setupPDO() {
+
+//		if ( Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
+//			Settings::setRunTime('SQL_DEBUGGING' ,Settings::GetRunTimeObject('MessageLog'));
+//		}
+//		Settings::GetRunTimeObject('SQL_DEBUGGING')->addAlert('SQL - at setupPDO');
+
 		if (!self::checkPDOSettings()) {
 			return false;
 		}
 
 		if ( Cache::exists('PDO_Connection')) {
 			$conn = Cache::pull('PDO_Connection');
-			//Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn from cache');
+			Settings::GetRunTimeObject('SQL_DEBUGGING')->addNotice('PDO::Conn from cache');
 		} else {
 
 		//if ($conn == false) {
@@ -94,7 +100,7 @@ abstract Class DBUtils {
 			//self::EndWriteOne();
 
 			Cache::add( 'PDO_Connection', $conn, 600);
-			//Settings::GetRunTimeObject('MessageLog')->addNotice('PDO::Conn new create and add to cache');
+			Settings::GetRunTimeObject('SQL_DEBUGGING')->addNotice('PDO::Conn new create and add to cache');
 		}
 		return $conn;
 	}
@@ -137,6 +143,7 @@ abstract Class DBUtils {
 		} catch (\PDOException $e) {
 			throw new \PDOException($e->getMessage(), (int) $e->getCode());
 		}
+		Settings::GetRunTimeObject('SQL_DEBUGGING')->addNotice(' after setupNewPDO');
 		return $conn;
 	}
 
@@ -158,7 +165,7 @@ abstract Class DBUtils {
 			self::doBinding($params, $stmt);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL',5);
+				dump::dump($sql, 'SQL', array('Show BackTrace Num Lines' => 5));
 				dump::dump($params);
 			}
 
@@ -191,7 +198,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL', 5);
+				dump::dump($sql, 'SQL', array('Show BackTrace Num Lines' => 5));
 				dump::dump($params);
 			}
 
@@ -231,7 +238,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 		if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-			dump::dump($sql, 'SQL', 5);
+			dump::dump($sql, 'SQL', array('Show BackTrace Num Lines' => 5));
 			dump::dump($params);
 		}
 			//dump::dump($stmt);
@@ -334,7 +341,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL', 5);
+				dump::dump($sql, 'SQL', array('Show BackTrace Num Lines' => 5));
 				dump::dump($params);
 			}
 			//dump::dump($stmt);
@@ -372,7 +379,7 @@ abstract Class DBUtils {
 			$stmt = $conn->prepare($sql);
 
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL', 5);
+				dump::dump($sql, 'SQL', array('Show BackTrace Num Lines' => 5));
 				dump::dump($params);
 			}
 
@@ -414,7 +421,7 @@ abstract Class DBUtils {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 			if (Settings::GetPublic('IS_DETAILED_SQL_DEBUGGING')){
-				dump::dump($sql, 'SQL', 5);
+				dump::dump($sql, 'SQL', array('Show BackTrace Num Lines' => 5));
 				dump::dump($params);
 			}
 

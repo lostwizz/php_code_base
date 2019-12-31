@@ -86,7 +86,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 
 .msg_style_EMERGENCY {
 	color: YellowGreen;
-	background: Red
+	background: Red;
 	border-radius: 4px;
 	border-style: solid;
 	border-width: 1px;

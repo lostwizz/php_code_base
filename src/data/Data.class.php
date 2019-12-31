@@ -25,6 +25,10 @@
  *
  * @todo Description
  *
+ *
+ * put this at the beginning of your method for some debug info (put the false at the bottom of the method:
+ *					Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', true);
+ *
  */
 //**********************************************************************************************
 

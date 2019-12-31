@@ -63,7 +63,6 @@ class HeaderView extends View {
 	 * @return Response
 	 */
 	public function doWork($parent = null): Response {
-
 		if (!Settings::GetRuntime('Surpress_Output')) {  // probably because we are printing
 			$this->showHTMLHeader();
 			?>
@@ -186,10 +185,22 @@ class HeaderView extends View {
 	 * @return type
 	 */
 	public function giveStyleSheets() {
-		return ['static\css\message_stack_style.css',
-			'static\css\general_style.css',
-			'static\css\animations_style.css'
-		];
+
+		if ($handle = opendir('static\css')) {
+			$entries = array();
+		    while (false !== ($entry = readdir($handle))) {
+				//echo "$entry\n";
+				$entries[] = 'static\css\\' . $entry;
+			}
+			closedir($handle);
+			return $entries;
+		} else {
+			return ['static\css\message_stack_style.cssXXX',
+				'static\css\general_style.css',
+				'static\css\animations_style.css',
+				'static\css\menu_style.css'
+			];
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------

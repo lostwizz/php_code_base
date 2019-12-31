@@ -1,46 +1,25 @@
 <?php
 
-/** * ********************************************************************************************
- * Controller.class.php
- *
- * Summary: the base class for all controlllers
- *
- * @author mike.merrett@whitehorse.ca
- * @version 0.5.0
- * $Id$
- *
- * Description: base class for all the controllers
- *
- *
- * @link URL
- *
- * @package ModelViewController - Controllers
- * @subpackage Controllers
- * @since 0.3.0
- *
- * @example
- * 							 class AuthenticateData extends Controller{  }
- *
- * @see elementName
- *
- * @todo Description
- *
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
-//**********************************************************************************************
 
-namespace php_base\Control;
+namespace php_base\control;
 
-use php_base\Model;
-use php_base\Data;
-use php_base\View;
-use \php_base\Settings\Settings as Settings;
+
+use \php_base\Resolver;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+use \php_base\Utils\Settings as Settings;
 
-/** * **********************************************************************************************
- * base class for the controllers
+/**
+ * Description of dbaController
+ *
+ * @author merrem
  */
-abstract class Controller {
+class dbaController extends Controller {
 
 	public $model;
 	public $view;
@@ -58,7 +37,9 @@ abstract class Controller {
 	/** -----------------------------------------------------------------------------------------------
 	 * basic form of the constructor
 	 */
-	abstract public function __construct(string $passedAction = '', $passedPayload = null);
+	public function __construct(string $passedAction = '', $passedPayload = null){
+
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a version number
@@ -76,7 +57,7 @@ abstract class Controller {
 	 * @return Response
 	 */
 	public function doWork(): Response {
-		return Response::GenericError();
+		return Response::NoError() ;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -85,9 +66,25 @@ abstract class Controller {
 	 * @param type $process
 	 * @param type $task
 	 */
-	public function setProcessAndTask($process, $task) {
+	public function setProcessAndTask($process =null, $task=null) {
 		$this->process = $process;
 		$this->task = $task;
 	}
 
+	public function one( $parent=null) {
+
+		echo 'at one ';
+		return Response::NoError();
+	}
+	public function two( $parent=null) {
+
+		echo 'at two ';
+
+		return Response::NoError();
+	}
+	public function three( $parent=null) {
+
+		echo 'at three ';
+		return Response::NoError();
+	}
 }

@@ -141,12 +141,15 @@ abstract class Settings {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 * !!!note !! cannot return NullAbsober- has to return false by default
+	 *          -- user getRunTimeObject instead
 	 *
 	 * @param type $key
 	 * @return type
 	 */
 	public static function getRunTime($key) {
 		return isset(self::$runTime[$key]) ? self::$runTime[$key] : false;
+		//return isset(self::$runTime[$key]) ? self::$runTime[$key] : new NullAbsorber();
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -173,6 +176,15 @@ abstract class Settings {
 	 * @param type $value
 	 */
 	public static function setRunTime($key, $value) {
+		self::$runTime[$key] = $value;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @param type $value
+	 */
+	public static function setRunTimeObject($key, $value) {
 		self::$runTime[$key] = $value;
 	}
 

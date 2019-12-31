@@ -53,12 +53,18 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
 
 	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', true);
-	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', true);
+
+	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', false);
+
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
 
 	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', false);
 	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', false);
+
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', true);
+
+
 
 	Settings::SetPublic('Show MessageLog Adds', true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
@@ -140,15 +146,15 @@ function checkLocalEnvIfDebugging(){
 	}
 	$cookie = filter_input_array(\INPUT_COOKIE,\FILTER_SANITIZE_STRING);
 
-	echo '<pre>';
-	print_r ($cookie);
-	echo '</pre>';
+//	echo '<pre>';
+//	print_r ($cookie);
+//	echo '</pre>';
 
 	if ( !empty( $cookie['DEBUG']) and ($cookie['DEBUG'] == '78') ){
 		echo '-debug true by cookie-'	;
 		return true;
 	}
 
-	echo '-debug false-'	;
+	//echo '-debug false (by cookie or get)-'	;
 	return false;
 }

@@ -53,3 +53,5 @@ Settings::SetProtected( 'DB_Table_PermissionsManager', 'RolePermissions' );
 Settings::SetProtected( 'DB_Table_UserAttributes', 'UserAttributes' );
 Settings::SetProtected( 'DB_Table_Settings', 'Settings');
 
+Settings::SetProtected( 'DB_Table_MenuDefinitions', 'MenuDefinitions');
+

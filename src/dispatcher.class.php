@@ -72,6 +72,11 @@ class Dispatcher {
 	 *
 	 */
 	public function __construct() {       //bool $isHeaderAndFooterLess = false
+		if ( Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')){
+			Settings::setRunTime('DISPATCHER_DEBUGGING' ,Settings::GetRunTimeObject('MessageLog'));
+		}
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addAlert('dispatcher constructor ');
+
 		$this->PREqueue = new \SplQueue();
 		$this->POSTqueue = new \SplQueue();
 		$this->DISPATCHqueue = new \SplQueue();
@@ -273,6 +278,7 @@ class Dispatcher {
 
 		// now calls basically the task with this so it can look up the class and task
 		$r = $x->$task($this);  //run the process's method
+
 		$this->debug( 'after running process got result', $r);
 //		if ( $r->hadError() ) {
 //			Settings::GetRunTimeObject('MessageLog')->addEmergency( 'dispatcher got ' . $r->giveMessage());

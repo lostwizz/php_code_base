@@ -98,6 +98,12 @@ class Resolver {
 	 *
 	 */
 	public function __construct() {
+		if ( Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING')){
+			Settings::setRunTime('RESOLVER_DEBUGGING' ,Settings::GetRunTimeObject('MessageLog'));
+		}
+		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addAlert('constructor for resolver');
+
+
 		$this->dispatcher = new Dispatcher();
 	}
 
@@ -126,6 +132,7 @@ class Resolver {
 		if (Settings::GetPublic('IS_DEBUGGING')) {
 			//dump::dumpLong( $_REQUEST);
 			Dump::dumpLong(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
+			Dump::dumpLong(filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING));
 			dump::dumpLong($_SESSION);
 			//dump::dump( session_id());
 		}
@@ -187,10 +194,13 @@ class Resolver {
 			//$action = null;
 			Settings::GetRunTimeObject('MessageLog')->addTODO('figure out what the default process is - probably menu system');
 
-			$process = 'UserRoleAndPermissions';
-			$task = 'doEdit';
-			$action = null;
+//			$process = 'UserRoleAndPermissions';
+//			$task = 'doEdit';
+//			$action = null;
 
+			$process = 'Menu';
+			$task = 'doWork';
+			$action = null;
 
 			$payload = ['username' => Settings::GetRunTime('Currently Logged In User')];
 			$this->dispatcher->addProcess($process, $task, $action, $payload);
@@ -208,20 +218,42 @@ class Resolver {
 	 */
 	public function decodeRequestInfo(): void {
 
-		$postVars = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
+		$PTAP = $this->decodeINPUTvars();
 
-
-		$process = (!empty($postVars[self::REQUEST_PROCESS])) ? $postVars[self::REQUEST_PROCESS] : null;
-		$task = (!empty($postVars[self::REQUEST_TASK])) ? $postVars[self::REQUEST_TASK] : null;
-		$action = (!empty($postVars[self::REQUEST_ACTION])) ? $postVars[self::REQUEST_ACTION] : null;
-		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : null;
 
 		/** if the GET/POST are not an Authenticate PTAP then do what they are
 				as the checkAuthenticate is added below 		 */
-		if (!( $process == 'Authenticate' and $task == 'checkAuthentication' )) {
-			$this->dispatcher->addProcess($process, $task, $action, $payload);
+		if (!( $PTAP['process'] == 'Authenticate' and $PTAP['task'] == 'checkAuthentication' )) {
+			$this->dispatcher->addProcess($PTAP['process'], $PTAP['task'], $PTAP['action'], $PTAP['payload']);
 		}
 	}
+
+
+	protected function decodeINPUTvars() {
+
+		$postVars = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
+
+		$getVars =  \filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
+
+		$PTAP = array();
+
+		$PTAP['process'] = (!empty($postVars[self::REQUEST_PROCESS])) ? $postVars[self::REQUEST_PROCESS] : null;
+		$PTAP['task'] = (!empty($postVars[self::REQUEST_TASK])) ? $postVars[self::REQUEST_TASK] : null;
+		$PTAP['action'] = (!empty($postVars[self::REQUEST_ACTION])) ? $postVars[self::REQUEST_ACTION] : null;
+		$PTAP['payload'] = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : null;
+
+		if ( empty($PTAP['process']) and !empty( $getVars['MENU_SELECT'])) {
+			$x = $getVars['MENU_SELECT'];
+			$exploded = \explode('.', $x);
+			$PTAP['process'] =	(!empty($exploded[0])) ? $exploded[0] : null;
+			$PTAP['task'] =		(!empty($exploded[1])) ? $exploded[1] : null;
+			$PTAP['action'] =	(!empty($exploded[2])) ? $exploded[2] : null;
+			$PTAP['payload'] =	(!empty($exploded[3])) ? $exploded[3] : null;
+		}
+		return $PTAP;
+	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * addSetupUserRoleAndPermissions - after a successful logon then setup the users permissions.

@@ -98,6 +98,11 @@ Class NullAbsorber {
 		return null;
 	}
 
+	public function __toString() :string{
+		return '';
+	}
+
+	
 //	public function __callStatic( $method, $args){
 //		echo 'tryied to call', $method;
 //	}
