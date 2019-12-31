@@ -72,15 +72,21 @@ class MenuData extends data {
 					. ' WHERE app = :app '
 					. ' ORDER BY item_number '
 			;
-			$app = Settings::GetPublic('App Name');
+
+
+			$app = Settings::GetPublic('App Name') ;
+
+
+
 			$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR]);
 			$data = DBUtils::doDBSelectMulti($sql, $params);
 			if ($data != false) {
 				$this->Menu = $data;
-				CACHE::add('MenuData', $this->Menu);
+				//CACHE::add('MenuData', $this->Menu);
 				return true;
 			}
 		}
+		return false;
 	}
 
 }

@@ -20,7 +20,7 @@ use \php_base\Utils\HTML\HTML as HTML;
  */
 class MenuView extends View{
 
-	protected $currentLevel = 0;
+	protected $currentLevel = 1;
 
 
 	/**
@@ -41,88 +41,148 @@ class MenuView extends View{
 //		return Response::NoError();
 //	}
 
-	public function showMenu (array $theMenu) {
+	public function showMenu ($theMenu) {
 		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice( 'at show Menu');
 
+
+		echo $theMenu;
+
+
+		//$this->controller->model->processedMenu;
+
+	}
+
+	/*
 		dump::dumpLong($theMenu);
 
-		$s ='<ul>';
+		//$this->fred();
+
+
+
+		$s ='<ul id="menu">';
+		$s .= PHP_EOL;
+
 		foreach($theMenu as $item){
 			$s .= $this->process($item);
 		}
-		$s .= '/ul>';
+		while ( $this->currentLevel >1){
+			$this->process( array('ITEM_NUMBER'=> 1, 'ptap'=> '', 'NAME'=> '' ));
+		}
+		$s .='</li></ul>';
+		$s .= '</ul id=end>';
 
+		echo PHP_EOL;
+		echo PHP_EOL;
 		echo $s;
-	}
+		echo PHP_EOL;
+		echo PHP_EOL;
 
-	protected function process( array $item ) : string{
-		dump::dumpLong($item);
-		$s ='';
-		$x = \explode('.', $item);
-		if ( count($x) > $this->currentLevel){
-			$s .= '<li class="dropdown">';
-			$s .= '<div class="dropdown-content">';
-			$s .= 'a href="./index.php?MENU_SELECT=' . $item['ptap'] .'">' . $item['NAME'] . '</a>';
+
+	}
+*/
+
+
+
+
+	protected function process(array $item) /* : string */ {
+		//dump::dumpLong($item);
+
+
+		$s = '';
+		$x = explode('.', $item['ITEM_NUMBER']);
+		if (count($x) > $this->currentLevel) {
+			$s .= '<li class="parent">';
+			$s .= '<a href="./index.php?MENU_SELECT=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+			$s .= PHP_EOL;
+			$s .= '<ul class="child">';
+			$s .= PHP_EOL;
 			$this->currentLevel ++;
 		} elseif (count($x) == $this->currentLevel) {
-			$s .= 'a href="./index.php?MENU_SELECT=' . $item['ptap'] .'">' . $item['NAME'] . '</a>';
+			$s .= '<li>'; //  class="parent"
+			$s .= '<a href="./index.php?MENU_SELECT=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+			$s .= '</li>';
+			$s .= PHP_EOL;
 		} else if (count($x) < $this->currentLevel) {
-			$s .= '</div>';
+			$s .= '</ul>';
+			$s .= PHP_EOL;
+			$s .= '</li>';
+			$s .= PHP_EOL;
+			$s .= '<li class="parent">';
+			$s .= '<a href="./index.php?MENU_SELECT=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
 			$s .= '</li>';
 			$this->currentLevel --;
 		}
 		return $s;
 	}
 
+	public 	function fred() {
 
+?>
+		<ul id="menu">
 
-}
+			<li class="parent"> ><a href="#bb">22Barbies</a></li>
 
-/*
+			<li class="parent"><a href="#">Popular Toys</a>
+				<ul class="child">
+					<li class="parent"><a href="#">Video Games <span class="expand">&raquo;</span></a>
+						<ul class="child">
+							<li><a href="#">Car</a></li>
+							<li class="parent"><a href="#">Bike Race<span class="expand">&raquo;</span></a>
+								<ul class="child">
+									<li><a href="#">one</a></li>
+									<li><a href="#">two</a></li>
+									<li><a href="#">three</a></li>
+									<li><a href="#">four</a></li>
+								</ul>
+							</li>
+							<li><a href="#">Fishing</a></li>
+						</ul>
+					</li>
+					<li><a href="#">Barbies</a></li>
+					<li><a href="#">Teddy Bear</a></li>
+					<li><a href="#">Golf Set</a></li>
+				</ul>
+			</li>
+			<li class="parent"><a href="#">Recent Toys</a>
+				<ul class="child">
+					<li><a href="#">Yoyo</a></li>
+					<li><a href="#">Doctor Kit</a></li>
+					<li class="parent"><a href="#">Fun Puzzle<span class="expand">&raquo;</span></a>
+						<ul class="child">
+							<li><a href="#" nowrap>Cards</a></li>
+							<li><a href="#" nowrap>Numbers</a></li>
+						</ul>
+					</li>
+					<li><a href="#">Uno Cards</a></li>
+				</ul>
+			</li>
 
-<ul>
-	<li><a href="./index.php?MENU_SELECT=home...">Home</a></li>
-	<li><a href="./index.php?MENU_SELECT=news...">News</a></li>
-	<li class="dropdown">
-		<a href="javascript:void(0)" class="dropbtn">Dropdown</a>
-		<div class="dropdown-content">
-			<a href="./index.php?MENU_SELECT=link.one..">Link 1</a>
-			<a href="./index.php?MENU_SELECT=link.two..">Link 2</a>
-			<a href="./index.php?MENU_SELECT=link.three..">Link 3</a>
-		</div>
-	</li>
-	<?php
-		if ( Settings::GetRunTime('userPermissionsController')->hasRole('DBA') ){
-?>	<li class="dropdown">
-		<a href="javascript:void(0)" class="dropbtn">DBA</a>
-		<div class="dropdown-content">
-			<a href="./index.php?MENU_SELECT=dba.one..">DBA1</a>
-			<a href="./index.php?MENU_SELECT=dba.two..">DBA2</a>
-			<a href="./index.php?MENU_SELECT=dba.three..">DBA3</a>
-		</div>
-	</li>
+		</ul>
+
 <?php
-		}
-	?>
-	<li class="dropdown">
-		<a href="javascript:void(0)" class="dropbtn">Help</a>
-		<div class="dropdown-content">
-			<a href="./index.php?MENU_SELECT=help.one..">About</a>
-			<a href="./index.php?MENU_SELECT=help.two..">Version</a>
-			<a href="./index.php?MENU_SELECT=help.three..">Help</a>
-		</div>
-	</li>
-</ul>
-
-<h3>Dropdown Menu inside a Navigation Bar</h3>
-<p>Hover over the "Dropdown" link to see the dropdown menu.</p>
-
-<?php
-
-
 	}
 
+
+
+
 }
 
 
-*/
+
+/*
+ * 	<li class="parent"><a href="#">Toys Category</a>
+	<ul class="child">
+		<li><a href="#">Battery Toys</a></li>
+		<li class="parent"><a href="#">Remote Toys <span class="expand">&raquo;</span></a>
+			<ul class="child">
+			<li><a href="#">Cars</a></li>
+			<li><a href="#">Aeroplane</a></li>
+			<li><a href="#">Helicopter</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Soft Toys</a>
+		</li>
+		<li><a href="#">Magnet Toys</a></li>
+	</ul>
+	</li>
+ */

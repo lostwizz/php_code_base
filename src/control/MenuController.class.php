@@ -65,7 +65,7 @@ class MenuController extends Controller {
 			Settings::setRunTime('MENU_DEBUGGING', Settings::GetRunTimeObject('MessageLog'));
 		}
 
-		//$this->model = new \php_base\model\AuthenticateModel($this);
+		$this->model = new \php_base\model\MenuModel($this);
 		$this->data = new \php_base\data\MenuData($this);
 		$this->view = new \php_base\view\MenuView($this);
 
@@ -98,44 +98,13 @@ class MenuController extends Controller {
 	public function doWork(): Response {
 
 		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu Controller doWork');
-		$preparedMenu = $this->prepareMenu();
+
+		$preparedMenu = $this->model->prepareMenu();
+
 		$this->view->showMenu($preparedMenu);
 		return Response::NoError();
 	}
 
-	protected function prepareMenu() :array {
-		$parsedMenu = array();
-		foreach ($this->data->Menu as $item) {
-			if ($this->hasRightsToMenuItem($item)) {
-				$item['ptap'] = $item['PROCESS'] . '.' . $item['TASK'] . '.' . $item['ACTION'] . '.' . $item['PAYLOAD'];
-				$parsedMenu[] = $item;
-			}
-		}
-		return $parsedMenu;
-	}
 
-	protected function hasRightsToMenuItem($item): bool {
-		if ( empty ($item['ROLE_NAME_REQUIRED'])
-			and empty( $item['PERMISSION_REQUIRED'])
-			and empty( $item['PROCESS_PERMISSION_REQUIRED'])
-			and empty( $item['TASK_PERMISSION_REQUIRED']) ){
-			return true;
-		}
-		if (!empty($item['ROLE_NAME_REQUIRED'])) {
-			if (Settings::GetRunTime('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED'])) {
-				return true;
-			}
-		} else {
-			if (Settings::GetRunTime('userPermissionsController')->isAllowed(  $item['PERMISSION_REQUIRED'],
-									$item['PROCESS_PERMISSION_REQUIRED'],
-									$item['TASK_PERMISSION_REQUIRED'],
-									$item['ACTION_PERMISSION_REQUIRED'],
-									$item['FIELD_PERMMISSION_REQUIRED']
-					) ){
-				return true;
-			}
-		}
-		return false;
-	}
 
 }

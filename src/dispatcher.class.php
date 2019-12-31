@@ -249,7 +249,7 @@ class Dispatcher {
 	 * @return Response class
 	 */
 	private function doExecute(string $dir,
-							string $class,
+							?string $class,
 							?string $task,
 							?string $action = '',
 							$passedPayload = null
@@ -267,19 +267,26 @@ class Dispatcher {
 		$class = '\\php_base\\' . $dir . '\\' . $class;
 		//Settings::GetRunTimeObject('MessageLog')->addTODO('willhave to change this from php_base:' . $class);
 
-		$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
+		try {
+			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-			Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher do execute - new ' . $class . '->'  . $task . ' action=' . $action . ' payload='  . $passedPayload);
+			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+				Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher do execute - new ' . $class . '->'  . $task . ' action=' . $action . ' payload='  . $passedPayload);
+			}
+			if ( empty($class)){
+				throw new Excption ( 'noname class can not be instantiized');
+			}
+			$instance = new $class($action, $payload); //instanciate the process  and pass it the payload
+
+			$instance->setProcessAndTask($process, $task); // sets the called class up with the Process
+
+			// now calls basically the task with this so it can look up the class and task
+			$r = $instance->$task($this);  //run the process's method
+
+			$this->debug( 'after running process got result', $r);
+		} catch (\Exception $ex) {
+			$r = new Response('something went wrong while trying a doExecute'. $ex->getMessage());
 		}
-		$x = new $class($action, $payload); //instanciate the process  and pass it the payload
-
-		$x->setProcessAndTask($process, $task); // sets the called class up with the Process
-
-		// now calls basically the task with this so it can look up the class and task
-		$r = $x->$task($this);  //run the process's method
-
-		$this->debug( 'after running process got result', $r);
 //		if ( $r->hadError() ) {
 //			Settings::GetRunTimeObject('MessageLog')->addEmergency( 'dispatcher got ' . $r->giveMessage());
 //

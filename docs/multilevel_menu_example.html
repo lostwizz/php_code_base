@@ -1,0 +1,69 @@
+
+/*    -- second example --
+ *  https://phppot.com/css/multilevel-dropdown-menu-with-pure-css/
+ *
+*/
+<html>
+<head>
+<title>Multilevel Dropdown Menu with Pure CSS</title>
+<style>
+.parent {display: block;position: relative;float: left;line-height: 30px;background-color: #4FA0D8;border-right:#CCC 1px solid;}
+.parent a{margin: 10px;color: #FFFFFF;text-decoration: none;}
+.parent:hover > ul {display:block;position:absolute;}
+.child {display: none;}
+.child li {background-color: #E4EFF7;line-height: 30px;border-bottom:#CCC 1px solid;border-right:#CCC 1px solid; width:100%;}
+.child li a{color: #000000;}
+ul{list-style: none;margin: 0;padding: 0px; min-width:10em;}
+ul ul ul{left: 100%;top: 0;margin-left:1px;}
+li:hover {background-color: #95B4CA;}
+.parent li:hover {background-color: #F0F0F0;}
+.expand{font-size:12px;float:right;margin-right:5px;}
+</style>
+</head>
+<body>
+<ul id="menu">
+	<li class="parent"><a href="#">Popular Toys</a>
+	<ul class="child">
+		<li class="parent"><a href="#">Video Games <span class="expand">&raquo;</span></a>
+			<ul class="child">
+			<li><a href="#">Car</a></li>
+			<li><a href="#">Bike Race</a></li>
+			<li><a href="#">Fishing</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Barbies</a></li>
+		<li><a href="#">Teddy Bear</a></li>
+		<li><a href="#">Golf Set</a></li>
+	</ul>
+	</li>
+	<li class="parent"><a href="#">Recent Toys</a>
+	<ul class="child">
+		<li><a href="#">Yoyo</a></li>
+		<li><a href="#">Doctor Kit</a></li>
+		<li class="parent"><a href="#">Fun Puzzle<span class="expand">&raquo;</span></a>
+			<ul class="child">
+			<li><a href="#" nowrap>Cards</a></li>
+			<li><a href="#" nowrap>Numbers</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Uno Cards</a></li>
+	</ul>
+	</li>
+	<li class="parent"><a href="#">Toys Category</a>
+	<ul class="child">
+		<li><a href="#">Battery Toys</a></li>
+		<li class="parent"><a href="#">Remote Toys <span class="expand">&raquo;</span></a>
+			<ul class="child">
+			<li><a href="#">Cars</a></li>
+			<li><a href="#">Aeroplane</a></li>
+			<li><a href="#">Helicopter</a></li>
+			</ul>
+		</li>
+		<li><a href="#">Soft Toys</a>
+		</li>
+		<li><a href="#">Magnet Toys</a></li>
+	</ul>
+	</li>
+</ul>
+</body>
+</html>
