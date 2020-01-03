@@ -348,7 +348,11 @@ Class UserRoleAndPermissionsController {
 	}
 
 
-
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $whichTbl
+	 * @return Response
+	 */
 	public function doEdit( $whichTbl) : Response{
 		$DataUserInfo = new \php_base\data\UserInfoData();
 dump::dumpLong( $DataUserInfo);
@@ -364,5 +368,19 @@ dump::dumpLong($x);
 		$result = $editorSession->runTableDisplayAndEdit( true );
 		return $result;
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public function doLogoff(){
+		unset($this->username );
+		unset($this->userID);
+		unset($this->userInfo);
+		unset($this->userAttributes);
+		unset($this->userPermissions);
+		unset($this->ArrayOfRoleNames);
+		unset($this->arOfRoleIDs);
+	}
+
 
 }

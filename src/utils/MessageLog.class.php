@@ -292,7 +292,9 @@ class AMessage extends MessageBase {
 		}
 		$s .= '<span class="' . $lineStyle . '">';
 		$s .= $textLeader;
-		$s .= '</span>';
+		if ( SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
+			$s .= '</span>';
+		}
 		$s .= ': ';
 
 		if (is_array($this->text)) {
@@ -304,6 +306,9 @@ class AMessage extends MessageBase {
 		$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 		$s .= $z;
 
+		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
+			$s .= '</span>';
+		}
 		return $s;
 	}
 

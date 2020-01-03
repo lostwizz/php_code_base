@@ -62,14 +62,17 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', false);
 
-	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', true);
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', false);
 
 
 
+	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
 } else {
 	DebugHandler::setCurrentLevel(DebugHandler::NOTICE);
+
+	Settings::SetPublic('Show MessageLog Display Mode Short Color', true);
 }
 
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 0); // debugging level is off
@@ -95,15 +98,10 @@ Settings::SetPublic('CACHE_IS_ON', true);
 Settings::SetPublic('App Name', 'TestApp');
 
 Settings::SetPublic('App Version', '0.3.0');
-Settings::SetPublic('App Server', empty($_SERVER['SERVER_NAME']) ? 'aunknoen' : $_SERVER['SERVER_NAME'] );
+Settings::SetPublic('App Server', empty($_SERVER['SERVER_NAME']) ? 'unknown' : $_SERVER['SERVER_NAME'] );
 
 Settings::SetPublic('Email_From', 'no-reply@whitehorse.ca');
 
-/**--------------------------------------------------------
- * the file names for the Lot Files
- */
-Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
-Settings::SetPublic('Security_Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_security.log');
 
 
 /**--------------------------------------------------------
@@ -116,13 +114,18 @@ Settings::SetRuntime('FileLog', null);
 Settings::SetRuntime('SecurityLog', null);
 Settings::SetRuntime('EmailLog', null);
 
+/**--------------------------------------------------------
+ * the file names for the Lot Files
+ */
+Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
+Settings::SetPublic('Security_Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_security.log');
 
 /**--------------------------------------------------------
  * this indicates which of the logging is active (true) and which are basically left turned off
  */
 Settings::SetPublic('Use_MessageLog', true);  //true
 Settings::SetPublic('Use_DBLog', false);
-Settings::SetPublic('Use_DBdataLog', true);
+Settings::SetPublic('Use_DBdataLog', false);
 Settings::SetPublic('Use_FileLog', false);  // true
 Settings::SetPublic('Use_SecurityLog', false);
 Settings::SetPublic('Use_EmailLog', false);	  // true

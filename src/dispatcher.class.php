@@ -153,7 +153,10 @@ class Dispatcher {
 	 * @return Response
 	 */
 	protected function RunThruTheQueue(\SplQueue $theQueue): Response {
-		$this->debug( 'the current Queue', $this->dumpQueue($theQueue, false) );
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+			$this->dumpQueue($theQueue, true);
+		}
+		$this->debug( 'the current Queue'  );
 
 		try {
 			$response = Response::NoError();
@@ -218,19 +221,20 @@ class Dispatcher {
 		}
 		//Settings::GetRunTimeObject('MessageLog')->addDEBUG('PTAP: ' . $passedProcess);
 
+
 		$exploded = \explode('.', $passedProcess);
 		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-
 			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
 		}
 		$response = $this->doExecute('control',
-								(empty($exploded[0]) ? null : $exploded[0]),
-								(empty($exploded[1]) ? null : $exploded[1]),
-								(empty($exploded[2]) ? '' : $exploded[2]),
-								(empty($exploded[3]) ? null : $exploded[3])
-								);
+									(empty($exploded[0]) ? null : $exploded[0]),
+									(empty($exploded[1]) ? null : $exploded[1]),
+									(empty($exploded[2]) ? '' : $exploded[2]),
+									(empty($exploded[3]) ? null : $exploded[3])
+									);
 
 		return $response;
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -263,18 +267,20 @@ class Dispatcher {
 		if ( empty($task)) {
 			$task = 'doWork';            /* the default task */
 		}
-
+		if ( empty($class)){
+			throw new \Exception ( 'noname class can not be instantiized');
+		}
 		$class = '\\php_base\\' . $dir . '\\' . $class;
-		//Settings::GetRunTimeObject('MessageLog')->addTODO('willhave to change this from php_base:' . $class);
+		//Settings::GetRunTimeObject('MessageLog')->addTODO('will have to change this from php_base:' . $class);
+
+
+
 
 		try {
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
 			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
 				Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher do execute - new ' . $class . '->'  . $task . ' action=' . $action . ' payload='  . $passedPayload);
-			}
-			if ( empty($class)){
-				throw new Excption ( 'noname class can not be instantiized');
 			}
 			$instance = new $class($action, $payload); //instanciate the process  and pass it the payload
 
@@ -498,8 +504,13 @@ class Dispatcher {
 	 * @param \SPLQueue $theQueue - the queue to be shown
 	 * @return void
 	 */
-	public function dumpQueue( \SPLQueue $theQueue, bool $doEcho = true): string {
+	public function dumpQueue( \SPLQueue $theQueue= null, bool $doEcho = true): string {
+		if ( empty( $theQueue )){
+			$theQueue = $this->DISPATCHqueue;
+		}
+
 		$s = '';
+		$s .= '<BR>';
 		$s .= '<pre class="pre_debug_queue">';
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
 		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
@@ -515,6 +526,7 @@ class Dispatcher {
 		$theQueue->rewind();
 		$s .= '@@@@@@@@@@@@@%%%%%%%%%%%';
 		$s .= '</pre>';
+		$s .= '<BR>';
 		if ( $doEcho ){
 			echo $s;
 		}

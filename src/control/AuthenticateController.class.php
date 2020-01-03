@@ -113,7 +113,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	public function checkAuthentication($parent): Response {
-
+		//dump::dumpLong($this);
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
 
 		if ($isAlreadyLoggedOn) {
@@ -126,6 +126,9 @@ class AuthenticateController extends \php_base\Control\Controller {
 		if (empty($this->payload[Resolver::REQUEST_ACTION])) {
 			$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
 		}
+
+		//dump::dump($this->payload[Resolver::REQUEST_ACTION]);
+
 		// not yet logged on
 		switch ($this->payload[Resolver::REQUEST_ACTION]) {
 			case 'Submit Logon':
@@ -199,14 +202,20 @@ class AuthenticateController extends \php_base\Control\Controller {
 	protected function Submit_Logon($parent, $username = null, $password = null): Response {
 
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-//dump::dump($this->UserInfoData);
+		//dump::dump($this->UserInfoData);
 
 		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
 			$r = $this->model->tryToLogin($username, $password, $this->UserInfoData);
 		} else {
 			$r = new Response('Username does not exist', -10);
 		}
-//dump::dump( $r);
+		//dump::dump( $r);
+		if ($r->hadError()) {
+			//echo '!!!!!!!!!!!!!!!!!! not logged on !!!!!!!!!!!!!!!!!!!!!!';
+			Settings::GetRunTimeObject('MessageLog')->addAlert('User could not be Logged onto the application');
+			$this->Need_login($parent, null,null);
+		}
+
 		return $r;
 
 /////		\php_base\control\UserRoleAndPermissionsController::tryToLogin( $username, $password);
@@ -271,12 +280,24 @@ class AuthenticateController extends \php_base\Control\Controller {
 		return Response::NoError();
 	}
 
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @return Response
+	 */
 	public function Submit_Username_for_Forgot_Password($parent, $username): Response {
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
 		$r = $this->model->doPasswordForgot($username, $this->UserInfoData);
 		return $r;
 	}
 
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @return Response
+	 */
 	public function Submit_Username_for_Password_Change($parent, $username): Response {
 //		dump::dump('Submit_Username_for_Password_Change');
 
@@ -291,6 +312,12 @@ class AuthenticateController extends \php_base\Control\Controller {
 		return $r;
 	}
 
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @param type $username
+	 * @return Response
+	 */
 	public function Submit_New_Account_Info($parent, $username): Response {
 //		dump::dump($this);
 
@@ -308,6 +335,40 @@ class AuthenticateController extends \php_base\Control\Controller {
 		//$r = $this->model->doNewAccountInfo($this->payload['entered_username'], $this->payload['entered_password'], $this->payload['entered_email']);
 
 		return $r;
+	}
+
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @return Response
+	 */
+	public function Logoff($parent): Response {
+
+		$this->model->DoLogoff();
+
+
+		if ( !empty($this->UserInfoData )){
+			$this->UserInfoData->doLogoff();
+		}
+
+		Settings::GetRunTimeObject('userPermissionsController')->doLogoff();
+
+		Settings::unSetRunTime('userPermissionsController');
+		Settings::unSetRunTime('Currently Logged In User');
+
+		$this->Need_login($parent, null,null);
+
+		return Response::NoError();
+	}
+
+
+	/**  -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
+	public static function isAuthenticated(){
+
+		return AuthenticateModel::isGoodAuthentication();
 	}
 
 }

@@ -59,7 +59,9 @@ class FooterView extends View {
 	 * @return Response
 	 */
 	public function doWork($parent = null): Response {
-
+		echo '<footer>' . PHP_EOL;
+		echo HTML::BR(5);
+		
 		echo '<div class="footer_hr ">' . PHP_EOL;
 		echo HTML::HR();
 		echo '</div>' . PHP_EOL;
@@ -69,8 +71,7 @@ class FooterView extends View {
 		echo 'Logged in as: ', Settings::GetRunTime('Currently Logged In User');
 		echo '</div>' . PHP_EOL;
 
-		echo '<footer>' . PHP_EOL;
-		echo '<Br>--footer--<Br>' . PHP_EOL;
+		//echo '<Br>--footer--<Br>' . PHP_EOL;
 
 		$exec_time = microtime(true) - Settings::GetRunTime('Benchmarks.start.executionTime');
 		Settings::GetRunTimeObject('MessageLog')->addINFO('Execution Time was: ' . $exec_time);

@@ -182,6 +182,15 @@ abstract class Settings {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $key
+	 */
+	public static function unSetRunTime( $key) {
+		self::$runTime[$key] = 'whyNOT';
+		unset( self::$runTime[$key]);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
 	 * @param type $value
 	 */
 	public static function setRunTimeObject($key, $value) {

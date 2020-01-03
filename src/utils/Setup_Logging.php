@@ -96,7 +96,7 @@ if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 
 					//$dbLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
 
-		Settings::GetRuntime('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['username'=>'fred was here', 'super'=> 'sam was not here']);
+		Settings::GetRuntime('DBLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------'); // , ['username'=>'fred was here', 'super'=> 'sam was not here']);
 		//Settings::GetRuntime('DBLog')->addInfo("hellow world");
 		//////////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,7 +119,7 @@ if (extension_loaded(Settings::GetProtected('database_extension_needed') )) {
 	//Dump::dump('++++++++++++++++++++++ herre');
 	//Dump::dump($dbDataLog);
 
-		$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['XXusername'=>'fred was here', 'super'=> 'sam was not here']);
+		$dbDataLog->addRecord( Logger::ALERT, '-------------Starting Logging------------'); //, ['XXusername'=>'fred was here', 'super'=> 'sam was not here']);
 
 		//Settings::GetRuntime('DBdataLog')->addRecord( Logger::ALERT, '-------------Starting Logging------------', ['CCCCusername'=>'fred was here', 'super'=> 'sam was not here']);
 		//////////////////////////////////////////////////////////////////////////////////////////

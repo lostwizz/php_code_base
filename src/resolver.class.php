@@ -37,6 +37,7 @@ namespace php_base;
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Response as Response;
+use \php_base\Control\MenuController as MenuController;
 
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\DebugHandler as DebugHandler;
@@ -103,6 +104,7 @@ class Resolver {
 		}
 		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addAlert('constructor for resolver');
 
+		//Settings::SetRunTime('RESOLVER_CLASS', $this);
 
 		$this->dispatcher = new Dispatcher();
 	}
@@ -143,6 +145,8 @@ class Resolver {
 		$this->AddSetupAuthenticateCheck();  // always start with login checks
 
 		$this->AddSetupUserRoleAndPermissions(); // after they have logged in now setup the user permissions
+
+		$this->addMenu();
 
 		$this->decodeRequestInfo();
 
@@ -188,7 +192,8 @@ class Resolver {
 	 * @see Dispatcher
 	 */
 	protected function setupDefaultController(): void {
-		if ( $this->dispatcher->getProcessQueueCount() <1) {
+		//if ( $this->dispatcher->getProcessQueueCount() <1) {
+		if (!empty(Settings::GetRunTime('Currently Logged In User') )) {
 			///$process = 'TEST';
 			//$task = 'doWork';
 			//$action = null;
@@ -198,12 +203,13 @@ class Resolver {
 //			$task = 'doEdit';
 //			$action = null;
 
-			$process = 'Menu';
-			$task = 'doWork';
-			$action = null;
-
 			$payload = ['username' => Settings::GetRunTime('Currently Logged In User')];
-			$this->dispatcher->addProcess($process, $task, $action, $payload);
+			$this->addMenu($payload);
+			//$process = 'Menu';
+			//$task = 'doWork';
+			//$action = null;
+
+			//$this->dispatcher->addProcess($process, $task, $action, $payload);
 		}
 	}
 
@@ -242,8 +248,8 @@ class Resolver {
 		$PTAP['action'] = (!empty($postVars[self::REQUEST_ACTION])) ? $postVars[self::REQUEST_ACTION] : null;
 		$PTAP['payload'] = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : null;
 
-		if ( empty($PTAP['process']) and !empty( $getVars['MENU_SELECT'])) {
-			$x = $getVars['MENU_SELECT'];
+		if ( empty($PTAP['process']) and !empty( $getVars[ MenuController::GET_TERM])) {
+			$x = $getVars[MenuController::GET_TERM];
 			$exploded = \explode('.', $x);
 			$PTAP['process'] =	(!empty($exploded[0])) ? $exploded[0] : null;
 			$PTAP['task'] =		(!empty($exploded[1])) ? $exploded[1] : null;
@@ -302,6 +308,19 @@ class Resolver {
 
 		$sPayload = \serialize( $payload);
 //		Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
+		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $payload
+	 * @return void
+	 */
+	public function addMenu($payload = null ): void {
+		$process = 'Menu';
+		$task = 'doWork';
+		$action = null;
+
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 

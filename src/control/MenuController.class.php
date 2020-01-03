@@ -43,6 +43,8 @@ use \php_base\Control;
  */
 class MenuController extends Controller {
 
+	const GET_TERM = 'MENU_SELECT';
+
 	public $process;
 	public $task;
 	public $data;
@@ -68,6 +70,8 @@ class MenuController extends Controller {
 		$this->model = new \php_base\model\MenuModel($this);
 		$this->data = new \php_base\data\MenuData($this);
 		$this->view = new \php_base\view\MenuView($this);
+
+dump::dumpLong($this->data);
 
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
@@ -97,14 +101,29 @@ class MenuController extends Controller {
 	 */
 	public function doWork(): Response {
 
-		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu Controller doWork');
 
-		$preparedMenu = $this->model->prepareMenu();
 
-		$this->view->showMenu($preparedMenu);
-		return Response::NoError();
+		// final check of if the user is properly logged in
+		if (AuthenticateController::isAuthenticated() and ! MenuController::isAboutToLogoff()) {
+			Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu Controller doWork');
+
+			$preparedMenu = $this->model->prepareMenu();
+
+			$this->view->showMenu($preparedMenu);
+			return Response::NoError();
+		} else {
+			return Response::GenericWarning();
+		}
 	}
 
+
+	public static function isAboutToLogoff(){
+		$gets =filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
+		if ( !empty($gets[self::GET_TERM] ) and  $gets[self::GET_TERM] == 'Authenticate.Logoff..' ) {
+			return true;
+		}
+		return false;
+	}
 
 
 }

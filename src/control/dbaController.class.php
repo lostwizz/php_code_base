@@ -73,15 +73,64 @@ class dbaController extends Controller {
 
 	public function one( $parent=null) {
 
-		echo 'at one ';
+dump::dump(	AuthenticateController::isAuthenticated());
+dump::dumpLong( $this);
+
+dump::dumpLong($_SESSION);
+
+//
+//		$resolver = (Settings::GetRunTimeObject('RESOLVER_CLASS'));
+//		//$resolver->AddMenu();
+//
+//
+//		Settings::GetRunTimeObject('MessageLog')->addAlert('at one!');
+//		echo 'at one ';
+//
+//
+//
+//		$ste = new SimpleTableEditor( 'php_base\data\UserInfoData');
+//
+//
+
+/*
+
+				$DataUserInfo = new \php_base\data\UserInfoData();
+dump::dumpLong( $DataUserInfo);
+
+$y = UserInfoData::$Table;
+dump::dumpLong( $y);
+
+		$x =  UserInfoData::$Table ;
+
+dump::dumpLong($x);
+		$editorSession = new \php_base\Utils\DatabaseHandlers\SimpleTableEditor($x);
+
+		$result = $editorSession->runTableDisplayAndEdit( true );
+		return $result;
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
 		return Response::NoError();
 	}
+
 	public function two( $parent=null) {
 
 		echo 'at two ';
 
 		return Response::NoError();
 	}
+
 	public function three( $parent=null) {
 
 		echo 'at three ';

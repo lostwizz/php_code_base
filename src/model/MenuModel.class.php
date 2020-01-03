@@ -4,6 +4,8 @@
 
 namespace php_base\Model;
 
+use \php_base\Control\MenuController as MenuController;
+
 
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
@@ -52,7 +54,7 @@ class MenuModel extends Model{
 	 */
 	public function prepareMenu():string{
 
-		$menu = $this->get_menu_tree(0); //$startItemNumber);
+		$menu = $this->get_menu_tree(0);
 		$menu = str_replace('<ul></ul>', '', $menu);
 
 		$menu = PHP_EOL . PHP_EOL . '<ul class="main-navigation">' . PHP_EOL .  $menu . PHP_EOL . '</ul>' . PHP_EOL . PHP_EOL;
@@ -66,14 +68,18 @@ class MenuModel extends Model{
 	 * @return bool
 	 */
 	protected function hasRightsToMenuItem($item): bool {
+
 		if ( empty ($item['ROLE_NAME_REQUIRED'])
 			and empty( $item['PERMISSION_REQUIRED'])
 			and empty( $item['PROCESS_PERMISSION_REQUIRED'])
 			and empty( $item['TASK_PERMISSION_REQUIRED']) ){
 			return true;
 		}
+
+		dump::dump(Settings::GetRunTimeObject('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED']), $item['ROLE_NAME_REQUIRED'] );
+
 		if (!empty($item['ROLE_NAME_REQUIRED'])) {
-			if (Settings::GetRunTime('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED'])) {
+			if (Settings::GetRunTimeObject('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED'])) {
 				return true;
 			}
 		} else {
@@ -97,7 +103,7 @@ class MenuModel extends Model{
 	protected function buildLink($row) {
 		$ptap = $row['PROCESS'] . '.' . $row['TASK'] . '.' . $row['ACTION'] . '.' . $row['PAYLOAD'];
 
-		$s = '<a href="./index.php?MENU_SELECT=' . $ptap . '">' . $row['NAME'] . '</a>';
+		$s = '<a href="./index.php?' . MenuController::GET_TERM . '=' . $ptap . '">' . $row['NAME'] . '</a>';
 
 		return $s;
 	}
