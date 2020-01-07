@@ -11,6 +11,9 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
+use \php_base\Resolver as Resolver;
+
+
 class MenuModel extends Model{
 
 	public $controller;
@@ -64,6 +67,32 @@ class MenuModel extends Model{
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * from:
+	 *    https://www.w3school.info/2015/12/22/steps-to-create-dynamic-multilevel-menu-using-php-and-mysql/
+	 *
+	 * maybe someday get this to show properly  . '<span class="expand">&raquo;</span>'
+	 *
+	 * @param int $parent_id
+	 * @return string
+	 */
+	protected  function get_menu_tree( int $parent_id) :string {
+		$menu = "";
+
+		foreach($this->controller->data->Menu as $row ) {
+			if( $row['PARENT_ITEM_NUMBER'] == $parent_id){
+				if ( $this->hasRightsToMenuItem($row)){
+					$menu .= '<li>' . $this->buildLink($row) . PHP_EOL;
+					$menu .= "<ul>" . $this->get_menu_tree($row['ITEM_NUMBER'])  . "</ul>"  . PHP_EOL; //call  recursively
+					$menu .= "</li>"  . PHP_EOL;
+				}
+			}
+		}
+
+		return $menu;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
 	 * @param type $item
 	 * @return bool
 	 */
@@ -76,7 +105,7 @@ class MenuModel extends Model{
 			return true;
 		}
 
-		dump::dump(Settings::GetRunTimeObject('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED']), $item['ROLE_NAME_REQUIRED'] );
+//		dump::dump(Settings::GetRunTimeObject('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED']), $item['ROLE_NAME_REQUIRED'] );
 
 		if (!empty($item['ROLE_NAME_REQUIRED'])) {
 			if (Settings::GetRunTimeObject('userPermissionsController')->hasRole($item['ROLE_NAME_REQUIRED'])) {
@@ -103,37 +132,11 @@ class MenuModel extends Model{
 	protected function buildLink($row) {
 		$ptap = $row['PROCESS'] . '.' . $row['TASK'] . '.' . $row['ACTION'] . '.' . $row['PAYLOAD'];
 
-		$s = '<a href="./index.php?' . MenuController::GET_TERM . '=' . $ptap . '">' . $row['NAME'] . '</a>';
+		$s = '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $ptap . '">' . $row['NAME'] . '</a>';
 
 		return $s;
 	}
 
 
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * from:
-	 *    https://www.w3school.info/2015/12/22/steps-to-create-dynamic-multilevel-menu-using-php-and-mysql/
-	 *
-	 * maybe someday get this to show properly  . '<span class="expand">&raquo;</span>'
-	 *
-	 * @param int $parent_id
-	 * @return string
-	 */
-	protected  function get_menu_tree( int $parent_id) :string {
-		$menu = "";
-
-		foreach($this->controller->data->Menu as $row ) {
-			if( $row['PARENT_ITEM_NUMBER'] == $parent_id){
-				if ( $this->hasRightsToMenuItem($row)){
-					$menu .= '<li>' . $this->buildLink($row) . PHP_EOL;
-					$menu .= "<ul>" . $this->get_menu_tree($row['ITEM_NUMBER'])  . "</ul>"  . PHP_EOL; //call  recursively
-					$menu .= "</li>"  . PHP_EOL;
-				}
-			}
-		}
-
-		return $menu;
-	}
 
 }

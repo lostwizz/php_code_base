@@ -82,7 +82,9 @@ class MenuData extends data {
 			$data = DBUtils::doDBSelectMulti($sql, $params);
 			if ($data != false) {
 				$this->Menu = $data;
-				//CACHE::add('MenuData', $this->Menu);
+				if (Settings::GetPublic('CACHE Allow_Menu to be Cached')){
+					CACHE::add('MenuData', $this->Menu);
+				}
 				return true;
 			}
 		}

@@ -98,6 +98,10 @@ Class UserRoleAndPermissionsController {
 			$this->action = $action;
 			$this->payload = $payload;
 		}
+
+		if ( Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')){
+			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -134,9 +138,8 @@ Class UserRoleAndPermissionsController {
 	 * @return Response
 	 */
 	public function Setup($action = '', $payload = null): Response {
-//dump::dumpLong(Settings::dump(false,false, true));
-//echo Settings::dump(false, false, true);
 		$u = Settings::GetRunTime('Currently Logged In User');
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'logged on user:' . $u);
 
 		if (!empty($u)) {
 			$response = $this->LoadAllUserInformation($u);
@@ -163,34 +166,13 @@ Class UserRoleAndPermissionsController {
 
 		if (Cache::exists('UserRoleAndPermissions')) {
 			$this->getCached();
-			//$this->view->dumpState(null, null, true);
-			//$this->view->dumpPermissions();
-
 			return Response::NoError();
 		} else {
-			try {
 
-				// setup the user with the extra data in the users table and then get the attributes for that user
-				$this->username = $username;
+			$r = $this->model->LoadALLUser( $username);
+			$this->setCached();
 
-				$this->GetUSERinfo();
-
-				$this->GetUSERAttributes();
-
-				$this->GetUSERpermissions();
-
-				// clean up things not needed
-				unset($this->arOfRoleIDs);
-
-				$this->setCached();
-
-				//$this->view->dumpState(null, null, true);
-				//$this->view->dumpPermissions();
-			} catch (\Exception $e) {
-				return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
-			}
-
-			return Response::NoError();
+			return $r;
 		}
 	}
 
@@ -225,66 +207,6 @@ Class UserRoleAndPermissionsController {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @return bool
-	 */
-	protected function GetUSERinfo(): bool {
-		$DataUserInfo = new \php_base\data\UserInfoData($this->username);
-
-		$this->userID = $DataUserInfo->getUserID();
-
-		$this->userInfo = $DataUserInfo->UserInfo;
-		return (!empty($this->userInfo));
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @return bool
-	 */
-	protected function GetUSERAttributes(): bool {
-
-		$DataUserAttribute = new \php_base\data\UserAttributeData($this->userID);
-
-		// take the primary role from the user info and addit to the array of roles in the user attributes
-		$primaryRole = $this->userInfo['PRIMARYROLENAME'];
-
-		$DataUserAttribute->AddPrimaryRole($primaryRole);  // add the userInfo PrimaryRole
-
-		$this->userAttributes = $DataUserAttribute->UserAttributes;
-
-		// get the array of all the roles this user has   (words i.e. Clerk)
-		$this->ArrayOfRoleNames = $DataUserAttribute->getArrayOfRoleNames();
-
-		return (!empty($this->userAttributes));
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @return bool
-	 */
-	protected function GetUSERpermissions(): bool {
-
-
-		// take the list of roles (words i.e. Clerk) and get the role IDs
-		$DataUserRoles = new \php_base\data\UserRoleData($this->ArrayOfRoleNames);
-
-		// now we have an array of Role ids
-		$this->arOfRoleIDs = $DataUserRoles->RoleIDData;
-		// now with roleid go and get the permissions related to those role ids
-		$DataUserPermissions = new \php_base\data\UserPermissionData($this->arOfRoleIDs);
-		$this->ArrayOfRoleNames = $DataUserRoles->RoleIDnames;
-
-		$this->userPermissions = $DataUserPermissions->permissionList;
-
-		if ( Settings::GetPublic('Show_Debug_UserRoleAndPermissiosn')){
-			/** DEBUG - dump the permissions prettily */
-			$this->view->dumpPermissions();
-		}
-
-		return (!empty($this->userPermissions));
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
 	 * @param string $roleWanted
 	 * @return bool
 	 */
@@ -307,8 +229,8 @@ Class UserRoleAndPermissionsController {
 			string $action = Permissions::NO_RIGHT,
 			string $field = Permissions::NO_RIGHT
 	): bool {
-
-		return $this->model->isAllowed($permissionWanted, $process, $task, $action, $field);
+		$r =  $this->model->isAllowed($permissionWanted, $process, $task, $action, $field);
+		return $r;
 	}
 
 //	public static function tryToLogin(string $username, string $password) {
@@ -373,6 +295,7 @@ dump::dumpLong($x);
 	 *
 	 */
 	public function doLogoff(){
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'LOGGING OFF!');
 		unset($this->username );
 		unset($this->userID);
 		unset($this->userInfo);

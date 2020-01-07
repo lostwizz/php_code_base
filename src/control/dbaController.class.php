@@ -14,6 +14,10 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 
+use \php_base\Utils\DatabaseHandlers\SimpleTableEditor as SimpleTableEditor;
+
+
+
 /**
  * Description of dbaController
  *
@@ -24,10 +28,13 @@ class dbaController extends Controller {
 	public $model;
 	public $view;
 	public $data;
+
 	public $process;
 	public $task;
 	public $action;
 	public $payload;
+
+
 
 	/**
 	 * @var version number
@@ -38,7 +45,8 @@ class dbaController extends Controller {
 	 * basic form of the constructor
 	 */
 	public function __construct(string $passedAction = '', $passedPayload = null){
-
+		$this->action = $passedAction;
+		$this->payload = $passedPayload;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -73,39 +81,34 @@ class dbaController extends Controller {
 
 	public function one( $parent=null) {
 
-dump::dump(	AuthenticateController::isAuthenticated());
-dump::dumpLong( $this);
+//dump::dump(	AuthenticateController::isAuthenticated());
+//dump::dumpLong( $this);
 
-dump::dumpLong($_SESSION);
+//dump::dumpLong($_SESSION);
 
-//
-//		$resolver = (Settings::GetRunTimeObject('RESOLVER_CLASS'));
-//		//$resolver->AddMenu();
-//
-//
-//		Settings::GetRunTimeObject('MessageLog')->addAlert('at one!');
-//		echo 'at one ';
-//
-//
-//
-//		$ste = new SimpleTableEditor( 'php_base\data\UserInfoData');
+
+	//	$ste = new SimpleTableEditor( 'php_base\data\UserInfoData');
+	//	$DataUserInfo = new \php_base\data\UserInfoData();
+
+//		dump::dumpLong( $DataUserInfo);
+	//	$y = \php_base\data\UserInfoData::$Table;
+	//	dump::dumpLong( $y);
+
+		$x = \php_base\data\UserInfoData::$Table ;
+	//	dump::dumpLong($x);
+
+		$action =
+		$editorSession = new SimpleTableEditor($x, 'DBA', 'one',$this->action, $this->payload);
+		$result = $editorSession->runTableDisplayAndEdit( true );
 //
 //
 
 /*
 
-				$DataUserInfo = new \php_base\data\UserInfoData();
-dump::dumpLong( $DataUserInfo);
 
-$y = UserInfoData::$Table;
-dump::dumpLong( $y);
 
-		$x =  UserInfoData::$Table ;
 
-dump::dumpLong($x);
-		$editorSession = new \php_base\Utils\DatabaseHandlers\SimpleTableEditor($x);
 
-		$result = $editorSession->runTableDisplayAndEdit( true );
 		return $result;
 
 
@@ -126,14 +129,14 @@ dump::dumpLong($x);
 
 	public function two( $parent=null) {
 
-		echo 'at two ';
+		echo 'at dba two ';
 
 		return Response::NoError();
 	}
 
 	public function three( $parent=null) {
 
-		echo 'at three ';
+		echo 'at dba three ';
 		return Response::NoError();
 	}
 }

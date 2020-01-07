@@ -156,6 +156,103 @@ Class UserRoleAndPermissionsModel extends Model {
 		return self::VERSION;
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $username
+	 * @return Response
+	 */
+	public function LoadALLUser( $username) : Response {
+		try {
+
+			// setup the user with the extra data in the users table and then get the attributes for that user
+			$this->controller->username = $username;
+
+			$this->GetUSERinfo($username);
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userInfo);
+
+			$this->GetUSERAttributes();
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userAttributes);
+
+			$this->GetUSERpermissions();
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userPermissions);
+
+			// clean up things not needed
+			unset($this->arOfRoleIDs);
+
+			//$this->view->dumpState(null, null, true);
+			//$this->view->dumpPermissions();
+		} catch (\Exception $e) {
+			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
+		}
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return bool
+	 */
+	protected function GetUSERinfo($username): bool {
+		$DataUserInfo = new \php_base\data\UserInfoData($username);
+
+		$this->controller->userID = $DataUserInfo->getUserID();
+
+		$this->controller->userInfo = $DataUserInfo->UserInfo;
+		return (!empty($this->controller->userInfo));
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return bool
+	 */
+	protected function GetUSERAttributes(): bool {
+
+		$DataUserAttribute = new \php_base\data\UserAttributeData($this->controller->userID);
+
+		// take the primary role from the user info and addit to the array of roles in the user attributes
+		$primaryRole = $this->controller->userInfo['PRIMARYROLENAME'];
+
+		$DataUserAttribute->AddPrimaryRole($primaryRole);  // add the userInfo PrimaryRole
+
+		$this->controller->userAttributes = $DataUserAttribute->UserAttributes;
+
+		// get the array of all the roles this user has   (words i.e. Clerk)
+		$this->controller->ArrayOfRoleNames = $DataUserAttribute->getArrayOfRoleNames();
+
+		return (!empty($this->controller->userAttributes));
+	}
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return bool
+	 */
+	protected function GetUSERpermissions(): bool {
+
+
+		// take the list of roles (words i.e. Clerk) and get the role IDs
+		$DataUserRoles = new \php_base\data\UserRoleData($this->controller->ArrayOfRoleNames);
+
+		// now we have an array of Role ids
+		$this->controller->arOfRoleIDs = $DataUserRoles->RoleIDData;
+		// now with roleid go and get the permissions related to those role ids
+		$DataUserPermissions = new \php_base\data\UserPermissionData($this->controller->arOfRoleIDs);
+		$this->controller->ArrayOfRoleNames = $DataUserRoles->RoleIDnames;
+
+		$this->controller->userPermissions = $DataUserPermissions->permissionList;
+
+		if ( Settings::GetPublic('Show_Debug_UserRoleAndPermissiosn')){
+			/** DEBUG - dump the permissions prettily */
+			$this->controller->view->dumpPermissions();
+		}
+
+		return (!empty($this->controller->userPermissions));
+	}
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $roleWanted - string with the role wanted

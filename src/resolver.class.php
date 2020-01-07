@@ -65,6 +65,9 @@ class Resolver {
 	const REQUEST_ACTION = 'ACTION_ACTION';
 	const REQUEST_PAYLOAD = 'ACTION_PAYLOAD';
 
+	const MENU_TERM = 'MENU_SELECT';
+	const MENU_ITEM_LOGOFF = 'ABOUT_TO_LOGOFF';
+
 	/**
 	 *
 	 * @var string $process  holds the current process.
@@ -146,9 +149,9 @@ class Resolver {
 
 		$this->AddSetupUserRoleAndPermissions(); // after they have logged in now setup the user permissions
 
-		$this->addMenu();
-
 		$this->decodeRequestInfo();
+
+		$this->addMenu($this->payload);
 
 		$this->SetupDefaultController();  // this would usually be the menu starter
 		// $r should be a ResponseClass
@@ -226,36 +229,51 @@ class Resolver {
 
 		$PTAP = $this->decodeINPUTvars();
 
-
 		/** if the GET/POST are not an Authenticate PTAP then do what they are
 				as the checkAuthenticate is added below 		 */
-		if (!( $PTAP['process'] == 'Authenticate' and $PTAP['task'] == 'checkAuthentication' )) {
-			$this->dispatcher->addProcess($PTAP['process'], $PTAP['task'], $PTAP['action'], $PTAP['payload']);
+		if (!( $this->process == 'Authenticate' and $this->task == 'checkAuthentication' )) {
+			$this->dispatcher->addProcess( $this->process, $this->task, $this->action, $this->payload);
 		}
 	}
 
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array
+	 */
 	protected function decodeINPUTvars() {
 
 		$postVars = \filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
-
 		$getVars =  \filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
 
 		$PTAP = array();
 
-		$PTAP['process'] = (!empty($postVars[self::REQUEST_PROCESS])) ? $postVars[self::REQUEST_PROCESS] : null;
-		$PTAP['task'] = (!empty($postVars[self::REQUEST_TASK])) ? $postVars[self::REQUEST_TASK] : null;
-		$PTAP['action'] = (!empty($postVars[self::REQUEST_ACTION])) ? $postVars[self::REQUEST_ACTION] : null;
-		$PTAP['payload'] = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : null;
-
-		if ( empty($PTAP['process']) and !empty( $getVars[ MenuController::GET_TERM])) {
-			$x = $getVars[MenuController::GET_TERM];
+		if ( !empty( $getVars[ self::MENU_TERM])) {
+			$x = $getVars[self::MENU_TERM];
 			$exploded = \explode('.', $x);
-			$PTAP['process'] =	(!empty($exploded[0])) ? $exploded[0] : null;
-			$PTAP['task'] =		(!empty($exploded[1])) ? $exploded[1] : null;
-			$PTAP['action'] =	(!empty($exploded[2])) ? $exploded[2] : null;
-			$PTAP['payload'] =	(!empty($exploded[3])) ? $exploded[3] : null;
+
+			$this->process =	(!empty($exploded[0])) ? $exploded[0] : null;
+			$this->task =		(!empty($exploded[1])) ? $exploded[1] : null;
+			$this->action =		(!empty($exploded[2])) ? $exploded[2] : null;
+
+			if ( !is_array($exploded[3])){
+				$exploded[3] = array();
+			}
+			if ( !empty($getVars[self::MENU_TERM] ) and  $getVars[self::MENU_TERM] == 'Authenticate.Logoff..' ) {
+				$exploded[3][self::MENU_ITEM_LOGOFF] = 'YES';
+			} else {
+				$exploded[3][self::MENU_ITEM_LOGOFF] = 'NO';
+			}
+			$this->payload =	(!empty($exploded[3])) ? $exploded[3] : null;
+
+		} else {
+			$this->process =	(!empty($postVars[self::REQUEST_PROCESS]))	? $postVars[self::REQUEST_PROCESS]	: null;
+			$this->task =		(!empty($postVars[self::REQUEST_TASK]))		? $postVars[self::REQUEST_TASK]		: null;
+			$this->action =		(!empty($postVars[self::REQUEST_ACTION]))	? $postVars[self::REQUEST_ACTION]	: null;
+			$this->payload =	(!empty($postVars[self::REQUEST_PAYLOAD]))	? $postVars[self::REQUEST_PAYLOAD]	: null;
 		}
+
 		return $PTAP;
 	}
 
@@ -363,6 +381,13 @@ class Resolver {
 
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $ref
+	 * @param type $msg
+	 * @param type $var
+	 * @param type $level
+	 */
 	private function debugy( int $ref, $msg, $var=null, $level = DebugHandler::NOTICE){
 		if(  Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING')) {
 			$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);

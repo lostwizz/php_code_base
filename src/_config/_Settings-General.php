@@ -89,6 +89,7 @@ Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 
 
 Settings::SetPublic('CACHE_IS_ON', true);
+Settings::SetPublic('CACHE Allow_Menu to be Cached', false);
 
 
 /**--------------------------------------------------------

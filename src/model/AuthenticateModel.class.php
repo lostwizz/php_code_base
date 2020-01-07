@@ -91,10 +91,6 @@ class AuthenticateModel extends \php_base\Model\Model {
 		return Response::NoError();
 	}
 
-
-
-
-
 	/** -----------------------------------------------------------------------------------------------
 	 * given a username and a password see if the password is valid for that username
 	 * @param type $username
@@ -102,7 +98,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @return Response
 	 */
 	public function tryToLogin(?string $username, ?string $password, ?UserInfoData $userInfoData): Response {
-		//if ( $this->isGoodAuthentication()) {
+
 		if ( $this->isGoodAuthentication()) {
 			if (Settings::GetPublic('Show_Debug_Authenticate')) {
 				Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
@@ -130,8 +126,6 @@ class AuthenticateModel extends \php_base\Model\Model {
 				$_SESSION['Authenticated_username'] = $username;
 				$exp = (new \DateTime('now'))->getTimestamp();
 				$_SESSION['Authenticated_ExpireTime'] =	(new \DateTime('now'))->getTimestamp();
-//dump::dump($_SESSION);
-
 			}
 		} else {
 			if (Settings::GetPublic('Show_Debug_Authenticate')) {
@@ -148,7 +142,6 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @return boolean
 	 */
 	public static function isGoodAuthentication() {
-		//Settings::GetRunTimeObject('MessageLog')->addCritical( 'testing currently logged on');
 
 		if (empty( $_SESSION['Authenticated_username'])) {
 			if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
@@ -158,7 +151,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 		}
 		$now = (new \DateTime('now'))->getTimestamp();
 		$then = $_SESSION['Authenticated_ExpireTime'] ;
-		$diff = $now - $then;
+		$diff = $now - $then; //ends up with seconds until time out
 
 		if ($diff > 900) {
 			if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
@@ -166,10 +159,11 @@ class AuthenticateModel extends \php_base\Model\Model {
 			}
 			return false;
 		}
+
 		if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
 			Settings::GetRunTimeObject('MessageLog')->addCritical( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
-			Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 		}
+		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 		return true;
 	}
 

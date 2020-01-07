@@ -115,7 +115,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 	public function checkAuthentication($parent): Response {
 		//dump::dumpLong($this);
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
-
 		if ($isAlreadyLoggedOn) {
 			return Response::NoError();
 		}
@@ -127,9 +126,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 			$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
 		}
 
-		//dump::dump($this->payload[Resolver::REQUEST_ACTION]);
-
 		// not yet logged on
+		//    yes we could just change the spaces to underscores - but this i think is easier to read
 		switch ($this->payload[Resolver::REQUEST_ACTION]) {
 			case 'Submit Logon':
 				$action = 'Submit_Logon';
@@ -158,20 +156,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 				break;
 		}
 
-
-		//if ( !empty($action ) and $action != 'checkAuthentication'){
-//		if (!empty($this->action)) {
-//			$action = $this->action;
-//		} else {
-//			$action = 'Need_login';
-//		}
-
-		//Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username);
-
+		// now do the action
 		$r = $this->$action($parent, $username, $password);
-
-		//Settings::GetRunTimeObject('MessageLog')->addCritical(get_class() . '->' . $action . ' username=' . $username . 'MSG=' . $r->giveMessage());
-
 		return $r;
 	}
 
@@ -202,23 +188,18 @@ class AuthenticateController extends \php_base\Control\Controller {
 	protected function Submit_Logon($parent, $username = null, $password = null): Response {
 
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-		//dump::dump($this->UserInfoData);
 
 		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
 			$r = $this->model->tryToLogin($username, $password, $this->UserInfoData);
 		} else {
 			$r = new Response('Username does not exist', -10);
 		}
-		//dump::dump( $r);
 		if ($r->hadError()) {
-			//echo '!!!!!!!!!!!!!!!!!! not logged on !!!!!!!!!!!!!!!!!!!!!!';
 			Settings::GetRunTimeObject('MessageLog')->addAlert('User could not be Logged onto the application');
 			$this->Need_login($parent, null,null);
 		}
 
 		return $r;
-
-/////		\php_base\control\UserRoleAndPermissionsController::tryToLogin( $username, $password);
 	}
 
 	/**  -----------------------------------------------------------------------------------------------
@@ -299,10 +280,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	public function Submit_Username_for_Password_Change($parent, $username): Response {
-//		dump::dump('Submit_Username_for_Password_Change');
 
 		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-//dump::dump($this);
 		$r = $this->model->doChangePassword(
 				$username,
 				$this->payload['old_password'],
@@ -319,7 +298,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	public function Submit_New_Account_Info($parent, $username): Response {
-//		dump::dump($this);
 
 		$uRAPController = new \php_base\control\UserRoleAndPermissionsController();
 
@@ -332,7 +310,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 		} else {
 			return Response::TODO_Error( ' do something here and create a proper error');
 		}
-		//$r = $this->model->doNewAccountInfo($this->payload['entered_username'], $this->payload['entered_password'], $this->payload['entered_email']);
 
 		return $r;
 	}
@@ -367,7 +344,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return type
 	 */
 	public static function isAuthenticated(){
-
 		return AuthenticateModel::isGoodAuthentication();
 	}
 

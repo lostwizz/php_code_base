@@ -36,14 +36,15 @@ namespace php_base\Control;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
+
 use \php_base\Control;
+
+use \php_base\Resolver as Resolver;
 
 /** * **********************************************************************************************
  *   MenuController
  */
 class MenuController extends Controller {
-
-	const GET_TERM = 'MENU_SELECT';
 
 	public $process;
 	public $task;
@@ -71,10 +72,9 @@ class MenuController extends Controller {
 		$this->data = new \php_base\data\MenuData($this);
 		$this->view = new \php_base\view\MenuView($this);
 
-dump::dumpLong($this->data);
-
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
+//dump::dumpLong($this);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -101,15 +101,14 @@ dump::dumpLong($this->data);
 	 */
 	public function doWork(): Response {
 
-
-
-		// final check of if the user is properly logged in
-		if (AuthenticateController::isAuthenticated() and ! MenuController::isAboutToLogoff()) {
+		// final check of if the user is properly logged in and not about to logoff
+		if (AuthenticateController::isAuthenticated() and (! $this->isAboutToLogoff()) ) {
 			Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu Controller doWork');
 
 			$preparedMenu = $this->model->prepareMenu();
 
 			$this->view->showMenu($preparedMenu);
+
 			return Response::NoError();
 		} else {
 			return Response::GenericWarning();
@@ -117,9 +116,12 @@ dump::dumpLong($this->data);
 	}
 
 
-	public static function isAboutToLogoff(){
-		$gets =filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
-		if ( !empty($gets[self::GET_TERM] ) and  $gets[self::GET_TERM] == 'Authenticate.Logoff..' ) {
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return boolean
+	 */
+	public  function isAboutToLogoff(){
+		if ( !empty($this->payload[Resolver::MENU_ITEM_LOGOFF]) and  $this->payload[Resolver::MENU_ITEM_LOGOFF] == 'YES' ) {
 			return true;
 		}
 		return false;

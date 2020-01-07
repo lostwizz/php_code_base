@@ -107,7 +107,7 @@ class AuthenticateView extends View {
 		echo 'Logon Form for ', Settings::GetPublic('App Name');
 		echo '</center>';
 
-		$this->showLoginBox();
+		$this->showLoginBox(false, false, true);
 		echo HTML::FormClose();
 	}
 
@@ -115,7 +115,8 @@ class AuthenticateView extends View {
 	 *
 	 * @return void
 	 */
-	protected function showLoginBox(): void {
+	protected function showLoginBox(bool $showChangePwd =false, bool $showAddAcct = false, bool $showForgotPwd = true): void {
+		$bottomLineSpan = 3 -($showChangePwd ? 1:0) + ($showAddAcct ? 1:0) +($showForgotPwd ? 1:0 );
 		?>
 		<table border=1 align=center>
 			<tr>
@@ -126,10 +127,35 @@ class AuthenticateView extends View {
 				<td colspan=2><?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array('maxlength' => 100, 'size' => 30)); ?></td>
 			</tr><tr>
 				<td align=center colspan=3><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit Logon'); ?></td>
-			</tr><tr>
-				<td><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Change Password'); ?></td>
-				<td><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Add New Account'); ?></td>
-				<td><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Forgot Password'); ?></td>
+			</tr><tr align=center>
+				<?php
+					if (  $showChangePwd){
+						echo HTML::Open('TD');
+						echo HTML::Submit(Resolver::REQUEST_ACTION, 'Change Password');
+					} else {
+						echo HTML::Open('TD');
+						echo HTML::Space( 20);
+					}
+					echo HTML::Close('TD');
+
+					if ($showAddAcct){
+						echo HTML::Open('TD');
+						echo HTML::Submit(Resolver::REQUEST_ACTION, 'Add New Account');
+					} else {
+						echo HTML::Open('TD');
+						echo HTML::Space( 20);
+					}
+					echo HTML::Close('TD');
+
+					if ( $showForgotPwd) {
+					echo HTML::Open('TD');
+						echo HTML::Submit(Resolver::REQUEST_ACTION, 'Forgot Password');
+					} else {
+						echo HTML::Open('TD');
+						echo HTML::Space( 20);
+					}
+					echo HTML::Close('TD');
+				?>
 			</tr>
 		</table>
 		<?php

@@ -76,7 +76,7 @@ Abstract class Cache {
 			'Expires' => $timeoutStamp
 		);
 		$_SESSION['CACHE'][$itemName] = $value;
-		if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+		if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
 			Settings::GetRunTimeObject('MessageLog')->addNotice('Cache added: ' . $itemName );
 		}
 		return true;

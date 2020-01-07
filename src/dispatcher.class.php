@@ -275,7 +275,6 @@ class Dispatcher {
 
 
 
-
 		try {
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
@@ -390,6 +389,10 @@ class Dispatcher {
 	 * @param $item the item to add to the queue
 	 */
 	protected function addItemToQueue($q, $item): void {
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+			dump::dump($item,null, array('Beautify_BackgroundColor' =>'#D5C659'));
+		}
+
 		$q->enqueue($item);
 	}
 
@@ -476,6 +479,7 @@ class Dispatcher {
 						   $task,
 						   $action,
 						   $payload);
+
 		if ( $item != '..') {
 			$this->addItemToQueue($this->DISPATCHqueue, $item);
 			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
@@ -534,7 +538,6 @@ class Dispatcher {
 
 	}
 
-		/** -----------------------------------------------------------------------------------------------
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $msg

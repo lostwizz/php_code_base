@@ -49,6 +49,10 @@ class Table {
 	public $fields = array();
 	public $primaryKeyFieldName;
 
+	public $process;
+	public $task;
+
+
 	/**
 	 * @var version number
 	 */
@@ -59,8 +63,11 @@ class Table {
 	 * @param string $tableName
 	 * @param array $attribs
 	 */
-	public function __construct(string $tableName, ?array $attribs = null) {
+	public function __construct(string $tableName, ?array $attribs = null,string $process='', string $task = '') {
 		$this->tableName = $tableName;
+
+		$this->proces = $process;
+		$this->process = $task;
 
 		if (is_array($attribs) && count($attribs) > 0) {
 			$this->tableName->setAttribs($attribs);
@@ -159,6 +166,7 @@ class Table {
 	}
 
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function dump():void {
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
 		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
@@ -171,6 +179,7 @@ class Table {
 
 
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function PrepareWhereClause( ?array $arWhereClause = null) : string{
 		if ( empty($arWhereClause) or !is_array($arWhereClause)){
 			return '1=1';
@@ -183,16 +192,19 @@ class Table {
 
 
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function giveFieldNamesList(): string {
 		$flds = $this->giveField();
 		$s = implode(', ', $flds);
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function giveFields(): array {
 		return array_keys($this->fields);
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function giveHeaderRow(bool $withSortButtons = false, bool $withFilterArea = false, ?array $sortKeys =null, ?array $filters=null): string {
 		$s = '';
 		foreach ($this->fields as $fld => $value) {
@@ -211,6 +223,7 @@ class Table {
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	protected function giveHeaderForField(string $fldName, Field $fldValue, bool $withSortButtons = false, bool $withFilterArea = false, ?string $sortDir =null, ?string $filter=null): string {
 		$s = '<th>';
 		$s .= $fldValue->givePrettyName();
@@ -224,9 +237,10 @@ class Table {
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	protected function giveSortButtons(string $fldName, ?string $sortDir): string {
 		$s = '<BR>';
-$s .= 'sortDir='. $sortDir;
+		$s .= 'sortDir='. $sortDir;
 		if (!empty($sortDir) and $sortDir =='Asc') {
 			$s .= HTML::Submit(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^^');
 			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
@@ -244,6 +258,7 @@ $s .= 'sortDir='. $sortDir;
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function giveFilterArea(string $fldName, ?string $filter): string {
 		$s = '<br>';
 		$s .= HTML::Text(Resolver::REQUEST_PAYLOAD . '[filter][' . $fldName . ']', $filter);
@@ -252,6 +267,7 @@ $s .= 'sortDir='. $sortDir;
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function readAllTableData(int $limit = PHP_INT_MAX, string $orderBy = ''): array {
 		$sql = 'SELECT * FROM ' . $this->tableName;
 		if (!empty($orderBy)) {
@@ -261,6 +277,7 @@ $s .= 'sortDir='. $sortDir;
 		return $data;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	public function showTable(array $data, ?array $sortKeys = null, ?array $filters = null): string {
 		$s = '<table border=1>';
 		$s .= $this->giveHeaderRow(true, true, $sortKeys, $filters);
@@ -271,6 +288,7 @@ $s .= 'sortDir='. $sortDir;
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	protected function showRowOfTable(array $value) : string{
 		$s = '<tr>';
 		foreach ($value as $colName => $column) {
@@ -280,6 +298,7 @@ $s .= 'sortDir='. $sortDir;
 		return $s;
 	}
 
+	//-------------------------------------------------------------------------------------------------------------------------------
 	protected function showFieldOfRow( string $colName,  $column) : string{
 		$s = '<td>';
 		$s .= $column;

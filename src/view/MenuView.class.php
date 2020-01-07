@@ -87,19 +87,18 @@ class MenuView extends View{
 	protected function process(array $item) /* : string */ {
 		//dump::dumpLong($item);
 
-
 		$s = '';
 		$x = explode('.', $item['ITEM_NUMBER']);
 		if (count($x) > $this->currentLevel) {
 			$s .= '<li class="parent">';
-			$s .= '<a href="./index.php?' . MenuController::GET_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
 			$s .= PHP_EOL;
 			$s .= '<ul class="child">';
 			$s .= PHP_EOL;
 			$this->currentLevel ++;
 		} elseif (count($x) == $this->currentLevel) {
 			$s .= '<li>'; //  class="parent"
-			$s .= '<a href="./index.php?' . MenuController::GET_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
 			$s .= '</li>';
 			$s .= PHP_EOL;
 		} else if (count($x) < $this->currentLevel) {
@@ -108,7 +107,7 @@ class MenuView extends View{
 			$s .= '</li>';
 			$s .= PHP_EOL;
 			$s .= '<li class="parent">';
-			$s .= '<a href="./index.php?' . MenuController::GET_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
+			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
 			$s .= '</li>';
 			$this->currentLevel --;
 		}
