@@ -41,6 +41,10 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 
+use \php_base\Utils\DatabaseHandlers\Table as Table;
+use \php_base\Utils\DatabaseHandlers\Field as Field;
+
+
 ////SELECT TOP (1000) [id]
 ////      ,[roleId]
 ////      ,[model]
@@ -64,6 +68,9 @@ class UserPermissionData {
 
 	public $permissionList;
 
+	public static $Table;
+
+
 	/**
 	 * @var version number
 	 */
@@ -75,6 +82,7 @@ class UserPermissionData {
 	 * @param type $listOfRoleIDs
 	 */
 	public function __construct($listOfRoleIDs) {
+		self::defineTable();
 		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
 	}
 
@@ -85,6 +93,24 @@ class UserPermissionData {
 	 */
 	public static function Version() {
 		return self::VERSION;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
+	public static function defineTable() : void {
+		self::$Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'));
+		self::$Table->setPrimaryKey( 'Id', ['prettyName' => 'Id']);
+		self::$Table->addFieldInt( 'id' , [ 'prettyName' => 'Id',
+												'alignment' => 'right']);
+		self::$Table->addFieldInt( 'roleid' , [ 'prettyName' => 'Role Id',
+												'alignment' => 'right']);
+		self::$Table->addFieldText( 'process', ['prettyName' => 'Process']);
+		self::$Table->addFieldText( 'task', ['prettyName' => 'Task']);
+		self::$Table->addFieldText( 'action', ['prettyName' => 'Action']);
+		self::$Table->addFieldText( 'field', ['prettyName' => 'Field']);
+		self::$Table->addFieldText( 'permission', ['prettyName' => 'Permission']);
 	}
 
 	/** -----------------------------------------------------------------------------------------------

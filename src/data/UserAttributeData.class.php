@@ -41,6 +41,10 @@ use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 
+use \php_base\Utils\DatabaseHandlers\Table as Table;
+use \php_base\Utils\DatabaseHandlers\Field as Field;
+
+
 /** * **********************************************************************************************
  * This any of the reads or writes to the UserAttributes table
  */
@@ -49,7 +53,10 @@ class UserAttributeData extends data {
 	public $UserAttributes = [];
 	public $roleNames = [];
 
-		/**
+	public static $Table;
+
+
+	/**
 	 * @var version number
 	 */
 	private const VERSION = '0.3.0';
@@ -60,6 +67,7 @@ class UserAttributeData extends data {
 	 * @param type $userID
 	 */
 	public function __construct($userID) {
+		self::defineTable();
 		$this->doReadFromDatabaseByUserID($userID);
 	}
 
@@ -70,6 +78,26 @@ class UserAttributeData extends data {
 	 */
 	public static function Version() {
 		return self::VERSION;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * [id]
+      ,[UserId]
+      ,[AttributeName]
+      ,[AttributeValue]
+	 *
+	 *
+	 * @return void
+	 */
+	public static function defineTable() : void {
+		self::$Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'));
+ 		self::$Table->setPrimaryKey( 'id', ['prettyName' => 'Id']);
+
+		self::$Table->addFieldInt( 'id', [ 'prettyName' => 'Id',
+												'alignment' => 'right']);
+		self::$Table->addFieldInt('userid', [ 'prettyName' => 'User Id']);
+		self::$Table->addFieldInt('attributename', [ 'prettyName' => 'Attribute Name']);
+		self::$Table->addFieldInt('attributevalue', [ 'prettyName' => 'Attribute Value']);
 	}
 
 	/** -----------------------------------------------------------------------------------------------

@@ -88,7 +88,7 @@ Class Field {
 	public $fieldName;
 	public $attribs = array();
 	protected $styleAttribs = ['alignment'];
-	protected $optionAttribs = ['isWrapable', 'maxlength', 'size', 'rows', 'cols'];
+	protected $optionAttribs = ['isWrapable', 'maxlength', 'size', 'rows', 'cols', 'visible'];
 
 	/**
 	 * @var version number
@@ -157,6 +157,7 @@ Class Field {
 		$this->attribs['isEditable'] = true;
 		$this->attribs['decimals'] = 2;
 		$this->attribs['width'] = 5;
+		$this->attribs['visible'] = true;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

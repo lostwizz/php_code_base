@@ -114,6 +114,33 @@ abstract Class HTML {
 		return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle, $lable);
 	}
 
+		/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $name
+	 * @param type $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return string
+	 */
+	public static function Image(
+			string $name,
+			string $imageFile,
+			?string $value = null,
+			$arOptions = null,
+			$arStyle = null,
+			?string $lable = null
+		): ?string {
+		if ( !empty( $arOptions) and is_array($arOptions)){
+			$arOptions = array_merge($arOptions, ['src' => $imageFile ]);//, 'alt' =>'Submit' ]);
+		} else {
+			$arOptions = ['src' => $imageFile ]; //, 'alt' =>'Submit' ];
+		}
+		return self::ShowInput($name, $value, 'IMAGE', $arOptions, $arStyle, $lable);
+	}
+
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a submit button
 	 * @static
@@ -239,7 +266,7 @@ abstract Class HTML {
 			$arStyle = null,
 			?string $lable = null
 	): ?string {
-		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN'];
+		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'IMAGE'];
 
 		if ( in_array($type, $possibeTypes) ){
 			$name = (!empty($name)) ? ' name="' . $name . '"' : '';
@@ -392,7 +419,7 @@ abstract Class HTML {
 	 * @param 	mixed $attributes Custom attributes (must be a valid attribute for the <img /> tag)
 	 * @return 	string The formated <img /> tag
 	 */
-	public static function Image($url, $arOptions = null, $arStyle = null) {
+	public static function Img($url, $arOptions = null, $arStyle = null) {
 		if (empty($arOptions['border'])) {
 			if (is_null($arOptions)) {
 				$arOptions = array();

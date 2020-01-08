@@ -48,7 +48,7 @@ class SimpleTableEditor {
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
 		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
 
-		dump::dumpLong( $this->action);
+		//dump::dumpLong( $this->action);
 
 
 		//$d = $tableName::$Table->readAllTableData();
@@ -63,8 +63,8 @@ class SimpleTableEditor {
 		$sortAr = $this->processPassedSort();
 		$filter = $this->processPassedFilter();
 
-dump::dumpLong($sortAr);
-dump::dumpLong($filter);
+//dump::dumpLong($sortAr);
+//dump::dumpLong($filter);
 
 		echo $this->table->showTable($d, $sortAr, $filter, $this->process, $this->task);
 

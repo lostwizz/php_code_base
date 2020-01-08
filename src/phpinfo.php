@@ -1,27 +1,29 @@
 <?php
 
-
-$ex = '^(("(?:[^"]|"")*"|[^,]*)(,("(?:[^"]|"")*"|[^,]*))*)$';
-
-
-$s = "!!!!!!!!!!!!! at TestController', 'now at', array('Show BackTrace Num Lines' => 99,'Beautify_BackgroundColor' => '#FFAA55') ";
-
-$s = "!!!!!!!!!!!!! at TestController', 'now at', array('Show BackTrace Num Lines' => 99,'Beautify_BackgroundColor' => '#FFAA55') ";
+$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_icon.png');
 
 
-$s2=  "array(1,2,'3', 'bob'=>'sam'), array('Show BackTrace Num Lines' => 99,'Beautify_BackgroundColor' => '#FFAA55') ";
-
-$ex1 = "/\,/";
-$ex2 = '/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/';
-$ex3 = '(?=(?:[^\"])*(?![^\"]))/';
-
-//$a = preg_split('(?=(?:[^\"])*(?![^\"]))/', $s);
-
-$a = preg_split($ex1, $s2);
-echo '<pre>';
-print_r($a);
-echo '</pre>';
-
+//$ex = '^(("(?:[^"]|"")*"|[^,]*)(,("(?:[^"]|"")*"|[^,]*))*)$';
+//
+//
+//$s = "!!!!!!!!!!!!! at TestController', 'now at', array('Show BackTrace Num Lines' => 99,'Beautify_BackgroundColor' => '#FFAA55') ";
+//
+//$s = "!!!!!!!!!!!!! at TestController', 'now at', array('Show BackTrace Num Lines' => 99,'Beautify_BackgroundColor' => '#FFAA55') ";
+//
+//
+//$s2=  "array(1,2,'3', 'bob'=>'sam'), array('Show BackTrace Num Lines' => 99,'Beautify_BackgroundColor' => '#FFAA55') ";
+//
+//$ex1 = "/\,/";
+//$ex2 = '/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/';
+//$ex3 = '(?=(?:[^\"])*(?![^\"]))/';
+//
+////$a = preg_split('(?=(?:[^\"])*(?![^\"]))/', $s);
+//
+//$a = preg_split($ex1, $s2);
+//echo '<pre>';
+//print_r($a);
+//echo '</pre>';
+//
 
 //$a = preg_split($ex, $s);
 //print_r( $a);

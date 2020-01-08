@@ -40,6 +40,9 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Settings as Settings;
 
+use \php_base\Utils\simpleConfig as simpleConfig;
+
+
 /** * **********************************************************************************************
  *
  */
@@ -49,8 +52,11 @@ class Table {
 	public $fields = array();
 	public $primaryKeyFieldName;
 
+	public $attribs = array();
+
 	public $process;
 	public $task;
+
 
 
 	/**
@@ -66,11 +72,23 @@ class Table {
 	public function __construct(string $tableName, ?array $attribs = null,string $process='', string $task = '') {
 		$this->tableName = $tableName;
 
-		$this->proces = $process;
-		$this->process = $task;
+		$this->process = $process;
+		$this->task = $task;
 
 		if (is_array($attribs) && count($attribs) > 0) {
-			$this->tableName->setAttribs($attribs);
+			$this->setAttribs($attribs);
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $attribs
+	 * @return void
+	 */
+	public function setAttribs(array $attribs): void {
+		foreach ($attribs as $key => $value) {
+			//echo 'key=', $key, '  value=',$value;
+			$this->attribs[$key] = $value;
 		}
 	}
 
@@ -89,7 +107,7 @@ class Table {
 	 * @param type $value
 	 */
 	public function __set($fieldName, $value) {
-		$fieldName = strtolower($fieldName);
+		$this->attribs[$fieldName] = strtolower($fieldName);
 		//fields[$name] ;
 	}
 
@@ -99,10 +117,13 @@ class Table {
 	 * @return boolean
 	 */
 	public function __get($fieldName) {
-		$fieldName = strtolower($fieldName);
-		if (array_key_exists($fieldName, $this->fields)) {
-			return $this->fields[$fieldName];
+		$fieldNameLower = strtolower($fieldName);
+		if (array_key_exists($fieldNameLower, $this->fields)) {
+			return $this->fields[$fieldNameLower];
 		} else {
+			if ( array_key_exists($fieldName, $this->attribs)){
+				return $this->attribs[$fieldName];
+			}
 			return false;
 		}
 	}
@@ -166,7 +187,10 @@ class Table {
 	}
 
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
 	public function dump():void {
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
 		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
@@ -179,7 +203,11 @@ class Table {
 
 
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $arWhereClause
+	 * @return string
+	 */
 	public function PrepareWhereClause( ?array $arWhereClause = null) : string{
 		if ( empty($arWhereClause) or !is_array($arWhereClause)){
 			return '1=1';
@@ -192,22 +220,142 @@ class Table {
 
 
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return string
+	 */
 	public function giveFieldNamesList(): string {
 		$flds = $this->giveField();
 		$s = implode(', ', $flds);
 		return $s;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array
+	 */
 	public function giveFields(): array {
 		return array_keys($this->fields);
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $withSortButtons
+	 * @param bool $withFilterArea
+	 * @param array $sortKeys
+	 * @param array $filters
+	 * @return string
+	 */
 	public function giveHeaderRow(bool $withSortButtons = false, bool $withFilterArea = false, ?array $sortKeys =null, ?array $filters=null): string {
 		$s = '';
+
+		$s .= $this->showAddButton( true);
+		$s .= $this->showEditColumn( true);
+		$s .= $this->showDeleteColumn( true);
+		$s .= $this->showSpecialColumn( true);
+
 		foreach ($this->fields as $fld => $value) {
+			$s .= $this->handleHeaderColumns( $fld, $value, $withSortButtons, $withFilterArea);
+		}
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $isHeaderRow
+	 * @return string
+	 */
+	protected function showAddButton( bool $isHeaderRow =false) : string{
+		$s = '';
+		if($this->isAdding){
+			if ( $isHeaderRow ){
+				$s = '<td>[Add]</td>';
+			} else {
+				//$s = '<td>[addIcon]</td>';
+				$s = HTML::Open('td') . HTML::Img('static\images\b_insrow.png') . HTML::Close('td');
+			}
+		}
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+
+	 *
+	 * @param bool $isHeaderRow
+	 * @return string
+	 */
+	protected function showEditColumn( bool $isHeaderRow =false, $rowKey = -1) : string {
+		$s = '';
+		if( $this->isEditing){
+			if ( $isHeaderRow ) {
+				$s = '<td>[Edt]</td>';
+			} else {
+				//$s = '<td>[edtIcon]</td>';
+
+				$r =  'e' . $rowKey. 'f';
+				$s = HTML::Open('td')
+						//. HTML::Img('static\images\b_edit.png')
+						//. HTML::Image(Resolver::REQUEST_ACTION . '=>' . $r  ,  'static\images\b_edit.png', null, ['width' =>18])
+						. HTML::Submit(Resolver::REQUEST_ACTION, $r, null , ['background-image'=>"url('static\images\b_edit.png')",'width'=>18, 'border' => 'solid 0px #000000'])
+						. HTML::Close('td');
+
+
+			}
+		}
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $isHeaderRow
+	 * @return string
+	 */
+	protected function showDeleteColumn( bool $isHeaderRow =false, $rowKey = -1) : string {
+		$s = '';
+		if( $this->isDeleting){
+			if ($isHeaderRow ){
+				$s = '<td>[del]</td>';
+			} else {
+				//$s = '<td>[delIcon]</td>';
+				$s = HTML::Open('td')
+						. HTML::Img('static\images\b_drop.png')
+						. HTML::Close('td');
+			}
+		}
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $isHeaderRow
+	 * @return string
+	 */
+	protected function showSpecialColumn( bool $isHeaderRow =false, $rowKey = -1) {
+		$s = '';
+		if( $this->isSpecial){
+			if ($isHeaderRow ){
+				$s = '<td>[spl]</td>';
+			} else {
+				//$s = '<td>[splStuff]</td>';
+				$s = HTML::Open('td') . HTML::Img('static\images\arrow_right.png') . HTML::Close('td');
+			}
+		}
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $fld
+	 * @param type $value
+	 * @param bool $withSortButtons
+	 * @param bool $withFilterArea
+	 * @param array $sortKeys
+	 * @param array $filters
+	 * @return string
+	 */
+	protected function handleHeaderColumns( $fld, $value, bool $withSortButtons = false, bool $withFilterArea = false, ?array $sortKeys =null, ?array $filters=null ) : string{
+		$s = '';
+		if ($value->isShowable){
 			if ( !empty( $sortKeys[$fld] )) {
 				$sortDir = $sortKeys[$fld];
 			} else {
@@ -223,12 +371,21 @@ class Table {
 		return $s;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $fldName
+	 * @param Field $fldValue
+	 * @param bool $withSortButtons
+	 * @param bool $withFilterArea
+	 * @param string|null $sortDir
+	 * @param string|null $filter
+	 * @return string
+	 */
 	protected function giveHeaderForField(string $fldName, Field $fldValue, bool $withSortButtons = false, bool $withFilterArea = false, ?string $sortDir =null, ?string $filter=null): string {
 		$s = '<th>';
-		$s .= $fldValue->givePrettyName();
 		if ($withSortButtons) {
-			$s .= $this->giveSortButtons($fldName, $sortDir);
+			$s .= $this->giveSortButtons($fldName, $sortDir, $fldValue);
 		}
 		if ($withFilterArea) {
 			$s .= $this->giveFilterArea($fldName, $filter);
@@ -237,28 +394,43 @@ class Table {
 		return $s;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
-	protected function giveSortButtons(string $fldName, ?string $sortDir): string {
-		$s = '<BR>';
-		$s .= 'sortDir='. $sortDir;
-		if (!empty($sortDir) and $sortDir =='Asc') {
-			$s .= HTML::Submit(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^^');
-			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
-		} else {
-			$s .= HTML::Submit(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
 
-		}
-		if (!empty($sortDir) and $sortDir == 'Desc'){
-			$s .= HTML::Submit(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']', 'vv');
-			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']', 'v');
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $fldName
+	 * @param string|null $sortDir
+	 * @param Field $fldValue
+	 * @return string
+	 */
+	protected function giveSortButtons(string $fldName, ?string $sortDir, Field $fldValue): string {
+		$s = '<BR>';
+		if (!empty($sortDir) and $sortDir =='Asc') {
+			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
+			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_Pushed_icon.png', 'az', ['width'=>18]);
 		} else {
-			$s .= HTML::Submit(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']', 'v');
+			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']',  '\static\images\A_to_Z_icon.png',  'az', ['width'=>18]);
+		}
+
+		$s .= HTML::space(2);
+		$s .= $fldValue->givePrettyName();
+		$s .= HTML::space(2);
+
+		if (!empty($sortDir) and $sortDir == 'Desc'){
+			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']', 'v');
+			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']',  '\static\images\Z_to_A_Pushed_icon.png',  'za', ['width'=>18]);
+		} else {
+			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']',  '\static\images\Z_to_A_icon.png',  'za', ['width'=>18]);
 		}
 		$s .= PHP_EOL;
 		return $s;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $fldName
+	 * @param string|null $filter
+	 * @return string
+	 */
 	public function giveFilterArea(string $fldName, ?string $filter): string {
 		$s = '<br>';
 		$s .= HTML::Text(Resolver::REQUEST_PAYLOAD . '[filter][' . $fldName . ']', $filter);
@@ -267,7 +439,12 @@ class Table {
 		return $s;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $limit
+	 * @param string $orderBy
+	 * @return array
+	 */
 	public function readAllTableData(int $limit = PHP_INT_MAX, string $orderBy = ''): array {
 		$sql = 'SELECT * FROM ' . $this->tableName;
 		if (!empty($orderBy)) {
@@ -277,32 +454,59 @@ class Table {
 		return $data;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
-	public function showTable(array $data, ?array $sortKeys = null, ?array $filters = null): string {
-		$s = '<table border=1>';
-		$s .= $this->giveHeaderRow(true, true, $sortKeys, $filters);
-		foreach ($data as $key => $value) {
-			$s .= $this->showRowOfTable($value);
-		}
-		$s .= '</table>';
-		return $s;
-	}
-
-	//-------------------------------------------------------------------------------------------------------------------------------
-	protected function showRowOfTable(array $value) : string{
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $RowValue
+	 * @return string
+	 */
+	protected function showRowOfTable(array $RowValue) : string{
+//dump::dumpLong($RowValue);
 		$s = '<tr>';
-		foreach ($value as $colName => $column) {
-			$s .= $this->showFieldOfRow($colName, $column);
+
+		$fld = strtoupper($this->primaryKeyFieldName);
+		$rowId  = $RowValue[ $fld ];
+//echo '<td>'. $rowId . '</td>';
+		$s .= $this->showAddButton( false);
+		$s .= $this->showEditColumn( false,$rowId);
+		$s .= $this->showDeleteColumn( false, $rowId);
+		$s .= $this->showSpecialColumn( false, $rowId);
+
+		foreach ($RowValue as $colName => $columnValue) {
+			if ( $this->$colName->isShowable) {
+				$s .= $this->showFieldOfRow( $columnValue );
+			}
 		}
 		$s .= '</tr>';
 		return $s;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
-	protected function showFieldOfRow( string $colName,  $column) : string{
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $columnValue
+	 * @return string
+	 */
+	protected function showFieldOfRow( $columnValue) : string{
 		$s = '<td>';
-		$s .= $column;
+		$s .= $columnValue;
 		$s .= '</td>';
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $data
+	 * @param array $sortKeys
+	 * @param array $filters
+	 * @return string
+	 */
+	public function showTable(array $data, ?array $sortKeys = null, ?array $filters = null): string {
+
+		$s = '<table border=1>';
+		$s .= $this->giveHeaderRow(true, true, $sortKeys, $filters);
+		foreach ($data as $key => $RowValue) {
+			$s .= $this->showRowOfTable($RowValue);
+		}
+		$s .= '</table>';
 		return $s;
 	}
 

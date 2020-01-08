@@ -60,6 +60,7 @@ class Data {
 	 * @param type $payload
 	 */
 	public function __construct($action ='', $payload = null){
+		self::defineTable();
 		$this->action = $action;
 		$this->payload = $payload;
 	}
@@ -72,6 +73,14 @@ class Data {
 	public static function Version() {
 		return self::VERSION;
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
+	public static function defineTable() : void {
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  the default method used to doanyhing (unless a method is supplied )

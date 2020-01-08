@@ -43,6 +43,10 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 
+use \php_base\Utils\DatabaseHandlers\Table as Table;
+use \php_base\Utils\DatabaseHandlers\Field as Field;
+
+
 /** * **********************************************************************************************
  * read and write the roles (by id) for the user
  */
@@ -55,7 +59,11 @@ Class UserRoleData extends Data {
 	//		- only needed this way because of the RolePermissions needing the the list of ids
 	public $RoleIDnames = []; // array with the keys being the roleID # and the values being the name
 
-		/**
+		public static $Table;
+
+
+
+	/**
 	 * @var version number
 	 */
 	private const VERSION = '0.3.0';
@@ -65,6 +73,8 @@ Class UserRoleData extends Data {
 	 * @param type $ArrayOfNames
 	 */
 	public function __construct(?array $ArrayOfNames = null) {
+		self::defineTable();
+
 		if (!empty($ArrayOfNames)) {
 			self::doReadFromDatabase($ArrayOfNames);
 		}
@@ -77,6 +87,19 @@ Class UserRoleData extends Data {
 	 */
 	public static function Version() {
 		return self::VERSION;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
+	public static function defineTable() : void {
+		self::$Table = new Table(Settings::GetProtected('DB_Table_RoleManager'));
+		self::$Table->setPrimaryKey( 'roleId', ['prettyName' => 'Role Id']);
+		self::$Table->addFieldInt( 'roleid' , [ 'prettyName' => 'Role Id',
+												'alignment' => 'right']);
+		self::$Table->addFieldText( 'name', ['prettyName' => 'Name']);
 	}
 
 	/** -----------------------------------------------------------------------------------------------

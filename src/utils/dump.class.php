@@ -1070,6 +1070,10 @@ class dumpConfig {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $array
+	 */
 	public function updateFromArray( array $array) {
 		foreach ($array as $key => $value) {
 			$this->update ( $key, $value);

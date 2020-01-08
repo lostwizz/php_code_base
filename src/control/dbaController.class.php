@@ -14,6 +14,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 
+use \php_base\Utils\HTML\HTML as HTML;
+
 use \php_base\Utils\DatabaseHandlers\SimpleTableEditor as SimpleTableEditor;
 
 
@@ -97,7 +99,7 @@ class dbaController extends Controller {
 		$x = \php_base\data\UserInfoData::$Table ;
 	//	dump::dumpLong($x);
 
-		$action =
+		//$action =
 		$editorSession = new SimpleTableEditor($x, 'DBA', 'one',$this->action, $this->payload);
 		$result = $editorSession->runTableDisplayAndEdit( true );
 //
@@ -114,16 +116,6 @@ class dbaController extends Controller {
 
 */
 
-
-
-
-
-
-
-
-
-
-
 		return Response::NoError();
 	}
 
@@ -137,6 +129,14 @@ class dbaController extends Controller {
 	public function three( $parent=null) {
 
 		echo 'at dba three ';
+
+$fldName = 'xxxxxxxxxx';
+
+		$x =   HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_icon.png', 'xx', ['width'=>18] );
+		dump::dump($x);
+
+		echo  $x;
+
 		return Response::NoError();
 	}
 }

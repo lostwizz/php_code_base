@@ -84,9 +84,11 @@ class UserInfoData extends data {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * @return void
 	 */
-	public static function defineTable() {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'));
+	public static function defineTable() : void {
+		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'), ['isAdding'=>true, 'isEditing'=>true,'isDeleting'=>true, 'isSpecial'=>true]);
+		
 		self::$Table->setPrimaryKey( 'UserId', ['prettyName' => 'User Id']);
 		self::$Table->addFieldInt( 'UserId' , [ 'prettyName' => 'User Id',
 												'alignment' => 'right']);
@@ -105,7 +107,9 @@ class UserInfoData extends data {
 			]);
 		self::$Table->addFieldText( 'password', ['prettyName' => 'Password']);
 		self::$Table->addFieldText( 'PrimaryRoleName', ['prettyName' => 'Primary Role']);
-		self::$Table->addFieldText( 'ip', ['prettyName' => 'IP Address']);
+
+		self::$Table->addFieldText( 'ip', ['prettyName' => 'IP Address', 'isShowable'=> false]);
+
 		self::$Table->addFieldDateTime( 'last_logon_time', ['prettyName' => 'Time/Date of Last Login']);
 
 
