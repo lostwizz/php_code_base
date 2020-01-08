@@ -56,6 +56,8 @@ class Table {
 
 	public $process;
 	public $task;
+	public $action;
+	public $payload;
 
 
 
@@ -253,9 +255,10 @@ class Table {
 		$s .= $this->showEditColumn( true);
 		$s .= $this->showDeleteColumn( true);
 		$s .= $this->showSpecialColumn( true);
+//dump::dumpLong( $this->fields)		;
 
 		foreach ($this->fields as $fld => $value) {
-			$s .= $this->handleHeaderColumns( $fld, $value, $withSortButtons, $withFilterArea);
+			$s .= $this->handleHeaderColumns( $fld, $value, $withSortButtons, $withFilterArea, $sortKeys, $filters);
 		}
 		return $s;
 	}
@@ -271,15 +274,18 @@ class Table {
 			if ( $isHeaderRow ){
 				$s = '<td>[Add]</td>';
 			} else {
-				//$s = '<td>[addIcon]</td>';
-				$s = HTML::Open('td') . HTML::Img('static\images\b_insrow.png') . HTML::Close('td');
+				$r =  '[AddKey=>NoRow]';
+				$s = HTML::Open('td')
+						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_insrow.png', null, ['width' =>18])
+						. HTML::Close('td');
+
 			}
 		}
 		return $s;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-
+	 *
 	 *
 	 * @param bool $isHeaderRow
 	 * @return string
@@ -290,16 +296,10 @@ class Table {
 			if ( $isHeaderRow ) {
 				$s = '<td>[Edt]</td>';
 			} else {
-				//$s = '<td>[edtIcon]</td>';
-
-				$r =  'e' . $rowKey. 'f';
+				$r =  '[EditKey=>' . $rowKey . ']';
 				$s = HTML::Open('td')
-						//. HTML::Img('static\images\b_edit.png')
-						//. HTML::Image(Resolver::REQUEST_ACTION . '=>' . $r  ,  'static\images\b_edit.png', null, ['width' =>18])
-						. HTML::Submit(Resolver::REQUEST_ACTION, $r, null , ['background-image'=>"url('static\images\b_edit.png')",'width'=>18, 'border' => 'solid 0px #000000'])
+						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_edit.png', null, ['width' =>18])
 						. HTML::Close('td');
-
-
 			}
 		}
 		return $s;
@@ -316,9 +316,9 @@ class Table {
 			if ($isHeaderRow ){
 				$s = '<td>[del]</td>';
 			} else {
-				//$s = '<td>[delIcon]</td>';
+				$r =  '[DelKey=>' . $rowKey . ']';
 				$s = HTML::Open('td')
-						. HTML::Img('static\images\b_drop.png')
+						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_drop.png', null, ['width' =>18])
 						. HTML::Close('td');
 			}
 		}
@@ -336,12 +336,15 @@ class Table {
 			if ($isHeaderRow ){
 				$s = '<td>[spl]</td>';
 			} else {
-				//$s = '<td>[splStuff]</td>';
-				$s = HTML::Open('td') . HTML::Img('static\images\arrow_right.png') . HTML::Close('td');
+				$r =  '[SpecialKey=>' . $rowKey . ']';
+				$s = HTML::Open('td')
+						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\arrow_right.png', null, ['width' =>18])
+						. HTML::Close('td');
 			}
 		}
 		return $s;
 	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -354,6 +357,8 @@ class Table {
 	 * @return string
 	 */
 	protected function handleHeaderColumns( $fld, $value, bool $withSortButtons = false, bool $withFilterArea = false, ?array $sortKeys =null, ?array $filters=null ) : string{
+
+//dump::dump($fld);
 		$s = '';
 		if ($value->isShowable){
 			if ( !empty( $sortKeys[$fld] )) {
@@ -366,6 +371,9 @@ class Table {
 			} else {
 				$filter = null;
 			}
+//dump::dump($value);
+//dump::dump($filters);
+//dump::dump($filters[$fld]);
 			$s .= $this->giveHeaderForField($fld, $value, $withSortButtons, $withFilterArea, $sortDir, $filter);
 		}
 		return $s;
@@ -405,10 +413,10 @@ class Table {
 	protected function giveSortButtons(string $fldName, ?string $sortDir, Field $fldValue): string {
 		$s = '<BR>';
 		if (!empty($sortDir) and $sortDir =='Asc') {
-			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
-			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_Pushed_icon.png', 'az', ['width'=>18]);
+			$s .= HTML::Hidden( Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
+			$s .= HTML::Image( Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_Pushed_icon.png', 'az', ['width'=>18]);
 		} else {
-			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']',  '\static\images\A_to_Z_icon.png',  'az', ['width'=>18]);
+			$s .= HTML::Image( Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']',  '\static\images\A_to_Z_icon.png',  'az', ['width'=>18]);
 		}
 
 		$s .= HTML::space(2);
@@ -416,10 +424,10 @@ class Table {
 		$s .= HTML::space(2);
 
 		if (!empty($sortDir) and $sortDir == 'Desc'){
-			$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']', 'v');
-			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']',  '\static\images\Z_to_A_Pushed_icon.png',  'za', ['width'=>18]);
+			$s .= HTML::Hidden( Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']', 'v');
+			$s .= HTML::Image( Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']',  '\static\images\Z_to_A_Pushed_icon.png',  'za', ['width'=>18]);
 		} else {
-			$s .= HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']',  '\static\images\Z_to_A_icon.png',  'za', ['width'=>18]);
+			$s .= HTML::Image( Resolver::REQUEST_PAYLOAD . '[sortDesc][' . $fldName . ']',  '\static\images\Z_to_A_icon.png',  'za', ['width'=>18]);
 		}
 		$s .= PHP_EOL;
 		return $s;
@@ -465,7 +473,6 @@ class Table {
 
 		$fld = strtoupper($this->primaryKeyFieldName);
 		$rowId  = $RowValue[ $fld ];
-//echo '<td>'. $rowId . '</td>';
 		$s .= $this->showAddButton( false);
 		$s .= $this->showEditColumn( false,$rowId);
 		$s .= $this->showDeleteColumn( false, $rowId);

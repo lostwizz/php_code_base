@@ -30,6 +30,14 @@ class SimpleTableEditor {
 	public $action;
 	public $payload;
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $dataTable
+	 * @param string $process
+	 * @param string $task
+	 * @param string $action
+	 * @param array $payload
+	 */
 	public function __construct( $dataTable, string $process='', string $task= '',string $action ='', ?array $payload = null) {
 //dump::dumpLong( $dataTable);
 		$this->table = $dataTable;
@@ -40,46 +48,122 @@ class SimpleTableEditor {
 		$this->payload = $payload;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $isEditAllowed
+	 * @return Response
+	 */
 	public function runTableDisplayAndEdit( $isEditAllowed= false ) : Response { ///$tableName = 'php_base\data\UserInfoData') {
 
-		echo HTML::FormOpen('tableFun');
-		///////////echo HTML::Hidden(Resolver::REQUEST_PROCESS, 'test');
-		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
-		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+		$this->handleVarsPassedToSimpleTableEditor();
 
-		//dump::dumpLong( $this->action);
+//dump::dumpLong($this);
+		$method = 'do' . $this->action;
+		if ( method_exists($this, $method)) {
+			$r = $this->$method();
+			return $r;
+		} else {
+			echo HTML::FormOpen('tableFun');
+			echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+			echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
 
+			$d = $this->table->readAllTableData();
+			$this->sortData($d);
+			$this->filterData($d);
 
-		//$d = $tableName::$Table->readAllTableData();
-		//$d = ($table::$Table)->readAllTableData();
+			$sortAr = $this->processPassedSort();
+			$filter = $this->processPassedFilter();
 
-//		dump::dumpLong( $this->table);
-		$d = $this->table->readAllTableData();
+			echo $this->table->showTable($d, $sortAr, $filter, $this->process, $this->task);
+			echo HTML::FormClose();
 
-		$this->sortData($d);
+			return Response::NoError();
+		}
+	}
 
-		$this->filterData($d);
-		$sortAr = $this->processPassedSort();
-		$filter = $this->processPassedFilter();
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * this attempts to figure out which row key is passed in the post/get ACTION when using the simple table editor class
+	 *
+	 * @param type $postVars
+	 * @param type $getVars
+	 */
+	protected function handleVarsPassedToSimpleTableEditor() {
+		if (!empty($this->payload)) {
+			foreach ($this->payload as $key => $value) {
+				if (\strpos($key, 'Key') !== false) {
+					$expload = \explode('=>', $key);
 
-//dump::dumpLong($sortAr);
-//dump::dumpLong($filter);
+					$the_key = $expload[1];
 
-		echo $this->table->showTable($d, $sortAr, $filter, $this->process, $this->task);
+					$this->payload['RowKey'] = $the_key;
 
+					switch ($expload[0]) {
+						case 'EditKey':
+							$this->action = 'EditRow';
+							break;
+						case 'DelKey':
+							$this->action = 'DeleteRow';
+							break;
+						case 'SpecialKey':
+							$this->action = 'SpecialRow';
+							break;
+						case 'AddKey':
+							$this->action = 'AddRow';
+							break;
+						default:
+							break;
+					}
 
-		echo HTML::FormClose();
+				}
+			}
+		}
+	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	protected function doEditRow() : Response {
+		echo 'At Edit<BR>';
 		return Response::NoError();
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	protected function doDeleteRow() : Response {
+		echo 'At Delete<BR>';
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	protected function doSpecialRow() : Response {
+		echo 'At Special<BR>';
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	protected function doAddRow() : Response {
+		echo 'At Add<BR>';
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
 	public function processPassedSort(): ?array {
 		$ar = array();
-//		$flds = UserInfoData::$Table->giveFields();
 		$flds = $this->table->giveFields();
-
 
 		if (!empty($this->payload['sortAsc']) and is_array($this->payload['sortAsc'])) {
 			foreach ($flds as $fld) {
@@ -100,9 +184,13 @@ class SimpleTableEditor {
 		return $ar;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
 	public function processPassedFilter(): ?array {
 		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {
+//dump::dump( $this->payload['filter']);
 			$filter = $this->payload['filter'];
 		} else {
 			$filter = null;
@@ -110,9 +198,14 @@ class SimpleTableEditor {
 		return $filter;
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $data
+	 */
 	public function filterData(array &$data) {
+
 		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {
+//dump::dump( $this->payload['filter']);
 			foreach ($this->payload['filter'] as $fld => $value) {
 				//dump::dump($value, $fld);
 				if (!empty($value)) {
@@ -122,14 +215,12 @@ class SimpleTableEditor {
 		}
 	}
 
-	//-------------------------------------------------------------------------------------------------------------------------------
-//	function startsWith ($string, $startString) {
-//		$len = strlen($startString);
-//		return (substr($string, 0, $len) === $startString);
-//	}
-
-
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @param type $fld
+	 * @param type $filter
+	 */
 	public function filterOn(&$data, $fld, $filter) {
 		foreach ($data as $key => $value) {
 			if (!(Utils::startsWith($value[$fld], $filter, true) )) {
@@ -139,7 +230,11 @@ class SimpleTableEditor {
 	}
 
 
-	//-------------------------------------------------------------------------------------------------------------------------------
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $data
+	 * @return type
+	 */
 	public function sortData(array &$data) {
 		//figure out what to sort and in which direction
 

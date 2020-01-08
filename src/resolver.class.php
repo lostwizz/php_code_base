@@ -64,6 +64,7 @@ class Resolver {
 	const REQUEST_TASK = 'ACTION_TASK';
 	const REQUEST_ACTION = 'ACTION_ACTION';
 	const REQUEST_PAYLOAD = 'ACTION_PAYLOAD';
+	//const REQUEST_HINT = 'ACTION_HINT';
 
 	const MENU_TERM = 'MENU_SELECT';
 	const MENU_ITEM_LOGOFF = 'ABOUT_TO_LOGOFF';
@@ -250,22 +251,7 @@ class Resolver {
 		$PTAP = array();
 
 		if ( !empty( $getVars[ self::MENU_TERM])) {
-			$x = $getVars[self::MENU_TERM];
-			$exploded = \explode('.', $x);
-
-			$this->process =	(!empty($exploded[0])) ? $exploded[0] : null;
-			$this->task =		(!empty($exploded[1])) ? $exploded[1] : null;
-			$this->action =		(!empty($exploded[2])) ? $exploded[2] : null;
-
-			if ( !is_array($exploded[3])){
-				$exploded[3] = array();
-			}
-			if ( !empty($getVars[self::MENU_TERM] ) and  $getVars[self::MENU_TERM] == 'Authenticate.Logoff..' ) {
-				$exploded[3][self::MENU_ITEM_LOGOFF] = 'YES';
-			} else {
-				$exploded[3][self::MENU_ITEM_LOGOFF] = 'NO';
-			}
-			$this->payload =	(!empty($exploded[3])) ? $exploded[3] : null;
+			$this->handleMenuINPUT( $getVars);
 
 		} else {
 			$this->process =	(!empty($postVars[self::REQUEST_PROCESS]))	? $postVars[self::REQUEST_PROCESS]	: null;
@@ -278,6 +264,29 @@ class Resolver {
 	}
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * handles if the menu 'log off' was selected - then sets a ne var int he payload that this happened
+	 * @param type $getVars
+	 */
+	protected function handleMenuINPUT($getVars) {
+		$x = $getVars[self::MENU_TERM];
+		$exploded = \explode('.', $x);
+
+		$this->process = (!empty($exploded[0])) ? $exploded[0] : null;
+		$this->task = (!empty($exploded[1])) ? $exploded[1] : null;
+		$this->action = (!empty($exploded[2])) ? $exploded[2] : null;
+
+		if (!is_array($exploded[3])) {
+			$exploded[3] = array();
+		}
+		if (!empty($getVars[self::MENU_TERM]) and $getVars[self::MENU_TERM] == 'Authenticate.Logoff..') {
+			$exploded[3][self::MENU_ITEM_LOGOFF] = 'YES';
+		} else {
+			$exploded[3][self::MENU_ITEM_LOGOFF] = 'NO';
+		}
+		$this->payload = (!empty($exploded[3])) ? $exploded[3] : null;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * addSetupUserRoleAndPermissions - after a successful logon then setup the users permissions.
