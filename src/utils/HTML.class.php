@@ -42,7 +42,7 @@ abstract Class HTML {
 	/**
 	 * @var version number
 	 */
-	private const VERSION = '0.3.0';
+	private const VERSION = '0.3.1';
 
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a version number
@@ -298,7 +298,7 @@ abstract Class HTML {
 	): string {
 		$attr = self::parseOptions($arOptions);
 		$style = self::parseStyle($arStyle);
-		return '<textarea name="' . $name . '" ' . $attr . $style . '> ' . $defaultText . '</textarea>';
+		return '<textarea name="' . $name . '" ' . $attr . $style . '>' . $defaultText . '</textarea>';
 	}
 
 	//-----------------------------------------------------------------------------------------------
@@ -560,6 +560,27 @@ abstract Class HTML {
 	public static function Close(string $tag) {
 		return PHP_EOL . '</' . $tag . '>' . PHP_EOL;
 	}
+
+	public static function TR($arOptions =null, $arStyle=null){
+		return self::Open('TR', $arOptions, $arStyle);
+	}
+	public static function TRend($arOptions =null, $arStyle=null){
+		return self::Close('TR');
+	}
+
+	public static function TD($arOptions =null, $arStyle=null){
+		return self::Open('TD', $arOptions, $arStyle);
+	}
+
+	public static function TDend($arOptions =null, $arStyle=null){
+		return self::Close('TD');
+	}
+
+
+	public static function TDendTD($arOptions =null, $arStyle=null){
+		return self::TDend() . self::TD($arOptions, $arStyle);
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * HTML::Filter_XSS($str, $args) -> Filter some string with the params into $args

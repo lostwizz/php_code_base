@@ -39,8 +39,9 @@ use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\Cache as CACHE;
 
-use \php_base\Utils\simpleConfig as simpleConfig;
+//use \php_base\Utils\simpleConfig as simpleConfig;
 
 
 /** * **********************************************************************************************
@@ -114,6 +115,7 @@ class Table {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *  return the field or the attribute of the passed fieldname/attribName
 	 *
 	 * @param type $fieldName
 	 * @return boolean
@@ -454,12 +456,22 @@ class Table {
 	 * @return array
 	 */
 	public function readAllTableData(int $limit = PHP_INT_MAX, string $orderBy = ''): array {
-		$sql = 'SELECT * FROM ' . $this->tableName;
-		if (!empty($orderBy)) {
-			$sql .= ' ORDER BY ' . $orderBy;
+
+		if (CACHE::exists('Table_' , $this->tableName)) {
+			return CACHE::pull('Table_' . $this->tableName);
+		} else {
+			$sql = 'SELECT * FROM ' . $this->tableName;
+			if (!empty($orderBy)) {
+				$sql .= ' ORDER BY ' . $orderBy;
+			}
+			$data = DBUtils::doDBSelectMulti($sql);
+
+			if ( Settings::GetPublic('CACHE_Allow_Tables to be Cached')){
+				CACHE::add( 'Table_' . $this->tableName, $data);
+			}
+
+			return $data;
 		}
-		$data = DBUtils::doDBSelectMulti($sql);
-		return $data;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -516,5 +528,50 @@ class Table {
 		$s .= '</table>';
 		return $s;
 	}
+
+
+	public function editRowOfTable( ){
+		$data = $this->readAllTableData();
+		$flds = $this->giveFields();
+//dump::dumpLong( $this->fields);
+
+		$rowOfData = $this->getRowByPrimaryKey( $this->payload['RowKey'], $data);
+
+		echo HTML::Open('Table', ['border'=>1, 'width' =>'50%']);
+		foreach ($this->fields as $fld => $value) {
+			echo HTML::TR();
+			echo HTML::TD();
+			//echo 'fld='. $fld, ' obj=';
+			//print_r( $value);
+			echo $value->prettyName;
+			echo HTML::TDendTD();
+
+			$ColOfData =$rowOfData[strtoupper($fld)];
+
+
+			echo $value->giveHTMLInput($fld, $ColOfData);
+
+			//echo HTML::BR();
+			echo HTML::TDend();
+
+			echo HTML::TRend();
+		}
+		echo HTML::Close('Table');
+		echo 'end';
+
+	}
+
+	public function getRowByPrimaryKey($key, $data){
+
+		$primaryKeyFld = strtoupper($this->primaryKeyFieldName );
+
+		foreach($data as $row){
+			if ( $row[$primaryKeyFld] = $key ){
+				return $row;
+			}
+		}
+		return null;
+	}
+
 
 }

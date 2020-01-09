@@ -57,7 +57,11 @@ class SimpleTableEditor {
 
 		$this->handleVarsPassedToSimpleTableEditor();
 
-//dump::dumpLong($this);
+		$this->table->process = $this->process;
+		$this->table->task = $this->task;
+		$this->table->action = $this->action;
+		$this->table->payload = $this->payload;
+
 		$method = 'do' . $this->action;
 		if ( method_exists($this, $method)) {
 			$r = $this->$method();
@@ -89,13 +93,13 @@ class SimpleTableEditor {
 	 * @param type $getVars
 	 */
 	protected function handleVarsPassedToSimpleTableEditor() {
+
 		if (!empty($this->payload)) {
 			foreach ($this->payload as $key => $value) {
 				if (\strpos($key, 'Key') !== false) {
+
 					$expload = \explode('=>', $key);
-
 					$the_key = $expload[1];
-
 					$this->payload['RowKey'] = $the_key;
 
 					switch ($expload[0]) {
@@ -114,9 +118,11 @@ class SimpleTableEditor {
 						default:
 							break;
 					}
-
+					unset ( $this->payload[$key]);  // get rid of the encoded thing -- dont need it cluttering things up
 				}
 			}
+		} else {
+			$this->payload = null;
 		}
 	}
 
@@ -126,6 +132,7 @@ class SimpleTableEditor {
 	 */
 	protected function doEditRow() : Response {
 		echo 'At Edit<BR>';
+		$this->table->editRowOfTable();
 		return Response::NoError();
 	}
 
@@ -185,12 +192,11 @@ class SimpleTableEditor {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * take the passed filter array and make it the working value
 	 * @return array|null
 	 */
 	public function processPassedFilter(): ?array {
 		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {
-//dump::dump( $this->payload['filter']);
 			$filter = $this->payload['filter'];
 		} else {
 			$filter = null;
@@ -199,32 +205,31 @@ class SimpleTableEditor {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * run thru the list of filters and remove the data
 	 * @param array $data
 	 */
 	public function filterData(array &$data) {
 
-		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {
-//dump::dump( $this->payload['filter']);
-			foreach ($this->payload['filter'] as $fld => $value) {
-				//dump::dump($value, $fld);
-				if (!empty($value)) {
-					$this->filterOn($data, strtoupper($fld), $value);
+		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {  //if have a filter passed
+			foreach ($this->payload['filter'] as $fld => $filterValue) {   // for each filter field see if ther is a filter
+				if (!empty($filterValue)) {								// there is a filter so
+					$this->filterTheData($data, strtoupper($fld), $filterValue);  // filter the data
 				}
 			}
 		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 * actuall removes the rows that dont match the filter on the coumn
 	 *
 	 * @param type $data
 	 * @param type $fld
-	 * @param type $filter
+	 * @param type $filterValue
 	 */
-	public function filterOn(&$data, $fld, $filter) {
-		foreach ($data as $key => $value) {
-			if (!(Utils::startsWith($value[$fld], $filter, true) )) {
-				unset($data[$key]);
+	public function filterTheData(&$data, $fld, $filterValue) {
+		foreach ($data as $key => $value) {  //run thru the data
+			if (!(Utils::startsWith($value[$fld], $filterValue, true) )) { // check the data against the column with the filter data
+				unset($data[$key]);  // remove the row
 			}
 		}
 	}

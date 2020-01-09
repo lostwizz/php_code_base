@@ -244,7 +244,7 @@ Class Field {
 	public function giveHTMLInput(string $name, string $value = ''): string {
 		$arStyle = $this->giveHTMLstyle();
 		$arOptions = $this->giveHTMLOptions();
-		$name = ' name="' . $name . '" ';
+		//$name = ' name="' . $name . '" ';
 
 		if ($this->giveAttrib('isEditable')) {
 			if ($this->giveAttrib('subType') == self::SUBTYPE_TEXTAREA) {
