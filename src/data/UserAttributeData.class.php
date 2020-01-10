@@ -90,7 +90,7 @@ class UserAttributeData extends data {
 	 * @return void
 	 */
 	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'));
+		self::$Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'), ['className'=> __NAMESPACE__ .'\UserAttributeData']);
  		self::$Table->setPrimaryKey( 'id', ['prettyName' => 'Id']);
 
 		self::$Table->addFieldInt( 'id', [ 'prettyName' => 'Id',

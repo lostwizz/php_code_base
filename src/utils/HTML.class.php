@@ -55,6 +55,50 @@ abstract Class HTML {
 
 	//-----------------------------------------------------------------------------------------------
 
+		/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $name
+	 * @param type $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return string
+	 */
+	public static function Button(
+			string $name,
+			?string $value = null,
+			$arOptions = null,
+			$arStyle = null,
+			?string $lable = null
+		): ?string {
+		return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle, $lable);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param string $val
+	 * @param type $lable
+	 * @param type $isChecked
+	 * @param boolean $arOptions
+	 * @param type $arStyle
+	 * @return string
+	 */
+	public static function CheckBox(
+			string $name,
+			string $value,
+			?string $lable = null,
+			$isChecked = false,
+			$arOptions = null,
+			$arStyle = null
+	): ?string {
+		$lable = (!empty($lable)) ? $lable : '';
+		if ($isChecked) {
+			$arOptions['checked'] = true;
+		}
+		return self::ShowInput($name, $value, "CHECKBOX", $arOptions, $arStyle, $lable);
+	}
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 * return a text with a hidden input
 	 * @example  output : '<input type=hidden name="' . ACTION_SYSTEM . '" value="' . INVOICING_SYSTEM . '">';
@@ -77,44 +121,6 @@ abstract Class HTML {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 * gives a text input
-	 *
-	 * @static
-	 * @param type $name
-	 * @param type $value
-	 * @param type $arOptions
-	 * @param type $arStyle
-	 * @return string
-	 */
-	public static function Text(
-			string $name,
-			?string $value = null,
-			$arOptions = null,
-			$arStyle = null,
-			?string $lable = null
-	): ?string {
-		return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle, $lable);
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $name
-	 * @param type $value
-	 * @param type $arOptions
-	 * @param type $arStyle
-	 * @return string
-	 */
-	public static function Button(
-			string $name,
-			?string $value = null,
-			$arOptions = null,
-			$arStyle = null,
-			?string $lable = null
-		): ?string {
-		return self::ShowInput($name, $value, 'BUTTON', $arOptions, $arStyle, $lable);
-	}
-
-		/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $name
 	 * @param type $value
@@ -138,28 +144,6 @@ abstract Class HTML {
 		return self::ShowInput($name, $value, 'IMAGE', $arOptions, $arStyle, $lable);
 	}
 
-
-
-
-	/** -----------------------------------------------------------------------------------------------
-	 * gives a submit button
-	 * @static
-	 * @param type $name
-	 * @param type $value
-	 * @param type $arOptions
-	 * @param type $arStyle
-	 * @return string
-	 */
-	public static function Submit(
-			string $name,
-			?string $value = null,
-			$arOptions = null,
-			$arStyle = null,
-			?string $lable = null
-	) : ?string {
-		return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle, $lable);
-	}
-
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a password text box
 	 * @static
@@ -179,22 +163,6 @@ abstract Class HTML {
 		return self::ShowInput($name, $value, 'Password', $arOptions, $arStyle, $lable);
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *  gives a reset button
-	 *
-	 * @static
-	 * @param type $value
-	 * @param type $arOptions
-	 * @param type $arStyle
-	 * @return string
-	 */
-	public static function Reset(
-			string $value = 'reset',
-			$arOptions = null,
-			$arStyle = null
-	): ?string {
-		return self::ShowInput('', $value, 'Reset', $arOptions, $arStyle);
-	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a radio selection
@@ -224,28 +192,20 @@ abstract Class HTML {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *  gives a reset button
 	 *
-	 * @param string $name
-	 * @param string $val
-	 * @param type $lable
-	 * @param type $isChecked
-	 * @param boolean $arOptions
+	 * @static
+	 * @param type $value
+	 * @param type $arOptions
 	 * @param type $arStyle
 	 * @return string
 	 */
-	public static function CheckBox(
-			string $name,
-			string $value,
-			?string $lable = null,
-			$isChecked = false,
+	public static function Reset(
+			string $value = 'reset',
 			$arOptions = null,
 			$arStyle = null
 	): ?string {
-		$lable = (!empty($lable)) ? $lable : '';
-		if ($isChecked) {
-			$arOptions['checked'] = true;
-		}
-		return self::ShowInput($name, $value, "CHECKBOX", $arOptions, $arStyle, $lable);
+		return self::ShowInput('', $value, 'Reset', $arOptions, $arStyle);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -280,6 +240,48 @@ abstract Class HTML {
 			return null;
 		}
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a submit button
+	 * @static
+	 * @param type $name
+	 * @param type $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return string
+	 */
+	public static function Submit(
+			string $name,
+			?string $value = null,
+			$arOptions = null,
+			$arStyle = null,
+			?string $lable = null
+	) : ?string {
+		return self::ShowInput($name, $value, 'Submit', $arOptions, $arStyle, $lable);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a text input
+	 *
+	 * @static
+	 * @param type $name
+	 * @param type $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return string
+	 */
+	public static function Text(
+			string $name,
+			?string $value = null,
+			$arOptions = null,
+			$arStyle = null,
+			?string $lable = null
+	): ?string {
+		return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle, $lable);
+	}
+
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	  // $arOptions should include rows=xx and cols=yy
@@ -561,22 +563,53 @@ abstract Class HTML {
 		return PHP_EOL . '</' . $tag . '>' . PHP_EOL;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return type
+	 */
 	public static function TR($arOptions =null, $arStyle=null){
 		return self::Open('TR', $arOptions, $arStyle);
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return type
+	 */
 	public static function TRend($arOptions =null, $arStyle=null){
 		return self::Close('TR');
 	}
 
+	/** ----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return type-
+	 */
 	public static function TD($arOptions =null, $arStyle=null){
 		return self::Open('TD', $arOptions, $arStyle);
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return type
+	 */
 	public static function TDend($arOptions =null, $arStyle=null){
 		return self::Close('TD');
 	}
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return type
+	 */
 	public static function TDendTD($arOptions =null, $arStyle=null){
 		return self::TDend() . self::TD($arOptions, $arStyle);
 	}

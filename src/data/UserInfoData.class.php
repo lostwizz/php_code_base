@@ -44,6 +44,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
+use \php_base\Utils\Cache as CACHE;
 
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
@@ -87,30 +88,41 @@ class UserInfoData extends data {
 	 * @return void
 	 */
 	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'), ['isAdding'=>true, 'isEditing'=>true,'isDeleting'=>true, 'isSpecial'=>true]);
-		
-		self::$Table->setPrimaryKey( 'UserId', ['prettyName' => 'User Id']);
+		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'), ['className'=> __NAMESPACE__ .'\UserInfoData', 'isAdding'=>true, 'isEditing'=>true,'isDeleting'=>true, 'isSpecial'=>true]);
+
+		self::$Table->setPrimaryKey( 'UserId', ['prettyName' => 'User Id', 'isEditable'=> false]);
+
 		self::$Table->addFieldInt( 'UserId' , [ 'prettyName' => 'User Id',
-												'alignment' => 'right']);
+												'alignment' => 'right',
+												'isEditable'=> false
+			]);
 		self::$Table->addFieldText( 'app', ['prettyName'=> 'App',
 											'isPassword'=> false,
-											'width'=> 20
+											'size'=> 50,
+											'maxlength' =>50,
+											'subType' => Field::SUBTYPE_SELECTLIST,
+											'selectFrom' => 'giveSelectOnApp'
 			]);
-		self::$Table->addFieldText( 'method', ['prettyName' => 'Authentication Method']);
+		self::$Table->addFieldText( 'method', ['prettyName' => 'Authentication Method',
+												'size'=>10,
+												'maxlength' => 10,
+												'subType' => Field::SUBTYPE_SELECTLIST,
+												'selectFrom' => 'giveSelectOnMethod'   //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
+			]);
 		self::$Table->addFieldText( 'username', [
-						 'subType' =>  Field::SUBTYPE_TEXTAREA,
+						 //'subType' =>  Field::SUBTYPE_TEXTAREA,
 						 'prettyName' => 'User Name',
 						 'isShowable' => true,
 						 'isEditable' => true,
-						 'width' => 35,
+						 'size' => 35,
 						 'height' => true,
 			]);
-		self::$Table->addFieldText( 'password', ['prettyName' => 'Password']);
+		self::$Table->addFieldText( 'password', ['prettyName' => 'Password', 'isEditable'=> false,'size'=> 80]);
 		self::$Table->addFieldText( 'PrimaryRoleName', ['prettyName' => 'Primary Role']);
 
-		self::$Table->addFieldText( 'ip', ['prettyName' => 'IP Address', 'isShowable'=> false]);
+		self::$Table->addFieldText( 'ip', ['prettyName' => 'IP Address', 'isShowable'=> false, 'isEditable'=> false]);
 
-		self::$Table->addFieldDateTime( 'last_logon_time', ['prettyName' => 'Time/Date of Last Login']);
+		self::$Table->addFieldDateTime( 'last_logon_time', ['prettyName' => 'Time/Date of Last Login', 'isEditable'=> false]);
 
 
 	}
@@ -172,6 +184,58 @@ class UserInfoData extends data {
 			return true;
 		}
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
+	public static function giveSelectOnMethod(): ?array {
+
+		if (CACHE::exists('Table_SelectOnMethod_' . Settings::GetProtected('DB_Table_UserManager'))) {
+			$data = CACHE::pull('Table_Select_' . Settings::GetProtected('DB_Table_UserManager'));
+		} else {
+			$sql = 'SELECT DISTINCT method FROM ' . Settings::GetProtected('DB_Table_UserManager');
+
+			$rawData = DBUtils::doDBSelectMulti($sql);
+
+			$data = array();
+			foreach ($rawData as $key => $value) {
+				$data[$value['METHOD']] = $value['METHOD'];
+			}
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add('Table_SelectOnMethod_' . Settings::GetProtected('DB_Table_UserManager'), $data);
+			}
+		}
+		return $data;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
+	public static function giveSelectOnApp(): ?array {
+
+		if (CACHE::exists('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'))) {
+			$data = CACHE::pull('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'));
+		} else {
+			$sql = 'SELECT DISTINCT app FROM ' . Settings::GetProtected('DB_Table_UserManager');
+
+			$rawData = DBUtils::doDBSelectMulti($sql);
+
+			$data = array();
+			foreach ($rawData as $key => $value) {
+				$data[$value['APP']] = $value['APP'];
+			}
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'), $data);
+			}
+		}
+		return $data;
+
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

@@ -72,7 +72,7 @@ class Table {
 	 * @param string $tableName
 	 * @param array $attribs
 	 */
-	public function __construct(string $tableName, ?array $attribs = null,string $process='', string $task = '') {
+	public function __construct(string $tableName, ?array $attribs = null, string $process='', string $task = '') {
 		$this->tableName = $tableName;
 
 		$this->process = $process;
@@ -147,7 +147,7 @@ class Table {
 	 */
 	public function addFieldInt(string $fieldName, ?array $attribs = null) {
 		$fieldName = strtolower($fieldName);
-		$this->fields[$fieldName] = new Field_Int($fieldName, $attribs);
+		$this->fields[$fieldName] = new Field_Int($this, $fieldName, $attribs);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -155,9 +155,9 @@ class Table {
 	 * @param string $fieldName
 	 * @param array $attribs
 	 */
-	public function addFieldText(string $fieldName, ?array $attribs = null) {
+	public function addFieldText( string $fieldName, ?array $attribs = null) {
 		$fieldName = strtolower($fieldName);
-		$this->fields[$fieldName] = new Field_Text($fieldName, $attribs);
+		$this->fields[$fieldName] = new Field_Text($this, $fieldName, $attribs);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ class Table {
 	 */
 	public function addFieldDateTime(string $fieldName, ?array $attribs = null) {
 		$fieldName = strtolower($fieldName);
-		$this->fields[$fieldName] = new Field_DateTime($fieldName, $attribs);
+		$this->fields[$fieldName] = new Field_DateTime($this, $fieldName, $attribs);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ class Table {
 	 */
 	public function addFieldFloat(string $fieldName, ?array $attribs = null) {
 		$fieldName = strtolower($fieldName);
-		$this->fields[$fieldName] = new \php_base\Utils\DatabaseHandlers\Field_Float($fieldName, $attribs);
+		$this->fields[$fieldName] = new \php_base\Utils\DatabaseHandlers\Field_Float($this, $fieldName, $attribs);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -187,7 +187,7 @@ class Table {
 	 */
 	public function addFieldBOOL(string $fieldName, ?array $attribs = null) {
 		$fieldName = strtolower($fieldName);
-		$this->fields[$fieldName] = new \php_base\Utils\DatabaseHandlers\Field_Boolean($fieldName, $attribs);
+		$this->fields[$fieldName] = new \php_base\Utils\DatabaseHandlers\Field_Boolean($this, $fieldName, $attribs);
 	}
 
 
@@ -529,38 +529,61 @@ class Table {
 		return $s;
 	}
 
-
-	public function editRowOfTable( ){
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public function editRowOfTable() {
 		$data = $this->readAllTableData();
 		$flds = $this->giveFields();
-//dump::dumpLong( $this->fields);
 
-		$rowOfData = $this->getRowByPrimaryKey( $this->payload['RowKey'], $data);
+		$rowNum = $this->payload['RowKey'];
+		$rowOfData = $this->getRowByPrimaryKey($this->payload['RowKey'], $data);
 
-		echo HTML::Open('Table', ['border'=>1, 'width' =>'50%']);
-		foreach ($this->fields as $fld => $value) {
-			echo HTML::TR();
-			echo HTML::TD();
-			//echo 'fld='. $fld, ' obj=';
-			//print_r( $value);
-			echo $value->prettyName;
-			echo HTML::TDendTD();
+		echo HTML::FormOpen('index.php', 'Editing', 'POST');
+		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+		echo HTML::Hidden(Resolver::REQUEST_ACTION, 'Editing');
 
-			$ColOfData =$rowOfData[strtoupper($fld)];
+		if (!is_array($this->payload)) {
+			$editPayload = array();
+		} else {
+			$editPayload = $this->payload;
+		}
+		$editPayload['RowKey'] = $rowNum;
 
+		$newPayload = str_replace( '.', '~!~', $editPayload);
+		$r = serialize($newPayload);
 
-			echo $value->giveHTMLInput($fld, $ColOfData);
+		//echo HTML::Hidden(Resolver::REQUEST_PAYLOAD, $a);
 
-			//echo HTML::BR();
-			echo HTML::TDend();
+		echo HTML::Open('Table', ['border' => 1, 'width' => '50%']);
 
-			echo HTML::TRend();
+		foreach ($this->fields as $fld => $fldObj) {
+			if ($fldObj->isShowable) {
+				echo HTML::TR();
+				echo HTML::TD();
+				echo $fldObj->prettyName;
+				echo HTML::TDendTD();
+
+				$ColOfData = $rowOfData[strtoupper($fld)];
+				echo $fldObj->giveHTMLInput($fld, $ColOfData);
+				echo HTML::TDend();
+				echo HTML::TRend();
+			}
 		}
 		echo HTML::Close('Table');
-		echo 'end';
+		echo HTML::Submit(Resolver::REQUEST_ACTION, 'Save Edit');
 
+
+		echo HTML::FormClose();
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $key
+	 * @param type $data
+	 * @return type
+	 */
 	public function getRowByPrimaryKey($key, $data){
 
 		$primaryKeyFld = strtoupper($this->primaryKeyFieldName );

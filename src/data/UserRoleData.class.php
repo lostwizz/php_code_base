@@ -42,6 +42,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
+use \php_base\Utils\Cache as CACHE;
+
 
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
@@ -95,7 +97,7 @@ Class UserRoleData extends Data {
 	 * @return void
 	 */
 	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_RoleManager'));
+		self::$Table = new Table(Settings::GetProtected('DB_Table_RoleManager'), ['className'=> __NAMESPACE__ .'\UserRoleData']);
 		self::$Table->setPrimaryKey( 'roleId', ['prettyName' => 'Role Id']);
 		self::$Table->addFieldInt( 'roleid' , [ 'prettyName' => 'Role Id',
 												'alignment' => 'right']);

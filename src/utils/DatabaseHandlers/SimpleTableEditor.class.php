@@ -94,6 +94,9 @@ class SimpleTableEditor {
 	 */
 	protected function handleVarsPassedToSimpleTableEditor() {
 
+		$this->process = ( ! empty($this->process) ? $this->process : 'SimpleTableEditor');
+		$this->task    = ( ! empty($this->task) ? $this->task : '');
+
 		if (!empty($this->payload)) {
 			foreach ($this->payload as $key => $value) {
 				if (\strpos($key, 'Key') !== false) {

@@ -34,6 +34,7 @@ namespace php_base\Utils\DatabaseHandlers;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
+use \php_base\Resolver as Resolver;
 
 /*  example of options
   //
@@ -60,11 +61,26 @@ use \php_base\Utils\HTML\HTML as HTML;
   'is_wrapable' =>false
   )),
  */
+//
+//Class Attributes {
+//	public $name;
+//	public $value;
+//	public $isStyle;
+//	public $isOption;
+//
+//	public function __construct($name, $value, $isStyle, $isOption){
+//		$this->name = $name;
+//		$this->value = $value;
+//		$this->isStyle = $isStyle;
+//		$this->isOption = $isOption;
+//	}
+//}
 
 /** * **********************************************************************************************
  *
  */
 Class Field {
+
 
 	const SUBTYPE_TEXTAREA = 'TEXTAREA';
 	const SUBTYPE_TEXT = 'TEXT';
@@ -85,6 +101,8 @@ Class Field {
 	const SUBTYPE_DATETIME_RFC822 = 'DATETIME_RFC822';
 	const SUBTYPE_INT_GREATER_THAN_ZERO = 'SUBTYPE_INT_GREATER_THAN_ZERO';
 
+	protected $parent;
+
 	public $fieldName;
 	public $attribs = array();
 	protected $styleAttribs = ['alignment'];
@@ -100,7 +118,8 @@ Class Field {
 	 * @param string $fieldName
 	 * @param array $attribs
 	 */
-	public function __construct(string $fieldName, ?array $attribs = null) {
+	public function __construct( $parent, string $fieldName, ?array $attribs = null) {
+		$this->parent = $parent;
 		$this->fieldName = strtolower($fieldName);
 		$this->setupDefaultAttribs();
 
@@ -143,21 +162,22 @@ Class Field {
 		}
 	}
 
-	/** -----------------------------------------------------------------------------------------------
+	/** ----------------------------------------------------------------------------------------------
 	 *
 	 * @return void
 	 */
 	public function setupDefaultAttribs(): void {
 		$this->attribs['size'] = 30;
 		$this->attribs['maxlength'] = 30;
+		$this->attribs['width'] = 5;
 		$this->attribs['type'] = self::SUBTYPE_TEXT;
 		$this->attribs['rows'] = 3;
 		$this->attribs['cols'] = 80;
 		$this->attribs['isShowable'] = true;
 		$this->attribs['isEditable'] = true;
 		$this->attribs['decimals'] = 2;
-		$this->attribs['width'] = 5;
 		$this->attribs['visible'] = true;
+		$this->attribs['selectFrom'] = [];
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -179,7 +199,7 @@ Class Field {
 	public function giveHTMLstyle(): ?array {
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
-			if (array_key_exists($key, $this->styleAttribs)) {
+			if (in_array($key, $this->styleAttribs)) {
 				$r[$key] = $value;
 			}
 		}
@@ -193,7 +213,7 @@ Class Field {
 	public function giveHTMLOptions(): ?array {
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
-			if (array_key_exists($key, $this->optionAttribs)) {
+			if (in_array($key, $this->optionAttribs)) {
 				$r[$key] = $value;
 			}
 		}
@@ -241,20 +261,49 @@ Class Field {
 	 * @param string $value
 	 * @return string
 	 */
-	public function giveHTMLInput(string $name, string $value = ''): string {
-		$arStyle = $this->giveHTMLstyle();
-		$arOptions = $this->giveHTMLOptions();
-		//$name = ' name="' . $name . '" ';
+	public function giveHTMLInput(string $name,  $value = ''): string {
+		if ($this->isShowable) {
+			$arStyle = $this->giveHTMLstyle();
+			$arOptions = $this->giveHTMLOptions();
+			//$name = ' name="' . $name . '" ';
 
-		if ($this->giveAttrib('isEditable')) {
-			if ($this->giveAttrib('subType') == self::SUBTYPE_TEXTAREA) {
-				$r = HTML::TextArea($name, $value, $arOptions, $arStyle);
+			if ($this->giveAttrib('isEditable')) {
+				switch ( $this->giveAttrib('subType') ) {
+					case self::SUBTYPE_TEXTAREA:
+						$r = HTML::TextArea(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, $arOptions, $arStyle);
+						break;
+					case self::SUBTYPE_SELECTLIST:
+						$r = $this->giveSelectHTMLInput(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+						break;
+					default:
+						$r = HTML::ShowInput(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, self::SUBTYPE_TEXT, $arOptions, $arStyle);
+						break;
+				}
 			} else {
-				$r = HTML::ShowInput($name, $value, self::SUBTYPE_TEXT, $arOptions, $arStyle);
+				return $value;
 			}
+			return $r;
 		} else {
-			return $value;
+			//TODO - setup hidden for those not editable
+			return '';
 		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $name
+	 * @param type $value
+	 * @return type
+	 */
+	public function giveSelectHTMLInput( $name, $value){
+		if ( is_array($this->selectFrom )) {
+			$selOptions = $this->selectFrom;
+		} else {
+			$class  = $this->parent->className;
+			$methodName = $this->selectFrom;
+			$selOptions = $class::$methodName();
+		}
+		$r = HTML::Select($name, $selOptions, $value, true);
 		return $r;
 	}
 

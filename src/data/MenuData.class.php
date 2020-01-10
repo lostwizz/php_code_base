@@ -81,7 +81,7 @@ class MenuData extends data {
 	 * @return void
 	 */
 	public static function defineTable() :void {
-		self::$Table = new Table(Settings::GetProtected('MenuDefinitions'));
+		self::$Table = new Table(Settings::GetProtected('MenuDefinitions'), ['className'=> __NAMESPACE__ .'\MenuData']);
 		self::$Table->setPrimaryKey( 'id', ['prettyName' => 'Id']);
 
 		self::$Table->addFieldInt( 'id', [ 'prettyName' => 'Id',

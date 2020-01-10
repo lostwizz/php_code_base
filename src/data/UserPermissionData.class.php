@@ -100,7 +100,7 @@ class UserPermissionData {
 	 * @return void
 	 */
 	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'));
+		self::$Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'), ['className'=> __NAMESPACE__ .'\UserPermissionData']);
 		self::$Table->setPrimaryKey( 'Id', ['prettyName' => 'Id']);
 		self::$Table->addFieldInt( 'id' , [ 'prettyName' => 'Id',
 												'alignment' => 'right']);
