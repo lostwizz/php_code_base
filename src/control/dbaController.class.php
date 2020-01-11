@@ -81,44 +81,30 @@ class dbaController extends Controller {
 		$this->task = $task;
 	}
 
-	public function one( $parent=null) {
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @return type
+	 */
+	public function SimpleEditUserInfoData( $parent=null) {
 
-//dump::dump(	AuthenticateController::isAuthenticated());
-//dump::dumpLong( $this);
-
-//dump::dumpLong($_SESSION);
-
-
-	//	$ste = new SimpleTableEditor( 'php_base\data\UserInfoData');
-	//	$DataUserInfo = new \php_base\data\UserInfoData();
-
-//		dump::dumpLong( $DataUserInfo);
-	//	$y = \php_base\data\UserInfoData::$Table;
-	//	dump::dumpLong( $y);
 
 		$x = \php_base\data\UserInfoData::$Table ;
-	//	dump::dumpLong($x);
 
-		//$action =
-		$editorSession = new SimpleTableEditor($x, 'DBA', 'one',$this->action, $this->payload);
+		$editorSession = new SimpleTableEditor($x, 'DBA', 'xSimpleEditUserInfoData',$this->action, $this->payload);
 		$result = $editorSession->runTableDisplayAndEdit( true );
-//
-//
-
-/*
-
-
-
-
-
-		return $result;
-
-
-*/
 
 		return Response::NoError();
 	}
 
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @return type
+	 */
 	public function two( $parent=null) {
 
 		echo 'at dba two ';
@@ -126,11 +112,19 @@ class dbaController extends Controller {
 		return Response::NoError();
 	}
 
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $parent
+	 * @return type
+	 */
 	public function three( $parent=null) {
 
 		echo 'at dba three ';
 
-$fldName = 'xxxxxxxxxx';
+//$fldName = 'xxxxxxxxxx';
 
 		$x =   HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_icon.png', 'xx', ['width'=>18] );
 		dump::dump($x);

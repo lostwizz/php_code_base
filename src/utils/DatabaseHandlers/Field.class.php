@@ -280,12 +280,14 @@ Class Field {
 						break;
 				}
 			} else {
-				return $value;
+				$r = HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+				return $r;
 			}
 			return $r;
 		} else {
 			//TODO - setup hidden for those not editable
-			return '';
+			$r = HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+			return $r;
 		}
 	}
 
