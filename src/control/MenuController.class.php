@@ -62,7 +62,7 @@ class MenuController extends Controller {
 	 * @param string $passedAction
 	 * @param type $passedPayload
 	 */
-	public function __construct(string $passedAction = '', $passedPayload = null) {
+	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null) {
 
 		if (Settings::GetPublic('IS_DETAILED_MENU_DEBUGGING')) {
 			Settings::setRunTime('MENU_DEBUGGING', Settings::GetRunTimeObject('MessageLog'));
@@ -71,6 +71,9 @@ class MenuController extends Controller {
 		$this->model = new \php_base\model\MenuModel($this);
 		$this->data = new \php_base\data\MenuData($this);
 		$this->view = new \php_base\view\MenuView($this);
+
+		$this->process = $passedProcess;
+		$this->task = $passedTask;
 
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
@@ -86,15 +89,15 @@ class MenuController extends Controller {
 		return self::VERSION;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask($process, $task) {
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask($process, $task) {
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

@@ -58,7 +58,7 @@ abstract class Controller {
 	/** -----------------------------------------------------------------------------------------------
 	 * basic form of the constructor
 	 */
-	abstract public function __construct(string $passedAction = '', $passedPayload = null);
+	abstract public function __construct( string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null);
 
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a version number

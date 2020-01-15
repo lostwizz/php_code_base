@@ -88,13 +88,15 @@ Class UserRoleAndPermissionsController {
 	 * @param type $action
 	 * @param type $payload
 	 */
-	public function __construct($action = '', $payload = null) {
+	public function __construct(string $process, string $task, string$action = '', $payload = null) {
 		$u = Settings::GetRunTime('Currently Logged In User');
 		if (!empty($u)) {
 
 			$this->model = new \php_base\model\UserRoleAndPermissionsModel($this);
 			$this->view = new \php_base\view\UserRoleAndPermissionsView($this);
 
+			$this->process = $process;
+			$this->task = $task;
 			$this->action = $action;
 			$this->payload = $payload;
 		}
@@ -113,15 +115,15 @@ Class UserRoleAndPermissionsController {
 		return self::VERSION;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask($process, $task) {
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask($process, $task) {
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

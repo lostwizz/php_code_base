@@ -46,7 +46,9 @@ class dbaController extends Controller {
 	/** -----------------------------------------------------------------------------------------------
 	 * basic form of the constructor
 	 */
-	public function __construct(string $passedAction = '', $passedPayload = null){
+	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null){
+		$this->process = $passedProcess;
+		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
 	}
@@ -70,16 +72,16 @@ class dbaController extends Controller {
 		return Response::NoError() ;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *  setup the process and task names so that it can be used for Permission queries
-	 *
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask($process =null, $task=null) {
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/** -----------------------------------------------------------------------------------------------
+//	 *  setup the process and task names so that it can be used for Permission queries
+//	 *
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask($process =null, $task=null) {
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -88,10 +90,14 @@ class dbaController extends Controller {
 	 */
 	public function SimpleEditUserInfoData( $parent=null) {
 
+dump::dumpClasses();
 
 		$x = \php_base\data\UserInfoData::$Table ;
 
-		$editorSession = new SimpleTableEditor($x, 'DBA', 'xSimpleEditUserInfoData',$this->action, $this->payload);
+dump::dump($Table);
+
+//		$editorSession = new SimpleTableEditor($x, 'DBA', 'SimpleEditUserInfoData',$this->action, $this->payload);
+		$editorSession = new SimpleTableEditor($x, 'DBA', basename(__FUNCTION__) ,$this->action, $this->payload);
 		$result = $editorSession->runTableDisplayAndEdit( true );
 
 		return Response::NoError();

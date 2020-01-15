@@ -31,13 +31,12 @@
 
 namespace php_base;
 
+use \php_base\Utils\DebugHandler as DebugHandler;
+use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Utils as Utils;
-
-use \php_base\Utils\Response as Response;
-
-use \php_base\Utils\Dump\Dump as Dump;
-use \php_base\Utils\DebugHandler as DebugHandler;
+use \php_base\Utils\Cache as CACHE;
 
 //use \php_base\utils\MessageLog as MessageLog;
 //use \php_base\utils\AMessage as AMessage;
@@ -68,6 +67,12 @@ class Dispatcher {
 
 	//protected $payloads = array();
 
+	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
@@ -80,6 +85,16 @@ class Dispatcher {
 		$this->PREqueue = new \SplQueue();
 		$this->POSTqueue = new \SplQueue();
 		$this->DISPATCHqueue = new \SplQueue();
+
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * gives a version number
+	 * @static
+	 * @return type
+	 */
+	public static function Version() {
+		return self::VERSION;
 	}
 
 
@@ -101,13 +116,8 @@ class Dispatcher {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	/** -----------------------------------------------------------------------------------------------
-
-	//-----------------------------------------------------------------------------------------------
-	// abort if anything returns FALSE
-
-	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * abort if anything returns FALSE
 	 * @since 0.0.2
 
 	 * @param type $parentResolver
@@ -278,12 +288,12 @@ class Dispatcher {
 		try {
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
-			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-				Settings::GetRunTimeObject('MessageLog')->addCritical( 'dispatcher do execute - new ' . $class . '->'  . $task . ' action=' . $action . ' payload='  . $passedPayload);
+			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')) {
+				Settings::GetRunTimeObject('MessageLog')->addCritical('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
 			}
-			$instance = new $class($action, $payload); //instanciate the process  and pass it the payload
+			$instance = new $class($process, $task, $action, $payload); //instanciate the process  and pass it the payload
 
-			$instance->setProcessAndTask($process, $task); // sets the called class up with the Process
+			//$instance->setProcessAndTask($process, $task); // sets the called class up with the Process
 
 			// now calls basically the task with this so it can look up the class and task
 			$r = $instance->$task($this);  //run the process's method
@@ -365,7 +375,7 @@ class Dispatcher {
 	 *
 	 * @since 0.0.2
 	 *
-	 * @see Dispatcher Class
+	 * @see \php_base\Dispatcher Class
 	 *
 	 * @param mixed $payload - the payload part of the PTAP in a string form
 	 * @return the unstringified version of the parameter

@@ -63,11 +63,14 @@ class HeaderController extends Controller {
 	 * @param type $action
 	 * @param type $payload
 	 */
-	public function __construct($action='', $payload = null) {
+	public function __construct(string $process, string $task, string $action='', $payload = null) {
 		//$this->model = new \php_base\model\HeaderModel($this);
 		//$this->data = new \php_base\data\HeaderData($this);
 		$this->view = new \php_base\view\HeaderView($this);
 
+		$this->process = $process;
+		$this->task = $task;
+		$this->action= $action;
 		$this->payload = $payload;
 	}
 
@@ -80,15 +83,15 @@ class HeaderController extends Controller {
 		return self::VERSION;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *  set the process and task
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask( $process, $task){
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/** -----------------------------------------------------------------------------------------------
+//	 *  set the process and task
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask( $process, $task){
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 
 

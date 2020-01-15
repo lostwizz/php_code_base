@@ -65,9 +65,12 @@ class FooterController extends Controller {
 	 * @param type $action
 	 * @param type $payload
 	 */
-	public function __construct($action='', $payload = null) {
+	public function __construct(string $process, string $task, string $action='', $payload = null) {
 		$this->view = new \php_base\view\FooterView($this);
 
+		$this->process = $process;
+		$this->task = $task;
+		$this->action= $action;
 		$this->payload = $payload;
 	}
 
@@ -80,15 +83,15 @@ class FooterController extends Controller {
 		return self::VERSION;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 * set the process and task (not really used in this class -but it is needed for consistency of the Controllers
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask( $process, $task){
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/** -----------------------------------------------------------------------------------------------
+//	 * set the process and task (not really used in this class -but it is needed for consistency of the Controllers
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask( $process, $task){
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 
 	/** -----------------------------------------------------------------------------------------------

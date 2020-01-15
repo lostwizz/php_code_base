@@ -66,19 +66,10 @@ Abstract class Cache {
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return false;
 		}
-		if (defined("IS_PHPUNIT_TESTING")) {
-			$now = 1575920000;
-		} else {
-			$now = (new \DateTime('now'))->getTimestamp();
-		}
-		$timeoutStamp = $now + $secondToTimeout;
-		$value = array('Data' => $data,
-			'Expires' => $timeoutStamp
-		);
-		$_SESSION['CACHE'][$itemName] = $value;
-		if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('Cache added: ' . $itemName );
-		}
+		$_SESSION['CACHE'][$itemName]['Data'] = $data;
+
+		self::changeExpires($itemName, $secondToTimeout);
+		
 		return true;
 	}
 
@@ -93,21 +84,10 @@ Abstract class Cache {
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return false;
 		}
-		if (defined("IS_PHPUNIT_TESTING")) {
-			$now = 1575940000;
-		} else {
-			$now = (new \DateTime('now'))->getTimestamp();
-		}
-		$timeoutStamp = $now + $secondToTimeout;
 
-		if ( self::hasExpired( $itemName)) {
-			return false;             /* expired before you got here */
-		}
 		$_SESSION['CACHE'][$itemName]['Data'] = $data;
-		$_SESSION['CACHE'][$itemName]['Expires'] = $timeoutStamp;
-		if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('Cache addOrUpdate: ' . $itemName );
-		}
+
+		self::changeExpires($itemName, $secondToTimeout);
 
 		return true;
 	}
@@ -126,7 +106,6 @@ Abstract class Cache {
 			return null;
 		}
 
-
 		if (defined("IS_PHPUNIT_TESTING")) {
 			$now = 1575920000;
 		} else {
@@ -136,21 +115,44 @@ Abstract class Cache {
 		if ( self::hasExpired( $itemName)) {
 			return false;
 		} else {
-			if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+			if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
 				Settings::GetRunTimeObject('MessageLog')->addNotice('Cache pull: ' . $itemName );
 			}
-
 			return $_SESSION['CACHE'][$itemName]['Data'];
 		}
 	}
+//
+	/** -----------------------------------------------------------------------------------------------
+	 *   increment a counter   (or if incrementValue is negative then decrement
+	 *     - and update the timeout so you dont have to that as an separate step
+	 * @param string $itemName
+	 * @param int $incrementValue
+	 * @return int|null
+	 */
+	public static function increment( string $itemName, int $incrementValue =1 , int $secondsFromNow = self::DEFAULTTIMEOUTSECONDS): ?int {
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return null;
+		}
+		if ( ! self::exists($itemName)){
+			return null;
+		}
+		$i = $_SESSION['CACHE'][$itemName]['Data'];
+		$i = $i + $incrementValue;
+		$_SESSION['CACHE'][$itemName]['Data'] = $i;
 
+		if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('increment: ' . $itemName  . ' i=' . $i);
+		}
+		self::changeExpires($itemName, $secondsFromNow);
+		return $i;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param int $secondsFromNow
 	 * @return bool
 	 */
-	public static function changeExpires(string $itemName, int $secondsFromNow = DEFAULTTIMEOUTSECONDS): bool{
+	public static function changeExpires(string $itemName, int $secondsFromNow = self::DEFAULTTIMEOUTSECONDS): bool{
 		if (!Settings::GetPublic('CACHE_IS_ON')) {
 			return false;
 		}
@@ -177,10 +179,13 @@ Abstract class Cache {
 		if ( self::hasExpired( $itemName)) {
 			return false;
 		}
-		if (empty( $_SESSION['CACHE'][$itemName]) ){
+		if (empty( $_SESSION['CACHE'][$itemName])){
 			return false;
 		}
-		if ( !empty( $_SESSION['CACHE'][$itemName]['Data'] ) and !empty(  $_SESSION['CACHE'][$itemName]['Expires'])){
+
+		if (( !empty( $_SESSION['CACHE'][$itemName]['Data'] ) or $_SESSION['CACHE'][$itemName]['Data'] ==0 )
+			and !empty(  $_SESSION['CACHE'][$itemName]['Expires'])
+		 	){
 			return true;
 		}
 		return false;
@@ -227,7 +232,7 @@ Abstract class Cache {
 		}
 
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
-			if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+			if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
 				Settings::GetRunTimeObject('MessageLog')->addNotice('Cache deleted' . ($fromExpired ? 'Expired':'') .': ' . $itemName );
 			}
 
@@ -303,7 +308,7 @@ Abstract class Cache {
 		if ( !empty( $_SESSION) and !empty($_SESSION['CACHE'] )) {
 			foreach ($_SESSION['CACHE'] as $itemName => $value) {
 				if ( !self::doesSerializeWorkOnThisObject($value['Data'])){
-					if (Settings::GetPublic('IS_DETAILED_	CACHE_DEBUGGING')) {
+					if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
 						Settings::GetRunTimeObject('MessageLog')->addNotice('Cache Cleanup : ' . $itemName );
 					}
 					unset ( $_SESSION['CACHE'][$itemName]);

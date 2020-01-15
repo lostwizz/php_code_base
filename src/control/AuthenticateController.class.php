@@ -69,11 +69,13 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @param string $passedAction
 	 * @param type $passedPayload
 	 */
-	public function __construct(string $passedAction = '', $passedPayload = null) {
+	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null) {
 		$this->model = new \php_base\model\AuthenticateModel($this);
 		//$this->data = new \php_base\data\AuthenticateData($this);
 		$this->view = new \php_base\view\AuthenticateView($this);
 
+		$this->process = $passedProcess;
+		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
 	}
@@ -87,15 +89,15 @@ class AuthenticateController extends \php_base\Control\Controller {
 		return self::VERSION;
 	}
 
-	/**  -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask($process, $task): void {
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/**  -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask($process, $task): void {
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 	/**  -----------------------------------------------------------------------------------------------
 	 *

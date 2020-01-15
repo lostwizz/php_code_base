@@ -12,6 +12,7 @@ use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
 use \php_base\Resolver;
 use \php_base\utils\Response as Response;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Utils;
 
@@ -57,12 +58,21 @@ class SimpleTableEditor {
 
 		$this->handleVarsPassedToSimpleTableEditor();
 
+dump::dumpLong($this);
+
+		Settings::GetRunTimeObject('MessageLog')->addTODO('pta ='. $this->process. '.' . $this->task. '.' . $this->action);
+
 		$this->table->process = $this->process;
+
 		$this->table->task = $this->task;
+
 		$this->table->action = $this->action;
+		
 		$this->table->payload = $this->payload;
 
-		$method = 'do' . $this->action;
+		$method = 'do' . str_replace (' ', '_',$this->action);
+		Settings::GetRunTimeObject('MessageLog')->addTODO('method ='. $method);
+
 		if ( method_exists($this, $method)) {
 			$r = $this->$method();
 			return $r;
@@ -129,16 +139,24 @@ class SimpleTableEditor {
 		}
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @return Response
-	 */
 	protected function doEditRow() : Response {
 		echo 'At Edit<BR>';
 		$this->table->editRowOfTable();
 		return Response::NoError();
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	protected function doSave_Edit() : Response {
+		echo 'At Save Edit<BR>';
+		//$this->table->editRowOfTable();
+
+		Settings::GetRunTimeObject('MessageLog')->addTODO('save the edit');
+		return Response::NoError();
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

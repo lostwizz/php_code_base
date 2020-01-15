@@ -333,7 +333,8 @@ class Resolver {
 			$payload[self::REQUEST_ACTION] = $postVars[self::REQUEST_ACTION ];
 		}
 
-		$sPayload = \serialize( $payload);
+		$newPayload = str_replace( '.', '~!~', $payload);
+		$sPayload = \serialize( $newPayload);
 //		Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
