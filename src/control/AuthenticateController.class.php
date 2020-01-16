@@ -34,13 +34,14 @@
 
 namespace php_base\Control;
 
-use \php_base\data\UserInfoData as UserInfoData;
 use \php_base\Model\AuthenticateModel;
+use \php_base\View\AuthenticateView;
+use \php_base\data\UserInfoData as UserInfoData;
+
 use \php_base\Resolver;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
-use \php_base\View\AuthenticateView;
 
 
 /** * **********************************************************************************************
@@ -70,14 +71,22 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @param type $passedPayload
 	 */
 	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null) {
+
+		if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING' ) != false) {
+			Settings::SetRuntime ('AUTHENTICATION_DEBUGGING' , Settings::GetRunTimeObject('MessageLog') );
+		}
+
 		$this->model = new \php_base\model\AuthenticateModel($this);
-		//$this->data = new \php_base\data\AuthenticateData($this);
+		$this->data = new \php_base\data\UserInfoData($this);
 		$this->view = new \php_base\view\AuthenticateView($this);
 
 		$this->process = $passedProcess;
 		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController construct' .$this->process. '.' .$this->task .  '.' .$this->action);
+
+//
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -124,10 +133,12 @@ class AuthenticateController extends \php_base\Control\Controller {
 		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
 		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check:'.$username . $password );
+
 		if (empty($this->payload[Resolver::REQUEST_ACTION])) {
 			$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
 		}
-
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check2' . $this->payload[Resolver::REQUEST_ACTION]);
 		// not yet logged on
 		//    yes we could just change the spaces to underscores - but this i think is easier to read
 		switch ($this->payload[Resolver::REQUEST_ACTION]) {
@@ -188,18 +199,26 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	protected function Submit_Logon($parent, $username = null, $password = null): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon:'. $username);
 
-		$this->UserInfoData = new \php_base\data\UserInfoData($username);
+		$this->UserInfoData = new UserInfoData($this, $username);
 
 		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon1:'. $username);
 			$r = $this->model->tryToLogin($username, $password, $this->UserInfoData);
 		} else {
 			$r = new Response('Username does not exist', -10);
 		}
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon2:'. $username);
+
+
 		if ($r->hadError()) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('User could not be Logged onto the application');
 			$this->Need_login($parent, null,null);
+		} else {
+			Settings::SetRuntime ('isAuthenticated', true );
 		}
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon3:'. $username);
 
 		return $r;
 	}
@@ -345,8 +364,10 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 *
 	 * @return type
 	 */
-	public static function isAuthenticated(){
-		return AuthenticateModel::isGoodAuthentication();
+	public  function isAuthenticated(){
+		$r = $this->model->isGoodAuthentication();
+		Settings::SetRuntime ('isAuthenticated', $r );
+		return $r;
 	}
 
 }

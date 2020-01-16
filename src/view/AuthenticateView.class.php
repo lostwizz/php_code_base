@@ -49,7 +49,7 @@ use \php_base\Utils\Dump\Dump as Dump;
  */
 class AuthenticateView extends View {
 
-	public $parent = null;
+	public $controller = null;
 
 	/**
 	 * @var version number
@@ -59,10 +59,10 @@ class AuthenticateView extends View {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - the parent has the data
-	 * @param type $parentObj
+	 * @param type $controller
 	 */
-	public function __construct($parentObj) {
-		$this->parent = $parentObj;
+	public function __construct($controller) {
+		$this->controller = $controller;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

@@ -597,4 +597,11 @@ class Table {
 	}
 
 
+	/** -----------------------------------------------------------------------------------------------*/
+	public function saveRow(array $data) :bool {
+dump::dumpLong( $data);
+		$this->tableName::doUpdateRecord($data);
+		return true;
+	}
+
 }

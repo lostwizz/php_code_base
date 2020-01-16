@@ -40,10 +40,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
-
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
-
 
 ////SELECT TOP (1000) [id]
 ////      ,[roleId]
@@ -67,22 +65,19 @@ use \php_base\Utils\DatabaseHandlers\Field as Field;
 class UserPermissionData {
 
 	public $permissionList;
-
-	public static $Table;
-
+	public $Table;
 
 	/**
 	 * @var version number
 	 */
 	private const VERSION = '0.3.0';
 
-
 	/** -----------------------------------------------------------------------------------------------
 	 *  basic constructor that initiates the reading from the database
 	 * @param type $listOfRoleIDs
 	 */
 	public function __construct($listOfRoleIDs) {
-		self::defineTable();
+		$this->defineTable();
 		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
 	}
 
@@ -99,30 +94,30 @@ class UserPermissionData {
 	 *
 	 * @return void
 	 */
-	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'), ['className'=> __NAMESPACE__ .'\UserPermissionData']);
-		self::$Table->setPrimaryKey( 'Id', ['prettyName' => 'Id']);
-		self::$Table->addFieldInt( 'id' , [ 'prettyName' => 'Id',
-												'alignment' => 'right']);
-		self::$Table->addFieldInt( 'roleid' , [ 'prettyName' => 'Role Id',
-												'alignment' => 'right']);
-		self::$Table->addFieldText( 'process', ['prettyName' => 'Process']);
-		self::$Table->addFieldText( 'task', ['prettyName' => 'Task']);
-		self::$Table->addFieldText( 'action', ['prettyName' => 'Action']);
-		self::$Table->addFieldText( 'field', ['prettyName' => 'Field']);
-		self::$Table->addFieldText( 'permission', ['prettyName' => 'Permission']);
+	public function defineTable(): void {
+		$this->Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'), ['className' => __NAMESPACE__ . '\UserPermissionData']);
+		$this->Table->setPrimaryKey('Id', ['prettyName' => 'Id']);
+		$this->Table->addFieldInt('id', ['prettyName' => 'Id',
+			'alignment' => 'right']);
+		$this->Table->addFieldInt('roleid', ['prettyName' => 'Role Id',
+			'alignment' => 'right']);
+		$this->Table->addFieldText('process', ['prettyName' => 'Process']);
+		$this->Table->addFieldText('task', ['prettyName' => 'Task']);
+		$this->Table->addFieldText('action', ['prettyName' => 'Action']);
+		$this->Table->addFieldText('field', ['prettyName' => 'Field']);
+		$this->Table->addFieldText('permission', ['prettyName' => 'Permission']);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $listOfRolesIDs
 	 */
-	protected  function doReadFromDatabaseForRoles( array $listOfRolesIDs) {
-		if (empty( $listOfRolesIDs)){
+	protected function doReadFromDatabaseForRoles(array $listOfRolesIDs) {
+		if (empty($listOfRolesIDs)) {
 			return;
 		}
 		$ids = implode(', ', $listOfRolesIDs);
-			$sql = 'SELECT id
+		$sql = 'SELECT id
 						,roleId
 						,UPPER(process) as process
 						,UPPER(task) as task
@@ -130,14 +125,14 @@ class UserPermissionData {
 						,UPPER(field) as field
 						,Permission
 					FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
-					. ' WHERE  RoleId in ('
-					. $ids
-					. ')';
+				. ' WHERE  RoleId in ('
+				. $ids
+				. ')';
 
-			//$paramas = array();
-			$data = DBUtils::doDBSelectMulti($sql);
+		//$paramas = array();
+		$data = DBUtils::doDBSelectMulti($sql);
 
-			$this->permissionList = $data;
+		$this->permissionList = $data;
 //dump::dump($sql)	;
 //dump::dump($data);
 	}
@@ -152,21 +147,20 @@ class UserPermissionData {
 	 * @param \php_base\data\Permission $permission
 	 * @return int
 	 */
-	public static function doAddNewPermission( int $roleID, string $process, string $task, string $action, string $field, Permission $permission): int {
+	public function doAddNewPermission(int $roleID, string $process, string $task, string $action, string $field, Permission $permission): int {
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_PermissionsManager')
 				. '( roleid, process, task, action, field, permission )'
 				. ' VALUES '
 				. '( :roleid, :process, :task, :action, :field, :permission )'
-				;
-		$params  = array(  ':roleid' =>  [ 'val' =>  $roleID   ,'type'=> \PDO::PARAM_INT],
-			':process' =>  [ 'val' =>  strtoupper($process)     ,'type'=> \PDO::PARAM_STR],
-			':task' =>  [ 'val' =>  strtoupper($task)     ,'type'=> \PDO::PARAM_str],
-			':action' =>  [ 'val' =>  strtoupper($action)     ,'type'=> \PDO::PARAM_STR],
-			':field' =>  [ 'val' =>   strtoupper($field)    ,'type'=> \PDO::PARAM_STR],
-			':permission' =>  [ 'val' =>  $permission     ,'type'=> \PDO::PARAM_STR],
-
-			);
-		$data = DBUtils::doDBInsertReturnID( $sql, $params);
+		;
+		$params = array(':roleid' => ['val' => $roleID, 'type' => \PDO::PARAM_INT],
+			':process' => ['val' => strtoupper($process), 'type' => \PDO::PARAM_STR],
+			':task' => ['val' => strtoupper($task), 'type' => \PDO::PARAM_str],
+			':action' => ['val' => strtoupper($action), 'type' => \PDO::PARAM_STR],
+			':field' => ['val' => strtoupper($field), 'type' => \PDO::PARAM_STR],
+			':permission' => ['val' => $permission, 'type' => \PDO::PARAM_STR],
+		);
+		$data = DBUtils::doDBInsertReturnID($sql, $params);
 		return $data;
 	}
 
@@ -175,11 +169,11 @@ class UserPermissionData {
 	 * @param int $id
 	 * @return bool
 	 */
-	public static function doDeletePermissionByID(int $id): bool {
+	public function doDeletePermissionByID(int $id): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
 				. ' WHERE id = :id'
-			;
-		$params = array( ':id' => ['val' => $id, 'type'=> \PDO::PARAM_INT]);
+		;
+		$params = array(':id' => ['val' => $id, 'type' => \PDO::PARAM_INT]);
 		$data = DBUtils::doDBDelete($sql, $params);
 		return ($data == 1);
 	}
@@ -189,12 +183,12 @@ class UserPermissionData {
 	 * @param int $roleid
 	 * @return bool
 	 */
-	public static function doDeletePermissionByRoleID( int $roleid ) :bool {
+	public function doDeletePermissionByRoleID(int $roleid): bool {
 
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
 				. 'WHERE roleid = :roleid'
-				;
-		$params = array( ':roleid' => ['val' => $roleid, 'type'=> \PDO::PARAM_INT]);
+		;
+		$params = array(':roleid' => ['val' => $roleid, 'type' => \PDO::PARAM_INT]);
 		$data = DBUtils::doDBDelete($sql, $params);
 		return ($data >= 1);
 	}

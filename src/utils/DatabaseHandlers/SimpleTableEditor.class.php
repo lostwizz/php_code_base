@@ -39,7 +39,7 @@ class SimpleTableEditor {
 	 * @param string $action
 	 * @param array $payload
 	 */
-	public function __construct( $dataTable, string $process='', string $task= '',string $action ='', ?array $payload = null) {
+	public function __construct( $dataTable, string $process='', string $task='', string $action ='', ?array $payload = null) {
 //dump::dumpLong( $dataTable);
 		$this->table = $dataTable;
 
@@ -47,6 +47,7 @@ class SimpleTableEditor {
 		$this->task = $task;
 		$this->action = $action;
 		$this->payload = $payload;
+		$this->runTableDisplayAndEdit(true);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -58,17 +59,20 @@ class SimpleTableEditor {
 
 		$this->handleVarsPassedToSimpleTableEditor();
 
-dump::dumpLong($this);
+//dump::dumpLong($this);
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('pta ='. $this->process. '.' . $this->task. '.' . $this->action);
+
 
 		$this->table->process = $this->process;
 
 		$this->table->task = $this->task;
 
 		$this->table->action = $this->action;
-		
+
 		$this->table->payload = $this->payload;
+
+
 
 		$method = 'do' . str_replace (' ', '_',$this->action);
 		Settings::GetRunTimeObject('MessageLog')->addTODO('method ='. $method);
@@ -106,6 +110,7 @@ dump::dumpLong($this);
 
 		$this->process = ( ! empty($this->process) ? $this->process : 'SimpleTableEditor');
 		$this->task    = ( ! empty($this->task) ? $this->task : '');
+
 
 		if (!empty($this->payload)) {
 			foreach ($this->payload as $key => $value) {
@@ -151,11 +156,17 @@ dump::dumpLong($this);
 	 * @return Response
 	 */
 	protected function doSave_Edit() : Response {
-		echo 'At Save Edit<BR>';
+		//echo 'At Save Edit<BR>';
 		//$this->table->editRowOfTable();
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('save the edit');
-		return Response::NoError();
+
+		$r = $this->table->saveRow( $this->payload);
+		if ( $r) {
+			return Response::NoError();
+		} else {
+			return Response::GenericError();
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------

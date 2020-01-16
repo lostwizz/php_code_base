@@ -30,7 +30,7 @@
  *
  * @todo Description
  *
- *		$now = date('d-M-Y g:i:s');
+ * 		$now = date('d-M-Y g:i:s');
  * 		$dt = new \DateTime( $now);
  *  	dump::dump($dt);
  *
@@ -45,7 +45,6 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Cache as CACHE;
-
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
 
@@ -55,8 +54,7 @@ use \php_base\Utils\DatabaseHandlers\Field as Field;
 class UserInfoData extends data {
 
 	public $UserInfo;
-
-	public static $Table;
+	public $Table;
 
 	/**
 	 * @var version number
@@ -67,10 +65,12 @@ class UserInfoData extends data {
 	 *  constructor - initiate the read from the database
 	 * @param type $username
 	 */
-	public function __construct($username = null) {
-		self::defineTable();
+	public function __construct($contoller, $username = null) {
+
+		$this->defineTable();
 		if (!empty($username)) {
-			self::doReadFromDatabaseByUserNameAndApp($username);
+dump::dump($username);
+			$this->doReadFromDatabaseByUserNameAndApp($username);
 		}
 	}
 
@@ -87,56 +87,87 @@ class UserInfoData extends data {
 	 *
 	 * @return void
 	 */
-	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_UserManager'), ['className'=> __NAMESPACE__ .'\UserInfoData', 'isAdding'=>true, 'isEditing'=>true,'isDeleting'=>true, 'isSpecial'=>true]);
+	public function defineTable(): void {
 
-		self::$Table->setPrimaryKey( 'UserId', ['prettyName' => 'User Id', 'isEditable'=> false]);
+		$this->Table = new Table(Settings::GetProtected('DB_Table_UserManager'),
+				['className' => __NAMESPACE__ . '\UserInfoData',
+			'isAdding' => true,
+			'isEditing' => true,
+			'isDeleting' => true,
+			'isSpecial' => true
+		]);
 
-		self::$Table->addFieldInt( 'UserId' , [ 'prettyName' => 'User Id',
-												'alignment' => 'right',
-												'isEditable'=> false
-			]);
-		self::$Table->addFieldText( 'app', ['prettyName'=> 'App',
-											'isPassword'=> false,
-											'size'=> 50,
-											'maxlength' =>50,
-											'subType' => Field::SUBTYPE_SELECTLIST,
-											'selectFrom' => 'giveSelectOnApp'
-			]);
-		self::$Table->addFieldText( 'method', ['prettyName' => 'Authentication Method',
-												'size'=>10,
-												'maxlength' => 10,
-												'subType' => Field::SUBTYPE_SELECTLIST,
-												'selectFrom' => 'giveSelectOnMethod'   //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
-			]);
-		self::$Table->addFieldText( 'username', [
-						 //'subType' =>  Field::SUBTYPE_TEXTAREA,
-						 'prettyName' => 'User Name',
-						 'isShowable' => true,
-						 'isEditable' => true,
-						 'size' => 35,
-						 'height' => true,
-			]);
-		self::$Table->addFieldText( 'password', ['prettyName' => 'Password', 'isEditable'=> false,'size'=> 80]);
-		self::$Table->addFieldText( 'PrimaryRoleName', ['prettyName' => 'Primary Role']);
+		$this->Table->setPrimaryKey('UserId',
+				['prettyName' => 'User Id',
+					'isEditable' => false
+		]);
 
-		self::$Table->addFieldText( 'ip', ['prettyName' => 'IP Address', 'isShowable'=> false, 'isEditable'=> false]);
+		$this->Table->addFieldInt('UserId',
+				['prettyName' => 'User Id',
+					'alignment' => 'right',
+					'isEditable' => false
+		]);
 
-		self::$Table->addFieldDateTime( 'last_logon_time', ['prettyName' => 'Time/Date of Last Login', 'isEditable'=> false]);
+		$this->Table->addFieldText('app',
+				['prettyName' => 'App',
+					'isPassword' => false,
+					'size' => 50,
+					'maxlength' => 50,
+					'subType' => Field::SUBTYPE_SELECTLIST,
+					'selectFrom' => 'giveSelectOnApp'
+		]);
+		$this->Table->addFieldText('method',
+				['prettyName' => 'Authentication Method',
+					'size' => 10,
+					'maxlength' => 10,
+					'subType' => Field::SUBTYPE_SELECTLIST,
+					'selectFrom' => 'giveSelectOnMethod' //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
+		]);
+		$this->Table->addFieldText('username',
+				[
+					//'subType' =>  Field::SUBTYPE_TEXTAREA,
+					'prettyName' => 'User Name',
+					'isShowable' => true,
+					'isEditable' => true,
+					'size' => 35,
+					'height' => true
+		]);
+		$this->Table->addFieldText('PrimaryRoleName',
+				['prettyName' => 'Primary Role'
+		]);
 
+		$this->Table->addFieldText('password',
+				['prettyName' => 'Password',
+					'isEditable' => false,
+					'size' => 80,
+					'isShowable' => false
+		]);
 
+		$this->Table->addFieldText('ip',
+				['prettyName' => 'IP Address',
+					'isShowable' => true,
+					'isEditable' => false
+		]);
+
+		$this->Table->addFieldDateTime('last_logon_time',
+				['prettyName' => 'Time/Date of Last Login',
+					'isEditable' => false,
+					'isShowable' => true
+		]);
 	}
+
+
 
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  give the user id (assuming the database has be read
 	 * @return int
 	 */
-	public function getUserID(): int {
+	public function getUserID(): ?int {
 		if (!empty($this->UserInfo) and ! empty($this->UserInfo['USERID'])) {
 			return $this->UserInfo['USERID'];
 		} else {
-			return false;
+			return null;
 		}
 	}
 
@@ -164,7 +195,7 @@ class UserInfoData extends data {
 		$sql = 'SELECT * '
 				. ' FROM ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' WHERE username = :uname AND  app = :app ;'
-				;
+		;
 
 		$app = Settings::GetPublic('App Name');
 		$username = strtolower($username);
@@ -176,7 +207,7 @@ class UserInfoData extends data {
 		$data = DBUtils::doDBSelectSingle($sql, $params);
 		$this->UserInfo = $data;
 
-		if ($data ==false){
+		if ($data == false) {
 			//Settings::GetRunTimeObject('MessageLog')->addNotice('user does not exist');
 			return false;
 		} else {
@@ -189,7 +220,7 @@ class UserInfoData extends data {
 	 *
 	 * @return array|null
 	 */
-	public static function giveSelectOnMethod(): ?array {
+	public function giveSelectOnMethod(): ?array {
 
 		if (CACHE::exists('Table_SelectOnMethod_' . Settings::GetProtected('DB_Table_UserManager'))) {
 			$data = CACHE::pull('Table_Select_' . Settings::GetProtected('DB_Table_UserManager'));
@@ -214,7 +245,7 @@ class UserInfoData extends data {
 	 *
 	 * @return array|null
 	 */
-	public static function giveSelectOnApp(): ?array {
+	public function giveSelectOnApp(): ?array {
 
 		if (CACHE::exists('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'))) {
 			$data = CACHE::pull('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'));
@@ -233,16 +264,14 @@ class UserInfoData extends data {
 			}
 		}
 		return $data;
-
 	}
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param int $userid
 	 * @param string $newPW
 	 */
-	public static function doUpdatePassword(int $userid, string $newPW): bool {
+	public function doUpdatePassword(int $userid, string $newPW): bool {
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET password = :password'
 				. ' WHERE userid = :userid'
@@ -263,7 +292,7 @@ class UserInfoData extends data {
 	 * @param string $newTime
 	 * @param string $newIP
 	 */
-	public static function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool {
+	public function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool {
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET ip = :ip'
 				. ' , last_logon_time = :last_logon'
@@ -278,7 +307,7 @@ class UserInfoData extends data {
 		);
 
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
-		return ($data ==1);
+		return ($data == 1);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -289,7 +318,7 @@ class UserInfoData extends data {
 	 * @param type $primaryRole
 	 * @return int
 	 */
-	public static function doInsertNewAccount($username, $password, $email, $primaryRole = null): int {
+	public function doInsertNewAccount($username, $password, $email, $primaryRole = null): int {
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' ( app, method, username, password, primaryRoleName)'
 				. ' VALUES '
@@ -315,17 +344,33 @@ class UserInfoData extends data {
 	 * @param string $username
 	 * @return bool
 	 */
-	public static function doDeleteAccountByUserNameAndApp(string $username): bool {
+	public function doDeleteAccountByUserNameAndApp(string $username): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' WHERE username = :username AND app = :app'
 		;
-		$app =  Settings::GetPublic('App Name');
+		$app = Settings::GetPublic('App Name');
 		$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR],
 			':username' => ['val' => $username, 'type' => \PDO::PARAM_STR]
 		);
 
 		$data = DBUtils::doDBDelete($sql, $params);
 		return ($data == 1);
+	}
+
+	public function doUpdateRecord($data): bool {
+		///////////$data = array_change_key_case($data, CASE_UPPER);
+		dump::dump($data);
+		echo 'password editable=', ($this->table->password->isEditable) ? 'y' : 'no';
+		/*
+		  $sql = 'UPDATE ' .  Settings::GetProtected('DB_Table_UserManager')
+		  . ' SET app = :app,'
+		  . ' method = :method,'
+		  . ' username = :username,'
+		  . ' PrimaryRoleName = :PrimaryRoleName,'
+		  . ($this->table->password->isEditable) ? ' password = :password,' : ''
+		  . ($this)' ip = :,'
+		  . ' last_logon_time = :last_logon_time,'
+		 */
 	}
 
 }

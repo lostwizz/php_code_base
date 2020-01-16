@@ -43,11 +43,8 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Cache as CACHE;
-
-
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
-
 
 /** * **********************************************************************************************
  * read and write the roles (by id) for the user
@@ -60,10 +57,7 @@ Class UserRoleData extends Data {
 	public $RoleIDData = []; // array with the keys begin the name and the values being the roleID #
 	//		- only needed this way because of the RolePermissions needing the the list of ids
 	public $RoleIDnames = []; // array with the keys being the roleID # and the values being the name
-
-		public static $Table;
-
-
+	public $Table;
 
 	/**
 	 * @var version number
@@ -75,10 +69,10 @@ Class UserRoleData extends Data {
 	 * @param type $ArrayOfNames
 	 */
 	public function __construct(?array $ArrayOfNames = null) {
-		self::defineTable();
+		$this->defineTable();
 
 		if (!empty($ArrayOfNames)) {
-			self::doReadFromDatabase($ArrayOfNames);
+			$this->doReadFromDatabase($ArrayOfNames);
 		}
 	}
 
@@ -91,17 +85,16 @@ Class UserRoleData extends Data {
 		return self::VERSION;
 	}
 
-
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @return void
 	 */
-	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_RoleManager'), ['className'=> __NAMESPACE__ .'\UserRoleData']);
-		self::$Table->setPrimaryKey( 'roleId', ['prettyName' => 'Role Id']);
-		self::$Table->addFieldInt( 'roleid' , [ 'prettyName' => 'Role Id',
-												'alignment' => 'right']);
-		self::$Table->addFieldText( 'name', ['prettyName' => 'Name']);
+	public function defineTable(): void {
+		$this->Table = new Table(Settings::GetProtected('DB_Table_RoleManager'), ['className' => __NAMESPACE__ . '\UserRoleData']);
+		$this->Table->setPrimaryKey('roleId', ['prettyName' => 'Role Id']);
+		$this->Table->addFieldInt('roleid', ['prettyName' => 'Role Id',
+			'alignment' => 'right']);
+		$this->Table->addFieldText('name', ['prettyName' => 'Name']);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -123,7 +116,7 @@ Class UserRoleData extends Data {
 	 * @param type $ArrayOfNames
 	 * @return bool
 	 */
-	protected  function doReadFromDatabase($ArrayOfNames): bool {
+	protected function doReadFromDatabase($ArrayOfNames): bool {
 		$names = "'" . implode("', '", $ArrayOfNames) . "'";
 		$sql = 'SELECT RoleId
 						,Name
@@ -145,7 +138,7 @@ Class UserRoleData extends Data {
 	 * @param string $roleName
 	 * @return int
 	 */
-	public static function doAddNewRole(string $roleName): int {
+	public function doAddNewRole(string $roleName): int {
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' { name)'
 				. ' VALUES '
@@ -162,7 +155,7 @@ Class UserRoleData extends Data {
 	 * @param string $roleName
 	 * @return bool
 	 */
-	public static function doRemoveRoleByName(string $roleName): bool {
+	public function doRemoveRoleByName(string $roleName): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE name = :name'
 		;
@@ -177,7 +170,7 @@ Class UserRoleData extends Data {
 	 * @param int $roleID
 	 * @return bool
 	 */
-	public static function doRemoveRoleByID(int $roleID): bool {
+	public function doRemoveRoleByID(int $roleID): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE roleid = :roleid'
 		;
@@ -192,7 +185,7 @@ Class UserRoleData extends Data {
 	 * @param string $roleName
 	 * @return int
 	 */
-	public static function getRoleIDByName(string $roleName): int {
+	public function getRoleIDByName(string $roleName): int {
 		$sql = 'SELECT roleid '
 				. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE roleid = :roleid'

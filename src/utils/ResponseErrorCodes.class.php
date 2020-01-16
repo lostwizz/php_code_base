@@ -38,6 +38,8 @@ abstract class ResponseErrorCodes {
 	const TODO = -999999;
 	const TestingError = -9999;
 
+	const PermissionsError = -9000;
+
 	/**
 	 * @var version number
 	 */
@@ -83,8 +85,10 @@ abstract class ResponseErrorCodes {
 		-21 => 'Missing email address for new account',
 		-22 => 'LDAP not loaded in PHP - cant login' ,
 		-23 => '',
+
+		-9000 => 'Permissions Error',
 		-9999 => 'testing error',
-		-999999 => 'DODO'
+		-999999 => 'TODO'
 	);
 
 	/** -----------------------------------------------------------------------------------------------

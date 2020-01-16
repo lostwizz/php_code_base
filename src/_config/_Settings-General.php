@@ -59,10 +59,10 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
 
 	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', false);
-	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', true);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', false);
 
-	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', true);
 
 
 
@@ -88,9 +88,9 @@ Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 
 
 
-Settings::SetPublic('CACHE_IS_ON', true);
+Settings::SetPublic('CACHE_IS_ON', false);
 Settings::SetPublic('CACHE Allow_Menu to be Cached', true);
-Settings::SetPublic('CACHE_Allow_Tables to be Cached', false);     //true
+Settings::SetPublic('CACHE_Allow_Tables to be Cached', true);     //true
 
 
 /**--------------------------------------------------------

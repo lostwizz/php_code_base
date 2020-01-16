@@ -27,15 +27,12 @@
  *
  *
  * put this at the beginning of your method for some debug info (put the false at the bottom of the method:
- *					Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', true);
+ * 					Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', true);
  *
  */
 //**********************************************************************************************
 
-
 namespace php_base\Data;
-
-
 
 use \php_base\Utils\Response as Response;
 
@@ -44,25 +41,20 @@ use \php_base\Utils\Response as Response;
  */
 class Data {
 
-	public $action;
-	public $payload;
+	public $controller;
+	public $Table;
 
 	/**
 	 * @var version number
 	 */
 	private const VERSION = '0.3.0';
 
-
 	/** -----------------------------------------------------------------------------------------------
-	 *  basic constructor for a data class
-	 *
-	 * @param type $action
-	 * @param type $payload
+	 * basic constructor - we track where the controller is because it has the links to the data and view classes
+	 * @param type $controller
 	 */
-	public function __construct($action ='', $payload = null){
-		self::defineTable();
-		$this->action = $action;
-		$this->payload = $payload;
+	public function __construct($controller) {
+		$this->controller = $controller;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -78,15 +70,16 @@ class Data {
 	 *
 	 * @return void
 	 */
-	public static function defineTable() : void {
-	}
+	public function defineTable(): void {
 
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  the default method used to doanyhing (unless a method is supplied )
 	 * @return Response
 	 */
-	public function doWork() : Response {
+	public function doWork(): Response {
 		return Response::GenericError();
 	}
+
 }

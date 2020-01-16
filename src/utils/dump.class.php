@@ -184,7 +184,7 @@ abstract class Dump {
 	 */
 	public static function setDefaultSettings(?array $configPreset) {
 		$defaults = array(
-			'FLAT_WINDOWS_LINES' => 5, //  big a output block can be before adding scrollbars
+			'FLAT_WINDOWS_LINES' => 7, //  big a output block can be before adding scrollbars
 			'PRE_CodeLines' => 0, // show the number of lines before the call
 			'POST_CodeLines' => 0, // show the number of lines after the call
 			'Show BackTrace Num Lines' => 0, // show the backtrace calls (how many lines in the history

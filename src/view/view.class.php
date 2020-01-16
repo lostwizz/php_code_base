@@ -51,7 +51,7 @@ class View {
 	 *
 	 * @param type $controller
 	 */
-	public function __construct($controller =null) {
+	public function __construct(  $controller =null) {
 		$this->controller = $controller;
 	}
 

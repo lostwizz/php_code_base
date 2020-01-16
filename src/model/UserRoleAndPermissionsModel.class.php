@@ -141,10 +141,8 @@ Class UserRoleAndPermissionsModel extends Model {
 	 *  constructor - basically keeps track of the controller
 	 * @param type $controller
 	 */
-	public function __construct($controller =null) {   //$action ='', $payload = null){
-		if (!empty($controller)) {
-			$this->controller = $controller;
-		}
+	public function __construct($controller) {   //$action ='', $payload = null){
+		$this->controller = $controller;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -180,8 +178,14 @@ Class UserRoleAndPermissionsModel extends Model {
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
 
-			//$this->view->dumpState(null, null, true);
-			//$this->view->dumpPermissions();
+			$ov = $this->controller->view;
+			//$ov->dumpState(null, null, true);
+
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addAlert(
+				$ov->dumpPermissions()
+					);
+
+
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
 		}
@@ -469,7 +473,9 @@ Class UserRoleAndPermissionsModel extends Model {
 
 	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
 		$userInfoData = new \php_base\data\UserInfoData();
-
+		if( empty($username)){
+			return false;
+		}
 		$exists  = $userInfoData->doReadFromDatabaseByUserNameAndApp($username);
 
 		if (! $exists) {

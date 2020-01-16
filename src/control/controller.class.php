@@ -79,15 +79,15 @@ abstract class Controller {
 		return Response::GenericError();
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *  setup the process and task names so that it can be used for Permission queries
-	 *
-	 * @param type $process
-	 * @param type $task
-	 */
-	public function setProcessAndTask($process, $task) {
-		$this->process = $process;
-		$this->task = $task;
-	}
+//	/** -----------------------------------------------------------------------------------------------
+//	 *  setup the process and task names so that it can be used for Permission queries
+//	 *
+//	 * @param type $process
+//	 * @param type $task
+//	 */
+//	public function setProcessAndTask($process, $task) {
+//		$this->process = $process;
+//		$this->task = $task;
+//	}
 
 }

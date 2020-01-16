@@ -156,6 +156,12 @@ class Resolver {
 
 		$this->SetupDefaultController();  // this would usually be the menu starter
 		// $r should be a ResponseClass
+
+//dump::dumpLong(Settings::GetRuntimeObject('DISPATCHqueue' )	);
+//dump::dumpLong(Settings::GetRuntimeObject('PREqueue' )	);
+//dump::dumpLong(Settings::GetRuntimeObject('POSTqueue' )	);
+
+
 		$r = $this->StartDispatch();
 		return $r;
 	}
@@ -329,13 +335,16 @@ class Resolver {
 		$action =null;
 
 		$payload = (!empty($postVars[self::REQUEST_PAYLOAD])) ? $postVars[self::REQUEST_PAYLOAD] : array();
+
 		if ( !empty($postVars[self::REQUEST_ACTION ])){
 			$payload[self::REQUEST_ACTION] = $postVars[self::REQUEST_ACTION ];
 		}
 
 		$newPayload = str_replace( '.', '~!~', $payload);
 		$sPayload = \serialize( $newPayload);
-//		Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
+		if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING' ) != false) {
+			Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
+		}
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 

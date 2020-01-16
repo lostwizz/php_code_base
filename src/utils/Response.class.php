@@ -104,6 +104,15 @@ Class Response {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $which
+	 * @return \php_base\Utils\Response
+	 */
+	public static function PermissionsError( string $which) : Response{
+		return new Response('Permissions Error: ' . $which, ResponseErrorCodes::PermissionsError , true );
+	}
+
+	/** -----------------------------------------------------------------------------------------------
 	 * quick way to give a todo error
 	 * give a TODO error message (just a notification that some code still needs to be writen
 	 * @return \php_base\Utils\Response

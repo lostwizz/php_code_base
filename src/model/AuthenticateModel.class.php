@@ -58,7 +58,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 
 	protected static $User;
 
-	public $parent = null;
+	public $controller = null;
 
 	/**
 	 * @var version number
@@ -70,7 +70,9 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @param type $parentObj
 	 */
 	public function __construct($parentObj) {
-		$this->parent = $parentObj;
+		$this->controller = $parentObj;
+
+//dump::dumpLong($this);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -98,7 +100,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @return Response
 	 */
 	public function tryToLogin(?string $username, ?string $password, ?UserInfoData $userInfoData): Response {
-
+Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateModel@@@@');
 		if ( $this->isGoodAuthentication()) {
 			if (Settings::GetPublic('Show_Debug_Authenticate')) {
 				Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
@@ -141,7 +143,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @param type $passedUsername
 	 * @return boolean
 	 */
-	public static function isGoodAuthentication() {
+	public  function isGoodAuthentication() {
 
 		if (empty( $_SESSION['Authenticated_username'])) {
 			if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
@@ -164,6 +166,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 			Settings::GetRunTimeObject('MessageLog')->addCritical( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
 		}
 		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
+		Settings::SetRuntime ('isAuthenticated', true );
 		return true;
 	}
 
@@ -179,7 +182,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 
 			// generate new password
 			$newPW = Utils::makeRandomPassword();
-			dump::dump($newPW);
+dump::dump($newPW);
 			$pwd = password_hash($newPW, PASSWORD_DEFAULT);
 
 			// save the new password
@@ -196,7 +199,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 			return Response::NoError();
 		} else {
 
-			$this->parent->view->showNoEmailAddressError();
+			$this->controller->view->showNoEmailAddressError();
 			return new Response('Unable to email the new password to the user', -12);
 		}
 	}
@@ -206,8 +209,8 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @return bool
 	 */
 	protected function sendEmailForPasswordForgot(string $newPW, string $emailAddr): bool {
-		dump::dump(ini_get('SMTP'));
-		dump::dump(ini_get('smtp_port'));
+dump::dump(ini_get('SMTP'));
+dump::dump(ini_get('smtp_port'));
 		//Settings::GetRunTimeObject('MessageLog')->addInfo( 'snmp: ' . ini_get('SMTP') );
 		//Settings::GetRunTimeObject('MessageLog')->addInfo( 'snmp_port: ' . ini_get('smtp_port') );
 		if (empty(ini_get('SMTP'))
@@ -297,7 +300,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 				Settings::GetRunTimeObject('MessageLog')->addAlert('Successful LOGON of ' . $username . ' using DB_TABLE password');
 			}
 
-			self::DoFinshLoginUpdatebyName( $username, $userInfoData);
+			$this->DoFinishLoginUpdatebyName( $username, $userInfoData);
 
 			return Response::NoError();
 		}
@@ -321,7 +324,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
 
-			self::DoFinshLoginUpdatebyName( $username, $userInfoData);
+			$this->DoFinishLoginUpdatebyName( $username, $userInfoData);
 
 			return Response::NoError();
 		}
@@ -398,7 +401,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'CellNum', $mobile );
 
 			}
-			self::DoFinshLoginUpdate( $userid);
+			$this->DoFinishLoginUpdate( $userid);
 
 //dump::dumpLong( $entries)			;
 		} catch (Exception $ex) {
@@ -412,11 +415,16 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @param int $userid
 	 * @return void
 	 */
-	public static function DoFinshLoginUpdate( int $userid) : void{
+	public  function DoFinishLoginUpdate( int $userid) : void{
 		$prettyNow = (new \DateTime('now'))->format( 'Y-m-d G:i:s');
 
 		$ip = \filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-		UserInfoData::doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
+		//UserInfoData::doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
+
+Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Auth Model-doFinshLoginUpdate:'. $userid);
+
+		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -424,11 +432,11 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @param string $username
 	 * @param UserInfoData|null $userInfoData
 	 */
-	public static function DoFinshLoginUpdatebyName( string $username, ?UserInfoData $userInfoData){
+	public function DoFinishLoginUpdatebyName( string $username, ?UserInfoData $userInfoData){
 		if (!empty( $userInfoData) ){
 			$userid = $userInfoData->getUserID();
 			if ( !empty( $userid)) {
-				self::DoFinshLoginUpdate( $userid );
+				$this->DoFinishLoginUpdate( $userid );
 			}
 		}
 	}

@@ -49,7 +49,7 @@ class Model {
 		 * basic constructor - we track where the controller is because it has the links to the data and view classes
 		 * @param type $controller
 		 */
-	public function __construct($controller) {
+	public function __construct( $controller) {
 		$this->controller = $controller;
 	}
 

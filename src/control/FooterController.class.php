@@ -50,7 +50,6 @@ class FooterController extends Controller {
 
 	public $process;
 	public $task;
-
 	public $action = null;
 	public $payload = null;
 
@@ -83,23 +82,26 @@ class FooterController extends Controller {
 		return self::VERSION;
 	}
 
-//	/** -----------------------------------------------------------------------------------------------
-//	 * set the process and task (not really used in this class -but it is needed for consistency of the Controllers
-//	 * @param type $process
-//	 * @param type $task
-//	 */
-//	public function setProcessAndTask( $process, $task){
-//		$this->process = $process;
-//		$this->task = $task;
-//	}
-
-
 	/** -----------------------------------------------------------------------------------------------
 	 * this calls the method that actually shows the footer
 	 *
 	 * @return Response
 	 */
 	public function doWork() : Response {
+
+		if ( $this->action =='two') {
+			echo '!!!!!!!!!!!!!!!!!!!! two was here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+		}
+
+		if ( $this->action =='three') {
+			echo '!!!!!!!!!!!!!!!!!!!! three was here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+		}
+
+		if ( $this->action =='four') {
+			echo '!!!!!!!!!!!!!!!!!!!! four was here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+		}
+
+
 		$this->payload = 'hi';
 		return $this->view->doWork( $this);
 	}

@@ -51,7 +51,7 @@ use \php_base\Utils\HTML\HTML as HTML;
  */
 class UserRoleAndPermissionsView extends View {
 
-	public $parent = null;
+	public $controller;
 
 	/**
 	 * @var version number
@@ -61,10 +61,10 @@ class UserRoleAndPermissionsView extends View {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - the parent has the data
-	 * @param type $parentObj
+	 * @param type $controller
 	 */
-	public function __construct($parentObj) {
-		$this->parent = $parentObj;
+	public function __construct($controller) {
+		$this->controller = $controller;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -107,7 +107,7 @@ class UserRoleAndPermissionsView extends View {
 //		print_r($arOfRoleIds);
 
 		echo 'THIS=';
-		print_r($this->parent);
+		print_r($this->controller);
 		echo HTML::BR();
 
 
@@ -119,18 +119,18 @@ class UserRoleAndPermissionsView extends View {
 	 * sort the permissions array
 	 */
 	protected function sortPermissionsArray( ){
-		if (!empty($this->parent->userPermissions)){
-			usort($this->parent->userPermissions,
+		if (!empty($this->controller->userPermissions)){
+			usort($this->controller->userPermissions,
 				function ($a, $b) {
-				$sA = $this->parent->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
-				$sB = $this->parent->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
+				$sA = $this->controller->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
+				$sB = $this->controller->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
 				return $sA <=> $sB;
 			});
 		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 * show a easily readable tabel with the permissions
+	 * show a easily readable table with the permissions
 	 */
 	public function dumpPermissions() {
 		//echo '--- ' . get_class() . '-dumpPermissions- -------------';
@@ -150,10 +150,10 @@ class UserRoleAndPermissionsView extends View {
 		echo '<th>', 'FIELD', '</Th>';
 		echo '<th>', 'PERMISSION', '</Th>';
 		echo '</tr>';
-		if (!empty($this->parent->userPermissions )){
-			foreach ($this->parent->userPermissions as $perm) { /**/
+		if (!empty($this->controller->userPermissions )){
+			foreach ($this->controller->userPermissions as $perm) { /**/
 				echo '<tr>';
-				echo '<td>', $perm['ROLEID'], ': ', $this->parent->ArrayOfRoleNames[$perm['ROLEID']], '</TD>';
+				echo '<td>', $perm['ROLEID'], ': ', $this->controller->ArrayOfRoleNames[$perm['ROLEID']], '</TD>';
 				echo '<td>', $perm['PROCESS'], '</TD>';
 				echo '<td>', $perm['TASK'], '</TD>';
 				echo '<td>', $perm['ACTION'], '</TD>';

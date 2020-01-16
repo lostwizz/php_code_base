@@ -40,10 +40,8 @@ use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
-
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
-
 
 /** * **********************************************************************************************
  * This any of the reads or writes to the UserAttributes table
@@ -52,22 +50,19 @@ class UserAttributeData extends data {
 
 	public $UserAttributes = [];
 	public $roleNames = [];
-
-	public static $Table;
-
+	public $Table;
 
 	/**
 	 * @var version number
 	 */
 	private const VERSION = '0.3.0';
 
-
 	/** -----------------------------------------------------------------------------------------------
 	 * constructor - starts of the reading of data for that User Id
 	 * @param type $userID
 	 */
 	public function __construct($userID) {
-		self::defineTable();
+		$this->defineTable();
 		$this->doReadFromDatabaseByUserID($userID);
 	}
 
@@ -82,22 +77,22 @@ class UserAttributeData extends data {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * [id]
-      ,[UserId]
-      ,[AttributeName]
-      ,[AttributeValue]
+	  ,[UserId]
+	  ,[AttributeName]
+	  ,[AttributeValue]
 	 *
 	 *
 	 * @return void
 	 */
-	public static function defineTable() : void {
-		self::$Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'), ['className'=> __NAMESPACE__ .'\UserAttributeData']);
- 		self::$Table->setPrimaryKey( 'id', ['prettyName' => 'Id']);
+	public function defineTable(): void {
+		$this->Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'), ['className' => __NAMESPACE__ . '\UserAttributeData']);
+		$this->Table->setPrimaryKey('id', ['prettyName' => 'Id']);
 
-		self::$Table->addFieldInt( 'id', [ 'prettyName' => 'Id',
-												'alignment' => 'right']);
-		self::$Table->addFieldInt('userid', [ 'prettyName' => 'User Id']);
-		self::$Table->addFieldInt('attributename', [ 'prettyName' => 'Attribute Name']);
-		self::$Table->addFieldInt('attributevalue', [ 'prettyName' => 'Attribute Value']);
+		$this->Table->addFieldInt('id', ['prettyName' => 'Id',
+			'alignment' => 'right']);
+		$this->Table->addFieldInt('userid', ['prettyName' => 'User Id']);
+		$this->Table->addFieldInt('attributename', ['prettyName' => 'Attribute Name']);
+		$this->Table->addFieldInt('attributevalue', ['prettyName' => 'Attribute Value']);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -193,7 +188,7 @@ class UserAttributeData extends data {
 	 * @param string $attribValue
 	 * @return bool
 	 */
-	public static function doAddAttribute(int $userID, string $attribName, string $attribValue): bool {
+	public function doAddAttribute(int $userID, string $attribName, string $attribValue): bool {
 		$sql = 'INSERT into ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' ( userid, AttributeName, AttributeValue )'
 				. ' VALUES '
@@ -214,7 +209,7 @@ class UserAttributeData extends data {
 	 * @param string $attribName
 	 * @return bool
 	 */
-	public static  function doRemoveAttribute(int $userid, string $attribName): bool {
+	public function doRemoveAttribute(int $userid, string $attribName): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' WHERE userid = :userid AND attributename = :attrib_name'
 		;
@@ -231,7 +226,7 @@ class UserAttributeData extends data {
 	 * @param int $userid
 	 * @return bool
 	 */
-	public static function doRemoveAllAttributesForUserID(int $userid): bool {
+	public function doRemoveAllAttributesForUserID(int $userid): bool {
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' WHERE userid = :userid'
 		;
@@ -241,7 +236,6 @@ class UserAttributeData extends data {
 		return ($data == 1);
 	}
 
-
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param int $userid
@@ -249,14 +243,14 @@ class UserAttributeData extends data {
 	 * @param string $attribValue
 	 * @return bool
 	 */
-	public static function doInserOrUpdateAttributeForUserID(int $userid, string $attribName, string $attribValue): bool {
-		$val = self::getByUseridAndAttributeName($userid, $attribName, $attribValue);
-		if (empty($val['ATTRIBUTEVALUE']) and  empty($val['ATTRIBUTENAME']) ) {  // the value might be '' so make it do an update if it is
+	public function doInserOrUpdateAttributeForUserID(int $userid, string $attribName, string $attribValue): bool {
+		$val = $this->getByUseridAndAttributeName($userid, $attribName, $attribValue);
+		if (empty($val['ATTRIBUTEVALUE']) and empty($val['ATTRIBUTENAME'])) {  // the value might be '' so make it do an update if it is
 			//insert
-			$val2 = self::insertUseridAndAttributeName($userid, $attribName, $attribValue);
+			$val2 = $this->insertUseridAndAttributeName($userid, $attribName, $attribValue);
 		} else {
 			//update
-			$val2 = self::updateByUseridAndAttributeName($userid, $attribName, $attribValue);
+			$val2 = $this->updateByUseridAndAttributeName($userid, $attribName, $attribValue);
 		}
 		return $val2;
 	}
@@ -267,7 +261,7 @@ class UserAttributeData extends data {
 	 * @param string $attribName
 	 * @return type
 	 */
-	public static function getByUseridAndAttributeName(int $userid, string $attribName) {
+	public function getByUseridAndAttributeName(int $userid, string $attribName) {
 		$sql = 'SELECT Id
 						,UserId
 						,AttributeName
@@ -289,7 +283,7 @@ class UserAttributeData extends data {
 	 * @param string $attribValue
 	 * @return bool
 	 */
-	public static function updateByUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
+	public function updateByUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' SET AttributeValue = :attribValue'
 				. ' WHERE userid = :userid'
@@ -311,7 +305,7 @@ class UserAttributeData extends data {
 	 * @param string $attribValue
 	 * @return bool
 	 */
-	public static function insertUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
+	public function insertUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' (Userid, AttributeName, AttributeValue)'
 				. ' VALUES '
@@ -322,7 +316,7 @@ class UserAttributeData extends data {
 			':attribValue' => ['val' => $attribValue, 'type' => \PDO::PARAM_STR]
 		);
 		$data = DBUtils::doDBInsertReturnID($sql, $params);
-		Settings::GetRunTimeObject('MessageLog')->addNotice(' INsert by userid and attrib name'. $userid . '-' . $attribName);
+		Settings::GetRunTimeObject('MessageLog')->addNotice(' INsert by userid and attrib name' . $userid . '-' . $attribName);
 
 		return ($data > 0);
 	}

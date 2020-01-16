@@ -86,6 +86,9 @@ class Dispatcher {
 		$this->POSTqueue = new \SplQueue();
 		$this->DISPATCHqueue = new \SplQueue();
 
+		Settings::SetRuntime('PREqueue', $this->PREqueue);
+		Settings::SetRuntime('POSTqueue', $this->POSTqueue);
+		Settings::SetRuntime('DISPATCHqueue', $this->DISPATCHqueue);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -291,6 +294,8 @@ class Dispatcher {
 			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')) {
 				Settings::GetRunTimeObject('MessageLog')->addCritical('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
 			}
+
+
 			$instance = new $class($process, $task, $action, $payload); //instanciate the process  and pass it the payload
 
 			//$instance->setProcessAndTask($process, $task); // sets the called class up with the Process

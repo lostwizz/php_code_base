@@ -51,6 +51,7 @@ class dbaController extends Controller {
 		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
+//dump::dumpLong($this);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -83,22 +84,47 @@ class dbaController extends Controller {
 //		$this->task = $task;
 //	}
 
+
+//	public function Route_UserInfoData($parent=null) : Response{
+//		Settings::GetRuntimeObject('DISPATCHqueue' )->enqueue('UserRoleAndPermissionsController.prepareToEditUserInfoData');
+//
+//		Settings::GetRuntimeObject('DISPATCHqueue' )->enqueue('DBAcontroller.Edit_UserInfoData');
+//
+////dump::dumpLong(Settings::GetRuntimeObject('DISPATCHqueue' )	);
+//		return Response::NoError();
+//	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $parent
 	 * @return type
 	 */
-	public function SimpleEditUserInfoData( $parent=null) {
+	public function Edit_UserInfoData( $parent=null) {
 
-dump::dumpClasses();
+		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
+			return Response::PermissionsError('Required DBA - Edit UserInfoData');
+		}
 
-		$x = \php_base\data\UserInfoData::$Table ;
+		$t = new \php_base\data\UserInfoData();
 
-dump::dump($Table);
+		//$x = \php_base\data\UserInfoData::$Table ;
+		$x = $t::$Table;
 
-//		$editorSession = new SimpleTableEditor($x, 'DBA', 'SimpleEditUserInfoData',$this->action, $this->payload);
-		$editorSession = new SimpleTableEditor($x, 'DBA', basename(__FUNCTION__) ,$this->action, $this->payload);
-		$result = $editorSession->runTableDisplayAndEdit( true );
+//dump::dumpLong($this);
+
+		//Settings::GetRuntimeObject('POSTqueue' )->enqueue('FooterController.doWork.two');
+
+		$this->payload['Table'] = 'UserInfoData';
+
+		//Settings::GetRuntimeObject('DISPATCHqueue' )->enqueue ('SimpleTableEditor');
+
+//dump::dumpLong(Settings::GetRuntimeObject('DISPATCHqueue' )	);
+//dump::dumpLong(Settings::GetRuntimeObject('PREqueue' )	);
+//dump::dumpLong(Settings::GetRuntimeObject('POSTqueue' )	);
+
+		$editorSession = new SimpleTableEditor($x, $this->process, $this->task, $this->action, $this->payload);
+
+		//$result = $editorSession->runTableDisplayAndEdit( true );
 
 		return Response::NoError();
 	}
