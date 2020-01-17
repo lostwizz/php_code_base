@@ -392,13 +392,13 @@ dump::dump(ini_get('smtp_port'));
 
 				$userid = $userInfoData->getUserID();
 
-				UserAttributeData::doInserOrUpdateAttributeForUserID( $userid, 'eMailAddress', $email );
-				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'GivenName', $givenname );
-				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'Surname', $surname );
-				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'PhoneNum', $telephonenumber );
-				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'Title', $title );
-				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'Department', $department );
-				UserAttributeData::doInserOrUpdateAttributeForUserID($userid, 'CellNum', $mobile );
+				$userInfoData->doInserOrUpdateAttributeForUserID( $userid, 'eMailAddress', $email );
+				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'GivenName', $givenname );
+				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'Surname', $surname );
+				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'PhoneNum', $telephonenumber );
+				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'Title', $title );
+				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'Department', $department );
+				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'CellNum', $mobile );
 
 			}
 			$this->DoFinishLoginUpdate( $userid);

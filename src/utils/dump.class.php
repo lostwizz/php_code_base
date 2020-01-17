@@ -103,6 +103,7 @@ abstract class Dump {
 	const PRE3POST3=3;
 	const LONGPRE3POST3=4;
 	const CLASSES_LOADED = 5;
+	const MULTI_ARRAY =6;
 
 
 	/**
@@ -168,6 +169,7 @@ abstract class Dump {
 					'Show BackTrace Num Lines' => 0,
 					);
 				break;
+			case self::MULTI_ARRAY:
 			default:
 			case self::NORMAL:  // default
 				$auxArray = array(
@@ -388,6 +390,24 @@ abstract class Dump {
 
 		return $r;
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $obj1
+	 * @return type
+	 */
+	public static function dumpA( ...$obj){
+		self::initConfig(null, self::MULTI_ARRAY);
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines'));  // get it early
+
+		self::initConfig(null, self::MULTI_ARRAY);
+
+		$r = SELF::dumpHelper($bt, $obj, '');
+
+		return $r;
+
+	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * method to expand the number of lines that show in the dump and then reset it back to the default

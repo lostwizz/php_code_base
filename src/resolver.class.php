@@ -52,6 +52,11 @@ use \php_base\Utils\DebugHandler as DebugHandler;
 class Resolver {
 
 	/**
+	 * @var version number
+	 */
+	private const VERSION = '0.3.0';
+
+	/**
 	 * the constants are used in the submit  and hidden html to know what things were passed.
 	 *
 	 * @since 0.0.2
@@ -86,12 +91,14 @@ class Resolver {
 	 * @var object of Dispatcher - the dispatcher instance need to send all the Process/Task/Action/Payload (PTAP) down to execute.
 	 *
 	 */
+
+	/**
+	 *
+	 * @var type
+	 */
 	public $dispatcher;
 
-		/**
-	 * @var version number
-	 */
-	private const VERSION = '0.3.0';
+
 
 
 	/** -----------------------------------------------------------------------------------------------
@@ -396,6 +403,8 @@ class Resolver {
 		$payload = null;
 
 		$this->dispatcher->addPOSTProcess($process, $task, $action, $payload);
+		//$this->dispatcher->addPOSTProcess('DBA', 'two');
+		//$this->dispatcher->addPOSTProcess('DBA', 'three');
 	}
 
 

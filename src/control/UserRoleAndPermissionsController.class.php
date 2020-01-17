@@ -143,6 +143,7 @@ Class UserRoleAndPermissionsController {
 		$u = Settings::GetRunTime('Currently Logged In User');
 		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'logged on user:' . $u);
 
+dump::dump($u);
 		if (!empty($u)) {
 			$response = $this->LoadAllUserInformation($u);
 

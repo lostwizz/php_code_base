@@ -140,6 +140,12 @@ class dbaController extends Controller {
 	public function two( $parent=null) {
 
 		echo 'at dba two ';
+dump::dump('at two');
+
+	//Settings::GetRuntimeObject('POSTqueue')->push('dbaController.four');
+
+		Settings::GetRuntimeObject('Dispatcher')->addPOSTProcess('dba', 'four');
+
 
 		return Response::NoError();
 	}
@@ -158,11 +164,30 @@ class dbaController extends Controller {
 
 //$fldName = 'xxxxxxxxxx';
 
-		$x =   HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_icon.png', 'xx', ['width'=>18] );
-		dump::dump($x);
+		//$x =   HTML::Image(Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '\static\images\A_to_Z_icon.png', 'xx', ['width'=>18] );
+		dump::dump('at three');
 
-		echo  $x;
+		//echo  $x;
+		//Settings::GetRuntimeObject('POSTqueue')->push('dbaController.five');
+		Settings::GetRuntimeObject('Dispatcher')->addPOSTProcess('dba', 'five');
 
 		return Response::NoError();
 	}
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function four( $parent=null) {
+
+		echo 'at dba four ';
+dump::dump('at four');
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function five( $parent=null) {
+
+		echo 'at dba five ';
+dump::dump('at five');
+		return Response::NoError();
+	}
+
 }

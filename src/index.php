@@ -97,6 +97,13 @@ include_once( \DIR . 'SetupSystemDetail.php');
 
 //dump::dumpClasses( );
 
+//$a1 =3432;
+//$a2 = 'fred was here';
+//$a3 = 'bob';
+//$a4= -21;
+//
+//dump::dumpA($a1,$a2,$a3, $a4);
+
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running
 $resolver = new Resolver();

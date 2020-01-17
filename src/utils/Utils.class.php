@@ -166,9 +166,28 @@ abstract Class Utils {
 			return false;
 		}
 		if ( $ignoreCase){
-			return (substr(strtolower($string), 0, $len) === strtolower($startString));
+			return (substr(strtolower($string), 0, $len) == strtolower($startString));
 		} else {
-			return (substr($string, 0, $len) === $startString);
+			return (substr($string, 0, $len) == $startString);
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $string
+	 * @param string $endString
+	 * @param bool $ignoreCase
+	 * @return bool
+	 */
+	public static function endsWith( string $string, string $endString, bool $ignoreCase=false) :bool{
+		$len = strlen($endString);
+		if ( $len <1) {
+			return false;
+		}
+		if ($ignoreCase){
+			return ( substr( strtolower($string, (-1*$len) )) == strtolower($endString) );
+		} else {
+			return ( substr( $string, (-1*$len) ) == $endString );
 		}
 	}
 

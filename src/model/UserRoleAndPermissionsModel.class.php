@@ -162,18 +162,20 @@ Class UserRoleAndPermissionsModel extends Model {
 	 */
 	public function LoadALLUser( $username) : Response {
 		try {
-
+dump::dump($username);
 			// setup the user with the extra data in the users table and then get the attributes for that user
 			$this->controller->username = $username;
 
 			$this->GetUSERinfo($username);
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userInfo);
-
+dump::dump($this);
 			$this->GetUSERAttributes();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userAttributes);
+dump::dump($this);
 
 			$this->GetUSERpermissions();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userPermissions);
+dump::dump($this);
 
 			// clean up things not needed
 			unset($this->arOfRoleIDs);

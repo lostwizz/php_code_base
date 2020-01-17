@@ -56,7 +56,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', false);
 
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', true);
 
 	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', false);
 	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', true);
