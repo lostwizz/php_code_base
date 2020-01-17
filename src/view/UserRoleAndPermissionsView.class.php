@@ -132,44 +132,50 @@ class UserRoleAndPermissionsView extends View {
 	/** -----------------------------------------------------------------------------------------------
 	 * show a easily readable table with the permissions
 	 */
-	public function dumpPermissions() {
+	public function dumpPermissions($doEcho= false) {
+		$s = '';
 		//echo '--- ' . get_class() . '-dumpPermissions- -------------';
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
-		echo '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
-		echo '<BR>';
+		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		$s .= '<BR>';
 
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
 		$this->sortPermissionsArray();
-		echo '<table border=1>';
-		ECHO '<Tr>';
-		echo '<th>', 'ROLEID', '</Th>';
-		echo '<th>', 'PROCESS', '</Th>';
-		echo '<th>', 'TASK', '</Th>';
-		echo '<th>', 'ACTION', '</Th>';
-		echo '<th>', 'FIELD', '</Th>';
-		echo '<th>', 'PERMISSION', '</Th>';
-		echo '</tr>';
+		$s .= '<Table border=1>';
+		$s .= '<Tr>';
+		$s .= '<th>ROLEID</Th>';
+		$s .= '<th>PROCESS</Th>';
+		$s .= '<th>TASK</Th>';
+		$s .= '<th>ACTION</Th>';
+		$s .= '<th>FIELD</Th>';
+		$s .= '<th>PERMISSION</Th>';
+		$s .= '</tr>';
 		if (!empty($this->controller->userPermissions )){
 			foreach ($this->controller->userPermissions as $perm) { /**/
-				echo '<tr>';
-				echo '<td>', $perm['ROLEID'], ': ', $this->controller->ArrayOfRoleNames[$perm['ROLEID']], '</TD>';
-				echo '<td>', $perm['PROCESS'], '</TD>';
-				echo '<td>', $perm['TASK'], '</TD>';
-				echo '<td>', $perm['ACTION'], '</TD>';
-				echo '<td>', $perm['FIELD'], '</TD>';
-				echo '<td>', $perm['PERMISSION'], '</TD>';
-				echo '</tr>';
+				$s .= '<tr>';
+				$s .= '<td>'. $perm['ROLEID'] . ': ' . $this->controller->ArrayOfRoleNames[$perm['ROLEID']] . '</TD>';
+				$s .= '<td>'. $perm['PROCESS'] . '</TD>';
+				$s .= '<td>'. $perm['TASK'] . '</TD>';
+				$s .= '<td>'. $perm['ACTION'] . '</TD>';
+				$s .= '<td>'. $perm['FIELD'] . '</TD>';
+				$s .= '<td>'. $perm['PERMISSION'] . '</TD>';
+				$s .= '</tr>';
 			}
 		}
-		echo '</table>';
-		echo '<font size="-1">';
-		echo HTML::Space(60);
-		echo basename($bt[0]['file']);
-		echo ': ';
-		echo $bt[0]['line'];
-		echo '</font>';
-		echo '<BR>' . PHP_EOL;
+		$s .= '</table>';
+		$s .= '<font size="-1">';
+		$s .= HTML::Space(60);
+		$s .= basename($bt[0]['file']);
+		$s .= ': ';
+		$s .= $bt[0]['line'];
+		$s .= '</font>';
+		$s .= '<BR>' . PHP_EOL;
+
+		if ($doEcho) {
+			echo $s;
+		}
+		return $s;
 
 	}
 

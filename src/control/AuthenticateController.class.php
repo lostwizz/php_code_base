@@ -53,7 +53,7 @@ use \php_base\Utils\Settings as Settings;
  */
 class AuthenticateController extends \php_base\Control\Controller {
 
-	protected $UserInfoData = null;
+	public $UserInfoData = null;
 	public $process;
 	public $task;
 	public $action;
@@ -77,7 +77,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 		}
 
 		$this->model = new \php_base\model\AuthenticateModel($this);
-		$this->data = new \php_base\data\UserInfoData($this);
+		//$this->data = new \php_base\data\UserInfoData($this);
+		$this->data =null;  //not created yet - wait until i have a username to load
 		$this->view = new \php_base\view\AuthenticateView($this);
 
 		$this->process = $passedProcess;
@@ -120,27 +121,31 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 	/**  -----------------------------------------------------------------------------------------------
 	 * get the username and password then call the appropriate method
-	 * @param type $parent
+	 * @param type $dispatcher
 	 * @return Response
 	 */
-	public function checkAuthentication($parent): Response {
-		//dump::dumpLong($this);
+	public function checkAuthentication($dispatcher): Response {
+
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@auth controllercheckAuthentication');
+
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('after isGoodAuth: '. ($isAlreadyLoggedOn ? 'yes':'no'));
 		if ($isAlreadyLoggedOn) {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('User is already logged on  so continue');
 			return Response::NoError();
 		}
 
 		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
 		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check:'.$username . $password );
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check: ' . $username . '/' . $password );
 
-		if (empty($this->payload[Resolver::REQUEST_ACTION])) {
-			$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
-		}
+		//if (empty($this->payload[Resolver::REQUEST_ACTION])) {
+		//	$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
+		//}
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check2' . $this->payload[Resolver::REQUEST_ACTION]);
 		// not yet logged on
-		//    yes we could just change the spaces to underscores - but this i think is easier to read
+		//    yes we could just change the spaces to underscores - but this i think is easier to read (and it shows all the possibilities)
 		switch ($this->payload[Resolver::REQUEST_ACTION]) {
 			case 'Submit Logon':
 				$action = 'Submit_Logon';
@@ -169,8 +174,10 @@ class AuthenticateController extends \php_base\Control\Controller {
 				break;
 		}
 
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('Authenticate is starting:' . $action);
 		// now do the action
-		$r = $this->$action($parent, $username, $password);
+		$r = $this->$action($dispatcher, $username, $password);
+
 		return $r;
 	}
 
@@ -183,7 +190,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @param type $password
 	 * @return Response
 	 */
-	protected function Need_login($parent, $username = null, $password = null): Response {
+	protected function Need_login($dispatcher, $username = null, $password = null): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateController-Need_login:');
 		 $this->view->showLoginPage();
 		 return Response::NoError();
 	}
@@ -193,19 +201,21 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 *
 	 * @see AuthenticateModel
 	 *
-	 * @param type $parent
+	 * @param type $dispatcher
 	 * @param type $username
 	 * @param type $password
 	 * @return Response
 	 */
-	protected function Submit_Logon($parent, $username = null, $password = null): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon:'. $username);
+	protected function Submit_Logon($dispatcher, $username = null, $password = null): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateController-submitLogon:'. $username);
 
-		$this->UserInfoData = new UserInfoData($this, $username);
+		//$this->UserInfoData = new UserInfoData($this, $username);
+		$this->data = new UserInfoData($this, $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice( $this->UserInfoData);
 
-		if (!empty($this->UserInfoData->UserInfo) and ! empty($this->UserInfoData->UserInfo['USERID'])) {
+		if (!empty($this->data->UserInfo) and ! empty($this->data->UserInfo['USERID'])) {
 			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon1:'. $username);
-			$r = $this->model->tryToLogin($username, $password, $this->UserInfoData);
+			$r = $this->model->tryToLogin($username, $password);
 		} else {
 			$r = new Response('Username does not exist', -10);
 		}
@@ -214,7 +224,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 		if ($r->hadError()) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('User could not be Logged onto the application');
-			$this->Need_login($parent, null,null);
+			$this->Need_login($dispatcher, null,null);
 		} else {
 			Settings::SetRuntime ('isAuthenticated', true );
 		}
@@ -289,8 +299,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	public function Submit_Username_for_Forgot_Password($parent, $username): Response {
-		$this->UserInfoData = new \php_base\data\UserInfoData($username);
-		$r = $this->model->doPasswordForgot($username, $this->UserInfoData);
+		$this->data = new \php_base\data\UserInfoData($username);
+		$r = $this->model->doPasswordForgot($username, $this->data);
 		return $r;
 	}
 
@@ -302,12 +312,12 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 */
 	public function Submit_Username_for_Password_Change($parent, $username): Response {
 
-		$this->UserInfoData = new \php_base\data\UserInfoData($username);
+		$this->data = new UserInfoData($username);
 		$r = $this->model->doChangePassword(
 				$username,
 				$this->payload['old_password'],
-				$this->payload['new_password'],
-				$this->UserInfoData
+				$this->payload['new_password']
+				//,$this->UserInfoData
 		);
 		return $r;
 	}
@@ -345,8 +355,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 		$this->model->DoLogoff();
 
 
-		if ( !empty($this->UserInfoData )){
-			$this->UserInfoData->doLogoff();
+		if ( !empty($this->data )){
+			$this->data->doLogoff();
 		}
 
 		Settings::GetRunTimeObject('userPermissionsController')->doLogoff();

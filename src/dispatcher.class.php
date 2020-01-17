@@ -578,7 +578,7 @@ class Dispatcher {
 		$s .= '<BR>';
 		$s .= '<pre class="pre_debug_queue">';
 		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
-		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		$s .= '--'  . __METHOD__ .  '-- called from ' . basename($bt['file']) . '(line: '. $bt['line'] . ')' ;
 		$s .= '<BR>';
 
 		$s .= '@@@@ - ' . $which . ' - queue dump -@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';

@@ -69,8 +69,8 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * constructor - the parent has the data
 	 * @param type $parentObj
 	 */
-	public function __construct($parentObj) {
-		$this->controller = $parentObj;
+	public function __construct($controller) {
+		$this->controller = $controller;
 
 //dump::dumpLong($this);
 	}
@@ -99,14 +99,9 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @param type $password
 	 * @return Response
 	 */
-	public function tryToLogin(?string $username, ?string $password, ?UserInfoData $userInfoData): Response {
-Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateModel@@@@');
-		if ( $this->isGoodAuthentication()) {
-			if (Settings::GetPublic('Show_Debug_Authenticate')) {
-				Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
-			}
-			return Response::NoError();
-		}
+	public function tryToLogin(?string $username, ?string $password ): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-tryToLogin');
+
 		if (empty( $username)) {
 			return Response::GenericError();
 		}
@@ -114,15 +109,17 @@ Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Authenticate
 			return Response::GenericError();
 		}
 
-		$method = 'LogonMethod_' . $userInfoData->UserInfo['METHOD'];
+		if ( $this->isGoodAuthentication()) {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( 'AuthenticateModel-tryToLogin had isGoodAuthentication');
+			return Response::NoError();
+		}
 
-		//Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method );
+		$method = 'LogonMethod_' . $this->controller->data->UserInfo['METHOD'];
 
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('Authenticateion-tryToLogin-Trying: ' . $method);
 		if (method_exists($this, $method)) {
-			if (Settings::GetPublic('Show_Debug_Authenticate')) {
-				Settings::GetRunTimeObject('MessageLog')->addInfo('Trying ' . $method);
-			}
-			$response = $this->$method($username, $password, $userInfoData);
+
+			$response = $this->$method($username, $password);
 			if ($response->giveErrorCode() == 0) {
 				Settings::SetRunTime('Currently Logged In User', $username);
 				$_SESSION['Authenticated_username'] = $username;
@@ -130,9 +127,7 @@ Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Authenticate
 				$_SESSION['Authenticated_ExpireTime'] =	(new \DateTime('now'))->getTimestamp();
 			}
 		} else {
-			if (Settings::GetPublic('Show_Debug_Authenticate')) {
-				Settings::GetRunTimeObject('MessageLog')->addInfo('Authentication Method: ' . $method . 'Does NOT exist for:' . $username);
-			}
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('Authentication Method: ' . $method . 'Does NOT exist for:' . $username);
 			$response = new Response('Authentication Method doenst exist', -8);
 		}
 		return $response;
@@ -144,11 +139,10 @@ Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Authenticate
 	 * @return boolean
 	 */
 	public  function isGoodAuthentication() {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-isGoodAuthentication');
 
 		if (empty( $_SESSION['Authenticated_username'])) {
-			if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addCritical( ' currently logged on -  as: ' . Settings::GetRunTime('Currently Logged In User'));
-			}
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addCritical( 'no username so returning false');
 			return false;
 		}
 		$now = (new \DateTime('now'))->getTimestamp();
@@ -156,17 +150,16 @@ Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Authenticate
 		$diff = $now - $then; //ends up with seconds until time out
 
 		if ($diff > 900) {
-			if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addCritical( ' currently logged on - NO Timeout');
-			}
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addCritical( ' currently logged on - NO Timeout');
 			return false;
 		}
 
-		if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING')) {
-			Settings::GetRunTimeObject('MessageLog')->addCritical( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
-		}
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addCritical( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
+
 		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 		Settings::SetRuntime ('isAuthenticated', true );
+
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( Settings::dump(false, false, true));
 		return true;
 	}
 
@@ -249,10 +242,9 @@ dump::dump(ini_get('smtp_port'));
 	 * @param type $username
 	 * @param type $old_password
 	 * @param type $new_password
-	 * @param type $UserInfoData
 	 * @return Response
 	 */
-	public function doChangePassword($username, $old_password, $new_password, $UserInfoData): Response {
+	public function doChangePassword($username, $old_password, $new_password): Response {
 		if (empty($username)) {
 			return new Response('missing usernamefor change password', -13);
 		}
@@ -265,13 +257,13 @@ dump::dump(ini_get('smtp_port'));
 //dump::dump( $UserInfoData);
 		// verify old password
 		//if (password_verify($old_password, Settings::GetProtected('Password_for_' . $username))) {
-		if (password_verify($old_password, $UserInfoData->UserInfo['PASSWORD'])) {
+		if (password_verify($old_password, $this->controller->data->UserInfo['PASSWORD'])) {
 
 			//encode the new password
 			$pwd = password_hash($new_password, PASSWORD_DEFAULT);
 
 			// save the new password
-			$rUpdate = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd);
+			$rUpdate = $this->controller->data->doUpdatePassword($this->controller->data->UserInfo['USERID'], $pwd);
 			if ($rUpdate) {
 				$r = Response::NoError();
 			} else {
@@ -294,19 +286,18 @@ dump::dump(ini_get('smtp_port'));
 	 * @param type $userInfoData
 	 * @return Response
 	 */
-	public function LogonMethod_DB_Table(string $username, string $password, $userInfoData): Response {
-		if (\password_verify($password, $userInfoData->UserInfo['PASSWORD'])) {
-			if (Settings::GetPublic('Show_Debug_Authenticate')) {
-				Settings::GetRunTimeObject('MessageLog')->addAlert('Successful LOGON of ' . $username . ' using DB_TABLE password');
-			}
+	public function LogonMethod_DB_Table(string $username, string $password ): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-LogonMethod_DB_Table');
 
-			$this->DoFinishLoginUpdatebyName( $username, $userInfoData);
+		if (\password_verify($password, $this->controller->data->UserInfo['PASSWORD'])) {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateModel-LogonMethod_DB_Table- good password for:'.$username);
+
+			$this->DoFinishLoginUpdatebyName( $username);
 
 			return Response::NoError();
 		}
-		if (Settings::GetPublic('Show_Debug_Authenticate')) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
-		}
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
+
 		return new Response('db_table password failed', -11);
 	}
 
@@ -317,14 +308,15 @@ dump::dump(ini_get('smtp_port'));
 	 * @param type $userInfoData
 	 * @return Response
 	 */
-	public function LogonMethod_HardCoded(string $username, string $password, $userInfoData): Response {
+	public function LogonMethod_HardCoded(string $username, string $password): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-LogonMethod_HardCoded');
 		//$pwd = \password_hash($password, PASSWORD_DEFAULT);
 //dump::dump($pwd);
 
 		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
 			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
 
-			$this->DoFinishLoginUpdatebyName( $username, $userInfoData);
+			$this->DoFinishLoginUpdatebyName( $username);
 
 			return Response::NoError();
 		}
@@ -341,7 +333,8 @@ dump::dump(ini_get('smtp_port'));
 	 * @param type $userInfoData
 	 * @return Response
 	 */
-	public function LogonMethod_LDAP(string $username, string $password, $userInfoData): Response {
+	public function LogonMethod_LDAP(string $username, string $password): Response {
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-LogonMethod_LDAP');
 		if (!extension_loaded('LDAP')) {
 			return new Response('LDAP not loaded in PHP - cant login ', -22);
 		}
@@ -410,37 +403,39 @@ dump::dump(ini_get('smtp_port'));
 		return Response::NoError();
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param int $userid
-	 * @return void
-	 */
-	public  function DoFinishLoginUpdate( int $userid) : void{
-		$prettyNow = (new \DateTime('now'))->format( 'Y-m-d G:i:s');
 
-		$ip = \filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-		//UserInfoData::doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
-
-Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Auth Model-doFinshLoginUpdate:'. $userid);
-
-		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
-
-	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $username
 	 * @param UserInfoData|null $userInfoData
 	 */
-	public function DoFinishLoginUpdatebyName( string $username, ?UserInfoData $userInfoData){
-		if (!empty( $userInfoData) ){
-			$userid = $userInfoData->getUserID();
+	public function DoFinishLoginUpdatebyName( string $username ){
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-doFinishLoginUpdatebyName');
+
+		if (!empty( $this->controller->userInfoData) ){
+			$userid = $this->controller->data->getUserID();
 			if ( !empty( $userid)) {
 				$this->DoFinishLoginUpdate( $userid );
 			}
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $userid
+	 * @return void
+	 */
+	public  function DoFinishLoginUpdate( int $userid) : void{
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-DoFinishLoginUpdate - call data to update last logon');
+		$prettyNow = (new \DateTime('now'))->format( 'Y-m-d G:i:s');
+
+		$ip = \filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Auth Model-doFinshLoginUpdate:'. $userid);
+
+		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

@@ -45,6 +45,10 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 use \php_base\data\UserInfoData as UserInfoData;
+use \php_base\data\UserAttributeData as UserAttributeData;
+use \php_base\data\UserRoleData as UserRoleData;
+use \php_base\data\UserPermissionData as UserPermissionData;
+
 
 
 /** * **********************************************************************************************
@@ -142,6 +146,9 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @param type $controller
 	 */
 	public function __construct($controller) {   //$action ='', $payload = null){
+		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
+			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
+		}
 		$this->controller = $controller;
 	}
 
@@ -161,21 +168,24 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return Response
 	 */
 	public function LoadALLUser( $username) : Response {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@LoadALLUser: '.  $username);
+
 		try {
-dump::dump($username);
+
+dump::dumpLong($this->controller);
 			// setup the user with the extra data in the users table and then get the attributes for that user
 			$this->controller->username = $username;
 
 			$this->GetUSERinfo($username);
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userInfo);
-dump::dump($this);
+dump::dumpLong($this);
 			$this->GetUSERAttributes();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userAttributes);
-dump::dump($this);
+dump::dumpLong($this);
 
 			$this->GetUSERpermissions();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userPermissions);
-dump::dump($this);
+dump::dumpLong($this);
 
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
@@ -186,7 +196,9 @@ dump::dump($this);
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addAlert(
 				$ov->dumpPermissions()
 					);
-
+//dump::dumpLong( $ov->dumpPermissions() );
+//		$x =Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING');
+//dump::dumpLong($x::$messageQueue)	;
 
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
@@ -199,8 +211,11 @@ dump::dump($this);
 	 * @return bool
 	 */
 	protected function GetUSERinfo($username): bool {
-		$DataUserInfo = new \php_base\data\UserInfoData($username);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@GetUSERinfo: ' . $username);
 
+		$DataUserInfo = new UserInfoData($this->controller, $username);
+
+//dump::dumpLong($DataUserInfo);
 		$this->controller->userID = $DataUserInfo->getUserID();
 
 		$this->controller->userInfo = $DataUserInfo->UserInfo;
@@ -213,8 +228,9 @@ dump::dump($this);
 	 * @return bool
 	 */
 	protected function GetUSERAttributes(): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@GetUSERAttributes');
 
-		$DataUserAttribute = new \php_base\data\UserAttributeData($this->controller->userID);
+		$DataUserAttribute = new UserAttributeData($this->controller, $this->controller->userID);
 
 		// take the primary role from the user info and addit to the array of roles in the user attributes
 		$primaryRole = $this->controller->userInfo['PRIMARYROLENAME'];
@@ -236,15 +252,19 @@ dump::dump($this);
 	 * @return bool
 	 */
 	protected function GetUSERpermissions(): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@GetUSERpermissions');
 
 
 		// take the list of roles (words i.e. Clerk) and get the role IDs
-		$DataUserRoles = new \php_base\data\UserRoleData($this->controller->ArrayOfRoleNames);
+		$DataUserRoles = new UserRoleData($this->controller, $this->controller->ArrayOfRoleNames);
 
 		// now we have an array of Role ids
 		$this->controller->arOfRoleIDs = $DataUserRoles->RoleIDData;
+dump::dumpLong($this->controller);
+
 		// now with roleid go and get the permissions related to those role ids
-		$DataUserPermissions = new \php_base\data\UserPermissionData($this->controller->arOfRoleIDs);
+		$DataUserPermissions = new UserPermissionData($this->controller, $this->controller->arOfRoleIDs);
+
 		$this->controller->ArrayOfRoleNames = $DataUserRoles->RoleIDnames;
 
 		$this->controller->userPermissions = $DataUserPermissions->permissionList;
@@ -265,6 +285,8 @@ dump::dump($this);
 	 * @return type
 	 */
 	public function hasRolePermission(string $roleWanted): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@hasRolePermission: ' .     $roleWanted);
+
 		$roleWanted = trim($roleWanted);
 		if (\in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
 			if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
@@ -291,8 +313,14 @@ dump::dump($this);
 	 * @param type $field
 	 * @return boolean
 	 */
-	public function isAllowed($wantedPermission = Permissions::NO_RIGHT, $process = Permissions::NO_RIGHT, $task = Permissions::NO_RIGHT, $action = Permissions::NO_RIGHT, $field = Permissions::WILDCARD_RIGHT
-	) {
+	public function isAllowed(
+			$wantedPermission = Permissions::NO_RIGHT,
+			$process = Permissions::NO_RIGHT,
+			$task = Permissions::NO_RIGHT,
+			$action = Permissions::NO_RIGHT,
+			$field = Permissions::WILDCARD_RIGHT
+			) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@isAllowed');
 		if (empty($wantedPermission) or $wantedPermission == Permissions::NO_RIGHT) {
 			return false;
 		}
@@ -347,6 +375,7 @@ dump::dump($this);
 	 * @return boolean
 	 */
 	protected function checkRight($singleOfPermissions, $wantedPermission, $process, $task, $action, $field) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkRight');
 
 //Dump::dumpLong( array( $singleOfPermissions, $wantedPermission, $process, $task, $action, $field));
 
@@ -372,6 +401,7 @@ dump::dump($this);
 	 * @return type
 	 */
 	protected function checkProcess($singleOfPermissions, $process) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkProcess');
 		$r = (($process == Permissions::WILDCARD_RIGHT)
 				or ( $process == $singleOfPermissions['PROCESS'])
 				or ( $singleOfPermissions['PROCESS'] == Permissions::WILDCARD_RIGHT));
@@ -385,6 +415,7 @@ dump::dump($this);
 	 * @return type
 	 */
 	protected function checkTask($singleOfPermissions, $task) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkTask');
 		$r = (($task == Permissions::WILDCARD_RIGHT)
 				or ( $task == $singleOfPermissions['TASK'])
 				or ( $singleOfPermissions['TASK'] == Permissions::WILDCARD_RIGHT));
@@ -398,6 +429,7 @@ dump::dump($this);
 	 * @return type
 	 */
 	protected function checkAction($singleOfPermissions, $action) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkAction');
 		$r = (($action == Permissions::WILDCARD_RIGHT)
 				or ( $action == $singleOfPermissions['ACTION'])
 				or ( $singleOfPermissions['ACTION'] == Permissions::WILDCARD_RIGHT));
@@ -415,6 +447,7 @@ dump::dump($this);
 	 * @return type
 	 */
 	protected function checkField($singleOfPermissions, $field) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkField');
 		$r = (($field == Permissions::WILDCARD_RIGHT)
 				or ( $field == $singleOfPermissions['FIELD'])
 				or ( $singleOfPermissions['FIELD'] == Permissions::WILDCARD_RIGHT));
@@ -436,6 +469,7 @@ dump::dump($this);
 	 * @return boolean
 	 */
 	protected function checkPermission($singleOfPermissions, $wantedPermission) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkPermission');
 		switch ($wantedPermission) {
 			case Permissions::GOD_RIGHT:
 				$r = (( $singleOfPermissions['PERMISSION'] == Permissions::GOD_RIGHT )
@@ -474,7 +508,8 @@ dump::dump($this);
 	}
 
 	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
-		$userInfoData = new \php_base\data\UserInfoData();
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doInsertIfNotExists');
+		$userInfoData = new UserInfoData();
 		if( empty($username)){
 			return false;
 		}

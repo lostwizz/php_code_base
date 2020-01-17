@@ -89,6 +89,9 @@ Class UserRoleAndPermissionsController {
 	 * @param type $payload
 	 */
 	public function __construct(string $process, string $task, string $action = '', $payload = null) {
+		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
+			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
+		}
 		$u = Settings::GetRunTime('Currently Logged In User');
 		if (!empty($u)) {
 
@@ -101,9 +104,6 @@ Class UserRoleAndPermissionsController {
 			$this->payload = $payload;
 		}
 
-		if ( Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -139,11 +139,12 @@ Class UserRoleAndPermissionsController {
 	 * @param type $payload
 	 * @return Response
 	 */
-	public function Setup($action = '', $payload = null): Response {
+	public function Setup($dispatcher, $action = '', $payload = null): Response {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@Setup: action=' . $action );
+
 		$u = Settings::GetRunTime('Currently Logged In User');
 		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'logged on user:' . $u);
 
-dump::dump($u);
 		if (!empty($u)) {
 			$response = $this->LoadAllUserInformation($u);
 
@@ -171,6 +172,7 @@ dump::dump($u);
 	 * @return Response
 	 */
 	public function LoadAllUserInformation($username): Response {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@LoadAllUserInformation :' . $username);
 		if (empty($username)) {
 			return new Response('Username not supplied to LoadPermissions', -6, false, true);
 		}
@@ -192,6 +194,7 @@ dump::dump($u);
 	 *
 	 */
 	protected function getCached() {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getCached');
 		$cacheVal = Cache::pull('UserRoleAndPermissions');
 //dump::dump($cacheVal);
 		$this->username = $cacheVal['username'];
@@ -206,6 +209,7 @@ dump::dump($u);
 	 *
 	 */
 	protected function setCached() {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@setCached');
 		$cacheVal = array();
 		$cacheVal['username'] = $this->username;
 		$cacheVal['userID'] = $this->userID;
@@ -223,6 +227,8 @@ dump::dump($u);
 	 * @return bool
 	 */
 	public function hasRole(string $roleWanted): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@hasRole: ' . $roleWanted);
+
 		return $this->model->hasRolePermission($roleWanted);
 	}
 
@@ -241,6 +247,8 @@ dump::dump($u);
 			string $action = Permissions::NO_RIGHT,
 			string $field = Permissions::NO_RIGHT
 	): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@isAllowed');
+
 		$r =  $this->model->isAllowed($permissionWanted, $process, $task, $action, $field);
 		return $r;
 	}
@@ -307,7 +315,7 @@ dump::dump($u);
 	 *
 	 */
 	public function doLogoff(){
-		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'LOGGING OFF!');
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( '@@LOGGING OFF!');
 		unset($this->username );
 		unset($this->userID);
 		unset($this->userInfo);

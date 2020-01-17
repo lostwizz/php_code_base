@@ -53,6 +53,8 @@ use \php_base\Utils\DatabaseHandlers\Field as Field;
  */
 class UserInfoData extends data {
 
+	public $controller;
+
 	public $UserInfo;
 	public $Table;
 
@@ -65,12 +67,20 @@ class UserInfoData extends data {
 	 *  constructor - initiate the read from the database
 	 * @param type $username
 	 */
-	public function __construct($contoller, $username = null) {
+	public function __construct($controller, $username = null) {
+		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
+			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
+		}
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . $username);
+
+		$this->controller = $controller;
 
 		$this->defineTable();
+
+//dump::dump($username);
 		if (!empty($username)) {
-dump::dump($username);
 			$this->doReadFromDatabaseByUserNameAndApp($username);
+dump::dumpLong( $this->UserInfo);
 		}
 	}
 
@@ -88,6 +98,7 @@ dump::dump($username);
 	 * @return void
 	 */
 	public function defineTable(): void {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
 
 		$this->Table = new Table(Settings::GetProtected('DB_Table_UserManager'),
 				['className' => __NAMESPACE__ . '\UserInfoData',
@@ -164,6 +175,8 @@ dump::dump($username);
 	 * @return int
 	 */
 	public function getUserID(): ?int {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getUserID');
+
 		if (!empty($this->UserInfo) and ! empty($this->UserInfo['USERID'])) {
 			return $this->UserInfo['USERID'];
 		} else {
@@ -177,6 +190,7 @@ dump::dump($username);
 	 * @return boolean
 	 */
 	public function getPrimaryRole() {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getPrimaryRole');
 		if (!empty($this->UserInfo) and ! empty($this->UserInfo['PRIMARYROLENAME'])) {
 			return $this->UserInfo['PRIMARYROLENAME'];
 		} else {
@@ -192,6 +206,7 @@ dump::dump($username);
 	 * @throws \Exception
 	 */
 	public function doReadFromDatabaseByUserNameAndApp(string $username): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseByUserNameAndApp: '. $username);
 		$sql = 'SELECT * '
 				. ' FROM ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' WHERE username = :uname AND  app = :app ;'
@@ -221,7 +236,7 @@ dump::dump($username);
 	 * @return array|null
 	 */
 	public function giveSelectOnMethod(): ?array {
-
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@giveSelectOnMethod');
 		if (CACHE::exists('Table_SelectOnMethod_' . Settings::GetProtected('DB_Table_UserManager'))) {
 			$data = CACHE::pull('Table_Select_' . Settings::GetProtected('DB_Table_UserManager'));
 		} else {
@@ -246,7 +261,7 @@ dump::dump($username);
 	 * @return array|null
 	 */
 	public function giveSelectOnApp(): ?array {
-
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@giveSelectOnApp');
 		if (CACHE::exists('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'))) {
 			$data = CACHE::pull('Table_SelectOnApp_' . Settings::GetProtected('DB_Table_UserManager'));
 		} else {
@@ -272,6 +287,7 @@ dump::dump($username);
 	 * @param string $newPW
 	 */
 	public function doUpdatePassword(int $userid, string $newPW): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doUpdatePassword');
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET password = :password'
 				. ' WHERE userid = :userid'
@@ -293,6 +309,7 @@ dump::dump($username);
 	 * @param string $newIP
 	 */
 	public function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doUpdateLastLoginAndIP');
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET ip = :ip'
 				. ' , last_logon_time = :last_logon'
@@ -319,6 +336,7 @@ dump::dump($username);
 	 * @return int
 	 */
 	public function doInsertNewAccount($username, $password, $email, $primaryRole = null): int {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doInsertNewAccount');
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' ( app, method, username, password, primaryRoleName)'
 				. ' VALUES '
@@ -345,6 +363,7 @@ dump::dump($username);
 	 * @return bool
 	 */
 	public function doDeleteAccountByUserNameAndApp(string $username): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doDeleteAccountByUserNameAndApp');
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' WHERE username = :username AND app = :app'
 		;
@@ -358,6 +377,7 @@ dump::dump($username);
 	}
 
 	public function doUpdateRecord($data): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doUpdateRecord');
 		///////////$data = array_change_key_case($data, CASE_UPPER);
 		dump::dump($data);
 		echo 'password editable=', ($this->table->password->isEditable) ? 'y' : 'no';

@@ -155,9 +155,9 @@ class Resolver {
 
 		$this->AddSetupAuthenticateCheck();  // always start with login checks
 
-		$this->AddSetupUserRoleAndPermissions(); // after they have logged in now setup the user permissions
-
 		$this->decodeRequestInfo();
+		
+		$this->AddSetupUserRoleAndPermissions($this->payload); // after they have logged in now setup the user permissions
 
 		$this->addMenu($this->payload);
 
@@ -310,11 +310,11 @@ class Resolver {
 	 *
 	 * @see Dispatcher and UserRoleAndPermission classes
 	 */
-	protected function addSetupUserRoleAndPermissions(): void {
+	protected function addSetupUserRoleAndPermissions($payload): void {
 		$process = 'UserRoleAndPermissions';
 		$task = 'Setup';
 		$action = null;
-		$payload = null;
+		//$payload = $payload;
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 

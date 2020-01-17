@@ -287,27 +287,37 @@ class AMessage extends MessageBase {
 			$lineStyle = $this->getShowStyle($this->level);
 		}
 
+		$s .= '<div class="' . $lineStyle . '">';
 		if (!empty($this->timeStamp)) {
 			$s .= '[' . $this->timeStamp . '] ';
 		}
-		$s .= '<span class="' . $lineStyle . '">';
 		$s .= $textLeader;
+
 		if ( SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
-			$s .= '</span>';
+			$s .= '</div>';
 		}
+
 		$s .= ': ';
 
 		if (is_array($this->text)) {
 			$this->text = \print_r($this->text, true);
+			$x = str_replace("\n", '<BR>', $this->text);
+			$y = str_replace(' ', '&nbsp;', $x);
+			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
+			$s .= $z;
+		} else if ( substr_count(strtolower($this->text), '/table' ) > 0){
+			$s .= '<pre>';
+			$s .= $this->text;
+			$s .= '</pre>';
+		} else {
+			$x = str_replace("\n", '<BR>', $this->text);
+			$y = str_replace(' ', '&nbsp;', $x);
+			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
+			$s .= $z;
 		}
-
-		$x = str_replace("\n", '<BR>', $this->text);
-		$y = str_replace(' ', '&nbsp;', $x);
-		$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
-		$s .= $z;
-
+		
 		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
-			$s .= '</span>';
+			$s .= '</div>';
 		}
 		return $s;
 	}
@@ -318,7 +328,8 @@ class AMessage extends MessageBase {
 	 * @param type $style
 	 */
 	public function show($style = null) {
-		echo $this->getPrettyLine($style);
+		$r= $this->getPrettyLine($style);
+		echo $r;
 	}
 
 }
@@ -337,7 +348,7 @@ class AMessage extends MessageBase {
 class MessageLog {
 
 	/** the queue static so there is only one */
-	protected static $messageQueue;
+	public static $messageQueue;
 
 	/**
 	 * @var version number
@@ -375,7 +386,7 @@ class MessageLog {
 		while (self::$messageQueue->valid()) {
 			$x = self::$messageQueue->current();
 			$s .= $x->__toString();
-			$s .= '<br />';
+			//$s .= '<br />';
 			self::$messageQueue->next(); //switch to next list item
 		}
 		return $s;
@@ -401,25 +412,34 @@ class MessageLog {
 	 * @param type $level
 	 */
 	public function add($obj_or_array = null, $timestamp = null, $level = null) {
+
+
 		if (is_object($obj_or_array) and ( $obj_or_array instanceof AMessage )) {
 			self::$messageQueue->enqueue($obj_or_array);
 		} else {
 			if (Settings::GetPublic('Show MessageLog Adds')) {
-				$bt = debug_backtrace(false, 2);
+				$bt = debug_backtrace(false, 3);
 				if (is_string($obj_or_array) and ! empty($bt[1])) {
 					if (Settings::GetPublic('Show MessageLog Adds_FileAndLine')) {
 						$obj_or_array .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn">';
-						$obj_or_array .= '- ' . basename($bt[1]['file']) . ':' . $bt[1]['line'] . '</span>';
+						$obj_or_array .= '- '
+								. basename($bt[1]['file'])
+								. ':'
+								. $bt[1]['line']
+								. ' ('
+								. (empty($bt[2]['class']) ? '' : basename($bt[2]['class']) )
+								. '.'
+								. (empty($bt[2]['function'] ) ? '' :$bt[2]['function'] )
+								. ')'
+								. '</span>';
 					}
 				}
 			}
-
 			$temp = new AMessage($obj_or_array, $timestamp, $level);
 			self::$messageQueue->enqueue($temp);
-
 			if (Settings::GetPublic('Show MessageLog Adds')) {
 				$temp->show();
-				echo '<Br>' . PHP_EOL;
+//				echo '<Br>' . PHP_EOL;
 			}
 		}
 	}
@@ -598,7 +618,7 @@ class MessageLog {
 			?><fieldset class="msg_fieldset"><Legend id="message_box_show_all_in_box" class="msg_legend">Messages</legend><?php
 				}
 				if ($this->hasMessages()) {
-					$this->showAllMessages();
+					$this->showAllMessages('');
 				} else {
 					echo '&nbsp;';
 				}

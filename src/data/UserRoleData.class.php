@@ -68,7 +68,14 @@ Class UserRoleData extends Data {
 	 *  constructor that initiates the reading of the database
 	 * @param type $ArrayOfNames
 	 */
-	public function __construct(?array $ArrayOfNames = null) {
+	public function __construct($controller, ?array $ArrayOfNames = null) {
+		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
+			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
+		}
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($ArrayOfNames, true));
+
+		$this->controller = $controller;
+
 		$this->defineTable();
 
 		if (!empty($ArrayOfNames)) {
@@ -90,6 +97,8 @@ Class UserRoleData extends Data {
 	 * @return void
 	 */
 	public function defineTable(): void {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+
 		$this->Table = new Table(Settings::GetProtected('DB_Table_RoleManager'), ['className' => __NAMESPACE__ . '\UserRoleData']);
 		$this->Table->setPrimaryKey('roleId', ['prettyName' => 'Role Id']);
 		$this->Table->addFieldInt('roleid', ['prettyName' => 'Role Id',
@@ -103,6 +112,7 @@ Class UserRoleData extends Data {
 	 * @param type $data
 	 */
 	public function ProcessRoleIDs($data) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo('@@ProcessRoleIDs: '. print_r($data, true));
 		foreach ($data as $record) {
 			if (!empty($record['NAME']) and ! empty($record['ROLEID'])) {
 				$this->RoleIDData[$record['NAME']] = $record['ROLEID'];
@@ -117,6 +127,8 @@ Class UserRoleData extends Data {
 	 * @return bool
 	 */
 	protected function doReadFromDatabase($ArrayOfNames): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabase' . print_r($ArrayOfNames, true));
+
 		$names = "'" . implode("', '", $ArrayOfNames) . "'";
 		$sql = 'SELECT RoleId
 						,Name
@@ -139,6 +151,8 @@ Class UserRoleData extends Data {
 	 * @return int
 	 */
 	public function doAddNewRole(string $roleName): int {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doAddNewRole: '. $roleName);
+
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' { name)'
 				. ' VALUES '
@@ -156,6 +170,8 @@ Class UserRoleData extends Data {
 	 * @return bool
 	 */
 	public function doRemoveRoleByName(string $roleName): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doRemveRoleByName:' . $roleName);
+
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE name = :name'
 		;
@@ -171,6 +187,7 @@ Class UserRoleData extends Data {
 	 * @return bool
 	 */
 	public function doRemoveRoleByID(int $roleID): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doRemoveRoleByID: '. $roleID);
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE roleid = :roleid'
 		;
@@ -186,6 +203,8 @@ Class UserRoleData extends Data {
 	 * @return int
 	 */
 	public function getRoleIDByName(string $roleName): int {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getRoleIDbyName: ' . $roleName );
+
 		$sql = 'SELECT roleid '
 				. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE roleid = :roleid'

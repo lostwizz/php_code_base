@@ -76,7 +76,14 @@ class UserPermissionData {
 	 *  basic constructor that initiates the reading from the database
 	 * @param type $listOfRoleIDs
 	 */
-	public function __construct($listOfRoleIDs) {
+	public function __construct($controller, $listOfRoleIDs) {
+		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
+			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
+		}
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($listOfRoleIDs, true));
+
+		$this->controller = $controller;
+
 		$this->defineTable();
 		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
 	}
@@ -95,6 +102,8 @@ class UserPermissionData {
 	 * @return void
 	 */
 	public function defineTable(): void {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+
 		$this->Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'), ['className' => __NAMESPACE__ . '\UserPermissionData']);
 		$this->Table->setPrimaryKey('Id', ['prettyName' => 'Id']);
 		$this->Table->addFieldInt('id', ['prettyName' => 'Id',
@@ -113,6 +122,8 @@ class UserPermissionData {
 	 * @param type $listOfRolesIDs
 	 */
 	protected function doReadFromDatabaseForRoles(array $listOfRolesIDs) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseForRoles: '. print_r($listOfRolesIDs));
+
 		if (empty($listOfRolesIDs)) {
 			return;
 		}
@@ -133,8 +144,7 @@ class UserPermissionData {
 		$data = DBUtils::doDBSelectMulti($sql);
 
 		$this->permissionList = $data;
-//dump::dump($sql)	;
-//dump::dump($data);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo('permissionList: ' . print_r($this->permissionList));
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -148,6 +158,8 @@ class UserPermissionData {
 	 * @return int
 	 */
 	public function doAddNewPermission(int $roleID, string $process, string $task, string $action, string $field, Permission $permission): int {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doAddNewPermission: '. $roleID);
+
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_PermissionsManager')
 				. '( roleid, process, task, action, field, permission )'
 				. ' VALUES '
@@ -170,6 +182,8 @@ class UserPermissionData {
 	 * @return bool
 	 */
 	public function doDeletePermissionByID(int $id): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doDeletePermissionByID: '. $id);
+
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
 				. ' WHERE id = :id'
 		;
@@ -184,6 +198,7 @@ class UserPermissionData {
 	 * @return bool
 	 */
 	public function doDeletePermissionByRoleID(int $roleid): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doDeletePermissionByRoleID: ', $roleid);
 
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
 				. 'WHERE roleid = :roleid'
