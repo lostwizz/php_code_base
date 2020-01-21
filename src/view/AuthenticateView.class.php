@@ -107,7 +107,7 @@ class AuthenticateView extends View {
 		echo 'Logon Form for ', Settings::GetPublic('App Name');
 		echo '</center>';
 
-		$this->showLoginBox(false, false, true);
+		$this->showLoginBox(true, true, true);
 		echo HTML::FormClose();
 	}
 
@@ -121,11 +121,25 @@ class AuthenticateView extends View {
 		<table border=1 align=center>
 			<tr>
 				<td>Username: </td>
-				<td colspan=2><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array('maxlength' => 30, 'size' => 30)); ?></td>
+				<td colspan=2><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]',
+												null,
+						array('maxlength' => 30,
+							'minlength'=> 1,
+							'size' => 30,
+							'required',
+							'placeholder'=>'User Name'
+							)); ?></td>
 			</tr><tr>
 				<td>Password: </td>
-				<td colspan=2><?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array('maxlength' => 100, 'size' => 30)); ?></td>
-			</tr><tr>
+				<td colspan=2><?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]',
+										null,
+						array('maxlength' => 100,
+							'minlength' =>1,
+							'size' => 30,
+							'required',
+							'placeholder' =>'Password'
+							)); ?>
+					</td></tr><tr>
 				<td align=center colspan=3><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit Logon'); ?></td>
 			</tr><tr align=center>
 				<?php
@@ -194,7 +208,15 @@ class AuthenticateView extends View {
 		<table border=1 align=center>
 			<tr>
 				<td>Username: </td>
-				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array('maxlength' => 30, 'size' => 30)); ?></td>
+				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]',
+												null,
+						array('maxlength' => 30,
+							'size' => 30,
+							'required',
+							'placeholder'=>'User Name',
+							'minlength'=> 1,
+							'required'
+							)); ?></td>
 			</tr><tr>
 				<td align=center colspan=2><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit Username for Forgot Password'); ?></td>
 			</tr>
@@ -245,17 +267,39 @@ class AuthenticateView extends View {
 		<table border=1 align=center>
 			<tr>
 				<td>Username: </td>
-				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array('maxlength' => 30, 'size' => 30)); ?>
+				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]',
+						null,
+						array('maxlength' => 30,
+							'size' => 30,
+							'minlength'=> 1,
+							'required',
+							'placeholder' =>'User Name'
+							)); ?>
 				</td>
 			</tr><tr>
 				<td>Old Password: </td>
 				<td>
-		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[old_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[old_password]',
+				null,
+				array('maxlength' => 100,
+					'size' => 30,
+					'required',
+					'minlength' =>1,
+					'placeholder'=>'Old Password'
+
+					)); ?>
 				</td>
 			</tr><tr>
 				<td>New Password: </td>
 				<td>
-		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[new_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[new_password]',
+				null,
+				array('maxlength' => 100,
+					'size' => 30,
+					'required',
+					'minlength' => 8,
+					'placeholder' => 'New Password'
+					)); ?>
 				</td>
 			</tr><tr>
 				<td align=center colspan=2><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit Username for Password Change'); ?></td>
@@ -296,20 +340,41 @@ class AuthenticateView extends View {
 		<table border="1" align=center>
 			<tr>
 				<td>Username: </td>
-				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]', null, array('maxlength' => 30, 'size' => 30)); ?>
+				<td><?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_username]',
+						null,
+						array('maxlength' => 30,
+							'size' => 30,
+							'required',
+							'minlength' => 1,
+							'placeholder' => 'User Name'
+							)); ?>
 				</td>
 			</tr><tr>
 				<td>Password: </td>
 				<td>
-		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]', null, array('maxlength' => 100, 'size' => 30)); ?>
+		<?php echo HTML::Password(Resolver::REQUEST_PAYLOAD . '[entered_password]',
+				null,
+				array('maxlength' => 100,
+					'size' => 30,
+					'required',
+					'minlength' =>8,
+					'placeholder' => 'Password'
+					)); ?>
 				</td>
 			</tr><tr>
 				<td>Email Address: </td>
 				<td>
-		<?php echo HTML::Text(Resolver::REQUEST_PAYLOAD . '[entered_email]', null, array('maxlength' => 255, 'size' => 30)); ?>
+		<?php echo HTML::eMail(Resolver::REQUEST_PAYLOAD . '[entered_email]',
+				null,
+				array('maxlength' => 255,
+					'size' => 30,
+					'required',
+					'placeholder' => 'email address'
+					)); ?>
 				</td>
 			</tr><tr>
-				<td align=center colspan=2><?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit New Account Info'); ?></td>
+				<td align=center colspan=2>
+					<?php echo HTML::Submit(Resolver::REQUEST_ACTION, 'Submit New Account Info'); ?></td>
 			</tr>
 		</table>
 		<?php

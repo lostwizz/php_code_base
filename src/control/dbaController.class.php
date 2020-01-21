@@ -47,6 +47,9 @@ class dbaController extends Controller {
 	 * basic form of the constructor
 	 */
 	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null){
+		if ( Settings::GetPublic('IS_DETAILED_DBA_DEBUGGING')){
+			Settings::SetRuntime('DBA_DEBUGGING', Settings::GetRunTimeObject('MessageLog') );
+		}
 		$this->process = $passedProcess;
 		$this->task = $passedTask;
 		$this->action = $passedAction;
@@ -70,6 +73,7 @@ class dbaController extends Controller {
 	 * @return Response
 	 */
 	public function doWork(): Response {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@doWork');
 		return Response::NoError() ;
 	}
 
@@ -99,16 +103,26 @@ class dbaController extends Controller {
 	 * @param type $parent
 	 * @return type
 	 */
-	public function Edit_UserInfoData( $parent=null) {
+	public function Edit_UserInfoData( $dispatcher=null) {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@edit_UserInfoData');
 
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit UserInfoData');
 		}
 
-		$t = new \php_base\data\UserInfoData();
+//dump::dump($dispatcher);
+
+//dump::dumpLong(Settings::GetRunTime('userPermissionsController'));
+
+
+//dump::dumpClasses();
+
+		//if ( )
+		//$dispatcher->addPOSTProcess('AuthenticateController','')
+		//$t = new \php_base\data\UserInfoData();
 
 		//$x = \php_base\data\UserInfoData::$Table ;
-		$x = $t::$Table;
+		//$x = $t::$Table;
 
 //dump::dumpLong($this);
 
@@ -116,13 +130,16 @@ class dbaController extends Controller {
 
 		$this->payload['Table'] = 'UserInfoData';
 
+
+//echo '"', __NAMESPACE__, '"';
+
 		//Settings::GetRuntimeObject('DISPATCHqueue' )->enqueue ('SimpleTableEditor');
 
 //dump::dumpLong(Settings::GetRuntimeObject('DISPATCHqueue' )	);
 //dump::dumpLong(Settings::GetRuntimeObject('PREqueue' )	);
 //dump::dumpLong(Settings::GetRuntimeObject('POSTqueue' )	);
 
-		$editorSession = new SimpleTableEditor($x, $this->process, $this->task, $this->action, $this->payload);
+		$editorSession = new SimpleTableEditor('\php_base\data\UserInfoData', $this->process, $this->task, $this->action, $this->payload);
 
 		//$result = $editorSession->runTableDisplayAndEdit( true );
 
@@ -138,6 +155,7 @@ class dbaController extends Controller {
 	 * @return type
 	 */
 	public function two( $parent=null) {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@two');
 
 		echo 'at dba two ';
 dump::dump('at two');
@@ -159,6 +177,7 @@ dump::dump('at two');
 	 * @return type
 	 */
 	public function three( $parent=null) {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@three');
 
 		echo 'at dba three ';
 
@@ -176,6 +195,7 @@ dump::dump('at two');
 
 	/** -----------------------------------------------------------------------------------------------*/
 	public function four( $parent=null) {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@four');
 
 		echo 'at dba four ';
 dump::dump('at four');
@@ -184,6 +204,7 @@ dump::dump('at four');
 
 	/** -----------------------------------------------------------------------------------------------*/
 	public function five( $parent=null) {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@five');
 
 		echo 'at dba five ';
 dump::dump('at five');

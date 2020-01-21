@@ -52,20 +52,23 @@ Settings::SetPublic('IS_DEBUGGING', true);
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
 
-	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
 
 	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', false);
 
 	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
 
 	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', false);
-	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', true);
-	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', true);
+	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
+
+
+	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', true);
+
+	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', true);
+
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', false);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', false);
-
-	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', true);
-
-
+	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
 
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);

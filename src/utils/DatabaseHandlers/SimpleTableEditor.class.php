@@ -23,7 +23,7 @@ use \php_base\Utils\Utils;
  */
 class SimpleTableEditor {
 
-	protected $table;
+	protected $tableObj;
 	public $key = '';
 
 	public $process;
@@ -40,13 +40,18 @@ class SimpleTableEditor {
 	 * @param array $payload
 	 */
 	public function __construct( $dataTable, string $process='', string $task='', string $action ='', ?array $payload = null) {
-//dump::dumpLong( $dataTable);
-		$this->table = $dataTable;
+		if (Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING')) {
+			Settings::SetRuntime ('SIMPLE_DEBUGGING' , Settings::GetRunTimeObject('MessageLog') );
+		}
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@construct' . $dataTable . ' proc=' . $process . ' task=' . $task . ' act=' . $action);
+
+		$this->tableObj = new $dataTable( $this);
 
 		$this->process = $process;
 		$this->task = $task;
 		$this->action = $action;
 		$this->payload = $payload;
+
 		$this->runTableDisplayAndEdit(true);
 	}
 
@@ -56,21 +61,28 @@ class SimpleTableEditor {
 	 * @return Response
 	 */
 	public function runTableDisplayAndEdit( $isEditAllowed= false ) : Response { ///$tableName = 'php_base\data\UserInfoData') {
-
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . $isEditAllowed ? ' Editable' : 'not Editable');
 		$this->handleVarsPassedToSimpleTableEditor();
 
-//dump::dumpLong($this);
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('pta ='. $this->process. '.' . $this->task. '.' . $this->action);
 
+//dump::dumpLong($this);
 
-		$this->table->process = $this->process;
+		$this->tableObj->process = $this->process;
 
-		$this->table->task = $this->task;
+		$this->tableObj->task = $this->task;
 
-		$this->table->action = $this->action;
+		$this->tableObj->action = $this->action;
 
-		$this->table->payload = $this->payload;
+//dump::dump($this->payload);
+//dump::dump($this->tableObj);
+
+		$this->tableObj->payload = $this->payload;
+		$this->tableObj->Table->payload = $this->payload;
+
+//dump::dump($this->payload);
+dump::dump($this->tableObj->Table->payload);
 
 
 
@@ -85,14 +97,19 @@ class SimpleTableEditor {
 			echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
 			echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
 
-			$d = $this->table->readAllTableData();
+
+//dump::dump( $this->table);
+
+//dump::dump( \get_class_methods($this->table->Table));
+			$d = ($this->tableObj->Table)->readAllTableData();
+
 			$this->sortData($d);
 			$this->filterData($d);
 
 			$sortAr = $this->processPassedSort();
 			$filter = $this->processPassedFilter();
 
-			echo $this->table->showTable($d, $sortAr, $filter, $this->process, $this->task);
+			echo $this->tableObj->Table->showTable($d, $sortAr, $filter, $this->process, $this->task);
 			echo HTML::FormClose();
 
 			return Response::NoError();
@@ -107,6 +124,7 @@ class SimpleTableEditor {
 	 * @param type $getVars
 	 */
 	protected function handleVarsPassedToSimpleTableEditor() {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@handleVarsPassedToSimplTableEditor' );
 
 		$this->process = ( ! empty($this->process) ? $this->process : 'SimpleTableEditor');
 		$this->task    = ( ! empty($this->task) ? $this->task : '');
@@ -116,11 +134,14 @@ class SimpleTableEditor {
 			foreach ($this->payload as $key => $value) {
 				if (\strpos($key, 'Key') !== false) {
 
-					$expload = \explode('=>', $key);
-					$the_key = $expload[1];
+					$exploded = \explode('=>', $key);
+
+//dump::dump($exploded);
+					$the_key = $exploded[1];
 					$this->payload['RowKey'] = $the_key;
 
-					switch ($expload[0]) {
+
+					switch ($exploded[0]) {
 						case 'EditKey':
 							$this->action = 'EditRow';
 							break;
@@ -142,11 +163,17 @@ class SimpleTableEditor {
 		} else {
 			$this->payload = null;
 		}
+
+//dump::dump($this->payload);
 	}
 
+	/** -----------------------------------------------------------------------------------------------*/
 	protected function doEditRow() : Response {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doEditRow');
+
 		echo 'At Edit<BR>';
-		$this->table->editRowOfTable();
+dump::dump($this->tableObj->Table);
+		$this->tableObj->Table->editRowOfTable();
 		return Response::NoError();
 	}
 
@@ -156,12 +183,14 @@ class SimpleTableEditor {
 	 * @return Response
 	 */
 	protected function doSave_Edit() : Response {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doSave_Edit');
+
 		//echo 'At Save Edit<BR>';
 		//$this->table->editRowOfTable();
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('save the edit');
 
-		$r = $this->table->saveRow( $this->payload);
+		$r = $this->tableObj->Table->saveRow( $this->payload);
 		if ( $r) {
 			return Response::NoError();
 		} else {
@@ -174,6 +203,7 @@ class SimpleTableEditor {
 	 * @return Response
 	 */
 	protected function doDeleteRow() : Response {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doDeleteRow');
 		echo 'At Delete<BR>';
 		return Response::NoError();
 	}
@@ -183,6 +213,7 @@ class SimpleTableEditor {
 	 * @return Response
 	 */
 	protected function doSpecialRow() : Response {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doSpecialRow');
 		echo 'At Special<BR>';
 		return Response::NoError();
 	}
@@ -192,6 +223,7 @@ class SimpleTableEditor {
 	 * @return Response
 	 */
 	protected function doAddRow() : Response {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doAddRow');
 		echo 'At Add<BR>';
 		return Response::NoError();
 	}
@@ -201,8 +233,10 @@ class SimpleTableEditor {
 	 * @return array|null
 	 */
 	public function processPassedSort(): ?array {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@processPassedSort');
+
 		$ar = array();
-		$flds = $this->table->giveFields();
+		$flds = $this->tableObj->Table->giveFields();
 
 		if (!empty($this->payload['sortAsc']) and is_array($this->payload['sortAsc'])) {
 			foreach ($flds as $fld) {
@@ -228,6 +262,7 @@ class SimpleTableEditor {
 	 * @return array|null
 	 */
 	public function processPassedFilter(): ?array {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@processPassedFilter');
 		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {
 			$filter = $this->payload['filter'];
 		} else {
@@ -241,6 +276,7 @@ class SimpleTableEditor {
 	 * @param array $data
 	 */
 	public function filterData(array &$data) {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@filterData');
 
 		if (!empty($this->payload['filter']) and is_array($this->payload['filter'])) {  //if have a filter passed
 			foreach ($this->payload['filter'] as $fld => $filterValue) {   // for each filter field see if ther is a filter
@@ -259,6 +295,7 @@ class SimpleTableEditor {
 	 * @param type $filterValue
 	 */
 	public function filterTheData(&$data, $fld, $filterValue) {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@filterTheData');
 		foreach ($data as $key => $value) {  //run thru the data
 			if (!(Utils::startsWith($value[$fld], $filterValue, true) )) { // check the data against the column with the filter data
 				unset($data[$key]);  // remove the row
@@ -273,6 +310,7 @@ class SimpleTableEditor {
 	 * @return type
 	 */
 	public function sortData(array &$data) {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@sortData');
 		//figure out what to sort and in which direction
 
 		if (!empty($this->payload['sortAsc'])) {

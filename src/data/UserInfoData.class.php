@@ -80,7 +80,7 @@ class UserInfoData extends data {
 //dump::dump($username);
 		if (!empty($username)) {
 			$this->doReadFromDatabaseByUserNameAndApp($username);
-dump::dumpLong( $this->UserInfo);
+			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->UserInfo);
 		}
 	}
 

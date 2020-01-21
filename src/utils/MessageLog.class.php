@@ -300,11 +300,16 @@ class AMessage extends MessageBase {
 		$s .= ': ';
 
 		if (is_array($this->text)) {
+			$debugText = $this->text['msglogTraceInfo'];
+			if ( !empty($debugText)){
+				unset ($this->text['msglogTraceInfo']);
+			}
 			$this->text = \print_r($this->text, true);
 			$x = str_replace("\n", '<BR>', $this->text);
 			$y = str_replace(' ', '&nbsp;', $x);
 			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 			$s .= $z;
+			$s .= $debugText;
 		} else if ( substr_count(strtolower($this->text), '/table' ) > 0){
 			$s .= '<pre>';
 			$s .= $this->text;
@@ -315,7 +320,7 @@ class AMessage extends MessageBase {
 			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 			$s .= $z;
 		}
-		
+
 		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
 			$s .= '</div>';
 		}
@@ -433,6 +438,16 @@ class MessageLog {
 								. ')'
 								. '</span>';
 					}
+				} else if ( is_array( $obj_or_array)){
+					$obj_or_array['msglogTraceInfo'] = '- '
+								. basename($bt[1]['file'])
+								. ':'
+								. $bt[1]['line']
+								. ' ('
+								. (empty($bt[2]['class']) ? '' : basename($bt[2]['class']) )
+								. '.'
+								. (empty($bt[2]['function'] ) ? '' :$bt[2]['function'] )
+								. ')';
 				}
 			}
 			$temp = new AMessage($obj_or_array, $timestamp, $level);

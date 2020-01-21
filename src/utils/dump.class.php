@@ -104,6 +104,7 @@ abstract class Dump {
 	const LONGPRE3POST3=4;
 	const CLASSES_LOADED = 5;
 	const MULTI_ARRAY =6;
+	const SHORT = 7;
 
 
 	/**
@@ -145,7 +146,7 @@ abstract class Dump {
 			switch ($whichPreset){
 			case self::LONG:  // long
 				$auxArray = array(
-					'FLAT_WINDOWS_LINES' => 50,
+					'FLAT_WINDOWS_LINES' => -1,
 					'Beautify_BackgroundColor'=> '#F0FFD5',
 					);
 				break;
@@ -169,6 +170,7 @@ abstract class Dump {
 					'Show BackTrace Num Lines' => 0,
 					);
 				break;
+			case self::SHORT:
 			case self::MULTI_ARRAY:
 			default:
 			case self::NORMAL:  // default
@@ -331,8 +333,11 @@ abstract class Dump {
 	 *
 	 */
 	public static function dump($obj, ?string $title = '', ?array $options=null){
-		self::initConfig($options, self::NORMAL);
+		//self::initConfig($options, self::NORMAL);
+		self::initConfig($options, self::LONG);
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines')  );  // get it early
+
+		self::initConfig($options, self::LONG);
 
 		return SELF::dumpHelper($bt, $obj, $title);
 	}
@@ -385,6 +390,26 @@ abstract class Dump {
 		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines'));  // get it early
 
 		self::initConfig($options, self::LONG);
+
+		$r = SELF::dumpHelper($bt, $obj, $title);
+
+		return $r;
+	}
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $obj
+	 * @param string|null $title
+	 * @param array $options
+	 * @return type
+	 */
+	public static function dumpshort($obj, ?string $title = '', ?array $options=null) {
+		self::initConfig($options, self::SHORT);
+		$bt = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, self::$config->get( 'Show BackTrace Num Lines'));  // get it early
+
+		self::initConfig($options, self::SHORT);
 
 		$r = SELF::dumpHelper($bt, $obj, $title);
 

@@ -190,7 +190,9 @@ class UserAttributeData extends data {
 
 		$params = array(':userid' => $userID);
 		$data = DBUtils::doDBSelectMulti($sql, $params);
-dump::dumpLong($data);
+
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice($data);
+
 		$this->ProcessAttributes($data);
 		return true;
 	}

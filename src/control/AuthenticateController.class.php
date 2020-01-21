@@ -143,7 +143,15 @@ class AuthenticateController extends \php_base\Control\Controller {
 		//if (empty($this->payload[Resolver::REQUEST_ACTION])) {
 		//	$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
 		//}
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check2' . $this->payload[Resolver::REQUEST_ACTION]);
+
+		if (empty($this->payload[Resolver::REQUEST_ACTION])){
+			$this->payload[Resolver::REQUEST_ACTION] ='';
+		}
+
+//dump::dump($this->payload)		;
+
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check2'
+							. (empty( $this->payload[Resolver::REQUEST_ACTION])  ? '' : $this->payload[Resolver::REQUEST_ACTION] ));
 		// not yet logged on
 		//    yes we could just change the spaces to underscores - but this i think is easier to read (and it shows all the possibilities)
 		switch ($this->payload[Resolver::REQUEST_ACTION]) {
@@ -379,5 +387,8 @@ class AuthenticateController extends \php_base\Control\Controller {
 		Settings::SetRuntime ('isAuthenticated', $r );
 		return $r;
 	}
+
+
+	
 
 }

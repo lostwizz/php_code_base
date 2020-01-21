@@ -303,7 +303,12 @@ Class Field {
 		} else {
 			$class  = $this->parent->className;
 			$methodName = $this->selectFrom;
-			$selOptions = $class::$methodName();
+			//$selOptions = $class::$methodName();
+dump::dumpA($class, $methodName);
+
+dump::dump($class);
+
+			$selOptions = $class->$methodName();
 		}
 		$r = HTML::Select($name, $selOptions, $value, true);
 		return $r;

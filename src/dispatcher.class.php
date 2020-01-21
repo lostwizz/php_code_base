@@ -52,6 +52,11 @@ use \php_base\Utils\Cache as CACHE;
  */
 class Dispatcher {
 
+	const NONE = 0;
+	const PRE = 1;
+	const DISPATCH = 2;
+	const POST = 3;
+
 	/**
 	 *
 	 * @var type these are the 3 queues to execute
@@ -62,6 +67,8 @@ class Dispatcher {
 	protected $PREqueue;
 	protected $POSTqueue;
 	protected $DISPATCHqueue;
+
+	public $currentQueue;
 
 	public $PHPUNIT_tempArray = array();
 
@@ -81,6 +88,8 @@ class Dispatcher {
 			Settings::setRunTime('DISPATCHER_DEBUGGING' ,Settings::GetRunTimeObject('MessageLog'));
 		}
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addAlert('dispatcher constructor ');
+
+		$this->currentQueue = dispatcher::NONE;
 
 		$this->PREqueue = new \SplQueue();
 		//$this->POSTqueue = new \SplQueue();
@@ -132,6 +141,7 @@ class Dispatcher {
 	public function doWork($parentResolver = null): Response {
 
 		$this->debug('dispatcher starting prequeue' );
+		$this->currentQueue = dispatcher::PRE;
 		$pre_result = $this->RunThruTheQueue($this->PREqueue);
 
 		if ($pre_result->hadError()) {
@@ -141,6 +151,7 @@ class Dispatcher {
 			// the pre queue contains authentication - so if it returns false then dont do any actuall work
 			$this->debug('dispatcher starting normal queue'   );
 
+			$this->currentQueue = dispatcher::DISPATCH;
 			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue);
 
 			if ($dispatch_result->hadError()) {
@@ -152,6 +163,7 @@ class Dispatcher {
 		$this->debug('dispatcher starting postqueue');
 
 		// show the post queue in all cases (it has the message stack for one- so you know what happend -  and the footer)
+		$this->currentQueue = dispatcher::POST;
 		$post_result = $this->RunThruTheQueue($this->POSTqueue);
 
 		if ($post_result->hadError()) {

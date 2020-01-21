@@ -98,6 +98,24 @@ abstract Class HTML {
 		return self::ShowInput($name, $value, "CHECKBOX", $arOptions, $arStyle, $lable);
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param string|null $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @param string|null $lable
+	 * @return string|null
+	 */
+	public static function email(
+			string $name,
+			?string $value = null,
+			$arOptions = null,
+			$arStyle = null,
+			?string $lable = null
+	): ?string {
+		return self::ShowInput($name, $value, 'eMail', $arOptions, $arStyle, $lable);
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * return a text with a hidden input
@@ -226,7 +244,7 @@ abstract Class HTML {
 			$arStyle = null,
 			?string $lable = null
 	): ?string {
-		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'TEXT', 'HIDDEN', 'IMAGE'];
+		$possibeTypes = ['CHECKBOX','RADIO','Reset', 'Password', 'Submit', 'BUTTON', 'eMail', 'TEXT', 'HIDDEN', 'IMAGE'];
 
 		if ( in_array($type, $possibeTypes) ){
 			$name = (!empty($name)) ? ' name="' . $name . '"' : '';
@@ -732,12 +750,13 @@ abstract Class HTML {
 		if (is_string($arOptions)) {
 			return (!empty($arOptions)) ? ' ' . trim($arOptions) : '';
 		}
-
+//dump::dumpLong($arOptions);
 		$attr = '';
 		if (is_array($arOptions)) {
 			foreach ($arOptions as $key => $val) {
-				if (strtolower($key == 'checked')) {
-					$attr .= ' checked';
+				//if (strtolower($key) == 'checked') {
+				if (is_numeric($key) ){
+					$attr .= ' ' .  $val;
 				} else {
 					$attr .= ' ' . $key . '="' . $val . '"';
 				}

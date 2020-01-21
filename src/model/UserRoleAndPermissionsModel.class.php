@@ -172,33 +172,25 @@ Class UserRoleAndPermissionsModel extends Model {
 
 		try {
 
-dump::dumpLong($this->controller);
 			// setup the user with the extra data in the users table and then get the attributes for that user
 			$this->controller->username = $username;
 
 			$this->GetUSERinfo($username);
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userInfo);
-dump::dumpLong($this);
+
 			$this->GetUSERAttributes();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userAttributes);
-dump::dumpLong($this);
 
 			$this->GetUSERpermissions();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userPermissions);
-dump::dumpLong($this);
 
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
 
-			$ov = $this->controller->view;
-			//$ov->dumpState(null, null, true);
-
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addAlert(
-				$ov->dumpPermissions()
+				$this->controller->view->dumpPermissions()
 					);
-//dump::dumpLong( $ov->dumpPermissions() );
-//		$x =Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING');
-//dump::dumpLong($x::$messageQueue)	;
+
 
 		} catch (\Exception $e) {
 			return new Response('something happended when trying to load all permissions' . $e->getMessage(), -7);
@@ -260,7 +252,6 @@ dump::dumpLong($this);
 
 		// now we have an array of Role ids
 		$this->controller->arOfRoleIDs = $DataUserRoles->RoleIDData;
-dump::dumpLong($this->controller);
 
 		// now with roleid go and get the permissions related to those role ids
 		$DataUserPermissions = new UserPermissionData($this->controller, $this->controller->arOfRoleIDs);
@@ -269,10 +260,8 @@ dump::dumpLong($this->controller);
 
 		$this->controller->userPermissions = $DataUserPermissions->permissionList;
 
-		if ( Settings::GetPublic('Show_Debug_UserRoleAndPermissiosn')){
-			/** DEBUG - dump the permissions prettily */
-			$this->controller->view->dumpPermissions();
-		}
+		//Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addAlert(	$this->controller->view->dumpPermissions());
+
 
 		return (!empty($this->controller->userPermissions));
 	}

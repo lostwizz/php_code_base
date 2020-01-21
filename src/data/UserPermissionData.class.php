@@ -122,7 +122,7 @@ class UserPermissionData {
 	 * @param type $listOfRolesIDs
 	 */
 	protected function doReadFromDatabaseForRoles(array $listOfRolesIDs) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseForRoles: '. print_r($listOfRolesIDs));
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseForRoles: '. print_r($listOfRolesIDs, true));
 
 		if (empty($listOfRolesIDs)) {
 			return;
@@ -144,7 +144,7 @@ class UserPermissionData {
 		$data = DBUtils::doDBSelectMulti($sql);
 
 		$this->permissionList = $data;
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo('permissionList: ' . print_r($this->permissionList));
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo('permissionList: ' . print_r($this->permissionList, true));
 	}
 
 	/** -----------------------------------------------------------------------------------------------

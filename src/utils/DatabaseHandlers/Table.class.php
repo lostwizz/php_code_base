@@ -535,7 +535,7 @@ class Table {
 	public function editRowOfTable() {
 		$data = $this->readAllTableData();
 		$flds = $this->giveFields();
-
+dump::dump($this);
 		$rowNum = $this->payload['RowKey'];
 		$rowOfData = $this->getRowByPrimaryKey($this->payload['RowKey'], $data);
 
