@@ -36,6 +36,9 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Resolver as Resolver;
 
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
+
 /*  example of options
   //
   //		'street' => provide_field_class(
@@ -119,6 +122,16 @@ Class Field {
 	 * @param array $attribs
 	 */
 	public function __construct( $parent, string $fieldName, ?array $attribs = null) {
+
+		if (Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING') >0) {
+			$loggy = new SubSystemMessage('SimpleTableEditor', Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING'));
+			Settings::SetRuntime ('DBHANDLERS_FLD_DEBUGGING', $loggy);
+		}
+
+
+
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@field constructor: ' . $fieldName);
+
 		$this->parent = $parent;
 		$this->fieldName = strtolower($fieldName);
 		$this->setupDefaultAttribs();
@@ -144,7 +157,8 @@ Class Field {
 	 * @param type $value
 	 * @return bool
 	 */
-	public function __set($name, $value): bool {
+	public function __set(string $name, $value): bool {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@__set :'. $name);
 		$this->attribs[$name] = $value;
 		return true;
 	}
@@ -154,7 +168,8 @@ Class Field {
 	 * @param type $name
 	 * @return boolean
 	 */
-	public function __get($name) {
+	public function __get(string $name) {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@__get :'. $name);
 		if (array_key_exists($name, $this->attribs)) {
 			return $this->attribs[$name];
 		} else {
@@ -167,6 +182,8 @@ Class Field {
 	 * @return void
 	 */
 	public function setupDefaultAttribs(): void {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@setupDefaultAttribs');
+
 		$this->attribs['size'] = 30;
 		$this->attribs['maxlength'] = 30;
 		$this->attribs['width'] = 5;
@@ -186,6 +203,8 @@ Class Field {
 	 * @return void
 	 */
 	public function setAttribs(array $attribs): void {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@setAttribs : ' . print_r($attribs, true));
+
 		foreach ($attribs as $key => $value) {
 			//echo 'key=', $key, '  value=',$value;
 			$this->attribs[$key] = $value;
@@ -197,6 +216,7 @@ Class Field {
 	 * @return array|null
 	 */
 	public function giveHTMLstyle(): ?array {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLstyle');
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
 			if (in_array($key, $this->styleAttribs)) {
@@ -211,6 +231,7 @@ Class Field {
 	 * @return array|null
 	 */
 	public function giveHTMLOptions(): ?array {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLOptions');
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
 			if (in_array($key, $this->optionAttribs)) {
@@ -226,6 +247,7 @@ Class Field {
 	 * @return boolean
 	 */
 	public function giveAttrib(string $attribName) {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveAttrib :' . $attribName);
 		if (array_key_exists($attribName, $this->attribs)) {
 			return $this->attribs[$attribName];
 		} else {
@@ -240,6 +262,7 @@ Class Field {
 	 * @return type
 	 */
 	public function giveAttribWithDefault(string $attribName, $defaultValue) {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveAttribWithDefault :', $attribName);
 		$r = $this->giveAttrib($attribName);
 		if ($r == false) {
 			return $defaultValue;
@@ -252,6 +275,7 @@ Class Field {
 	 * @return string
 	 */
 	public function givePrettyName(): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@givePrettyName');
 		return $this->giveAttribWithDefault('prettyName', $this->fieldName);
 	}
 
@@ -262,6 +286,7 @@ Class Field {
 	 * @return string
 	 */
 	public function giveHTMLInput(string $name,  $value = ''): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLInput: ' . $name);
 		if ($this->isShowable) {
 			$arStyle = $this->giveHTMLstyle();
 			$arOptions = $this->giveHTMLOptions();
@@ -297,7 +322,8 @@ Class Field {
 	 * @param type $value
 	 * @return type
 	 */
-	public function giveSelectHTMLInput( $name, $value){
+	public function giveSelectHTMLInput( string $name, $value){
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveSelectHTMLInput: ' .  $name);
 		if ( is_array($this->selectFrom )) {
 			$selOptions = $this->selectFrom;
 		} else {
@@ -320,6 +346,7 @@ dump::dump($class);
 	 * @return string
 	 */
 	public function giveHTMLOutput(string $value): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLOutput: '  . $value);
 		return $value;
 	}
 
@@ -329,10 +356,17 @@ dump::dump($class);
 	 * @return bool
 	 */
 	public function hasFilterValue($data): bool {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@hasFilterValue: '. print_r($data, true));
 		return (!empty($data) and $data != -1);
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $data
+	 * @return string
+	 */
 	public function generateFilterWhereClause($data): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@generateFilterWhereClause: ' . print_r( $data, true));
 		switch ($this->giveAttrib('subType')) {
 			case self::SUBTYPE_FLAGS:
 			case self::SUBTYPE_PHONENUM:
@@ -354,6 +388,7 @@ dump::dump($class);
 	 * @return string
 	 */
 	public function giveFilterBox(string $filter): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveFilterBox: '. $filter);
 		switch ($this->giveAttrib('subType')) {
 			case self::SUBTYPE_FLAGS:
 				$arOptions = array('size' => $this->giveAttribWithDefault('width', 10),
@@ -378,6 +413,7 @@ dump::dump($class);
 	 * @return type
 	 */
 	public function givePDOType() {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@givePDOType ');
 		if (empty(self::TYPE)) {
 			return \PDO::PARAM_STR;
 		} else {
@@ -391,6 +427,7 @@ dump::dump($class);
 	 * @return type
 	 */
 	public function giveQuotedWhere($data) {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveQuotedWhere: '. print_r($data, true));
 		return "'" . $data . "'";
 	}
 
@@ -400,7 +437,8 @@ dump::dump($class);
 	 * @return type
 	 */
 	public function giveBinding($data) {
-		//dump::dump($this->givePDOType());
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@giveBinding: ' . print_r($data, true));
+//dump::dump($this->givePDOType());
 		return $this->givePDOType();
 	}
 
@@ -411,6 +449,7 @@ dump::dump($class);
 	 * @return array
 	 */
 	public function validateField($data): array {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@validateField: '. print_r($data, true));
 		$msg = array();
 		if (empty($data)) {
 			$msg[] = $this->giveAttrib('prettyName') . ': is Empty';

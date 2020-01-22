@@ -101,6 +101,40 @@ abstract class MessageBase {
 
 //***********************************************************************************************
 //***********************************************************************************************
+
+class SubSystemMessage {
+	PUBLIC $subSystem;
+
+	function __construct(string $passedSubSystem, $lvl){
+		$this->subSystem = $passedSubSystem;
+		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
+		//dump::dump(MessageLog::$LoggingLevel);
+		//dump::dump(Settings::GetRunTimeObject('MessageLog'));
+	}
+
+	public function __call($name, $args){
+		$c = count($args);
+		switch($c){
+			case 0:
+				Settings::GetRunTimeObject('MessageLog') -> $name(  'something?????', null, $this->subSystem );
+			case 1:
+				Settings::GetRunTimeObject('MessageLog') -> $name(  $args[0], null, $this->subSystem );
+				break;
+			case 3:
+			case 2:
+			default:
+				Settings::GetRunTimeObject('MessageLog') -> $name(  $args[0], $args[1], $this->subSystem );
+				break;
+		}
+	}
+
+}
+
+
+
+//***********************************************************************************************
+//***********************************************************************************************
+
 /**
  * a message class
  *     - the base has the text and level
@@ -355,6 +389,11 @@ class MessageLog {
 	/** the queue static so there is only one */
 	public static $messageQueue;
 
+	public static $DEFAULTLoggingLevel = MessageBase::DEBUG;
+	public static $LoggingLevel = array('general' =>  MessageBase::DEBUG);
+
+
+
 	/**
 	 * @var version number
 	 */
@@ -410,44 +449,112 @@ class MessageLog {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $level
+	 * @param string $subSystem
+	 * @return bool
+	 */
+	public function isGoodLevelsAndSystem( $level, string $subSystem) : bool {
+		if (key_exists($subSystem, self::$LoggingLevel)) {
+			$lvl = self::$LoggingLevel[$subSystem];
+		} else {
+			self::$LoggingLevel[ $subSystem ] = self::$DEFAULTLoggingLevel;
+			$lvl = self::$DEFAULTLoggingLevel;
+		}
+//dump::dumpA( $level, $lvl);
+		return ( $level >= $lvl) ;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $subSystem
+	 * @param type $level
+	 */
+	public function setSubSystemLoggingLevel( string $subSystem, $level = null) {
+		if (is_null( $level) ){
+			$level = self::$DEFAULTLoggingLevel;
+		}
+
+		self::$LoggingLevel[$subSystem] = $level;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $bt
+	 * @param type $magicWord
+	 * @return int
+	 */
+	protected function figureOutWhichBTisRelevant($bt, $magicWord = 'MessageLog.class.php') {
+		$r = 0;
+
+		for ($i = 0; $i <= count($bt); $i++) {
+			if (basename($bt[$i]['file']) != $magicWord) {
+				$r = $i;
+				break;
+			}
+		}
+		if ($r >= count($bt)) {
+			return $r - 1;
+		} else {
+			return $r;
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $bt
+	 * @param bool $includeSpan
+	 * @return string
+	 */
+	protected function generateGoodBT($bt, bool $includeSpan = true) {
+		$btLvl = $this->figureOutWhichBTisRelevant($bt);
+		$mid = '- '
+				. basename($bt[$btLvl]['file'])
+				. ':'
+				. $bt[$btLvl]['line']
+				. ' ('
+				. (empty($bt[$btLvl + 1]['class']) ? '' : basename($bt[$btLvl + 1]['class']) )
+				. '.'
+				. (empty($bt[$btLvl + 1]['function']) ? '' : $bt[$btLvl + 1]['function'] )
+				. ')';
+
+		if ($includeSpan) {
+			$out = '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn">';
+			$out .= $mid;
+			$out .= '</span>';
+		} else {
+			$out = $mid;
+		}
+
+		return $out;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
 	 * add a new message to the stack ( may include some values passed down to the message class)
 	 *
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 * @param type $level
 	 */
-	public function add($obj_or_array = null, $timestamp = null, $level = null) {
+	public function add($obj_or_array = null, $timestamp = null, $level = null, string $subSystem='general') {
 
+		if ( ! self::isGoodLevelsAndSystem( $level, $subSystem)) {
+			return;  // if msg level is lower than setting then do nothing
+		}
 
 		if (is_object($obj_or_array) and ( $obj_or_array instanceof AMessage )) {
 			self::$messageQueue->enqueue($obj_or_array);
 		} else {
 			if (Settings::GetPublic('Show MessageLog Adds')) {
-				$bt = debug_backtrace(false, 3);
+				$bt = debug_backtrace(false, 5);
 				if (is_string($obj_or_array) and ! empty($bt[1])) {
 					if (Settings::GetPublic('Show MessageLog Adds_FileAndLine')) {
-						$obj_or_array .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn">';
-						$obj_or_array .= '- '
-								. basename($bt[1]['file'])
-								. ':'
-								. $bt[1]['line']
-								. ' ('
-								. (empty($bt[2]['class']) ? '' : basename($bt[2]['class']) )
-								. '.'
-								. (empty($bt[2]['function'] ) ? '' :$bt[2]['function'] )
-								. ')'
-								. '</span>';
+						$obj_or_array .= $this->generateGoodBT($bt, true);
 					}
 				} else if ( is_array( $obj_or_array)){
-					$obj_or_array['msglogTraceInfo'] = '- '
-								. basename($bt[1]['file'])
-								. ':'
-								. $bt[1]['line']
-								. ' ('
-								. (empty($bt[2]['class']) ? '' : basename($bt[2]['class']) )
-								. '.'
-								. (empty($bt[2]['function'] ) ? '' :$bt[2]['function'] )
-								. ')';
+					$obj_or_array['msglogTraceInfo'] = $this->generateGoodBT($bt, false);
 				}
 			}
 			$temp = new AMessage($obj_or_array, $timestamp, $level);
@@ -464,11 +571,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addToDo($obj_or_array = null, $timestamp = null) {
+	public function addToDo($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::TODO;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::TODO);
+		$this->add($obj_or_array, $timestamp, AMessage::TODO, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -476,11 +583,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addDebug($obj_or_array = null, $timestamp = null) {
+	public function addDebug($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::DEBUG;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::DEBUG);
+		$this->add($obj_or_array, $timestamp, AMessage::DEBUG, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -488,11 +595,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addInfo($obj_or_array = null, $timestamp = null) {
+	public function addInfo($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::INFO;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::INFO);
+		$this->add($obj_or_array, $timestamp, AMessage::INFO, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -500,11 +607,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addNotice($obj_or_array = null, $timestamp = null) {
+	public function addNotice($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::NOTICE;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::NOTICE);
+		$this->add($obj_or_array, $timestamp, AMessage::NOTICE, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -512,11 +619,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addWarning($obj_or_array = null, $timestamp = null) {
+	public function addWarning($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::WARNING;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::WARNING);
+		$this->add($obj_or_array, $timestamp, AMessage::WARNING, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -524,11 +631,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addError($obj_or_array = null, $timestamp = null) {
+	public function addError($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ERROR;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::ERROR);
+		$this->add($obj_or_array, $timestamp, AMessage::ERROR, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -536,11 +643,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addCritical($obj_or_array = null, $timestamp = null) {
+	public function addCritical($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::CRITICAL;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::CRITICAL);
+		$this->add($obj_or_array, $timestamp, AMessage::CRITICAL, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -548,11 +655,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addAlert($obj_or_array = null, $timestamp = null) {
+	public function addAlert($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ALERT;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::ALERT);
+		$this->add($obj_or_array, $timestamp, AMessage::ALERT, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -560,11 +667,11 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addEmergency($obj_or_array = null, $timestamp = null) {
+	public function addEmergency($obj_or_array = null, $timestamp = null, string $subSystem='general') {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::EMERGENCY;
 		}
-		$this->add($obj_or_array, $timestamp, AMessage::EMERGENCY);
+		$this->add($obj_or_array, $timestamp, AMessage::EMERGENCY, $subSystem);
 	}
 
 	/** -----------------------------------------------------------------------------------------------

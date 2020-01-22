@@ -383,16 +383,23 @@ dump::dump(ini_get('smtp_port'));
 
 
 
-				$userid = $userInfoData->getUserID();
+//dump::dump( $this->controller->data);
+				if (!empty( $this->controller->data) ){
+					$userid = $this->controller->data->getUserID();
+				}
 
-				$userInfoData->doInserOrUpdateAttributeForUserID( $userid, 'eMailAddress', $email );
-				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'GivenName', $givenname );
-				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'Surname', $surname );
-				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'PhoneNum', $telephonenumber );
-				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'Title', $title );
-				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'Department', $department );
-				$userInfoData->doInserOrUpdateAttributeForUserID($userid, 'CellNum', $mobile );
+				Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addTODO('add these attributes somewhere usefull - at this point the attrib table has not be read - should it Now??');
 
+/*
+ *
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'eMailAddress', $email );
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'GivenName', $givenname );
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'Surname', $surname );
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'PhoneNum', $telephonenumber );
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'Title', $title );
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'Department', $department );
+				$this->controller->data->doInserOrUpdateAttributeForUserID($userid, 'CellNum', $mobile );
+*/
 			}
 			$this->DoFinishLoginUpdate( $userid);
 

@@ -161,8 +161,40 @@ class dbaController extends Controller {
 dump::dump('at two');
 
 	//Settings::GetRuntimeObject('POSTqueue')->push('dbaController.four');
+		//Settings::GetRuntimeObject('Dispatcher')->addPOSTProcess('dba', 'four');
 
-		Settings::GetRuntimeObject('Dispatcher')->addPOSTProcess('dba', 'four');
+
+		$loggy = new \php_base\Utils\SubSystemMessage('SimpleTableEditor', \php_base\Utils\MessageBase::DEBUG);
+
+dump::dump($loggy);
+		Settings::SetRuntime ('SIMPLE_DEBUGGING', $loggy);
+
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addEmergency('this is emergency example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addAlert('this is alert example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addCritical('this is critical example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addError('this is error example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addWarning('this is warning example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addNotice('this is notice example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addInfo('this is info example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addTodo('this is todo example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug('this is debug example');
+
+
+
+		$loggy2 = new \php_base\Utils\SubSystemMessage('SimpleTableEditor', \php_base\Utils\MessageBase::NOTICE);
+
+dump::dump($loggy2);
+		Settings::SetRuntime ('SIMPLE_DEBUGGING', $loggy2);
+
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addEmergency('this is emergency example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addAlert('this is alert example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addCritical('this is critical example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addError('this is error example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addWarning('this is warning example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addNotice('this is notice example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addInfo('this is info example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addTodo('this is todo example');
+	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug('this is debug example');
 
 
 		return Response::NoError();

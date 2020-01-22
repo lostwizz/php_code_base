@@ -129,6 +129,8 @@ class MenuData extends data {
 				if (Settings::GetPublic('CACHE Allow_Menu to be Cached')) {
 					CACHE::add('MenuData', $this->Menu);
 				}
+
+//dump::dump( $this->Menu);
 				return true;
 			}
 		}

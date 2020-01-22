@@ -16,6 +16,8 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Utils;
 
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 /**
  * Description of TableFun
  *
@@ -40,10 +42,16 @@ class SimpleTableEditor {
 	 * @param array $payload
 	 */
 	public function __construct( $dataTable, string $process='', string $task='', string $action ='', ?array $payload = null) {
-		if (Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING')) {
-			Settings::SetRuntime ('SIMPLE_DEBUGGING' , Settings::GetRunTimeObject('MessageLog') );
+		if (Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING') >0) {
+			$loggy = new SubSystemMessage('SimpleTableEditor', Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING'));
+			Settings::SetRuntime ('SIMPLE_DEBUGGING', $loggy);
 		}
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@construct' . $dataTable . ' proc=' . $process . ' task=' . $task . ' act=' . $action);
+
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addAlert( 'testing alert');
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addTODO( 'testing todo');
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addEmergency( 'testing emergency');
+
 
 		$this->tableObj = new $dataTable( $this);
 

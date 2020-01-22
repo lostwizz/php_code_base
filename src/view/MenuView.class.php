@@ -20,7 +20,7 @@ use \php_base\Utils\HTML\HTML as HTML;
  */
 class MenuView extends View{
 
-	protected $currentLevel = 1;
+	protected $currentMenuLevel = 1;
 
 
 	/**
@@ -89,27 +89,27 @@ class MenuView extends View{
 
 		$s = '';
 		$x = explode('.', $item['ITEM_NUMBER']);
-		if (count($x) > $this->currentLevel) {
+		if (count($x) > $this->currentMenuLevel) {
 			$s .= '<li class="parent">';
-			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
 			$s .= PHP_EOL;
 			$s .= '<ul class="child">';
 			$s .= PHP_EOL;
-			$this->currentLevel ++;
-		} elseif (count($x) == $this->currentLevel) {
+			$this->currentMenuLevel ++;
+		} elseif (count($x) == $this->currentMenuLevel) {
 			$s .= '<li>'; //  class="parent"
-			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
 			$s .= '</li>';
 			$s .= PHP_EOL;
-		} else if (count($x) < $this->currentLevel) {
+		} else if (count($x) < $this->currentMenuLevel) {
 			$s .= '</ul>';
 			$s .= PHP_EOL;
 			$s .= '</li>';
 			$s .= PHP_EOL;
 			$s .= '<li class="parent">';
-			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
+			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
 			$s .= '</li>';
-			$this->currentLevel --;
+			$this->currentMenuLevel --;
 		}
 		return $s;
 	}
