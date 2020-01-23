@@ -57,6 +57,8 @@ class MenuData extends data {
 	 *
 	 */
 	public function __construct() {
+		Settings::getRunTimeObject('MENU_DEBUGGING')->addInfo('constructor for MenuData');
+
 		$this->defineTable();
 
 		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu read data before');
@@ -78,6 +80,9 @@ class MenuData extends data {
 	 * @return void
 	 */
 	public function defineTable(): void {
+		Settings::getRunTimeObject('MENU_DEBUGGING')->addInfo('@@defineTable - menuData');
+		Settings::getRunTimeObject('MENU_DEBUGGING')->Suspend();
+
 
 		$this->Table = new Table(Settings::GetProtected('MenuDefinitions'), ['className' => __NAMESPACE__ . '\MenuData']);
 
@@ -104,6 +109,9 @@ class MenuData extends data {
 		$this->Table->addFieldText('Action_Permission_Required', ['prettyName' => 'Action Permission Required']);
 		$this->Table->addFieldText('Field_Permmission_Required', ['prettyName' => 'Field Permmission Required']);
 		$this->Table->addFieldText('Permission_Required', ['prettyName' => 'Permission Required']);
+
+
+		Settings::getRunTimeObject('MENU_DEBUGGING')->Resume();
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('put in the rest of the table definitions');
 	}

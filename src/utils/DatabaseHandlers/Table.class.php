@@ -74,11 +74,7 @@ class Table {
 	 * @param array $attribs
 	 */
 	public function __construct(string $tableName ='', ?array $attribs = null, string $process='', string $task = '') {
-
-		if (Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING') >0) {
-			$loggy = new SubSystemMessage('SimpleTableEditor', Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING'));
-			Settings::SetRuntime ('DBHANDLERS_DEBUGGING', $loggy);
-		}
+//dump::dump(Settings::GetRunTimeObject('MessageLog')->__toString());
 
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@constructor: ' . $tableName);
 

@@ -40,6 +40,7 @@ use \php_base\Utils\Response as Response;
 use \php_base\Control;
 
 use \php_base\Resolver as Resolver;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 /** * **********************************************************************************************
  *   MenuController
@@ -66,9 +67,7 @@ class MenuController extends Controller {
 	 */
 	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null) {
 
-		if (Settings::GetPublic('IS_DETAILED_MENU_DEBUGGING')) {
-			Settings::setRunTime('MENU_DEBUGGING', Settings::GetRunTimeObject('MessageLog'));
-		}
+		Settings::getRunTimeObject('MENU_DEBUGGING')->addInfo('constructor for MenuController');
 
 		$this->model = new \php_base\model\MenuModel($this);
 		$this->data = new \php_base\data\MenuData($this);

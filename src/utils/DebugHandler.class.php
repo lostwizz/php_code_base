@@ -12,9 +12,9 @@ abstract class DebugHandler {
 	 */
 	private const VERSION = '0.3.0';
 	const DEBUG = 100;
-	const TODO = 150;
 	const INFO = 200;
 	const NOTICE = 250;
+	const TODO = 275;
 	const WARNING = 300;
 	const ERROR = 400;
 	const CRITICAL = 500;

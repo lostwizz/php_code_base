@@ -45,6 +45,8 @@ use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Cache as CACHE;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 
 /** * **********************************************************************************************
  * read and write the roles (by id) for the user
@@ -69,9 +71,7 @@ Class UserRoleData extends Data {
 	 * @param type $ArrayOfNames
 	 */
 	public function __construct($controller, ?array $ArrayOfNames = null) {
-		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
+
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($ArrayOfNames, true));
 
 		$this->controller = $controller;

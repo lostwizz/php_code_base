@@ -43,6 +43,8 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 
 /** * **********************************************************************************************
  * handles authentication and logon processes
@@ -71,10 +73,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @param type $passedPayload
 	 */
 	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null) {
-
-		if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING' ) != false) {
-			Settings::SetRuntime ('AUTHENTICATION_DEBUGGING' , Settings::GetRunTimeObject('MessageLog') );
-		}
 
 		$this->model = new \php_base\model\AuthenticateModel($this);
 		//$this->data = new \php_base\data\UserInfoData($this);
@@ -131,7 +129,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('after isGoodAuth: '. ($isAlreadyLoggedOn ? 'yes':'no'));
 		if ($isAlreadyLoggedOn) {
-			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('User is already logged on  so continue');
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('User is already logged on  so continue');
 			return Response::NoError();
 		}
 
@@ -182,7 +180,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 				break;
 		}
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('Authenticate is starting:' . $action);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('Authenticate is starting:' . $action);
 		// now do the action
 		$r = $this->$action($dispatcher, $username, $password);
 
@@ -231,7 +229,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 
 		if ($r->hadError()) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('User could not be Logged onto the application');
+			Settings::GetRunTimeObject('MessageLog')->addInfo('User could not be Logged onto the application');
 			$this->Need_login($dispatcher, null,null);
 		} else {
 			Settings::SetRuntime ('isAuthenticated', true );
@@ -389,6 +387,6 @@ class AuthenticateController extends \php_base\Control\Controller {
 	}
 
 
-	
+
 
 }

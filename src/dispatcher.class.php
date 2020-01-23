@@ -37,6 +37,7 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\Cache as CACHE;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 //use \php_base\utils\MessageLog as MessageLog;
 //use \php_base\utils\AMessage as AMessage;
@@ -84,10 +85,7 @@ class Dispatcher {
 	 *
 	 */
 	public function __construct() {       //bool $isHeaderAndFooterLess = false
-		if ( Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')){
-			Settings::setRunTime('DISPATCHER_DEBUGGING' ,Settings::GetRunTimeObject('MessageLog'));
-		}
-		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addAlert('dispatcher constructor ');
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('dispatcher constructor ');
 
 		$this->currentQueue = dispatcher::NONE;
 
@@ -189,7 +187,7 @@ class Dispatcher {
 		try {
 			$response = Response::NoError();
 			while ( ! $theQueue->isEmpty()) {
-				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice ){
 					$this->dumpQueue($theQueue, true);
 				}
 
@@ -275,7 +273,7 @@ class Dispatcher {
 		//Settings::GetRunTimeObject('MessageLog')->addDEBUG('PTAP: ' . $passedProcess);
 
 		$exploded = \explode('.', $passedProcess);
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')<= LVL_Notice ){
 			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
 		}
 		$response = $this->doExecute('control',
@@ -328,9 +326,7 @@ class Dispatcher {
 		try {
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
-			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addCritical('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
-			}
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
 
 			$instance = new $class($process, $task, $action, $payload); //instanciate the process  and pass it the payload
 
@@ -375,9 +371,8 @@ class Dispatcher {
 		$payload = (!empty($passedpayload)) ? '.' . $this->processPayloadForItem($passedpayload) : '';
 
 		$item = $process . $task . $action . $payload;
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-			dump::dump($item);
-		}
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice($item);
+
 		return $item;
 	}
 
@@ -430,7 +425,7 @@ class Dispatcher {
 	 * @param $item the item to add to the queue
 	 */
 	protected function addItemToQueue($q, $item): void {
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice ){
 			dump::dump($item,null, array('Beautify_BackgroundColor' =>'#D5C659'));
 		}
 		$which = $this->identifyWhichQueue( $q);
@@ -472,9 +467,7 @@ class Dispatcher {
 						   $payload);
 		if ( $item != '..') {
 			$this->addItemToQueue($this->PREqueue,  $item);
-			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the PRE Queue');
-			}
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice( 'Added ' . $item . ' to the PRE Queue');
 		}
 	}
 
@@ -502,9 +495,7 @@ class Dispatcher {
 						   $payload);
 		if ( $item != '..') {
 			$this->addItemToQueue($this->POSTqueue,  $item);
-			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the POST Queue');
-			}
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice( 'Added ' . $item . ' to the POST Queue');
 		}
 	}
 
@@ -534,9 +525,7 @@ class Dispatcher {
 
 		if ( $item != '..') {
 			$this->addItemToQueue($this->DISPATCHqueue,  $item);
-			if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-				Settings::GetRunTimeObject('MessageLog')->addNotice( 'Added ' . $item . ' to the Queue');
-			}
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice( 'Added ' . $item . ' to the Queue');
 		}
 	}
 
@@ -641,7 +630,7 @@ class Dispatcher {
 		//	$level = AMessage::ALERT;
 			$v = empty($var) ? '' : print_r($var, true);
 		}
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice ){
 			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
 			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
 

@@ -42,6 +42,8 @@ use \php_base\Control\MenuController as MenuController;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\DebugHandler as DebugHandler;
 
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 /** * **********************************************************************************************
  * takes the input and makes a process/task/action out of it and Dispatcher executes
  *
@@ -110,10 +112,8 @@ class Resolver {
 	 *
 	 */
 	public function __construct() {
-		if ( Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING')){
-			Settings::setRunTime('RESOLVER_DEBUGGING' ,Settings::GetRunTimeObject('MessageLog'));
-		}
-		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addAlert('constructor for resolver');
+
+		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addInfo('constructor for resolver');
 
 		//Settings::SetRunTime('RESOLVER_CLASS', $this);
 
@@ -156,7 +156,7 @@ class Resolver {
 		$this->AddSetupAuthenticateCheck();  // always start with login checks
 
 		$this->decodeRequestInfo();
-		
+
 		$this->AddSetupUserRoleAndPermissions($this->payload); // after they have logged in now setup the user permissions
 
 		$this->addMenu($this->payload);

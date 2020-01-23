@@ -42,6 +42,8 @@ use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 
 /** * **********************************************************************************************
  * This any of the reads or writes to the UserAttributes table
@@ -62,9 +64,7 @@ class UserAttributeData extends data {
 	 * @param type $userID
 	 */
 	public function __construct($controller, $userID) {
-		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
+
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . $userID);
 
 		$this->controller = $controller;
@@ -93,6 +93,8 @@ class UserAttributeData extends data {
 	 */
 	public function defineTable(): void {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
+
 		$this->Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'), ['className' => __NAMESPACE__ . '\UserAttributeData']);
 		$this->Table->setPrimaryKey('id', ['prettyName' => 'Id']);
 
@@ -101,6 +103,8 @@ class UserAttributeData extends data {
 		$this->Table->addFieldInt('userid', ['prettyName' => 'User Id']);
 		$this->Table->addFieldInt('attributename', ['prettyName' => 'Attribute Name']);
 		$this->Table->addFieldInt('attributevalue', ['prettyName' => 'Attribute Value']);
+
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
 	}
 
 	/** -----------------------------------------------------------------------------------------------

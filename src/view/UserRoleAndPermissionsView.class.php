@@ -43,6 +43,7 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\HTML\HTML as HTML;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 
 
@@ -64,6 +65,9 @@ class UserRoleAndPermissionsView extends View {
 	 * @param type $controller
 	 */
 	public function __construct($controller) {
+
+		Settings::getRunTimeObject('PERMISSION_DEBUGGING')->addInfo('constructor for UserRoleAndPermissionsView');
+
 		$this->controller = $controller;
 	}
 

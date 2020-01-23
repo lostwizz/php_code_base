@@ -123,11 +123,6 @@ Class Field {
 	 */
 	public function __construct( $parent, string $fieldName, ?array $attribs = null) {
 
-		if (Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING') >0) {
-			$loggy = new SubSystemMessage('SimpleTableEditor', Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING'));
-			Settings::SetRuntime ('DBHANDLERS_FLD_DEBUGGING', $loggy);
-		}
-
 
 
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@field constructor: ' . $fieldName);

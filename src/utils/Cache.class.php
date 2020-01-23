@@ -69,7 +69,7 @@ Abstract class Cache {
 		$_SESSION['CACHE'][$itemName]['Data'] = $data;
 
 		self::changeExpires($itemName, $secondToTimeout);
-		
+
 		return true;
 	}
 
@@ -115,9 +115,7 @@ Abstract class Cache {
 		if ( self::hasExpired( $itemName)) {
 			return false;
 		} else {
-			if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addNotice('Cache pull: ' . $itemName );
-			}
+			Settings::GetRunTimeObject('CACHE_DEBUGGING')->addNotice('Cache pull: ' . $itemName );
 			return $_SESSION['CACHE'][$itemName]['Data'];
 		}
 	}
@@ -140,9 +138,7 @@ Abstract class Cache {
 		$i = $i + $incrementValue;
 		$_SESSION['CACHE'][$itemName]['Data'] = $i;
 
-		if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('increment: ' . $itemName  . ' i=' . $i);
-		}
+		Settings::GetRunTimeObject('CACHE_DEBUGGING')->addNotice('increment: ' . $itemName  . ' i=' . $i);
 		self::changeExpires($itemName, $secondsFromNow);
 		return $i;
 	}
@@ -232,9 +228,7 @@ Abstract class Cache {
 		}
 
 		if ( !empty( $_SESSION['CACHE'][$itemName])) {
-			if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addNotice('Cache deleted' . ($fromExpired ? 'Expired':'') .': ' . $itemName );
-			}
+			Settings::GetRunTimeObject('CACHE_DEBUGGING')->addNotice('Cache deleted' . ($fromExpired ? 'Expired':'') .': ' . $itemName );
 
 			unset ($_SESSION['CACHE'][$itemName]);
 			return true;
@@ -308,9 +302,7 @@ Abstract class Cache {
 		if ( !empty( $_SESSION) and !empty($_SESSION['CACHE'] )) {
 			foreach ($_SESSION['CACHE'] as $itemName => $value) {
 				if ( !self::doesSerializeWorkOnThisObject($value['Data'])){
-					if (Settings::GetPublic('IS_DETAILED_CACHE_DEBUGGING')) {
-						Settings::GetRunTimeObject('MessageLog')->addNotice('Cache Cleanup : ' . $itemName );
-					}
+					Settings::GetRunTimeObject('CACHE_DEBUGGING')->addNotice('Cache Cleanup : ' . $itemName );
 					unset ( $_SESSION['CACHE'][$itemName]);
 				}
 			}

@@ -28,6 +28,12 @@ class MenuView extends View{
 	 */
 	private const VERSION = '0.3.0';
 
+
+	function __construct( $controller ){
+		Settings::getRunTimeObject('MENU_DEBUGGING')->addInfo('constructor for MenuView');
+
+	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a version number
 	 * @static

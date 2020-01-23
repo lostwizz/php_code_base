@@ -39,6 +39,8 @@ use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Response as Response;
 use \php_base\Resolver as Resolver;
 use \php_base\Utils\Dump\Dump as Dump;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 
 /** * **********************************************************************************************
  * handles authentication and logon processes output
@@ -62,6 +64,9 @@ class AuthenticateView extends View {
 	 * @param type $controller
 	 */
 	public function __construct($controller) {
+
+		Settings::getRunTimeObject('AUTHENTICATION_DEBUGGING')->addInfo('constructor for AuthenticateView');
+
 		$this->controller = $controller;
 	}
 

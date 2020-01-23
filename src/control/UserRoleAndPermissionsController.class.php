@@ -50,6 +50,8 @@ use \php_base\Utils\Cache;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 
 
 /** * **********************************************************************************************
@@ -89,9 +91,8 @@ Class UserRoleAndPermissionsController {
 	 * @param type $payload
 	 */
 	public function __construct(string $process, string $task, string $action = '', $payload = null) {
-		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
+		Settings::getRunTimeObject('PERMISSION_DEBUGGING')->addInfo('constructor for UserRoleAndPermissionsController');
+
 		$u = Settings::GetRunTime('Currently Logged In User');
 		if (!empty($u)) {
 
@@ -146,6 +147,7 @@ Class UserRoleAndPermissionsController {
 		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'logged on user:' . $u);
 
 		if (!empty($u)) {
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'have a username:' . $u);
 			$response = $this->LoadAllUserInformation($u);
 
 			// use this setting to check permissions
@@ -153,7 +155,7 @@ Class UserRoleAndPermissionsController {
 		} else {
 			$response = new Response('no username', -18, false, true);
 		}
-
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice('done setup:' .  $response);
 //Dump::dump(Settings::GetRunTime('userPermissions'));
 		return $response;
 	}

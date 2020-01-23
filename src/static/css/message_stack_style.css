@@ -37,21 +37,188 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	font-size: small;
 	}
 
+.msg_style_DEBUG_1 {
+	color: cyan;
+	background: black;
+	font-size: small;
+	}
+
+.msg_style_DEBUG_2 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+
+.msg_style_DEBUG_3 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+.msg_style_DEBUG_4 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+.msg_style_DEBUG_5 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+.msg_style_DEBUG_7 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+.msg_style_DEBUG_8 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+.msg_style_DEBUG_9 {
+	color: green;
+	background: black;
+	font-size: small;
+	}
+
+
+
+
 .msg_style_INFO {
-	color: #D3D3D3;
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+
+.msg_style_INFO_1 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_2 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_3 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_4 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_5 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_6 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_7 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_8 {
+	color: #F1F227;  /*#D3D3D3;*/
+	background: black;
+	border-radius: 4px;
+	}
+.msg_style_INFO_9 {
+	color: #F1F227;  /*#D3D3D3;*/
 	background: black;
 	border-radius: 4px;
 	}
 
 .msg_style_NOTICE {
 	color: #84308F;
+	background-color: #4ED7F3;
 	border-radius: 4px;
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
 }
+.msg_style_NOTICE_1 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_2 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_3 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_4 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_5 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_6 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_7 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_8 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+.msg_style_NOTICE_9 {
+	color: #84308F;
+	background-color: #78DFF5;
+	border-radius: 4px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+}
+
 .msg_style_WARNING {
-	 color: orange;
+	 color: #914f15;  /*orange; */
+	background-color: #A6EAF9;
 	border-radius: 4px;
 	border-style: solid;
 	border-width: 1px;
@@ -64,6 +231,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
+	font-weight: bolder;
 	}
 
 .msg_style_CRITICAL {
@@ -85,7 +253,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	}
 
 .msg_style_EMERGENCY {
-	color: YellowGreen;
+	color: #F1F227;   /* YellowGreen;*/
 	background: Red;
 	border-radius: 4px;
 	border-style: solid;
@@ -94,12 +262,13 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	}
 
 .msg_style_TODO {
-	color: Orange;
+	color: #AA5535; /* Orange */
 	background: white; /* gray;*/
 	border-radius: 4px;
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
+	font-weight: bolder;
 	}
 
 

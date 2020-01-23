@@ -47,6 +47,8 @@ use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\Cache as CACHE;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 
 /** * **********************************************************************************************
  * reads the info on a user - the id, password and last time they logged in and any other basic data
@@ -68,9 +70,7 @@ class UserInfoData extends data {
 	 * @param type $username
 	 */
 	public function __construct($controller, $username = null) {
-		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
+
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . $username);
 
 		$this->controller = $controller;
@@ -99,6 +99,7 @@ class UserInfoData extends data {
 	 */
 	public function defineTable(): void {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
 
 		$this->Table = new Table(Settings::GetProtected('DB_Table_UserManager'),
 				['className' => __NAMESPACE__ . '\UserInfoData',
@@ -165,6 +166,8 @@ class UserInfoData extends data {
 					'isEditable' => false,
 					'isShowable' => true
 		]);
+				Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
+
 	}
 
 
@@ -308,11 +311,12 @@ class UserInfoData extends data {
 	 * @param string $newTime
 	 * @param string $newIP
 	 */
-	public function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP): bool {
+	public function doUpdateLastLoginAndIP(int $userid, string $newTime, string $newIP, string $sessionId) : bool {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doUpdateLastLoginAndIP');
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserManager')
 				. ' SET ip = :ip'
 				. ' , last_logon_time = :last_logon'
+				. ' , session_id = :session_id'
 				. '	WHERE userid = :userid'
 		;
 
@@ -320,7 +324,8 @@ class UserInfoData extends data {
 		//Settings::GetRunTimeObject('MessageLog')->addInfo('DT=' . $now);
 		$params = array(':ip' => ['val' => $newIP, 'type' => \PDO::PARAM_STR],
 			':last_logon' => ['val' => $now, 'type' => \PDO::PARAM_STR],
-			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT]
+			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_INT],
+			':session_id' =>['val' => $sessionId, 'type' => \PDO::PARAM_STR]
 		);
 
 		$data = DBUtils::doDBUpdateSingle($sql, $params);

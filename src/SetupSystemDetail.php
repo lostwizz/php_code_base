@@ -35,6 +35,7 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\MessageLog as MessageLog;
 use \php_base\Utils\Utils as Utils;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 //************************************************************************************
 // setup everything
@@ -42,6 +43,22 @@ use \php_base\Utils\Utils as Utils;
 include_once( DIR . 'autoload.php');
 date_default_timezone_set('Canada/Yukon');
 //include_once( DIR . 'utils' . DS . 'dump.class.php');
+
+
+
+if (true) {
+	if ( session_status() == \PHP_SESSION_NONE AND !headers_sent()){
+		session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
+		session_start();
+		//Settings::GetRunTimeObject('MessageLog')->addNotice('Starting ..session..'); // cant really do a messageLog because it isnt loaded yet
+	}
+
+	//think about how to use   session_regenerate_id(true);
+	//    and/or session_destroy()
+	// https://www.php.net/manual/en/function.session-destroy.php
+}
+
+
 
 
 require_once( DIR . '..' . DSZ . 'vendor' . DSZ . 'autoload.php');
@@ -54,9 +71,17 @@ require_once( DIR . '_config' . DSZ . '_Settings-protected.php');
 
 require_once( 'P:\Projects\_Private_Settings.php');
 
-include_once( DIR . 'utils' . DSZ . 'ErrorHandler.php');		   // has to be after the settings are initialized
+include_once( DIR . 'utils' . DSZ . 'ErrorHandler.php');	 // has to be after the settings are initialized
+
 
 Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
+
+
+if (Settings::GetPublic('Use_MessageLog')) {
+	$mLog = new MessageLog();
+	Settings::SetRunTime('MessageLog', $mLog);
+}
+
 include_once( DIR . 'utils' . DSZ . 'Setup_Logging.php');
 
 
@@ -109,30 +134,8 @@ if (false) {
 	$mc->set("bar", "Memcached...");
 }
 
-if (true) {
-	if ( session_status() == \PHP_SESSION_NONE AND !headers_sent()){
-		session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
-		session_start();
-	}
-
-	//think about how to use   session_regenerate_id(true);
-	//    and/or session_destroy()
-	// https://www.php.net/manual/en/function.session-destroy.php
-}
 
 
-
-if (Settings::GetPublic('Use_MessageLog')) {
-	$mLog = new MessageLog();
-	Settings::SetRunTime('MessageLog', $mLog);
-}
-
-
-
-if (Settings::GetPublic('Use_MessageLog')) {
-	$mLog = new MessageLog();
-	Settings::SetRunTime('MessageLog', $mLog);
-}
 //************************************************************************************
 // done the setup
 //************************************************************************************
@@ -177,6 +180,3 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 }
 
 
-if (Settings::GetPublic('IS_DEBUGGING')) {
-	Settings::GetRunTimeObject('MessageLog')->addNotice('Starting ..session..');
-}

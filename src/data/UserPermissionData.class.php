@@ -42,6 +42,7 @@ use \php_base\Utils\Utils as Utils;
 use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 ////SELECT TOP (1000) [id]
 ////      ,[roleId]
@@ -77,9 +78,7 @@ class UserPermissionData {
 	 * @param type $listOfRoleIDs
 	 */
 	public function __construct($controller, $listOfRoleIDs) {
-		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
+
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($listOfRoleIDs, true));
 
 		$this->controller = $controller;
@@ -103,6 +102,8 @@ class UserPermissionData {
 	 */
 	public function defineTable(): void {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
+
 
 		$this->Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'), ['className' => __NAMESPACE__ . '\UserPermissionData']);
 		$this->Table->setPrimaryKey('Id', ['prettyName' => 'Id']);
@@ -115,6 +116,8 @@ class UserPermissionData {
 		$this->Table->addFieldText('action', ['prettyName' => 'Action']);
 		$this->Table->addFieldText('field', ['prettyName' => 'Field']);
 		$this->Table->addFieldText('permission', ['prettyName' => 'Permission']);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------

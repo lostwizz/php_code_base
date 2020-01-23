@@ -45,7 +45,11 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Utils as Utils;
-use \Swoole\MySQL\Exception;
+//////////////////////////////use \Swoole\MySQL\Exception;
+
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
+
 //use \Swoole\MySQL\Exception;
 
 /** * **********************************************************************************************
@@ -70,6 +74,8 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @param type $parentObj
 	 */
 	public function __construct($controller) {
+		Settings::getRunTimeObject('AUTHENTICATION_DEBUGGING')->addInfo('constructor for AuthenticateModel');
+
 		$this->controller = $controller;
 
 //dump::dumpLong($this);
@@ -150,11 +156,11 @@ class AuthenticateModel extends \php_base\Model\Model {
 		$diff = $now - $then; //ends up with seconds until time out
 
 		if ($diff > 900) {
-			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addCritical( ' currently logged on - NO Timeout');
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( ' currently logged on - NO Timeout');
 			return false;
 		}
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addCritical( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( 'is user currently logged on -> YES  as: ' . Settings::GetRunTime('Currently Logged In User'));
 
 		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 		Settings::SetRuntime ('isAuthenticated', true );
@@ -296,7 +302,7 @@ dump::dump(ini_get('smtp_port'));
 
 			return Response::NoError();
 		}
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('UNSuccessful logon DB_TABLE password for: ' . $username);
 
 		return new Response('db_table password failed', -11);
 	}
@@ -313,14 +319,16 @@ dump::dump(ini_get('smtp_port'));
 		//$pwd = \password_hash($password, PASSWORD_DEFAULT);
 //dump::dump($pwd);
 
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addTODO('test this to make sure it is working properly');
+
 		if (\password_verify($password, Settings::GetProtected('Password_for_' . $username))) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Successful Hardcoded password for: ' . $username);
+			Settings::GetRunTimeObject('MessageLog')->addInfo('Successful Hardcoded password for: ' . $username);
 
 			$this->DoFinishLoginUpdatebyName( $username);
 
 			return Response::NoError();
 		}
-		Settings::GetRunTimeObject('MessageLog')->addAlert('UNSuccessful Hardcoded password for: ' . $username);
+		Settings::GetRunTimeObject('MessageLog')->addInfo('UNSuccessful Hardcoded password for: ' . $username);
 		return new Response('HardCoded password failed', -9);
 	}
 
@@ -420,7 +428,7 @@ dump::dump(ini_get('smtp_port'));
 	public function DoFinishLoginUpdatebyName( string $username ){
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-doFinishLoginUpdatebyName');
 
-		if (!empty( $this->controller->userInfoData) ){
+		if (!empty( $this->controller->data) ){
 			$userid = $this->controller->data->getUserID();
 			if ( !empty( $userid)) {
 				$this->DoFinishLoginUpdate( $userid );
@@ -438,10 +446,9 @@ dump::dump(ini_get('smtp_port'));
 		$prettyNow = (new \DateTime('now'))->format( 'Y-m-d G:i:s');
 
 		$ip = \filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Auth Model-doFinshLoginUpdate:'. $userid);
 
-		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip);
+		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip, \session_id() );
 	}
 
 	/** -----------------------------------------------------------------------------------------------

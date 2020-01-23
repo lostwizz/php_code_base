@@ -37,14 +37,18 @@
 
 namespace php_base\Utils;
 
+
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+
 /**
  * debugging type settings
  */
 
-define('LVL_DEBUG', 100);
-define('LVL_TODO', 150);
-define('LVL_INFO', 200);
-define('LVL_Notice', 250);
+define('LVL_ALL', 1);
+define('LVL_DEBUG', 110);
+define('LVL_INFO', 210);
+define('LVL_Notice', 260);
+define('LVL_TODO', 275);
 define('LVL_WARNING', 300);
 define('LVL_ERROR', 400);
 define('LVL_CRITICAL', 500);
@@ -65,24 +69,26 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
 
 
-	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', false);
+		//==============
+		// Note:  look in /utils/Setup_Logging for the initialization of the loggers at that level
+	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', LVL_TODO);
 
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_TODO);
 
-	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', true);
-	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', false);
-	Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_TODO);
+	//////////Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 
 
-	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', true);
+	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_ALL);
 
-	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_DEBUG);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_WARNING);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_WARNING);
+	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_ALL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_ALL);
 
-	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', false);
-	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', false);
-	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', false);
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_TODO);
 
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);
@@ -94,7 +100,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 }
 
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 0); // debugging level is off
-Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
+//Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 200);  // 200 = MessageLog::INFO;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 250);  //                   Notice = 250;
 //Settings::SetPublic('THE_DEBUGGING_LEVEL', 300);  //                   WARNING = 300;
@@ -183,3 +189,4 @@ function checkLocalEnvIfDebugging(){
 	//echo '-debug false (by cookie or get)-'	;
 	return false;
 }
+

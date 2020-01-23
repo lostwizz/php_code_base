@@ -12,6 +12,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 use \php_base\Resolver as Resolver;
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 
 class MenuModel extends Model{
@@ -30,6 +31,8 @@ class MenuModel extends Model{
 		 * @param type $controller
 		 */
 	public function __construct($controller) {
+		Settings::getRunTimeObject('MENU_DEBUGGING')->addInfo('constructor for MenuModel');
+
 		$this->controller = $controller;
 	}
 

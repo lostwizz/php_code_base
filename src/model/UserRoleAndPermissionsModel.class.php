@@ -49,6 +49,7 @@ use \php_base\data\UserAttributeData as UserAttributeData;
 use \php_base\data\UserRoleData as UserRoleData;
 use \php_base\data\UserPermissionData as UserPermissionData;
 
+use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 
 /** * **********************************************************************************************
@@ -146,9 +147,11 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @param type $controller
 	 */
 	public function __construct($controller) {   //$action ='', $payload = null){
-		if ( Settings::GetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING')){
-			Settings::setRunTime( 'PERMISSION_DEBUGGING',  Settings::GetRunTimeObject('MessageLog')) ;
-		}
+
+
+		Settings::getRunTimeObject('PERMISSION_DEBUGGING')->addInfo('constructor for UserRoleAndPermissionsModel');
+
+
 		$this->controller = $controller;
 	}
 
@@ -187,7 +190,7 @@ Class UserRoleAndPermissionsModel extends Model {
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
 
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addAlert(
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addInfo(
 				$this->controller->view->dumpPermissions()
 					);
 
@@ -260,7 +263,7 @@ Class UserRoleAndPermissionsModel extends Model {
 
 		$this->controller->userPermissions = $DataUserPermissions->permissionList;
 
-		//Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addAlert(	$this->controller->view->dumpPermissions());
+		//Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addInfo(	$this->controller->view->dumpPermissions());
 
 
 		return (!empty($this->controller->userPermissions));
@@ -278,16 +281,13 @@ Class UserRoleAndPermissionsModel extends Model {
 
 		$roleWanted = trim($roleWanted);
 		if (\in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
-			if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addAlert('has role wanted: ' . $roleWanted);
-			}
+			Settings::GetRunTimeObject('PERMISSION_DEBUGGING')->addInfo('has role wanted: ' . $roleWanted);
+
 			Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has role: ' . $roleWanted);
 			return true;
 		} else {
-			if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
-				Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have role wanted: ' . $roleWanted);
-			}
-			Settings::GetRuntimeObject('SecurityLog')->addAlert(Settings::GetRunTime('Currently Logged In User') . ' Does NOT have role: ' . $roleWanted);
+			Settings::GetRunTimeObject('PERMISSION_DEBUGGING')->addInfo('Does NOT have role wanted: ' . $roleWanted);
+			Settings::GetRuntimeObject('SecurityLog')->addInfo(Settings::GetRunTime('Currently Logged In User') . ' Does NOT have role: ' . $roleWanted);
 			return false;
 		}
 	}
@@ -334,9 +334,8 @@ Class UserRoleAndPermissionsModel extends Model {
 		if (!empty($this->controller->userPermissions)) {
 			foreach ($this->controller->userPermissions as $value) {
 				if ($this->checkRight($value, $wantedPermission, $process, $task, $action, $field)) {
-					if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
-						Settings::GetRunTimeObject('MessageLog')->addAlert('has permission wanted: ' . $s);
-					}
+					Settings::GetRunTimeObject('PERMISSION_DEBUGGING')->addInfo('has permission wanted: ' . $s);
+
 					Settings::GetRuntimeObject('SecurityLog')->addNotice(Settings::GetRunTime('Currently Logged In User') . ' has permission: ' . $s);
 
 					return true;
@@ -345,9 +344,9 @@ Class UserRoleAndPermissionsModel extends Model {
 		} else {
 			return true;
 		}
-		if (Settings::GetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING')) {
-			Settings::GetRunTimeObject('MessageLog')->addAlert('Does NOT have permission wanted: ' . $s);
-		}
+
+		Settings::GetRunTimeObject('PERMISSION_DEBUGGING')->addAlert('Does NOT have permission wanted: ' . $s);
+
 		Settings::GetRuntimeObject('SecurityLog')->addAlert(Settings::GetRunTime('Currently Logged In User') . ' Does NOT have permission: ' . $s);
 		return false;
 	}
