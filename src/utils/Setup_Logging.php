@@ -293,5 +293,5 @@ if (Settings::getPublic('IS_DETAILED_DBA_DEBUGGING') > 0) {
 
 //$x =Settings::GetRunTimeObject('MessageLog')->__toString();
 
-dump::dump(Settings::GetRunTimeObject('MessageLog')->__toString());
+//dump::dump(Settings::GetRunTimeObject('MessageLog')->__toString());
 

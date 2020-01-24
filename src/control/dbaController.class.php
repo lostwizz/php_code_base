@@ -16,7 +16,7 @@ use \php_base\Utils\Settings as Settings;
 
 use \php_base\Utils\HTML\HTML as HTML;
 
-use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+//use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 use \php_base\Utils\DatabaseHandlers\SimpleTableEditor as SimpleTableEditor;
 
@@ -106,44 +106,15 @@ class dbaController extends Controller {
 	 * @return type
 	 */
 	public function Edit_UserInfoData( $dispatcher=null) {
-		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@edit_UserInfoData');
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
 
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit UserInfoData');
 		}
 
-//dump::dump($dispatcher);
-
-//dump::dumpLong(Settings::GetRunTime('userPermissionsController'));
-
-
-//dump::dumpClasses();
-
-		//if ( )
-		//$dispatcher->addPOSTProcess('AuthenticateController','')
-		//$t = new \php_base\data\UserInfoData();
-
-		//$x = \php_base\data\UserInfoData::$Table ;
-		//$x = $t::$Table;
-
-//dump::dumpLong($this);
-
-		//Settings::GetRuntimeObject('POSTqueue' )->enqueue('FooterController.doWork.two');
-
 		$this->payload['Table'] = 'UserInfoData';
 
-
-//echo '"', __NAMESPACE__, '"';
-
-		//Settings::GetRuntimeObject('DISPATCHqueue' )->enqueue ('SimpleTableEditor');
-
-//dump::dumpLong(Settings::GetRuntimeObject('DISPATCHqueue' )	);
-//dump::dumpLong(Settings::GetRuntimeObject('PREqueue' )	);
-//dump::dumpLong(Settings::GetRuntimeObject('POSTqueue' )	);
-
 		$editorSession = new SimpleTableEditor('\php_base\data\UserInfoData', $this->process, $this->task, $this->action, $this->payload);
-
-		//$result = $editorSession->runTableDisplayAndEdit( true );
 
 		return Response::NoError();
 	}
@@ -174,6 +145,7 @@ dump::dump('at two');
 
 	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug_1('this is debug1 example');
 	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug_2('this is debug2 example');
+
 	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo_2('this is info2 example');
 	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo_3('this is info3 example');
 
@@ -192,21 +164,21 @@ dump::dump('at two');
 	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug('this is debug example');
 
 
-
-		$loggy2 = new \php_base\Utils\SubSystemMessage('SimpleTableEditor', \php_base\Utils\MessageBase::NOTICE);
-
-//dump::dump($loggy2);
-		Settings::SetRuntime ('DBA_DEBUGGING', $loggy2);
-
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addEmergency('this is emergency example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addAlert('this is alert example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addCritical('this is critical example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addError('this is error example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addWarning('this is warning example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addNotice('this is notice example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo('this is info example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addTodo('this is todo example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug('this is debug example');
+//
+//		$loggy2 = new \php_base\Utils\SubSystemMessage('SimpleTableEditor', \php_base\Utils\MessageBase::NOTICE);
+//
+////dump::dump($loggy2);
+//		Settings::SetRuntime ('DBA_DEBUGGING', $loggy2);
+//
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addEmergency('this is emergency example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addAlert('this is alert example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addCritical('this is critical example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addError('this is error example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addWarning('this is warning example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addNotice('this is notice example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo('this is info example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addTodo('this is todo example');
+//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug('this is debug example');
 
 
 		return Response::NoError();

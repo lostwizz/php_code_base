@@ -171,6 +171,9 @@ abstract class Dump {
 					);
 				break;
 			case self::SHORT:
+				$auxArray = array(
+					'FLAT_WINDOWS_LINES' => 12);
+				break;
 			case self::MULTI_ARRAY:
 			default:
 			case self::NORMAL:  // default

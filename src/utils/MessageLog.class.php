@@ -423,6 +423,7 @@ class AMessage extends MessageBase {
 		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
 			$s .= '</div>';
 		}
+		$s .= PHP_EOL;
 		return $s;
 	}
 

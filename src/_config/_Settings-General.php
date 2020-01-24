@@ -43,11 +43,48 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 /**
  * debugging type settings
  */
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// the various debugging levels - it is in numberical order so you can set LVL_ALL so evrerything is MessageLog output
+//       if you set LVL_DEBUG then the LVL_DEBUG_1-9 will not output
+//         this should allow fine levels of output --
+//       eg i set to LVL_DEBUG_5 then debug_4,3,2,1 wont be outputed but 5,6,7,8,9 and LVL_DEBUG_ will be output
+//			these here are only used to set the "DETAILED" MessageLog output
+//            to make these really work you have to change MessageBase  (in the MessageLog.class.php file)
 define('LVL_ALL', 1);
+
+define('LVL_DEBUG_1', 101);
+define('LVL_DEBUG_2', 102);
+define('LVL_DEBUG_3', 103);
+define('LVL_DEBUG_4', 104);
+define('LVL_DEBUG_5', 105);
+define('LVL_DEBUG_6', 106);
+define('LVL_DEBUG_7', 107);
+define('LVL_DEBUG_8', 108);
+define('LVL_DEBUG_9', 109);
 define('LVL_DEBUG', 110);
+
+define('LVL_INFO_1', 201);
+define('LVL_INFO_2', 202);
+define('LVL_INFO_3', 203);
+define('LVL_INFO_4', 204);
+define('LVL_INFO_5', 205);
+define('LVL_INFO_6', 206);
+define('LVL_INFO_7', 207);
+define('LVL_INFO_8', 208);
+define('LVL_INFO_9', 209);
 define('LVL_INFO', 210);
+
+define('LVL_Notice_1', 251);
+define('LVL_Notice_2', 252);
+define('LVL_Notice_3', 253);
+define('LVL_Notice_4', 254);
+define('LVL_Notice_5', 255);
+define('LVL_Notice_6', 256);
+define('LVL_Notice_7', 257);
+define('LVL_Notice_8', 258);
+define('LVL_Notice_9', 259);
 define('LVL_Notice', 260);
+
 define('LVL_TODO', 275);
 define('LVL_WARNING', 300);
 define('LVL_ERROR', 400);
@@ -82,9 +119,9 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_ALL);
 
-	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_ALL);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_ALL);
+	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_DEBUG_7); //LVL_TODO); //LVL_ALL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_DEBUG_7); //LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_DEBUG_7); //LVL_TODO);
 
 	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_TODO);
 	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', LVL_TODO);
@@ -98,19 +135,6 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', true);
 }
-
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 0); // debugging level is off
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 100);  // 100 = MessageLog::DEBUG;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 200);  // 200 = MessageLog::INFO;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 250);  //                   Notice = 250;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 300);  //                   WARNING = 300;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 400);  //                   ERROR = 400;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 500);  //                   CRITICAL = 500;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 550);  //                   ALERT = 550;
-//Settings::SetPublic('THE_DEBUGGING_LEVEL', 600);  //                   EMERGENCY = 600;
-
-
-
 
 
 

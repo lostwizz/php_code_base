@@ -48,9 +48,9 @@ Class Field_Text extends Field {
 	 * @param string $fieldName
 	 * @param array $attribs
 	 */
-	public function __construct($parent, string $fieldName, ?array $attribs = null) {
-		$this->parent = $parent;
-		parent::__construct($parent, $fieldName, $attribs);
+	public function __construct(Table $parentTableObj, string $fieldName, ?array $attribs = null) {
+		$this->parentTableObj = $parentTableObj;
+		parent::__construct($parentTableObj, $fieldName, $attribs);
 	}
 
 	/** -----------------------------------------------------------------------------------------------

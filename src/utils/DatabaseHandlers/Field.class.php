@@ -35,8 +35,11 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Resolver as Resolver;
+use \php_base\Utils\Utils;
 
-use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+use \php_base\Utils\DatabaseHandlers\Table as Table;
+
+//use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 
 /*  example of options
@@ -104,7 +107,7 @@ Class Field {
 	const SUBTYPE_DATETIME_RFC822 = 'DATETIME_RFC822';
 	const SUBTYPE_INT_GREATER_THAN_ZERO = 'SUBTYPE_INT_GREATER_THAN_ZERO';
 
-	protected $parent;
+	protected $parentTableObj;
 
 	public $fieldName;
 	public $attribs = array();
@@ -121,13 +124,13 @@ Class Field {
 	 * @param string $fieldName
 	 * @param array $attribs
 	 */
-	public function __construct( $parent, string $fieldName, ?array $attribs = null) {
+	public function __construct( Table $parentTableObj, string $fieldName, ?array $attribs = null) {
 
 
 
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@field constructor: ' . $fieldName);
 
-		$this->parent = $parent;
+		$this->parentTableObj = $parentTableObj;
 		$this->fieldName = strtolower($fieldName);
 		$this->setupDefaultAttribs();
 
@@ -153,7 +156,7 @@ Class Field {
 	 * @return bool
 	 */
 	public function __set(string $name, $value): bool {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@__set :'. $name);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@__set :'. $name);
 		$this->attribs[$name] = $value;
 		return true;
 	}
@@ -164,7 +167,7 @@ Class Field {
 	 * @return boolean
 	 */
 	public function __get(string $name) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@__get :'. $name);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@__get :'. $name);
 		if (array_key_exists($name, $this->attribs)) {
 			return $this->attribs[$name];
 		} else {
@@ -211,7 +214,7 @@ Class Field {
 	 * @return array|null
 	 */
 	public function giveHTMLstyle(): ?array {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLstyle');
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveHTMLstyle');
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
 			if (in_array($key, $this->styleAttribs)) {
@@ -226,7 +229,7 @@ Class Field {
 	 * @return array|null
 	 */
 	public function giveHTMLOptions(): ?array {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLOptions');
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveHTMLOptions');
 		$r = array();
 		foreach ($this->attribs as $key => $value) {
 			if (in_array($key, $this->optionAttribs)) {
@@ -242,7 +245,7 @@ Class Field {
 	 * @return boolean
 	 */
 	public function giveAttrib(string $attribName) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveAttrib :' . $attribName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveAttrib :' . $attribName);
 		if (array_key_exists($attribName, $this->attribs)) {
 			return $this->attribs[$attribName];
 		} else {
@@ -257,7 +260,7 @@ Class Field {
 	 * @return type
 	 */
 	public function giveAttribWithDefault(string $attribName, $defaultValue) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveAttribWithDefault :', $attribName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveAttribWithDefault :', $attribName);
 		$r = $this->giveAttrib($attribName);
 		if ($r == false) {
 			return $defaultValue;
@@ -270,7 +273,7 @@ Class Field {
 	 * @return string
 	 */
 	public function givePrettyName(): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@givePrettyName');
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@givePrettyName');
 		return $this->giveAttribWithDefault('prettyName', $this->fieldName);
 	}
 
@@ -281,13 +284,17 @@ Class Field {
 	 * @return string
 	 */
 	public function giveHTMLInput(string $name,  $value = ''): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveHTMLInput: ' . $name);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveHTMLInput: ' . $name);
+
+		//Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug( $name . ' isShowable: ' . ($this->isShowable?'yes':'no') . ' isEditable:'. ($this->isEditable ? 'yes':'no'));
+
 		if ($this->isShowable) {
 			$arStyle = $this->giveHTMLstyle();
 			$arOptions = $this->giveHTMLOptions();
 			//$name = ' name="' . $name . '" ';
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5( $name. ' >' . Utils::array_display_compactor( $arStyle) . '<  >' . Utils::array_display_compactor( $arOptions) );
 
-			if ($this->giveAttrib('isEditable')) {
+			if ($this->isEditable ) {
 				switch ( $this->giveAttrib('subType') ) {
 					case self::SUBTYPE_TEXTAREA:
 						$r = HTML::TextArea(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, $arOptions, $arStyle);
@@ -300,7 +307,10 @@ Class Field {
 						break;
 				}
 			} else {
-				$r = HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+				$x = str_pad( $value, $this->size, ' ', STR_PAD_LEFT);
+				$r = str_replace(' ', '&nbsp;', $x);
+				$r .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+				//$r = HTML::Diver( $name, $value, $arOptions, $arStyle);
 				return $r;
 			}
 			return $r;
@@ -312,24 +322,24 @@ Class Field {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 * - create a tabel for a dropdown pick list- name of table is
+	 *			the attrib 'selectFrom'
+	 *      the method to call to create the list is the attrib 'selectFrom'
 	 *
 	 * @param type $name
 	 * @param type $value
 	 * @return type
 	 */
 	public function giveSelectHTMLInput( string $name, $value){
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveSelectHTMLInput: ' .  $name);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveSelectHTMLInput: ' .  $name . ' val=' . Utils::array_display_compactor($value) . '<<');
 		if ( is_array($this->selectFrom )) {
 			$selOptions = $this->selectFrom;
 		} else {
-			$class  = $this->parent->className;
+			$class  = $this->parentTableObj->className;
 			$methodName = $this->selectFrom;
-			//$selOptions = $class::$methodName();
-dump::dumpA($class, $methodName);
 
-dump::dump($class);
-
-			$selOptions = $class->$methodName();
+			$tbl = new $class('dummyController');
+			$selOptions = ($tbl)->$methodName();
 		}
 		$r = HTML::Select($name, $selOptions, $value, true);
 		return $r;

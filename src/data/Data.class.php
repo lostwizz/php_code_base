@@ -42,7 +42,12 @@ use \php_base\Utils\Response as Response;
 class Data {
 
 	public $controller;
-	public $Table;
+	public $TableStructure;
+
+	public $process;
+	public $task;
+	public $action;
+	public $payload;
 
 	/**
 	 * @var version number

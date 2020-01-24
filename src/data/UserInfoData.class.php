@@ -58,7 +58,7 @@ class UserInfoData extends data {
 	public $controller;
 
 	public $UserInfo;
-	public $Table;
+	public $TableStructure;
 
 	/**
 	 * @var version number
@@ -70,8 +70,9 @@ class UserInfoData extends data {
 	 * @param type $username
 	 */
 	public function __construct($controller, $username = null) {
-
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . $username);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addTODO('need somesort of verification when adding a column to the DB doesnt show here -instead of errors');
+
 
 		$this->controller = $controller;
 
@@ -101,7 +102,7 @@ class UserInfoData extends data {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
 
-		$this->Table = new Table(Settings::GetProtected('DB_Table_UserManager'),
+		$this->TableStructure = new Table(Settings::GetProtected('DB_Table_UserManager'),
 				['className' => __NAMESPACE__ . '\UserInfoData',
 			'isAdding' => true,
 			'isEditing' => true,
@@ -109,18 +110,20 @@ class UserInfoData extends data {
 			'isSpecial' => true
 		]);
 
-		$this->Table->setPrimaryKey('UserId',
+		$this->TableStructure->setPrimaryKey('UserId',
 				['prettyName' => 'User Id',
-					'isEditable' => false
+					'isEditable' => false,
+					'isShowable' => true,
 		]);
 
-		$this->Table->addFieldInt('UserId',
+		$this->TableStructure->addFieldInt('UserId',
 				['prettyName' => 'User Id',
-					'alignment' => 'right',
-					'isEditable' => false
+					'text-align' => 'right',
+					'isEditable' => false,
+					'size' => 12
 		]);
 
-		$this->Table->addFieldText('app',
+		$this->TableStructure->addFieldText('app',
 				['prettyName' => 'App',
 					'isPassword' => false,
 					'size' => 50,
@@ -128,14 +131,14 @@ class UserInfoData extends data {
 					'subType' => Field::SUBTYPE_SELECTLIST,
 					'selectFrom' => 'giveSelectOnApp'
 		]);
-		$this->Table->addFieldText('method',
+		$this->TableStructure->addFieldText('method',
 				['prettyName' => 'Authentication Method',
 					'size' => 10,
 					'maxlength' => 10,
 					'subType' => Field::SUBTYPE_SELECTLIST,
 					'selectFrom' => 'giveSelectOnMethod' //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
 		]);
-		$this->Table->addFieldText('username',
+		$this->TableStructure->addFieldText('username',
 				[
 					//'subType' =>  Field::SUBTYPE_TEXTAREA,
 					'prettyName' => 'User Name',
@@ -144,29 +147,38 @@ class UserInfoData extends data {
 					'size' => 35,
 					'height' => true
 		]);
-		$this->Table->addFieldText('PrimaryRoleName',
+		$this->TableStructure->addFieldText('PrimaryRoleName',
 				['prettyName' => 'Primary Role'
 		]);
 
-		$this->Table->addFieldText('password',
+		$this->TableStructure->addFieldText('password',
 				['prettyName' => 'Password',
 					'isEditable' => false,
 					'size' => 80,
 					'isShowable' => false
 		]);
 
-		$this->Table->addFieldText('ip',
+		$this->TableStructure->addFieldText('ip',
 				['prettyName' => 'IP Address',
 					'isShowable' => true,
 					'isEditable' => false
 		]);
 
-		$this->Table->addFieldDateTime('last_logon_time',
+		$this->TableStructure->addFieldDateTime('last_logon_time',
 				['prettyName' => 'Time/Date of Last Login',
 					'isEditable' => false,
 					'isShowable' => true
 		]);
-				Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
+
+		$this->TableStructure->addFieldText('session_id',
+				['prettyName' => 'Session Id',
+					'size' => 50,
+					'maxlength' => 50,
+					'isEditable' => false,
+		]);
+
+
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
 
 	}
 

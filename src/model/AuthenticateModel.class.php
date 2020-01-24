@@ -148,7 +148,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-isGoodAuthentication');
 
 		if (empty( $_SESSION['Authenticated_username'])) {
-			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addCritical( 'no username so returning false');
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addDebug_9( 'no username so returning false');
 			return false;
 		}
 		$now = (new \DateTime('now'))->getTimestamp();

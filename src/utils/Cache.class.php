@@ -39,7 +39,7 @@ use \php_base\Utils\Dump\Dump as Dump;
  */
 Abstract class Cache {
 
-	public const DEFAULTTIMEOUTSECONDS = 600;
+	public const DEFAULTTIMEOUTSECONDS =  18000;
 
 	/**
 	 * @var version number

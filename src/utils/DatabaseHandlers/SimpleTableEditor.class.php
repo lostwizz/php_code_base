@@ -16,7 +16,7 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Utils;
 
-use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+//use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 /**
  * Description of TableFun
@@ -25,7 +25,7 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
  */
 class SimpleTableEditor {
 
-	protected $tableObj;
+	protected $tableDataObj;
 	public $key = '';
 
 	public $process;
@@ -42,14 +42,10 @@ class SimpleTableEditor {
 	 * @param array $payload
 	 */
 	public function __construct( $dataTable, string $process='', string $task='', string $action ='', ?array $payload = null) {
-		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@construct' . $dataTable . ' proc=' . $process . ' task=' . $task . ' act=' . $action);
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@construct: ' . $dataTable . ' proc=' . $process . ' task=' . $task . ' act=' . $action);
 
-		//Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addAlert( 'testing alert');
-		//Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addTODO( 'testing todo');
-		//Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addEmergency( 'testing emergency');
-
-
-		$this->tableObj = new $dataTable( $this);
+		$this->tableDataObj = new $dataTable( $this);
+//dump::dump($this->tableDataObj);
 
 		$this->process = $process;
 		$this->task = $task;
@@ -68,118 +64,136 @@ class SimpleTableEditor {
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . $isEditAllowed ? ' Editable' : 'not Editable');
 		$this->handleVarsPassedToSimpleTableEditor();
 
+		Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addTODO('pta ='. $this->process. '.' . $this->task. '.' . $this->action . '<');
 
-		Settings::GetRunTimeObject('MessageLog')->addTODO('pta ='. $this->process. '.' . $this->task. '.' . $this->action);
-
-//dump::dumpLong($this);
-
-		$this->tableObj->process = $this->process;
-
-		$this->tableObj->task = $this->task;
-
-		$this->tableObj->action = $this->action;
+		$this->tableDataObj->action = $this->action;
 
 //dump::dump($this->payload);
-//dump::dump($this->tableObj);
+//dump::dump($this->tableDataObj);
 
-		$this->tableObj->payload = $this->payload;
-		$this->tableObj->Table->payload = $this->payload;
+		$this->tableDataObj->payload = $this->payload;
+		$this->tableDataObj->TableStructure->payload = $this->payload;
 
 //dump::dump($this->payload);
-dump::dump($this->tableObj->Table->payload);
+//dump::dump($this->tableDataObj->TableStructure->payload);
 
-
-
-		$method = 'do' . str_replace (' ', '_',$this->action);
-		Settings::GetRunTimeObject('MessageLog')->addTODO('method ='. $method);
+		$method = str_replace (' ', '_',$this->action);
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addTODO('method ='. $method);
 
 		if ( method_exists($this, $method)) {
 			$r = $this->$method();
 			return $r;
 		} else {
-			echo HTML::FormOpen('tableFun');
-			echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
-			echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
-
-
-//dump::dump( $this->table);
-
-//dump::dump( \get_class_methods($this->table->Table));
-			$d = ($this->tableObj->Table)->readAllTableData();
-
-			$this->sortData($d);
-			$this->filterData($d);
-
-			$sortAr = $this->processPassedSort();
-			$filter = $this->processPassedFilter();
-
-			echo $this->tableObj->Table->showTable($d, $sortAr, $filter, $this->process, $this->task);
-			echo HTML::FormClose();
-
-			return Response::NoError();
+			return Response::GenericError();
 		}
 	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * this attempts to figure out which row key is passed in the post/get ACTION when using the simple table editor class
-	 *
-	 * @param type $postVars
-	 * @param type $getVars
 	 */
-	protected function handleVarsPassedToSimpleTableEditor() {
-		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@handleVarsPassedToSimplTableEditor' );
+	protected function handleVarsPassedToSimpleTableEditor(): void {
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@handleVarsPassedToSimplTableEditor - workout PTA');
 
-		$this->process = ( ! empty($this->process) ? $this->process : 'SimpleTableEditor');
-		$this->task    = ( ! empty($this->task) ? $this->task : '');
+		$this->process = (!empty($this->process) ? $this->process : 'SimpleTableEditor');
+		$this->task = (!empty($this->task) ? $this->task : '');
 
-
+		//$this->action = 'doDisplayTableForEditing';		//default
+		$route= '';
 		if (!empty($this->payload)) {
 			foreach ($this->payload as $key => $value) {
+				Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('handleVars: key=' . $key . ' Value=' . Utils::array_display_compactor($value));
+
 				if (\strpos($key, 'Key') !== false) {
-
 					$exploded = \explode('=>', $key);
+					Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('key(id)=' . $exploded[1] . '  action=' . $exploded[0]);
 
-//dump::dump($exploded);
 					$the_key = $exploded[1];
 					$this->payload['RowKey'] = $the_key;
 
-
-					switch ($exploded[0]) {
-						case 'EditKey':
-							$this->action = 'EditRow';
-							break;
-						case 'DelKey':
-							$this->action = 'DeleteRow';
-							break;
-						case 'SpecialKey':
-							$this->action = 'SpecialRow';
-							break;
-						case 'AddKey':
-							$this->action = 'AddRow';
-							break;
-						default:
-							break;
-					}
-					unset ( $this->payload[$key]);  // get rid of the encoded thing -- dont need it cluttering things up
+					$route = $this->router( $exploded[0]);
+					$this->action = $route;
+					unset($this->payload[$key]);  // get rid of the encoded thing -- dont need it cluttering things up
+					break;
 				}
+			}
+			if (empty($route)){
+				$route = $this->router( $this->action);
 			}
 		} else {
 			$this->payload = null;
 		}
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('route returned = ' . $route);
 
-//dump::dump($this->payload);
+	}
+
+	/** ----------------------------------------------------------------------------------------------- */
+	protected function router($which) {
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@router which:' . $which);
+		$which = str_replace(' ', '_', $which);
+		switch ($which) {
+			case 'EditKey':
+				return 'doEditRow';
+			case 'DelKey':
+				return 'doDeleteRow';
+			case 'SpecialKey':
+				return 'doSpecialRow';
+			case 'AddKey':
+				return 'doAddRow';
+			case 'Save_Edit':
+				return 'doSave_Edit';
+			default:
+				return 'doDisplayTableForEditing';
+		}
+	}
+
+	/** ----------------------------------------------------------------------------------------------- */
+	protected function doDisplayTableForEditing() : Response{
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addDebug_5('@@doDisplayTableForEditing');
+		echo HTML::FormOpen('tableFun');
+		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+
+		$d = ($this->tableDataObj->TableStructure)->readAllTableData();
+
+		$this->sortData($d);
+		$this->filterData($d);
+
+		$sortAr = $this->processPassedSort();
+		$filter = $this->processPassedFilter();
+
+		echo $this->tableDataObj->TableStructure->showTable($d, $sortAr, $filter, $this->process, $this->task);
+		echo HTML::FormClose();
+		return Response::NoError();
 	}
 
 	/** -----------------------------------------------------------------------------------------------*/
 	protected function doEditRow() : Response {
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doEditRow');
 
-		echo 'At Edit<BR>';
-dump::dump($this->tableObj->Table);
-		$this->tableObj->Table->editRowOfTable();
+		//echo 'At Edit<BR>';
+		echo PHP_EOL, PHP_EOL;
+		echo HTML::FormOpen('tableFun');
+		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+		echo HTML::Hidden(Resolver::REQUEST_ACTION, 'Editing');
+
+		echo PHP_EOL;
+		echo HTML::Submit(Resolver::REQUEST_ACTION, 'Save Edit');
+
+//dump::dump($this->tableDataObj->TableStructure);
+		$this->tableDataObj->TableStructure->editRowOfTable();
+
+		echo PHP_EOL;
+		echo HTML::Submit(Resolver::REQUEST_ACTION, 'Save Edit');
+
+		echo HTML::FormClose();
+		echo PHP_EOL, PHP_EOL;
 		return Response::NoError();
 	}
+
 
 
 	/** -----------------------------------------------------------------------------------------------
@@ -189,12 +203,12 @@ dump::dump($this->tableObj->Table);
 	protected function doSave_Edit() : Response {
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@doSave_Edit');
 
-		//echo 'At Save Edit<BR>';
+		echo 'At Save Edit<BR>';
 		//$this->table->editRowOfTable();
 
 		Settings::GetRunTimeObject('MessageLog')->addTODO('save the edit');
 
-		$r = $this->tableObj->Table->saveRow( $this->payload);
+		$r = $this->tableDataObj->TableStructure->saveRow( $this->payload);
 		if ( $r) {
 			return Response::NoError();
 		} else {
@@ -240,7 +254,7 @@ dump::dump($this->tableObj->Table);
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@processPassedSort');
 
 		$ar = array();
-		$flds = $this->tableObj->Table->giveFields();
+		$flds = $this->tableDataObj->TableStructure->giveFields();
 
 		if (!empty($this->payload['sortAsc']) and is_array($this->payload['sortAsc'])) {
 			foreach ($flds as $fld) {

@@ -253,10 +253,24 @@ abstract Class HTML {
 			$style = self::parseStyle($arStyle);
 			$value = empty($value) ? '' : ' ' . $value;
 
-			return '<Input type="' . $type . '"' . $name . $value . $attr . $style . '>' . $lable; //. PHP_EOL;
+			return '<Input type="' . $type . '"' . $name . $value . $attr . $style . '>' . $lable . PHP_EOL;
 		} else {
 			return null;
 		}
+	}
+
+	public static function Diver(
+			string $name,
+			?string $value,
+			$arOptions = null,
+			$arStyle = null
+	): ?string {
+		$name = (!empty($name)) ? ' name="' . $name . '"' : '';
+		$value = (!empty($value)) ? $value  : '';
+		$attr = self::parseOptions($arOptions);
+		$style = self::parseStyle($arStyle);
+		$value = empty($value) ? '' : ' ' . $value;
+		return '<Div ' . $style . $attr . $name .'>' . $value . '</Div>' . PHP_EOL;
 	}
 
 	/** -----------------------------------------------------------------------------------------------

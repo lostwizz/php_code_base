@@ -211,6 +211,70 @@ abstract Class Utils {
 
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * take an array and when you do a print_r it takes a lot of lines to show it all
+	 * this function will attempt to shrink the contents of the subarrays down to a one line string
+	 *     (if the key is in the $compress_elements array -- if not in that array then it keeps it and does nothing to it)
+	 *     using implode (if simple strings)or using serialize if the sub array is more complicated
+	 *  - you can also just ignore the sub array if the key exists in the $eliminate_elements array
+	 *
+	 * @param type $the_array
+	 * @param array $compress_elements
+	 * @param array $eliminate_elements
+	 * @return type
+	 */
+	public static function array_display_compactor($the_array) : string {
+		return wordwrap( serialize($the_array), 100, "<br />\n", true);
+	}
+
+
+
+//			, $compress_elements = array(), $eliminate_elements = array()) : string {
+//		// make sure the two parameters are arrays - attempt to make them arrays if they are null -- give up if still not arrays
+//		if (is_null($compress_elements)) {
+//			$compress_elements = array();
+//		}
+//		if (is_null($eliminate_elements)) {
+//			$eliminate_elements = array();
+//		}
+//		if (!is_array($compress_elements) or ! is_array($eliminate_elements)) {
+//			return print_r($the_array, true);
+//		}
+//
+//
+//		// run thru the array and check if to include the sub element or just ignore it -- then if to compress the contents or not
+//		$s = array();
+//		if (is_array($the_array)) {
+//			foreach ($the_array as $k => &$a) {
+//				if (!!in_array($k, $eliminate_elements)) {
+//
+//					if (in_array($k, $compress_elements) and is_array($a)) {
+//
+//						// make sure the sub elements are simple strings with integer keys -- otherwise use serialize to show keys and such
+//						$all_str = true;
+//						foreach ($a as $sub_k => &$sub_a) {
+//							if (!is_string($sub_a) or ! is_int($sub_k)) {
+//								$all_str = false;
+//								break;
+//							}
+//						}
+//						if ($all_str) {
+//							$s[$k] = implode(',', $a);
+//						} else {
+//							$s[$k] = serialize($a);
+//						}
+//					} else {
+//						$s[$k] = $a; // not compressing it so just include it
+//					}
+//				}
+//			}
+//			// return the array as the printable expansion using print_r
+//			return print_r($s, true);
+//		} else {
+//			return $the_array;
+//		}
+//	}
 
 }
 
