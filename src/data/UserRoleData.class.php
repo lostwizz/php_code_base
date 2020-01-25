@@ -71,7 +71,6 @@ Class UserRoleData extends Data {
 	 * @param type $ArrayOfNames
 	 */
 	public function __construct($controller, ?array $ArrayOfNames = null) {
-
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($ArrayOfNames, true));
 
 		$this->controller = $controller;
@@ -97,13 +96,56 @@ Class UserRoleData extends Data {
 	 * @return void
 	 */
 	public function defineTable(): void {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice('@@defineTable');
 
-		$this->Table = new Table(Settings::GetProtected('DB_Table_RoleManager'), ['className' => __NAMESPACE__ . '\UserRoleData']);
+		$this->Table = new Table(
+				Settings::GetProtected('DB_Table_RoleManager'),
+				[
+			'className' => __NAMESPACE__ . '\UserRoleData',
+			'isAdding' => true,
+			'isEditing' => true,
+			'isDeleting' => true,
+			'isSpecial' => true
+		]);
+
 		$this->Table->setPrimaryKey('roleId', ['prettyName' => 'Role Id']);
 		$this->Table->addFieldInt('roleid', ['prettyName' => 'Role Id',
-			'alignment' => 'right']);
+			'text-align' => 'right',
+			'isEditable' => false,
+			]);
 		$this->Table->addFieldText('name', ['prettyName' => 'Name']);
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
+	public function clearAllCaches() :void {
+		CACHE::deleteForPrefix( Settings::GetProtected('DB_Table_RoleManager') .'_all_');
+		CACHE::deleteForPrefix(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' );
+		CACHE::delete(Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll');
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array
+	 */
+	public function readAllData(): array {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' )){
+			$data = CACHE::pull( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' );
+		} else  {
+			$sql = 'SELECT * '
+					. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager');
+			$data = DBUtils::doDBSelectMulti($sql);
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll', $data);
+			}
+		}
+		return $data;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -130,17 +172,25 @@ Class UserRoleData extends Data {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabase' . print_r($ArrayOfNames, true));
 
 		$names = "'" . implode("', '", $ArrayOfNames) . "'";
-		$sql = 'SELECT RoleId
-						,Name
-					FROM ' . Settings::GetProtected('DB_Table_RoleManager')
-				. ' WHERE  Name in ('
-				. $names
-				. ')'
-		;
 
-		$params = null; ///array(Settings::GetPublic( 'RoleId') );
-		$data = DBUtils::doDBSelectMulti($sql, $params);
+		if ( CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_all_' . substr($names, 1, -1))) {
+			$data = CACHE::pull(Settings::GetProtected('DB_Table_RoleManager') . '_all_' . substr($names, 1, -1));
+		} else {
 
+			$sql = 'SELECT RoleId
+							,Name
+						FROM ' . Settings::GetProtected('DB_Table_RoleManager')
+					. ' WHERE  Name in ('
+					. $names
+					. ')'
+			;
+
+			$params = null; ///array(Settings::GetPublic( 'RoleId') );
+			$data = DBUtils::doDBSelectMulti($sql, $params);
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_RoleManager') . '_all_' .  substr($names, 1, -1), $data);
+			}
+		}
 		$this->ProcessRoleIDs($data);
 		return true;
 	}
@@ -161,6 +211,7 @@ Class UserRoleData extends Data {
 		$params = array(':name' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
 
 		$data = DBUtils::doDBInsertReturnID($sql, $params);
+		$this->clearAllCaches();
 		return $data;
 	}
 
@@ -178,6 +229,7 @@ Class UserRoleData extends Data {
 		$params = array(':name' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
 
 		$data = DBUtils::doDBDelete($sql, $params);
+		$this->clearAllCaches();
 		return ($data == 1);
 	}
 
@@ -194,6 +246,7 @@ Class UserRoleData extends Data {
 		$params = array(':roleid' => ['val' => $roleID, 'type' => \PDO::PARAM_INT]);
 
 		$data = DBUtils::doDBDelete($sql, $params);
+		$this->clearAllCaches();
 		return ($data == 1);
 	}
 
@@ -205,12 +258,21 @@ Class UserRoleData extends Data {
 	public function getRoleIDByName(string $roleName): int {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getRoleIDbyName: ' . $roleName );
 
+		if ( CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName)) {
+			$data = CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName);
+			return true;
+		}
+
 		$sql = 'SELECT roleid '
 				. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager')
-				. ' WHERE roleid = :roleid'
+				. ' WHERE rolename = :rolename'
 		;
-		$params = array(':name' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
+		$params = array(':rolename' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
+
+		if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+			CACHE::add(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName, $data);
+		}
 		if ($data > 0) {
 			return $data;
 		} else {

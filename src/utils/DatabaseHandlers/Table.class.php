@@ -483,21 +483,29 @@ class Table {
 	public function readAllTableData(int $limit = PHP_INT_MAX, string $orderBy = ''): array {
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@readAllTableData');
 
-		if (CACHE::exists('Table_' , $this->tableName)) {
-			return CACHE::pull('Table_' . $this->tableName);
-		} else {
-			$sql = 'SELECT * FROM ' . $this->tableName;
-			if (!empty($orderBy)) {
-				$sql .= ' ORDER BY ' . $orderBy;
-			}
-			$data = DBUtils::doDBSelectMulti($sql);
-
-			if ( Settings::GetPublic('CACHE_Allow_Tables to be Cached')){
-				CACHE::add( 'Table_' . $this->tableName, $data);
-			}
-
-			return $data;
-		}
+		echo 'DO NOT USE THIS';
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addEmergency('Dont Use This function');
+//
+//
+//dump::dump($this->payload['Table']);
+//
+//
+//
+//		if (CACHE::exists('Table_' , $this->tableName . '_TableReadAll')) {
+//			return CACHE::pull('Table_' . $this->tableName . '_TableReadAll');
+//		} else {
+//			$sql = 'SELECT * FROM ' . $this->tableName;
+//			if (!empty($orderBy)) {
+//				$sql .= ' ORDER BY ' . $orderBy;
+//			}
+//			$data = DBUtils::doDBSelectMulti($sql);
+//
+//			if ( Settings::GetPublic('CACHE_Allow_Tables to be Cached')){
+//				CACHE::add( 'Table_' . $this->tableName . '_TableReadAll', $data);
+//			}
+//
+//			return $data;
+//		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -563,6 +571,7 @@ class Table {
 
 		$s = '<table border=1>';
 		$s .= $this->giveHeaderRow(true, true, $sortKeys, $filters);
+//dump::dump($data);
 		foreach ($data as $key => $RowValue) {
 			$s .= $this->showRowOfTable($RowValue);
 		}
@@ -576,13 +585,16 @@ class Table {
 	public function editRowOfTable() {
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@editRowOfTable');
 
-		$data = $this->readAllTableData();
+		$className = $this->className;
+		$tbl = new $className('dummyController');
+		$data = ($tbl)->readAllData();
+
+		//$data = $this->readAllTableData();
 		$flds = $this->giveFields();
 //dump::dumpShort($this);
 		$rowNum = $this->payload['RowKey'];
 		$rowOfData = $this->getRowByPrimaryKey($this->payload['RowKey'], $data);
 
-//dump::dump($rowOfData);
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('row of data to edit: ' . Utils::array_display_compactor($rowOfData));
 
 
@@ -600,7 +612,8 @@ class Table {
 
 		echo PHP_EOL, PHP_EOL;
 		echo HTML::Open('Table', ['border' => 1, 'width' => '50%']);
-
+//dump::dump( $rowOfData);
+//dump::dump($this->fields);
 		foreach ($this->fields as $fld => $fldObj) {
 			if ($fldObj->isShowable) {
 				echo HTML::TR();
@@ -609,7 +622,7 @@ class Table {
 				echo HTML::TDendTD();
 
 				$ColOfData = $rowOfData[strtoupper($fld)];
-
+//dump::dump( $rowOfData[strtoupper($fld)]);
 				echo $fldObj->giveHTMLInput($fld, $ColOfData);
 
 				echo HTML::TDend();
@@ -628,12 +641,13 @@ class Table {
 	 * @return type
 	 */
 	public function getRowByPrimaryKey($key, $data): ?array {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@getRowByPrimaryKey');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@getRowByPrimaryKey key=' . $key );
 
 		$primaryKeyFld = strtoupper($this->primaryKeyFieldName );
 
 		foreach($data as $row){
-			if ( $row[$primaryKeyFld] = $key ){
+
+			if ( $row[$primaryKeyFld] == $key ){
 				return $row;
 			}
 		}

@@ -105,17 +105,55 @@ class dbaController extends Controller {
 	 * @param type $parent
 	 * @return type
 	 */
-	public function Edit_UserInfoData( $dispatcher=null) {
+	public function Edit_UserInfoData( $dispatcher=null) : Response  {
 		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
 
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit UserInfoData');
 		}
 
-		$this->payload['Table'] = 'UserInfoData';
-
+//		$this->payload['Table'] = 'UserInfoData';
 		$editorSession = new SimpleTableEditor('\php_base\data\UserInfoData', $this->process, $this->task, $this->action, $this->payload);
+		return Response::NoError();
+	}
 
+	/** -----------------------------------------------------------------------------------------------	*/
+	public function Edit_Roles( $dispatcher=null) : Response {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_Roles');
+
+		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
+			return Response::PermissionsError('Required DBA - Edit Roles');
+		}
+
+		//$this->payload['Table'] = 'UserRoleData';
+		$editorSession = new SimpleTableEditor('\php_base\data\UserRoleData', $this->process, $this->task, $this->action, $this->payload);
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------	*/
+	public function Edit_Attributes( $dispatcher=null) : Response {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_attributes');
+
+		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
+			return Response::PermissionsError('Required DBA - Edit Attributes');
+		}
+
+		//$this->payload['Table'] = 'UserAttributeData';
+		$editorSession = new SimpleTableEditor('\php_base\data\UserAttributeData', $this->process, $this->task, $this->action, $this->payload);
+		return Response::NoError();
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------	*/
+	public function Edit_Permissions( $dispatcher=null) : Response {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('Edit_Permissions');
+
+		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
+			return Response::PermissionsError('Required DBA - Edit_Permissions');
+		}
+
+		$this->payload['Table'] = 'UserPermissionData';
+		$editorSession = new SimpleTableEditor('\php_base\data\UserPermissionData', $this->process, $this->task, $this->action, $this->payload);
 		return Response::NoError();
 	}
 

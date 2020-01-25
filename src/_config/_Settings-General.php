@@ -138,7 +138,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 
 
-Settings::SetPublic('CACHE_IS_ON', false);
+Settings::SetPublic('CACHE_IS_ON', true);
 Settings::SetPublic('CACHE Allow_Menu to be Cached', true);
 Settings::SetPublic('CACHE_Allow_Tables to be Cached', true);     //true
 

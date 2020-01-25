@@ -284,40 +284,71 @@ Class Field {
 	 * @return string
 	 */
 	public function giveHTMLInput(string $name,  $value = ''): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveHTMLInput: ' . $name);
-
-		//Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug( $name . ' isShowable: ' . ($this->isShowable?'yes':'no') . ' isEditable:'. ($this->isEditable ? 'yes':'no'));
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveHTMLInput: ' . $name . ' isShowable: ' . ($this->isShowable?'yes':'no') . ' isEditable:'. ($this->isEditable ? 'yes':'no'));
 
 		if ($this->isShowable) {
-			$arStyle = $this->giveHTMLstyle();
-			$arOptions = $this->giveHTMLOptions();
-			//$name = ' name="' . $name . '" ';
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5( $name. ' >' . Utils::array_display_compactor( $arStyle) . '<  >' . Utils::array_display_compactor( $arOptions) );
-
 			if ($this->isEditable ) {
-				switch ( $this->giveAttrib('subType') ) {
-					case self::SUBTYPE_TEXTAREA:
-						$r = HTML::TextArea(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, $arOptions, $arStyle);
-						break;
-					case self::SUBTYPE_SELECTLIST:
-						$r = $this->giveSelectHTMLInput(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
-						break;
-					default:
-						$r = HTML::ShowInput(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, self::SUBTYPE_TEXT, $arOptions, $arStyle);
-						break;
-				}
+				$r = $this->giveEditableHTMLInput($name, $value);
 			} else {
-				$x = str_pad( $value, $this->size, ' ', STR_PAD_LEFT);
-				$r = str_replace(' ', '&nbsp;', $x);
-				$r .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
-				//$r = HTML::Diver( $name, $value, $arOptions, $arStyle);
-				return $r;
+				$r = $this->giveNonEditableHTMLInput($name, $value);
 			}
 			return $r;
 		} else {
 			//TODO - setup hidden for those not editable
 			$r = HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
 			return $r;
+		}
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *  handle it is an editable value - use the attribs to handle the different cases
+	 *
+	 * @param string $name
+	 * @param type $value
+	 * @return string
+	 */
+	public function giveEditableHTMLInput( string $name, $value): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveEditableHTMLInput: '  . $name);
+		$arStyle = $this->giveHTMLstyle();
+		$arOptions = $this->giveHTMLOptions();
+
+		switch ($this->giveAttrib('subType')) {
+			case self::SUBTYPE_TEXTAREA:
+				$r = HTML::TextArea(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, $arOptions, $arStyle);
+				break;
+			case self::SUBTYPE_SELECTLIST:
+				$r = $this->giveSelectHTMLInput(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+				break;
+			default:
+				$r = HTML::ShowInput(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value, self::SUBTYPE_TEXT, $arOptions, $arStyle);
+				break;
+		}
+		return $r;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * handle any formating of a the plain text
+	 *		- basically if text-align: right; then pad the left with spaces
+	 *
+	 * @param string $name
+	 * @param type $value
+	 * @return string
+	 */
+	public function giveNonEditableHTMLInput(string $name, $value): string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_8('@@giveEditableHTMLInput: '  . $name   . ' val=' . $value);
+
+		$txt = 'text-align';
+		if ($this->$txt == 'right') {
+			$x = str_pad($value, $this->size, ' ', STR_PAD_LEFT);
+			$r = str_replace(' ', '&nbsp;', $x);
+			$r .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
+			return $r;
+		} else {
+			if (empty($value)) {
+				$value ='';
+			}
+			return $value;
 		}
 	}
 
@@ -335,11 +366,26 @@ Class Field {
 		if ( is_array($this->selectFrom )) {
 			$selOptions = $this->selectFrom;
 		} else {
-			$class  = $this->parentTableObj->className;
-			$methodName = $this->selectFrom;
+			$c = ($this->selectClass);
+			Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('before selectClass: ' . $c. ' ->' . $this->selectClass);
 
+			if ( empty( $c) ) {
+				$class  = $this->parentTableObj->className;
+				Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('empty selectClass: ' . $class. ' ->' . $this->selectClass);
+			} else {
+				$class = $this->selectClass;
+				Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('NOT empty selectClass: ' . $class. ' ->' . $this->selectClass);
+			}
+			$methodName = $this->selectFrom;
+//dump::dumpA( $class, $methodName);
 			$tbl = new $class('dummyController');
-			$selOptions = ($tbl)->$methodName();
+
+//dump::dump($tbl);
+//dump::dump(get_class_methods($tbl));
+//dump::dumpA($value, $class, $methodName, $tbl);
+			$selOptions = ($tbl)->$methodName( $value );
+//dump::dump( $selOptions	);
+
 		}
 		$r = HTML::Select($name, $selOptions, $value, true);
 		return $r;

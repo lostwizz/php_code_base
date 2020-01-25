@@ -156,7 +156,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 		$diff = $now - $then; //ends up with seconds until time out
 
 		if ($diff > 900) {
-			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( ' currently logged on - NO Timeout');
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( ' currently logged on - NOT Timeout');
 			return false;
 		}
 
@@ -166,6 +166,10 @@ class AuthenticateModel extends \php_base\Model\Model {
 		Settings::SetRuntime ('isAuthenticated', true );
 
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( Settings::dump(false, false, true));
+
+		//update the timeout -  so that it reflects inactivity
+		$exp = (new \DateTime('now'))->getTimestamp();
+		$_SESSION['Authenticated_ExpireTime'] =	(new \DateTime('now'))->getTimestamp();
 		return true;
 	}
 
@@ -449,6 +453,8 @@ dump::dump(ini_get('smtp_port'));
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Auth Model-doFinshLoginUpdate:'. $userid);
 
 		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip, \session_id() );
+
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------

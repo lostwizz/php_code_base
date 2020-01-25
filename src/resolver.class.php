@@ -146,7 +146,7 @@ class Resolver {
 			//dump::dumpLong( $_REQUEST);
 			Dump::dumpLong(filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING));
 			Dump::dumpLong(filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING));
-			dump::dumpLong($_SESSION);
+			dump::dumpLong($_SESSION, '$_Session', ['FLAT_WINDOWS_LINES' => 20]);
 			//dump::dump( session_id());
 		}
 

@@ -43,6 +43,8 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
 use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+use \php_base\Utils\Cache as CACHE;
+
 
 
 /** * **********************************************************************************************
@@ -63,14 +65,16 @@ class UserAttributeData extends data {
 	 * constructor - starts of the reading of data for that User Id
 	 * @param type $userID
 	 */
-	public function __construct($controller, $userID) {
+	public function __construct($controller, $userID = null) {
 
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . $userID);
 
 		$this->controller = $controller;
 
 		$this->defineTable();
-		$this->doReadFromDatabaseByUserID($userID);
+		if ( ! is_null($userID)){
+			$this->doReadFromDatabaseByUserID($userID);
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -92,19 +96,73 @@ class UserAttributeData extends data {
 	 * @return void
 	 */
 	public function defineTable(): void {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->Suspend();
 
-		$this->Table = new Table(Settings::GetProtected('DB_Table_UserAttributes'), ['className' => __NAMESPACE__ . '\UserAttributeData']);
-		$this->Table->setPrimaryKey('id', ['prettyName' => 'Id']);
+		$this->Table = new Table(
+				Settings::GetProtected('DB_Table_UserAttributes'),
+				[
+			'className' => __NAMESPACE__ . '\UserAttributeData',
+			'isAdding' => true,
+			'isEditing' => true,
+			'isDeleting' => true,
+			'isSpecial' => true
+		]);
+		$this->Table->setPrimaryKey('id');//, ['prettyName' => 'Id']);
 
 		$this->Table->addFieldInt('id', ['prettyName' => 'Id',
-			'alignment' => 'right']);
-		$this->Table->addFieldInt('userid', ['prettyName' => 'User Id']);
+			'text-align' => 'right',
+			'isEditable' => false
+			]);
+		$this->Table->addFieldInt(
+				'userid',
+				['prettyName' => 'User Id',
+					'text-align' => 'right',
+					'subType' => Field::SUBTYPE_SELECTLIST,
+					'selectClass' => '\php_base\data\UserInfoData',
+					'selectFrom' => 'doReadFromDatabaseByUserID',
+					'selectCol' => 'username'
+					]);
 		$this->Table->addFieldInt('attributename', ['prettyName' => 'Attribute Name']);
 		$this->Table->addFieldInt('attributevalue', ['prettyName' => 'Attribute Value']);
 
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->Resume();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * if any updates or inserts are done on the table than all of the caches may be invalid
+	 *    - so clear them out so no mixups
+	 * @return void
+	 */
+	public function clearAllCaches() :void {
+		CACHE::deleteForPrefix(Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' );
+		CACHE::deleteForPrefix(Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_');
+		CACHE::deleteForPrefix( Settings::GetProtected('DB_Table_UserAttributes')   . '_userAndAttrib_');
+		CACHE::delete(Settings::GetProtected('DB_Table_UserAttributes') .'_ReadAll');
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array
+	 */
+	public function readAllData(): array {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserAttributes') .'_ReadAll' )){
+			$data = CACHE::pull( Settings::GetProtected('DB_Table_UserAttributes') .'_ReadAll' );
+		} else  {
+			$sql = 'SELECT * '
+					. ' FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
+					. ' ORDER BY Userid' ;
+
+			$data = DBUtils::doDBSelectMulti($sql);
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_UserAttributes') .'_ReadAll', $data);
+			}
+		}
+		return $data;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -184,20 +242,27 @@ class UserAttributeData extends data {
 	protected function doReadFromDatabaseByUserID($userID): bool {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseByUserID: ' . $userID);
 
-		$sql = 'SELECT Id
-						,UserId
-						,AttributeName
-						,AttributeValue
-					FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
-				. ' WHERE  UserId = :userid'
-		;
+		if (CACHE::exists( Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' . $userID)) {
+			$data = CACHE::pull( Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' . $userID)	;
+		} else {
+			$sql = 'SELECT Id
+							,UserId
+							,AttributeName
+							,AttributeValue
+						FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
+					. ' WHERE  UserId = :userid'
+			;
 
-		$params = array(':userid' => $userID);
-		$data = DBUtils::doDBSelectMulti($sql, $params);
-
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice($data);
-
+			$params = array(':userid' => $userID);
+			$data = DBUtils::doDBSelectMulti($sql, $params);
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached') ) {
+				CACHE::add( Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' . $userID, $data);
+			}
+			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice($data);
+		}
 		$this->ProcessAttributes($data);
+
+		$this->clearAllCaches();
 		return true;
 	}
 
@@ -222,6 +287,7 @@ class UserAttributeData extends data {
 		);
 
 		$data = DBUtils::doDBInsertReturnID($sql, $params);
+		$this->clearAllCaches();
 		return true;
 	}
 
@@ -242,6 +308,7 @@ class UserAttributeData extends data {
 		);
 
 		$data = DBUtils::doDBDelete($sql, $params);
+		$this->clearAllCaches();
 		return ($data == 1);
 	}
 
@@ -259,6 +326,7 @@ class UserAttributeData extends data {
 		$params = array(':userid' => ['val' => $userID, 'type' => \PDO::PARAM_STR]);
 
 		$data = DBUtils::doDBDelete($sql, $params);
+		$this->clearAllCaches();
 		return ($data == 1);
 	}
 
@@ -292,6 +360,9 @@ class UserAttributeData extends data {
 	public function getByUseridAndAttributeName(int $userid, string $attribName) {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getByUseridAndAttributeName:'  . $userid);
 
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserAttributes')   . '_userAndAttrib_'  . $userid .'_' . $attribName )) {
+			$data = CACHE::exists(Settings::GetProtected('DB_Table_UserAttributes')   . '_userAndAttrib_'  . $userid .'_' . $attribName);
+		}
 		$sql = 'SELECT Id
 						,UserId
 						,AttributeName
@@ -300,9 +371,15 @@ class UserAttributeData extends data {
 				. ' WHERE  UserId = :userid'
 				. ' AND AttributeName = :attribName'
 		;
-		$params = array(':userid' => ['val' => $userid, 'type' => \PDO::PARAM_STR],
+		$params = array(
+			':userid' => ['val' => $userid, 'type' => \PDO::PARAM_STR],
 			':attribName' => ['val' => $attribName, 'type' => \PDO::PARAM_STR]);
+
 		$data = DBUtils::doDBSelectSingle($sql, $params);
+		if (Settings::GetPublic('CACHE_Allow_Tables to be Cached') ) {
+			CACHE::add( Settings::GetProtected('DB_Table_UserAttributes')   . '_userAndAttrib_'  . $userid .'_' . $attribName, $data);
+		}
+
 		return $data;
 	}
 
@@ -327,6 +404,7 @@ class UserAttributeData extends data {
 		);
 
 		$data = DBUtils::doDBUpdateSingle($sql, $params);
+		$this->clearAllCaches();
 		return $data;
 	}
 
@@ -352,6 +430,7 @@ class UserAttributeData extends data {
 		$data = DBUtils::doDBInsertReturnID($sql, $params);
 		Settings::GetRunTimeObject('MessageLog')->addNotice(' INsert by userid and attrib name' . $userid . '-' . $attribName);
 
+		$this->clearAllCaches();
 		return ($data > 0);
 	}
 

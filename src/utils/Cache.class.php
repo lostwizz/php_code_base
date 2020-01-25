@@ -44,7 +44,7 @@ Abstract class Cache {
 	/**
 	 * @var version number
 	 */
-	private const VERSION = '0.3.0';
+	private const VERSION = '0.3.2';
 
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a version number
@@ -115,7 +115,7 @@ Abstract class Cache {
 		if ( self::hasExpired( $itemName)) {
 			return false;
 		} else {
-			Settings::GetRunTimeObject('CACHE_DEBUGGING')->addNotice('Cache pull: ' . $itemName );
+			Settings::GetRunTimeObject('CACHE_DEBUGGING')->addNotice_8('Cache pull: ' . $itemName );
 			return $_SESSION['CACHE'][$itemName]['Data'];
 		}
 	}
@@ -236,6 +236,26 @@ Abstract class Cache {
 		return false;
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *  find all cache entries and if they start with the $prefix then delete them
+	 *     is is for case  when there are multiple caches for  'TableX_2_17' and 'TableX_3_12' etc.
+	 *
+	 * @param string $prefix
+	 * @param bool $fromExpired
+	 * @return boolean
+	 */
+	public static function deleteForPrefix( string $prefix, bool $fromExpired = false){
+		if (!Settings::GetPublic('CACHE_IS_ON')) {
+			return true;
+		}
+		foreach($_SESSION['CACHE'] as $key => $item) {
+			if (substr($key, strlen($prefix)) == $prefix ){
+				self::delete($key, $fromExpired);
+			}
+		}
+
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

@@ -372,13 +372,13 @@ abstract Class HTML {
 	 * @param type $arStyle
 	 * @return type
 	 */
-	public static function Select(string $name,
+	public static function Select(
+			string $name,
 			$values,
 			$defaultItemValue = null,
 			$addDefaultSelection = true,
 			$arOptions = null,
 			$arStyle = null) {
-
 		$attr = self::parseOptions($arOptions);
 		$style = self::parseStyle($arStyle);
 
@@ -409,7 +409,7 @@ abstract Class HTML {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				$options .= '<option value="' . $key . '"';
-				if ($key === $defaultItemValue) {
+				if ($key == $defaultItemValue) {
 					$options .= ' selected';
 				}
 				$options .= '>' . $val . '</option>' . PHP_EOL;

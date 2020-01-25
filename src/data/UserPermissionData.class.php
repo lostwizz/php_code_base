@@ -43,6 +43,8 @@ use \php_base\Utils\DBUtils as DBUtils;
 use \php_base\Utils\DatabaseHandlers\Table as Table;
 use \php_base\Utils\DatabaseHandlers\Field as Field;
 use \php_base\Utils\SubSystemMessage as SubSystemMessage;
+use \php_base\Utils\Cache as CACHE;
+
 
 ////SELECT TOP (1000) [id]
 ////      ,[roleId]
@@ -77,14 +79,16 @@ class UserPermissionData {
 	 *  basic constructor that initiates the reading from the database
 	 * @param type $listOfRoleIDs
 	 */
-	public function __construct($controller, $listOfRoleIDs) {
+	public function __construct($controller, $listOfRoleIDs=null) {
 
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($listOfRoleIDs, true));
 
 		$this->controller = $controller;
 
 		$this->defineTable();
-		$this->doReadFromDatabaseForRoles($listOfRoleIDs);
+		if ( ! is_null($listOfRoleIDs)){
+			$this->doReadFromDatabaseForRoles($listOfRoleIDs);
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -101,23 +105,65 @@ class UserPermissionData {
 	 * @return void
 	 */
 	public function defineTable(): void {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@defineTable');
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->Suspend();
 
-
-		$this->Table = new Table(Settings::GetProtected('DB_Table_PermissionsManager'), ['className' => __NAMESPACE__ . '\UserPermissionData']);
+		$this->Table = new Table(
+				Settings::GetProtected('DB_Table_PermissionsManager'),
+				[
+			'className' => __NAMESPACE__ . '\UserPermissionData',
+			'isAdding' => true,
+			'isEditing' => true,
+			'isDeleting' => true,
+			'isSpecial' => true
+		]);
 		$this->Table->setPrimaryKey('Id', ['prettyName' => 'Id']);
 		$this->Table->addFieldInt('id', ['prettyName' => 'Id',
-			'alignment' => 'right']);
+			'text-align' => 'right',
+			'isEditable' => false
+			]);
 		$this->Table->addFieldInt('roleid', ['prettyName' => 'Role Id',
-			'alignment' => 'right']);
+			'text-align' => 'right',]);
 		$this->Table->addFieldText('process', ['prettyName' => 'Process']);
 		$this->Table->addFieldText('task', ['prettyName' => 'Task']);
 		$this->Table->addFieldText('action', ['prettyName' => 'Action']);
 		$this->Table->addFieldText('field', ['prettyName' => 'Field']);
 		$this->Table->addFieldText('permission', ['prettyName' => 'Permission']);
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Resume();
 
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->Resume();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
+	public function clearAllCaches() :void {
+		CACHE::deleteForPrefix(Settings::GetProtected('DB_Table_PermissionsManager') . '_listOfRoleIds_' );
+		CACHE::delete(Settings::GetProtected('DB_Table_PermissionsManager') .'_ReadAll');
+
+	}
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array
+	 */
+	public function readAllData(): array {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_PermissionsManager') .'_ReadAll' )){
+			$data = CACHE::pull( Settings::GetProtected('DB_Table_PermissionsManager') .'_ReadAll' );
+		} else  {
+			$sql = 'SELECT * '
+					. ' FROM ' . Settings::GetProtected('DB_Table_PermissionsManager');
+			$data = DBUtils::doDBSelectMulti($sql);
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_PermissionsManager') .'_ReadAll', $data);
+			}
+		}
+		return $data;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -131,21 +177,29 @@ class UserPermissionData {
 			return;
 		}
 		$ids = implode(', ', $listOfRolesIDs);
-		$sql = 'SELECT id
-						,roleId
-						,UPPER(process) as process
-						,UPPER(task) as task
-						,UPPER(action) as action
-						,UPPER(field) as field
-						,Permission
-					FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
-				. ' WHERE  RoleId in ('
-				. $ids
-				. ')';
 
-		//$paramas = array();
-		$data = DBUtils::doDBSelectMulti($sql);
+		if (CACHE::exists(Settings::GetProtected('DB_Table_PermissionsManager') . '_listOfRoleIds_' . $ids  )) {
+			$data = CACHE::pull(Settings::GetProtected('DB_Table_PermissionsManager') . '_listOfRoleIds_' . $ids );
+		} else {
+			$sql = 'SELECT id
+							,roleId
+							,UPPER(process) as process
+							,UPPER(task) as task
+							,UPPER(action) as action
+							,UPPER(field) as field
+							,Permission
+						FROM ' . Settings::GetProtected('DB_Table_PermissionsManager')
+					. ' WHERE  RoleId in ('
+					. $ids
+					. ')';
 
+			//$paramas = array();
+			$data = DBUtils::doDBSelectMulti($sql);
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_PermissionsManager') . '_listOfRoleIds_' . $ids , $data);
+			}
+
+		}
 		$this->permissionList = $data;
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo('permissionList: ' . print_r($this->permissionList, true));
 	}
@@ -176,6 +230,7 @@ class UserPermissionData {
 			':permission' => ['val' => $permission, 'type' => \PDO::PARAM_STR],
 		);
 		$data = DBUtils::doDBInsertReturnID($sql, $params);
+		$this->clearAllCaches();
 		return $data;
 	}
 
@@ -192,6 +247,7 @@ class UserPermissionData {
 		;
 		$params = array(':id' => ['val' => $id, 'type' => \PDO::PARAM_INT]);
 		$data = DBUtils::doDBDelete($sql, $params);
+		$this->clearAllCaches();
 		return ($data == 1);
 	}
 
@@ -208,6 +264,7 @@ class UserPermissionData {
 		;
 		$params = array(':roleid' => ['val' => $roleid, 'type' => \PDO::PARAM_INT]);
 		$data = DBUtils::doDBDelete($sql, $params);
+		$this->clearAllCaches();
 		return ($data >= 1);
 	}
 
