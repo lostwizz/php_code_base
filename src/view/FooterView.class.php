@@ -61,7 +61,7 @@ class FooterView extends View {
 	public function doWork($parent = null): Response {
 		echo '<footer>' . PHP_EOL;
 		echo HTML::BR(5);
-		
+
 		echo '<div class="footer_hr ">' . PHP_EOL;
 		echo HTML::HR();
 		echo '</div>' . PHP_EOL;
@@ -75,7 +75,9 @@ class FooterView extends View {
 
 		$exec_time = microtime(true) - Settings::GetRunTime('Benchmarks.start.executionTime');
 		Settings::GetRunTimeObject('MessageLog')->addINFO('Execution Time was: ' . $exec_time);
-		Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!
+		if ( ! Settings::GetPublic('Show MessageLog Adds')) {
+			Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!
+		}
 		echo '</footer>' . PHP_EOL;
 		echo '</body>' . PHP_EOL;
 

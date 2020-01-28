@@ -141,7 +141,8 @@ abstract Class DBUtils {
 			$conn->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
 			$conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		} catch (\PDOException $e) {
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+			$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		}
 		Settings::GetRunTimeObject('SQL_DEBUGGING')->addNotice(' after setupNewPDO');
 		return $conn;
@@ -172,10 +173,11 @@ abstract Class DBUtils {
 
 			Settings::getRunTimeObject('SQL_DEBUGGING')->addNotice( $result);
 
-		} catch (\PDOException $e) {
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\PDOException $epdo) {
+			$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		} catch (\Exception $e) {
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
+			trigger_error($epdo->getMessage() );
 		}
 		return $result;
 	}
@@ -209,10 +211,11 @@ abstract Class DBUtils {
 				return null;
 			}
 			return $data[0];
-		} catch (\PDOException $e) {
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\PDOException $epdo) {
+			$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		} catch (\Exception $e) {
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
+			trigger_error($epdo->getMessage() );
 		}
 	}
 
@@ -225,29 +228,27 @@ abstract Class DBUtils {
 	 * @throws \Exception
 	 */
 	public static function doDBSelectMulti(string $sql, array $params = null) {
-		//Settings::GetRunTimeObject('MessageLog')->addEmergency($sql);
+		Settings::GetRunTimeObject('SQL_DEBUGGING')->addDEBUG_6($sql);
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
-			Settings::getRunTimeObject('SQL_DEBUGGING')->addNotice( $sql);
-			Settings::getRunTimeObject('SQL_DEBUGGING')->addNotice( $params);
 
 			self::doBinding($params, $stmt);
+			if ( ! Settings::GetRunTimeObject('SQL_DEBUGGING')->isNullableClass() ) {
+				$stmt->debugDumpParams();
+			}
 			$stmt->execute();
+
 			$data = $stmt->fetchAll();
-
-			Settings::getRunTimeObject('SQL_DEBUGGING')->addNotice( $data);
-
 			$stmt->closeCursor();
 
 			return $data;
-		} catch (\PDOException $e) {
-//dump::dump($e->getMessage())	;
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\PDOException $epdo) {
+			$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		} catch (\Exception $e) {
-//dump::dump($e->getMessage())	;
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
+			trigger_error($epdo->getMessage() );
 		}
 	}
 
@@ -257,11 +258,15 @@ abstract Class DBUtils {
 	 * @param \PDOStatement|null $stmt
 	 */
 	public static function doBinding(?array $params, ?\PDOStatement $stmt) {
+		Settings::GetRuntimeObject( 'SQL_DEBUGGING')->addDEBUG_2('@@doBinding');
+		Settings::GetRuntimeObject( 'SQL_DEBUGGING')->addDEBUG_2('doBindingAA: ' . print_r($params, true));
+
 		if (is_array($params) and ! empty($params) and ! empty($stmt)) {
 			foreach ($params as $key => $value) {
 				if (is_array($value)) {
 					$stmt->bindParam($key, $value['val'], $value['type']);
 				} else {
+
 					$stmt->bindParam($key, $value);
 				}
 			}
@@ -343,12 +348,11 @@ abstract Class DBUtils {
 				throw new Exception('did not get the proper number of updates returned');
 			}
 			return true;
-		} catch (\PDOException $e) {
-//dump::dump($e->getMessage())	;
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\PDOException $epdo) {
+				$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		} catch (\Exception $e) {
-//dump::dump($e->getMessage())	;
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
+			trigger_error($epdo->getMessage() );
 		}
 		return false;
 	}
@@ -382,12 +386,11 @@ abstract Class DBUtils {
 			Settings::getRunTimeObject('SQL_DEBUGGING')->addNotice( $last_id);
 
 			return $last_id;
-		} catch (\PDOException $e) {
-//dump::dump($e->getMessage())	;
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\PDOException $epdo) {
+				$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		} catch (\Exception $e) {
-//dump::dump($e->getMessage())	;
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
+			trigger_error($epdo->getMessage() );
 		}
 		return -1;
 	}
@@ -416,12 +419,11 @@ abstract Class DBUtils {
 			Settings::getRunTimeObject('SQL_DEBUGGING')->addNotice( $r);
 
 			return $r;
-		} catch (\PDOException $e) {
-//dump::dump($e->getMessage())	;
-			throw new \PDOException($e->getMessage(), (int) $e->getCode());
+		} catch (\PDOException $epdo) {
+				$stmt->debugDumpParams();
+			trigger_error($epdo->getMessage() );
 		} catch (\Exception $e) {
-//dump::dump($e->getMessage())	;
-			throw new \Exception($e->getMessage(), (int) $e->getCode());
+			trigger_error($epdo->getMessage() );
 		}
 		return -1;
 	}

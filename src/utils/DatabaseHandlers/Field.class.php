@@ -130,7 +130,7 @@ Class Field {
 
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@field constructor: ' . $fieldName);
 
-		$this->parentTableObj = $parentTableObj;
+	//	$this->parentTableObj = $parentTableObj;
 		$this->fieldName = strtolower($fieldName);
 		$this->setupDefaultAttribs();
 
@@ -192,7 +192,7 @@ Class Field {
 		$this->attribs['isEditable'] = true;
 		$this->attribs['decimals'] = 2;
 		$this->attribs['visible'] = true;
-		$this->attribs['selectFrom'] = [];
+		$this->attribs['selectFrom'] = null;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -277,6 +277,100 @@ Class Field {
 		return $this->giveAttribWithDefault('prettyName', $this->fieldName);
 	}
 
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function showField( $dataValue, bool $showOnly= false) {
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showField: ' . $dataValue);
+		$s = '';
+//dump::dump($this);
+		$s .= $this->giveFullFormatedValue( $dataValue);
+
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function giveFullFormatedValue( $dataValue) : string {
+		$s ='';
+		$tdOptions = $this->giveAlignRightOptions();
+		$s .= HTML::TD(null, $tdOptions);
+
+		$s .= $dataValue;
+		$s .= $this->giveExtendedValue($dataValue);
+
+		$s .= HTML::TDend();
+		return $s;
+	}
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function giveAlignRightOptions() : ?array {
+
+		$x = 'text-align';
+		if ( $this->$x =='right'){
+			$ar = ['text-align'=>'right'];
+		} else {
+			$ar = null;
+		}
+		return $ar;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function giveExtendedValue( $dataValue ) :string {
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addINFO_2('@@giveExtendedValue: ' . $dataValue);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addINFO_2('selectFrom: ' . print_r($this->selectFrom, true));
+		$s= '';
+		$from = $this->selectFrom;
+
+		if (!empty($from ) and is_array($from)) {
+			$class = $from['class'];
+			$method = $from['method'];
+			$id = $from['id'];
+			$data = $from['data'];
+
+dump::dump( $from);
+			$class = 'php_base\data\\' . $class;
+
+			$o = new $class( 'dummyController');
+
+dump::dumpShort($o);
+
+			$r = $o->$method( $id, $data, $dataValue);
+
+			Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addINFO_3('r: ' . print_r($r, true));
+			$result =  $r[strtoupper($data)];
+
+			$s .= ' ( ';
+			$s .= $result;
+			$s .=' ) ';
+		}
+		return $s;
+	}
+
+	//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @param type $columnValue
+//	 * @return string
+//	 */
+//	protected function showFieldOfRow( $attribs, $columnValue) : string{
+//		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showFieldOfRow: ' . Utils::array_display_compactor($attribs));
+//		$s = '<td>';
+//		if (!empty( $attribs['text-align'] )) {
+//			$x = str_pad( $columnValue, $attribs['size'], ' ', STR_PAD_LEFT);
+//			$s .= str_replace(' ', '&nbsp;', $x);
+//		} elseif (!empty( $attribs['selectFrom'] )) {
+//			$s .= $columnValue;
+//			$s .= '(';
+//
+//			$s .= ')';
+//
+//		}else {
+//
+//			$s .= $columnValue;
+//		}
+//		$s .= '</td>';
+//		return $s;
+//	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $name
@@ -309,7 +403,7 @@ Class Field {
 	 * @return string
 	 */
 	public function giveEditableHTMLInput( string $name, $value): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveEditableHTMLInput: '  . $name);
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_6('@@giveEditableHTMLInput: '  . $name);
 		$arStyle = $this->giveHTMLstyle();
 		$arOptions = $this->giveHTMLOptions();
 
@@ -362,16 +456,16 @@ Class Field {
 	 * @return type
 	 */
 	public function giveSelectHTMLInput( string $name, $value){
-		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('@@giveSelectHTMLInput: ' .  $name . ' val=' . Utils::array_display_compactor($value) . '<<');
+		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_6('@@giveSelectHTMLInput: ' .  $name . ' val=' . Utils::array_display_compactor($value) . '<<');
 		if ( is_array($this->selectFrom )) {
 			$selOptions = $this->selectFrom;
 		} else {
 			$c = ($this->selectClass);
-			Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('before selectClass: ' . $c. ' ->' . $this->selectClass);
+			Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_3('before selectClass: ' . $c. ' ->' . $this->selectClass);
 
 			if ( empty( $c) ) {
 				$class  = $this->parentTableObj->className;
-				Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('empty selectClass: ' . $class. ' ->' . $this->selectClass);
+				Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_4('empty selectClass: ' . $class. ' ->' . $this->selectClass);
 			} else {
 				$class = $this->selectClass;
 				Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_5('NOT empty selectClass: ' . $class. ' ->' . $this->selectClass);

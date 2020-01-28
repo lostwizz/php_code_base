@@ -159,7 +159,6 @@ abstract class MessageBase {
 
 //***********************************************************************************************
 //***********************************************************************************************
-
 class SubSystemMessage {
 	PUBLIC $subSystem;
 
@@ -167,11 +166,18 @@ class SubSystemMessage {
 	public static $suspended_SubSystem ='';
 
 
+	/** -----------------------------------------------------------------------------------------------**/
 	function __construct(string $passedSubSystem, $lvl){
 		$this->subSystem = $passedSubSystem;
 		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
 	}
 
+	/** -----------------------------------------------------------------------------------------------**/
+	public function isNullableClass() : bool {
+		return false;
+	}
+
+	/** -----------------------------------------------------------------------------------------------**/
 	public function __call($name, $args){
 		if ( substr( $name,-2,1 ) == '_'  and substr($name, 0,3) == 'add') {
 			$new_lvl_name = strtoupper(substr($name, 3));
@@ -409,7 +415,7 @@ class AMessage extends MessageBase {
 			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 			$s .= $z;
 			$s .= $debugText;
-		} else if ( substr_count(strtolower($this->text), '/table' ) > 0){
+		} else if ( !empty($this->text ) and is_string($this->text) and substr_count(strtolower($this->text), '/table' ) > 0){
 			$s .= '<pre>';
 			$s .= $this->text;
 			$s .= '</pre>';
@@ -482,6 +488,14 @@ class MessageLog {
 	 */
 	public static function Version() {
 		return self::VERSION;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return bool
+	 */
+	public function isNullableClass() : bool {
+		return false;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -821,6 +835,22 @@ class MessageLog {
 					?></fieldset><?php
 		}
 	}
+
+	public  function TestAllLevels() : void {
+		$this->setSubSystemLoggingLevel('TESTER_messages',-1);
+		foreach(  MessageBase::$levels as $key => $value){
+
+			echo 'Key= ' , $key, ' value=' , $value;
+			echo '<BR>';
+
+			$this->add( 'This is a test of: ' . $value, null, $key, 'TESTER_messages');
+			echo '<BR>';
+		}
+		$this->showAllMessagesInBox();
+
+	}
+
+
 
 }
 

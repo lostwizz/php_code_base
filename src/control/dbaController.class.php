@@ -102,6 +102,32 @@ class dbaController extends Controller {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 * @param type $dispatcher
+	 * @return Response
+	 */
+	public function showAllMessageLogLevels($dispatcher) : Response {
+
+		Settings::GetRunTimeObject('MessageLog')->TestAllLevels();
+
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $dispatcher
+	 * @return Response
+	 */
+	public function ShowAllSettings($dispatcher): Response {
+
+		echo Settings::dump(true,true,true);
+
+
+
+		return Response::NoError();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
 	 * @param type $parent
 	 * @return type
 	 */
@@ -266,3 +292,4 @@ dump::dump('at five');
 	}
 
 }
+

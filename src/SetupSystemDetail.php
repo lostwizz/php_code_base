@@ -144,18 +144,7 @@ if (false) {
 //************************************************************************************
 //Dump::dump( \filter_input_array(\INPUT_SERVER, \FILTER_SANITIZE_STRING, true));
 
-if ( false) {
 
-	Settings::GetRunTimeObject('MessageLog')->addTodo('this is todo example');
-	Settings::GetRunTimeObject('MessageLog')->addEmergency('this is emergency example');
-	Settings::GetRunTimeObject('MessageLog')->addAlert('this is alert example');
-	Settings::GetRunTimeObject('MessageLog')->addCritical('this is critical example');
-	Settings::GetRunTimeObject('MessageLog')->addError('this is error example');
-	Settings::GetRunTimeObject('MessageLog')->addWarning('this is warning example');
-	Settings::GetRunTimeObject('MessageLog')->addNotice('this is notice example');
-	Settings::GetRunTimeObject('MessageLog')->addInfo('this is info example');
-	Settings::GetRunTimeObject('MessageLog')->addDebug('this is debug example');
-}
 Settings::SetRunTime('Benchmarks.start.executionTime', microtime(true));
 
 

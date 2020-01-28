@@ -128,14 +128,21 @@ class UserInfoData extends data {
 					'size' => 50,
 					'maxlength' => 50,
 					'subType' => Field::SUBTYPE_SELECTLIST,
-					'selectFrom' => 'giveSelectOnApp'
+					'selectFrom' => ['method' => 'getUserInfoDataForSelect',
+									'class'=> 'UserInfoData',
+									'id' => '!DISTINCT!',
+									'data' => 'app'		]
+
 		]);
 		$this->Table->addFieldText('method',
 				['prettyName' => 'Authentication Method',
 					'size' => 10,
 					'maxlength' => 10,
 					'subType' => Field::SUBTYPE_SELECTLIST,
-					'selectFrom' => 'giveSelectOnMethod' //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
+					'selectFrom' => [ 'method' => 'getUserInfoDataForSelect', //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
+									'class' => 'UserInfoData',
+									'id' => '!DISTINCT!',
+									'data' => 'method']
 		]);
 		$this->Table->addFieldText('username',
 				[
@@ -147,8 +154,12 @@ class UserInfoData extends data {
 					'height' => true
 		]);
 		$this->Table->addFieldText('PrimaryRoleName',
-				['prettyName' => 'Primary Role'
-		]);
+				['prettyName' => 'Primary Role',
+					'selectFrom' => ['method' => 'getRolesForSelect',
+									'class' => 'UserRoleData',
+									'id' => 'roleid',
+									'data' => 'name']
+					]);
 
 		$this->Table->addFieldText('password',
 				['prettyName' => 'Password',
@@ -242,6 +253,47 @@ class UserInfoData extends data {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------*/
+	public function getUserInfoDataForSelect( $id, $data,  $idValue = null) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' )){
+			$data = CACHE::pull( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' );
+		} else  {
+
+			if ($id =='!DISTINCT!'){
+				$sql = 'SELECT DISTINCT '. $data
+					. ' FROM ' . Settings::GetProtected('DB_Table_UserManager');
+			}
+
+			$sql = 'SELECT  ' . $id . ', ' . $data
+					. ' FROM ' . Settings::GetProtected('DB_Table_UserManager');
+
+			if ( ! is_null( $idValue)){
+				$sql .= ' WHERE ' . $id . ' = :data';
+				$param = array(':data'=> $idValue );
+			} else {
+				$param = null;
+			}
+
+			$data = DBUtils::doDBSelectMulti($sql, $param);
+
+
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_UserManager') .'_ReadAll', $data);
+			}
+		}
+		if ( ! is_null( $idValue)){
+			return $data[0];
+		}
+		return $data;
+
+	}
+
+
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *  read from the database table
 	 *
@@ -285,104 +337,104 @@ class UserInfoData extends data {
 		}
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param string $userid
-	 * @return bool
-	 */
-	public function doReadFromDatabaseByUserID(string $userid, bool $allUserIds = true): ?array {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseByUserNameAndApp: '. $userid);
+//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @param string $userid
+//	 * @return bool
+//	 */
+//	public function doReadFromDatabaseByUserID(string $userid, bool $allUserIds = true): ?array {
+//		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseByUserNameAndApp: '. $userid);
+//
+//		//if (CACHE::exists(Settings::GetProtected('DB_Table_UserManager') . '_onlyOneUSER_ID' . '_'. $userid)) {
+//		//	$data = CACHE::pull( Settings::GetProtected('DB_Table_UserManager') . '_onlyOneUSER_ID' . '_'. $userid);
+//		//} else {
+//
+//			$sql = 'SELECT  userid, username '
+//					. ' FROM ' . Settings::GetProtected('DB_Table_UserManager');
+//			if ( ! $allUserIds){
+//				$sql .= ' WHERE userid = :uid ;';
+//			}
+//			$sql .= ' ORDER BY username';
+//
+//			$params = array(
+//				':uid' => ['val' => $userid, 'type' => \PDO::PARAM_STR]
+//			);
+//
+//			if ( ! $allUserIds){
+//				$data = DBUtils::doDBSelectSingle($sql, $params);
+//			} else {
+//				$rawData = DBUtils::doDBSelectMulti($sql);
+//				$data = array();
+//				foreach ($rawData as $key => $value) {
+//					$data[$value['USERID']] = $value['USERNAME'];
+//				}
+//			}
+//			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo_5($data);
+//		//}
+//
+//
+//		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo_5($data);
+//		if ($data == false) {
+//			return null;
+//		} else {
+//		//	if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+//		//		CACHE::add(Settings::GetProtected('DB_Table_UserManager') . '_onlyOneUSER_ID' . '_'. $userid, $data);
+//		//	}
+//			return $data;
+//		}
+//	}
 
-		//if (CACHE::exists(Settings::GetProtected('DB_Table_UserManager') . '_onlyOneUSER_ID' . '_'. $userid)) {
-		//	$data = CACHE::pull( Settings::GetProtected('DB_Table_UserManager') . '_onlyOneUSER_ID' . '_'. $userid);
-		//} else {
-
-			$sql = 'SELECT  userid, username '
-					. ' FROM ' . Settings::GetProtected('DB_Table_UserManager');
-			if ( ! $allUserIds){
-				$sql .= ' WHERE userid = :uid ;';
-			}
-			$sql .= ' ORDER BY username';
-
-			$params = array(
-				':uid' => ['val' => $userid, 'type' => \PDO::PARAM_STR]
-			);
-
-			if ( ! $allUserIds){
-				$data = DBUtils::doDBSelectSingle($sql, $params);
-			} else {
-				$rawData = DBUtils::doDBSelectMulti($sql);
-				$data = array();
-				foreach ($rawData as $key => $value) {
-					$data[$value['USERID']] = $value['USERNAME'];
-				}
-			}
-			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo_5($data);
-		//}
-
-
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addInfo_5($data);
-		if ($data == false) {
-			return null;
-		} else {
-		//	if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
-		//		CACHE::add(Settings::GetProtected('DB_Table_UserManager') . '_onlyOneUSER_ID' . '_'. $userid, $data);
-		//	}
-			return $data;
-		}
-	}
-
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @return array|null
-	 */
-	public function giveSelectOnMethod(): ?array {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@giveSelectOnMethod');
-		if (CACHE::exists(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnMethod' )) {
-			$data = CACHE::pull(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnMethod');
-		} else {
-			$sql = 'SELECT DISTINCT method FROM ' . Settings::GetProtected('DB_Table_UserManager');
-
-			$rawData = DBUtils::doDBSelectMulti($sql);
-
-			$data = array();
-			foreach ($rawData as $key => $value) {
-				$data[$value['METHOD']] = $value['METHOD'];
-			}
-
-			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
-				CACHE::add(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnMethod', $data);
-			}
-		}
-		return $data;
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @return array|null
-	 */
-	public function giveSelectOnApp(): ?array {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@giveSelectOnApp');
-
-		if (CACHE::exists(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnApp'  )) {
-			$data = CACHE::pull(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnApp');
-		} else {
-			$sql = 'SELECT DISTINCT app FROM ' . Settings::GetProtected('DB_Table_UserManager');
-
-			$rawData = DBUtils::doDBSelectMulti($sql);
-
-			$data = array();
-			foreach ($rawData as $key => $value) {
-				$data[$value['APP']] = $value['APP'];
-			}
-
-			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
-				CACHE::add(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnApp', $data);
-			}
-		}
-		return $data;
-	}
+//
+//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @return array|null
+//	 */
+//	public function giveSelectOnMethod(): ?array {
+//		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@giveSelectOnMethod');
+//		if (CACHE::exists(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnMethod' )) {
+//			$data = CACHE::pull(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnMethod');
+//		} else {
+//			$sql = 'SELECT DISTINCT method FROM ' . Settings::GetProtected('DB_Table_UserManager');
+//
+//			$rawData = DBUtils::doDBSelectMulti($sql);
+//
+//			$data = array();
+//			foreach ($rawData as $key => $value) {
+//				$data[$value['METHOD']] = $value['METHOD'];
+//			}
+//
+//			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+//				CACHE::add(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnMethod', $data);
+//			}
+//		}
+//		return $data;
+//	}
+//
+//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @return array|null
+//	 */
+//	public function giveSelectOnApp(): ?array {
+//		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@giveSelectOnApp');
+//
+//		if (CACHE::exists(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnApp'  )) {
+//			$data = CACHE::pull(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnApp');
+//		} else {
+//			$sql = 'SELECT DISTINCT app FROM ' . Settings::GetProtected('DB_Table_UserManager');
+//
+//			$rawData = DBUtils::doDBSelectMulti($sql);
+//
+//			$data = array();
+//			foreach ($rawData as $key => $value) {
+//				$data[$value['APP']] = $value['APP'];
+//			}
+//
+//			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+//				CACHE::add(Settings::GetProtected('DB_Table_UserManager') . '_SelectOnApp', $data);
+//			}
+//		}
+//		return $data;
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

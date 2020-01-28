@@ -115,7 +115,7 @@ class Table {
 	 * @param type $value
 	 */
 	public function __set(string $fieldName, string $value) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@__set fldname='. $fieldName );
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_4('@@__set fldname='. $fieldName );
 		$this->attribs[$fieldName] = strtolower($fieldName);
 		//fields[$name] ;
 	}
@@ -127,7 +127,7 @@ class Table {
 	 * @return boolean
 	 */
 	public function __get( string $fieldName) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@__get : ' . $fieldName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_4('@@__get : ' . $fieldName);
 		$fieldNameLower = strtolower($fieldName);
 		if (array_key_exists($fieldNameLower, $this->fields)) {
 			return $this->fields[$fieldNameLower];
@@ -154,7 +154,7 @@ class Table {
 	 * @param array $attribs
 	 */
 	public function addFieldInt(string $fieldName, ?array $attribs = null) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_5('@@addFieldInt: ' . $fieldName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@addFieldInt: ' . $fieldName);
 		$fieldName = strtolower($fieldName);
 		$this->fields[$fieldName] = new Field_Int($this, $fieldName, $attribs);
 	}
@@ -165,7 +165,7 @@ class Table {
 	 * @param array $attribs
 	 */
 	public function addFieldText( string $fieldName, ?array $attribs = null) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_5('@@addFieldText: ' . $fieldName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@addFieldText: ' . $fieldName);
 		$fieldName = strtolower($fieldName);
 		$this->fields[$fieldName] = new Field_Text($this, $fieldName, $attribs);
 	}
@@ -176,7 +176,7 @@ class Table {
 	 * @param array $attribs
 	 */
 	public function addFieldDateTime(string $fieldName, ?array $attribs = null) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_5('@@addFieldDateTime: ' . $fieldName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@addFieldDateTime: ' . $fieldName);
 		$fieldName = strtolower($fieldName);
 		$this->fields[$fieldName] = new Field_DateTime($this, $fieldName, $attribs);
 	}
@@ -187,7 +187,7 @@ class Table {
 	 * @param array $attribs
 	 */
 	public function addFieldFloat(string $fieldName, ?array $attribs = null) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_5('@@addFieldFloat: ' . $fieldName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@addFieldFloat: ' . $fieldName);
 		$fieldName = strtolower($fieldName);
 		$this->fields[$fieldName] = new Field_Float($this, $fieldName, $attribs);
 	}
@@ -198,7 +198,7 @@ class Table {
 	 * @param array $attribs
 	 */
 	public function addFieldBOOL(string $fieldName, ?array $attribs = null) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_5('@@addFieldBOOL: ' . $fieldName);
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@addFieldBOOL: ' . $fieldName);
 		$fieldName = strtolower($fieldName);
 		$this->fields[$fieldName] = new Field_Boolean($this, $fieldName, $attribs);
 	}
@@ -288,17 +288,16 @@ class Table {
 	 * @return string
 	 */
 	protected function showAddButton( bool $isHeaderRow =false) : string{
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@showAddButton');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showAddButton');
 		$s = '';
 		if($this->isAdding){
 			if ( $isHeaderRow ){
-				$s = '<td>[Add]</td>';
+				$s = HTML::TD() . '[Add]' . HTML::TDend() ;
 			} else {
 				$r =  '[AddKey=>NoRow]';
-				$s = HTML::Open('td')
+				$s = HTML::TD()
 						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_insrow.png', null, ['width' =>18])
-						. HTML::Close('td');
-
+						. HTML::TDend();
 			}
 		}
 		return $s;
@@ -311,16 +310,16 @@ class Table {
 	 * @return string
 	 */
 	protected function showEditColumn( bool $isHeaderRow =false, $rowKey = -1) : string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@showEditColumn');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showEditColumn');
 		$s = '';
 		if( $this->isEditing){
 			if ( $isHeaderRow ) {
-				$s = '<td>[Edt]</td>';
+				$s = HTML::TD() . '[Edit]' . HTML::TDend() ;
 			} else {
 				$r =  '[EditKey=>' . $rowKey . ']';
-				$s = HTML::Open('td')
+				$s = HTML::TD()
 						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_edit.png', null, ['width' =>18])
-						. HTML::Close('td');
+						. HTML::TDend();
 			}
 		}
 		return $s;
@@ -332,16 +331,16 @@ class Table {
 	 * @return string
 	 */
 	protected function showDeleteColumn( bool $isHeaderRow =false, $rowKey = -1) : string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@showDeleteColumn');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showDeleteColumn');
 		$s = '';
 		if( $this->isDeleting){
 			if ($isHeaderRow ){
-				$s = '<td>[del]</td>';
+				$s = HTML::TD() . '[Del]' . HTML::TDend() ;
 			} else {
 				$r =  '[DelKey=>' . $rowKey . ']';
-				$s = HTML::Open('td')
+				$s = HTML::TD()
 						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_drop.png', null, ['width' =>18])
-						. HTML::Close('td');
+						. HTML::TDend();
 			}
 		}
 		return $s;
@@ -353,16 +352,16 @@ class Table {
 	 * @return string
 	 */
 	protected function showSpecialColumn( bool $isHeaderRow =false, $rowKey = -1) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@showSpecialColumn');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showSpecialColumn');
 		$s = '';
 		if( $this->isSpecial){
 			if ($isHeaderRow ){
-				$s = '<td>[spl]</td>';
+				$s = HTML::TD() . '[Spl]' . HTML::TDend() ;
 			} else {
 				$r =  '[SpecialKey=>' . $rowKey . ']';
-				$s = HTML::Open('td')
+				$s = HTML::TD()
 						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\arrow_right.png', null, ['width' =>18])
-						. HTML::Close('td');
+						. HTML::TDend();
 			}
 		}
 		return $s;
@@ -380,7 +379,7 @@ class Table {
 	 * @return string
 	 */
 	protected function handleHeaderColumns( $fld, $value, bool $withSortButtons = false, bool $withFilterArea = false, ?array $sortKeys =null, ?array $filters=null ) : string{
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@handleHeaderColumns');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@handleHeaderColumns');
 
 //dump::dump($fld);
 		$s = '';
@@ -395,9 +394,6 @@ class Table {
 			} else {
 				$filter = null;
 			}
-//dump::dump($value);
-//dump::dump($filters);
-//dump::dump($filters[$fld]);
 			$s .= $this->giveHeaderForField($fld, $value, $withSortButtons, $withFilterArea, $sortDir, $filter);
 		}
 		return $s;
@@ -414,16 +410,25 @@ class Table {
 	 * @param string|null $filter
 	 * @return string
 	 */
-	protected function giveHeaderForField(string $fldName, Field $fldValue, bool $withSortButtons = false, bool $withFilterArea = false, ?string $sortDir =null, ?string $filter=null): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@giveHeaderForField');
-		$s = '<th>';
+	protected function giveHeaderForField(
+			string $fldName,
+			Field $fldValue,
+			bool $withSortButtons = false,
+			bool $withFilterArea = false,
+			?string $sortDir =null,
+			?string $filter=null
+			): string {
+
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@giveHeaderForField');
+		$s = '';
+		$s .= HTML::TD();
 		if ($withSortButtons) {
 			$s .= $this->giveSortButtons($fldName, $sortDir, $fldValue);
 		}
 		if ($withFilterArea) {
 			$s .= $this->giveFilterArea($fldName, $filter);
 		}
-		$s .= '</th>';
+		$s .= HTML::TDend();
 		return $s;
 	}
 
@@ -436,7 +441,7 @@ class Table {
 	 * @return string
 	 */
 	protected function giveSortButtons(string $fldName, ?string $sortDir, Field $fldValue): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@giveSortButtons');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@giveSortButtons');
 		$s = '<BR>';
 		if (!empty($sortDir) and $sortDir =='Asc') {
 			$s .= HTML::Hidden( Resolver::REQUEST_PAYLOAD . '[sortAsc][' . $fldName . ']', '^');
@@ -466,7 +471,7 @@ class Table {
 	 * @return string
 	 */
 	public function giveFilterArea(string $fldName, ?string $filter): string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@giveFilterArea');
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@giveFilterArea');
 		$s = '<br>';
 		$s .= HTML::Text(Resolver::REQUEST_PAYLOAD . '[filter][' . $fldName . ']', $filter);
 		$s .= HTML::Submit(Resolver::REQUEST_PAYLOAD . '[refresh][' . $fldName . ']', 'Apply');
@@ -510,54 +515,39 @@ class Table {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @param array $RowValue
+	 * @param array $RowData
 	 * @return string
 	 */
-	protected function showRowOfTable(array $RowValue) : string{
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@showRowOfTable');
-//dump::dumpLong($RowValue);
-		$s = '<tr>';
+	protected function showRowOfTable(array $RowData) : string{
+		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showRowOfTable');
 
 		$fld = strtoupper($this->primaryKeyFieldName);
-		$rowId  = $RowValue[ $fld ];
+		$rowId  = $RowData[ $fld ];          // this is the primarykey of the row (used in the hidden to tell which row editting
 
+		$s ='';
 		// show the button columns
 		$s .= $this->showAddButton( false);
 		$s .= $this->showEditColumn( false,$rowId);
 		$s .= $this->showDeleteColumn( false, $rowId);
 		$s .= $this->showSpecialColumn( false, $rowId);
 
+		// now run thru each column and get the output
+		foreach ($RowData as $colName => $dataValue) {
 
-		// now run thru each column and give out the data (if showable)
-		foreach ($RowValue as $colName => $columnValue) {
-			if ( ($this->$colName)->isShowable ) {
+			$o = ($this->$colName);
+			$s .= $o->showField( $dataValue, true);
 
-//dump::dump(($this->$colName)->attribs);
-//dump::dump(($this->$colName));
-				$s .= $this->showFieldOfRow( ($this->$colName)->attribs, $columnValue );
-			}
+//			if ( ($this->$colName)->isShowable ) {
+//
+//dump::dump($this->colName);
+//dump::dump($this->columnValue);
+//				$s .= $this->showFieldOfRow( ($this->$colName)->attribs, $columnValue );
+//			}
 		}
-		$s .= '</tr>';
 		return $s;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $columnValue
-	 * @return string
-	 */
-	protected function showFieldOfRow( $attribs, $columnValue) : string{
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDebug_5('@@showFieldOfRow: ' . Utils::array_display_compactor($attribs));
-		$s = '<td>';
-		if (!empty( $attribs['text-align'] )) {
-			$x = str_pad( $columnValue, $attribs['size'], ' ', STR_PAD_LEFT);
-			$s .= str_replace(' ', '&nbsp;', $x);
-		} else {
-			$s .= $columnValue;
-		}
-		$s .= '</td>';
-		return $s;
-	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -569,13 +559,17 @@ class Table {
 	public function showTable(array $data, ?array $sortKeys = null, ?array $filters = null): string {
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@showTable');
 
-		$s = '<table border=1>';
+		$s = HTML::Open('Table', ['border' => 1, 'width' => '90%']);
+
 		$s .= $this->giveHeaderRow(true, true, $sortKeys, $filters);
-//dump::dump($data);
-		foreach ($data as $key => $RowValue) {
-			$s .= $this->showRowOfTable($RowValue);
+		foreach ($data as $key => $RowData) {
+			$s .= HTML::TR();
+
+			$s .= $this->showRowOfTable($RowData);
+			$s .= HTML::TRend();
 		}
-		$s .= '</table>';
+		$s .= HTML::Close('Table');
+		$s .= PHP_EOL;
 		return $s;
 	}
 

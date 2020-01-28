@@ -119,9 +119,10 @@ class UserAttributeData extends data {
 				['prettyName' => 'User Id',
 					'text-align' => 'right',
 					'subType' => Field::SUBTYPE_SELECTLIST,
-					'selectClass' => '\php_base\data\UserInfoData',
-					'selectFrom' => 'doReadFromDatabaseByUserID',
-					'selectCol' => 'username'
+					'selectFrom' => ['method' => 'getUserInfoDataForSelect',
+									'class' => '\php_base\data\UserInfoData',
+									'id' => 'userid',
+									'data' => 'username']
 					]);
 		$this->Table->addFieldInt('attributename', ['prettyName' => 'Attribute Name']);
 		$this->Table->addFieldInt('attributevalue', ['prettyName' => 'Attribute Value']);

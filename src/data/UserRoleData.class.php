@@ -127,6 +127,47 @@ Class UserRoleData extends Data {
 	}
 
 
+
+
+	/** -----------------------------------------------------------------------------------------------*/
+	public function getRolesForSelect( $id, $data,  $idValue = null) {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' )){
+			$data = CACHE::pull( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' );
+		} else  {
+
+			if ($id =='!DISTINCT!'){
+				$sql = 'SELECT DISTINCT '. $data
+					. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager');
+			}
+
+			$sql = 'SELECT  ' . $id . ', ' . $data
+					. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager');
+
+			if ( ! is_null( $idValue)){
+				$sql .= ' WHERE ' . $id . ' = :data';
+				$param = array(':data'=> $idValue );
+			} else {
+				$param = null;
+			}
+dump::dump($sql);
+			$data = DBUtils::doDBSelectMulti($sql, $param);
+
+
+			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+				CACHE::add(Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll', $data);
+			}
+		}
+dump::dump($data);
+		if ( ! is_null( $idValue)){
+			return $data[0];
+		}
+		return $data;
+
+	}
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @return array
@@ -162,6 +203,7 @@ Class UserRoleData extends Data {
 			}
 		}
 	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *  read the data from the database

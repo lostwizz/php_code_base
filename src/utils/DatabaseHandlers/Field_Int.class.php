@@ -73,10 +73,10 @@ Class Field_Int extends Field {
 	 * @param string $fieldName
 	 * @param array $attribs
 	 */
-	public function __construct( Table $parentTableObj, string $fieldName, ?array $attribs = null) {
-		$this->parentTableObj = $parentTableObj;
-		parent::__construct($parentTableObj, $fieldName, $attribs);
-	}
+//	public function __construct( Table $parentTableObj, string $fieldName, ?array $attribs = null) {
+//	//	$this->parentTableObj = $parentTableObj;
+//		parent::__construct($parentTableObj, $fieldName, $attribs);
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * gives a version number

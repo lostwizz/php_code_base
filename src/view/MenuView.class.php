@@ -54,6 +54,8 @@ class MenuView extends View{
 		echo $theMenu;
 
 
+echo HTML::BR(10);
+
 		//$this->controller->model->processedMenu;
 
 	}

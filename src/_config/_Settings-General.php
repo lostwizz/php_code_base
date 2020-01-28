@@ -119,12 +119,12 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_ALL);
 
-	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_DEBUG_7); //LVL_TODO); //LVL_ALL);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_DEBUG_7); //LVL_TODO);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_DEBUG_7); //LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL); //LVL_TODO); //LVL_ALL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_ALL); //LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_ALL); //LVL_TODO);
 
 	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_TODO);
-	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', LVL_ALL); //LVL_TODO);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_TODO);
 
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
@@ -139,7 +139,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 
 Settings::SetPublic('CACHE_IS_ON', true);
-Settings::SetPublic('CACHE Allow_Menu to be Cached', true);
+Settings::SetPublic('CACHE Allow_Menu to be Cached', false);
 Settings::SetPublic('CACHE_Allow_Tables to be Cached', true);     //true
 
 

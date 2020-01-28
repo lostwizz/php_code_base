@@ -102,7 +102,10 @@ Class NullAbsorber {
 		return '';
 	}
 
-	
+	public function isNullableClass() : bool {
+		return true;
+	}
+
 //	public function __callStatic( $method, $args){
 //		echo 'tryied to call', $method;
 //	}
