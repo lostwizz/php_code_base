@@ -31,13 +31,16 @@
 
 namespace php_base\Utils\DatabaseHandlers;
 
-use \php_base\Utils\Settings as Settings;
+//use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
-use \php_base\Utils\HTML\HTML as HTML;
-use \php_base\Resolver as Resolver;
+//use \php_base\Utils\HTML\HTML as HTML;
+//use \php_base\Resolver as Resolver;
 use \php_base\Utils\Utils;
 
 use \php_base\Utils\DatabaseHandlers\Table as Table;
+use php_base\Utils\HTML\HTML;
+use php_base\Resolver;
+use php_base\Utils\Settings;
 
 //use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
@@ -125,8 +128,6 @@ Class Field {
 	 * @param array $attribs
 	 */
 	public function __construct( Table $parentTableObj, string $fieldName, ?array $attribs = null) {
-
-
 
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@field constructor: ' . $fieldName);
 
@@ -283,7 +284,9 @@ Class Field {
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showField: ' . $dataValue);
 		$s = '';
 //dump::dump($this);
-		$s .= $this->giveFullFormatedValue( $dataValue);
+		if ( $this->isShowable){
+			$s .= $this->giveFullFormatedValue( $dataValue);
+		}
 
 		return $s;
 	}
@@ -327,21 +330,18 @@ Class Field {
 			$id = $from['id'];
 			$data = $from['data'];
 
-dump::dump( $from);
-			$class = 'php_base\data\\' . $class;
+			if ( $id != '!DISTINCT!') {
+				$o = new $class( 'dummyController');
 
-			$o = new $class( 'dummyController');
+				$r = $o->$method( $id, $data, $dataValue);
 
-dump::dumpShort($o);
+				Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addINFO_3('r: ' . print_r($r, true));
+				$result =  $r[strtoupper($data)];
 
-			$r = $o->$method( $id, $data, $dataValue);
-
-			Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addINFO_3('r: ' . print_r($r, true));
-			$result =  $r[strtoupper($data)];
-
-			$s .= ' ( ';
-			$s .= $result;
-			$s .=' ) ';
+				$s .= ' ( ';
+				$s .= $result;
+				$s .=' ) ';
+			}
 		}
 		return $s;
 	}
@@ -435,7 +435,7 @@ dump::dumpShort($o);
 		$txt = 'text-align';
 		if ($this->$txt == 'right') {
 			$x = str_pad($value, $this->size, ' ', STR_PAD_LEFT);
-			$r = str_replace(' ', '&nbsp;', $x);
+			$r = \str_replace(' ', '&nbsp;', $x);
 			$r .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[' . $name . ']', $value);
 			return $r;
 		} else {
@@ -455,7 +455,7 @@ dump::dumpShort($o);
 	 * @param type $value
 	 * @return type
 	 */
-	public function giveSelectHTMLInput( string $name, $value){
+	public function giveSelectHTMLInput( string $name, $value) : string {
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addDebug_6('@@giveSelectHTMLInput: ' .  $name . ' val=' . Utils::array_display_compactor($value) . '<<');
 		if ( is_array($this->selectFrom )) {
 			$selOptions = $this->selectFrom;
@@ -557,7 +557,7 @@ dump::dumpShort($o);
 	 *
 	 * @return type
 	 */
-	public function givePDOType() {
+	public function givePDOType() : int {
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@givePDOType ');
 		if (empty(self::TYPE)) {
 			return \PDO::PARAM_STR;
@@ -571,7 +571,7 @@ dump::dumpShort($o);
 	 * @param type $data
 	 * @return type
 	 */
-	public function giveQuotedWhere($data) {
+	public function giveQuotedWhere($data) : string {
 		Settings::GetRuntimeObject( 'DBHANDLERS_FLD_DEBUGGING')->addNotice('@@giveQuotedWhere: '. print_r($data, true));
 		return "'" . $data . "'";
 	}
@@ -581,7 +581,7 @@ dump::dumpShort($o);
 	 * @param type $data
 	 * @return type
 	 */
-	public function giveBinding($data) {
+	public function giveBinding($data) : int {
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@giveBinding: ' . print_r($data, true));
 //dump::dump($this->givePDOType());
 		return $this->givePDOType();

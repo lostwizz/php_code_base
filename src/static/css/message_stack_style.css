@@ -95,7 +95,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	}
 
 .msg_style_INFO_1 {
-	color: green;  /*#D3D3D3;*/
+	color: papayawhip;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
 	}
@@ -110,7 +110,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-radius: 4px;
 	}
 .msg_style_INFO_4 {
-	color: orchid;  /*#D3D3D3;*/
+	color: purple;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
 	}
@@ -149,7 +149,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-color: black;
 }
 .msg_style_NOTICE_1 {
-	color: #f4b342;
+	color: darkorchid;
 	background-color: #78DFF5;
 	border-radius: 4px;
 	border-style: solid;

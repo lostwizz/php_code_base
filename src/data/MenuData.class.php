@@ -61,9 +61,9 @@ class MenuData extends data {
 
 		$this->defineTable();
 
-		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu read data before');
+		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_5('at  Menu read data before');
 		$this->doReadFromDB();
-		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu read data after');
+		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_5('at  Menu read data after');
 	}
 
 	/** -----------------------------------------------------------------------------------------------

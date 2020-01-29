@@ -108,7 +108,7 @@ Class Field_Int extends Field {
 	 *
 	 * @return string
 	 */
-	public function givePDOType(): string {
+	public function givePDOType(): int {
 		if (empty(self::TYPE)) {
 			return \PDO::PARAM_STR;
 		} else {

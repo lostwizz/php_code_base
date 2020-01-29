@@ -60,33 +60,31 @@ class SimpleTableEditor {
 	 * @param type $isEditAllowed
 	 * @return Response
 	 */
-	public function runTableDisplayAndEdit( $isEditAllowed= false ) : Response { ///$tableName = 'php_base\data\UserInfoData') {
-		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . $isEditAllowed ? ' Editable' : 'not Editable');
+	public function runTableDisplayAndEdit($isEditAllowed = false): Response { ///$tableName = 'php_base\data\UserInfoData') {
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . $isEditAllowed ? ' Editable' : 'not Editable');
 		$this->handleVarsPassedToSimpleTableEditor();
 
-		Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug_5('pta ='. $this->process. '.' . $this->task. '.' . $this->action . '<');
+		Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug_5('pta =' . $this->process . '.' . $this->task . '.' . $this->action . '<');
 
 		$this->tableDataObj->action = $this->action;
 
 
-		if ( !empty( $this->payload)){
+		if (!empty($this->payload)) {
 			$this->tableDataObj->payload = $this->payload;
 			$this->tableDataObj->Table->payload = $this->payload;
 		}
-	Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug_5('pta ='. $this->process. '.' . $this->task. '.' . $this->action . '.' . serialize($this->payload) .'<');
+		Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug_5('pta =' . $this->process . '.' . $this->task . '.' . $this->action . '.' . serialize($this->payload) . '<');
 
-		$method = str_replace (' ', '_',$this->action);
-		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addDebug_5('method ='. $method);
+		$method = str_replace(' ', '_', $this->action);
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addDebug_5('method =' . $method);
 
-		if ( method_exists($this, $method)) {
+		if (method_exists($this, $method)) {
 			$r = $this->$method();
 			return $r;
 		} else {
 			return Response::GenericError();
 		}
 	}
-
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

@@ -88,7 +88,7 @@ Class Field_DateTime extends Field {
 	 *
 	 * @return type
 	 */
-	public function givePDOType() {
+	public function givePDOType() : int {
 		if (empty(self::TYPE)) {
 			return \PDO::PARAM_STR;
 		} else {

@@ -71,7 +71,6 @@ class Resolver {
 	const REQUEST_TASK = 'ACTION_TASK';
 	const REQUEST_ACTION = 'ACTION_ACTION';
 	const REQUEST_PAYLOAD = 'ACTION_PAYLOAD';
-	//const REQUEST_HINT = 'ACTION_HINT';
 
 	const MENU_TERM = 'MENU_SELECT';
 	const MENU_ITEM_LOGOFF = 'ABOUT_TO_LOGOFF';
@@ -100,9 +99,6 @@ class Resolver {
 	 */
 	public $dispatcher;
 
-
-
-
 	/** -----------------------------------------------------------------------------------------------
 	 * object constructor.
 	 *
@@ -112,10 +108,7 @@ class Resolver {
 	 *
 	 */
 	public function __construct() {
-
 		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addInfo('constructor for resolver');
-
-		//Settings::SetRunTime('RESOLVER_CLASS', $this);
 
 		$this->dispatcher = new Dispatcher();
 	}
@@ -162,14 +155,10 @@ class Resolver {
 		$this->addMenu($this->payload);
 
 		$this->SetupDefaultController();  // this would usually be the menu starter
-		// $r should be a ResponseClass
-
-//dump::dumpLong(Settings::GetRuntimeObject('DISPATCHqueue' )	);
-//dump::dumpLong(Settings::GetRuntimeObject('PREqueue' )	);
-//dump::dumpLong(Settings::GetRuntimeObject('POSTqueue' )	);
-
 
 		$r = $this->StartDispatch();
+		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addInfo('Response from Dispatcher: ' . $r->giveMessage(). '(' . $r->giveErrorCode() . ')');
+
 		return $r;
 	}
 
@@ -185,16 +174,12 @@ class Resolver {
 	 */
 	protected function startDispatch(): Response {
 
-		$r = $this->dispatcher->doWork($this);
+		$r = $this->dispatcher->doWork($this);   // start up the dispatcher to do things
 		if ($r->hadError()) {
-			//echo 'Loggon failed';
 			Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got: ' . $r);
 			Settings::GetRuntimeObject('FileLog')->addNotice('resolver got:' . $r);
-			return $r;
 		}
 
-		//Settings::GetRunTimeObject('MessageLog')->addNotice('resolver got a true');
-		//Settings::GetRuntimeObject('FileLog')->addNotice('resolver got a true');
 		return $r;
 	}
 
@@ -211,22 +196,10 @@ class Resolver {
 	protected function setupDefaultController(): void {
 		//if ( $this->dispatcher->getProcessQueueCount() <1) {
 		if (!empty(Settings::GetRunTime('Currently Logged In User') )) {
-			///$process = 'TEST';
-			//$task = 'doWork';
-			//$action = null;
-			Settings::GetRunTimeObject('MessageLog')->addTODO('figure out what the default process is - probably menu system');
-
-//			$process = 'UserRoleAndPermissions';
-//			$task = 'doEdit';
-//			$action = null;
 
 			$payload = ['username' => Settings::GetRunTime('Currently Logged In User')];
-			$this->addMenu($payload);
-			//$process = 'Menu';
-			//$task = 'doWork';
-			//$action = null;
 
-			//$this->dispatcher->addProcess($process, $task, $action, $payload);
+			$this->addMenu($payload);
 		}
 	}
 
@@ -347,11 +320,11 @@ class Resolver {
 			$payload[self::REQUEST_ACTION] = $postVars[self::REQUEST_ACTION ];
 		}
 
-		$newPayload = str_replace( '.', '~!~', $payload);
+		$newPayload = str_replace( '.', '~!~', $payload);  // unless this is done if there are any other periods in the value it screws up my decoding
 		$sPayload = \serialize( $newPayload);
-		if (Settings::GetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING' ) != false) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
-		}
+
+		Settings::getRunTimeObject('RESOLVER_DEBUGGING')->addNotice_3('adding to preQueue ' . $process . '.'  . $task .  '.' . $action . $sPayload);
+
 		$this->dispatcher->addPREProcess($process, $task, $action, $payload);
 	}
 
@@ -403,8 +376,6 @@ class Resolver {
 		$payload = null;
 
 		$this->dispatcher->addPOSTProcess($process, $task, $action, $payload);
-		//$this->dispatcher->addPOSTProcess('DBA', 'two');
-		//$this->dispatcher->addPOSTProcess('DBA', 'three');
 	}
 
 
@@ -416,24 +387,24 @@ class Resolver {
 	 * @param type $var
 	 * @param type $level
 	 */
-	private function debugy( int $ref, $msg, $var=null, $level = DebugHandler::NOTICE){
-		if(  Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING')) {
-			$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
-			$s = Utils::backTraceHelper($bt, 0);
-			$s = '     - ' . $s;
-
-			if ( is_a($var, 'php_base\Utils\Response')) {
-				$v = empty($var) ? '' : $var->toString() ;
-
-				if ( $var->hadError() ){
-					$level = DebugHandler::EMERGENCY;
-				} else {
-					$level = DebugHandler::INFO;
-				}
-			}
-		}
-
-	}
+//	private function debugy( int $ref, $msg, $var=null, $level = DebugHandler::NOTICE){
+//		if(  Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING')) {
+//			$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
+//			$s = Utils::backTraceHelper($bt, 0);
+//			$s = '     - ' . $s;
+//
+//			if ( is_a($var, 'php_base\Utils\Response')) {
+//				$v = empty($var) ? '' : $var->toString() ;
+//
+//				if ( $var->hadError() ){
+//					$level = DebugHandler::EMERGENCY;
+//				} else {
+//					$level = DebugHandler::INFO;
+//				}
+//			}
+//		}
+//
+//	}
 
 
 }

@@ -42,14 +42,15 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 /**
  * debugging type settings
+ * the various debugging levels - it is in numberical order so you can set LVL_ALL so evrerything is MessageLog output
+ *       if you set LVL_DEBUG then the LVL_DEBUG_1-9 will not output
+ *         this should allow fine levels of output --
+ *       eg i set to LVL_DEBUG_5 then debug_4,3,2,1 wont be outputed but 5,6,7,8,9 and LVL_DEBUG_ will be output
+ *			these here are only used to set the "DETAILED" MessageLog output
+ *            to make these really work you have to change MessageBase  (in the MessageLog.class.php file)
+ * all these come from AMessage::xxx -so try to keep them matchedup
+ *
  */
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// the various debugging levels - it is in numberical order so you can set LVL_ALL so evrerything is MessageLog output
-//       if you set LVL_DEBUG then the LVL_DEBUG_1-9 will not output
-//         this should allow fine levels of output --
-//       eg i set to LVL_DEBUG_5 then debug_4,3,2,1 wont be outputed but 5,6,7,8,9 and LVL_DEBUG_ will be output
-//			these here are only used to set the "DETAILED" MessageLog output
-//            to make these really work you have to change MessageBase  (in the MessageLog.class.php file)
 define('LVL_ALL', 1);
 
 define('LVL_DEBUG_1', 101);
@@ -84,6 +85,10 @@ define('LVL_Notice_7', 257);
 define('LVL_Notice_8', 258);
 define('LVL_Notice_9', 259);
 define('LVL_Notice', 260);
+/////////////define('LVL_Notice', AMessage::NOTICE);
+
+define('LVL_NORMAL', LVL_Notice);    // this the noraml level for not debugging i.e. production
+								// -it will show Notices but not the lower levels i.e. Notice_9..1
 
 define('LVL_TODO', 275);
 define('LVL_WARNING', 300);
@@ -108,24 +113,24 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 		//==============
 		// Note:  look in /utils/Setup_Logging for the initialization of the loggers at that level
-	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_TODO);
-	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
 	//////////Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 
 
 	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_ALL);
 
-	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL); //LVL_TODO); //LVL_ALL);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_ALL); //LVL_TODO);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_ALL); //LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL); //LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_ALL); //LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_ALL); //LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_TODO);
-	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING', LVL_ALL); //LVL_TODO);
-	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_TODO);
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
 
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);
@@ -138,9 +143,9 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 
 
-Settings::SetPublic('CACHE_IS_ON', true);
-Settings::SetPublic('CACHE Allow_Menu to be Cached', false);
-Settings::SetPublic('CACHE_Allow_Tables to be Cached', true);     //true
+Settings::SetPublic('CACHE_IS_ON', false);
+Settings::SetPublic('CACHE Allow_Menu to be Cached', true);
+Settings::SetPublic('CACHE_Allow_Tables to be Cached', false);     //true
 
 
 /**--------------------------------------------------------

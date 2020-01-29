@@ -870,6 +870,18 @@ header_td_app_name {
 	}
 
 	.SettingsDump {
-		background-color: green;
+		background-color: mediumturquoise;
 		color: black;
+	}
+	.SettingsVar {
+		color: blueviolet;
+	}
+	.SettingsPublic {
+		color: brown;
+	}
+	.SettingsRunTime {
+		color: blue;
+	}
+	.SettingsProtected{
+		color: forestgreen;
 	}

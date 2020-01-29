@@ -109,12 +109,12 @@ class MenuController extends Controller {
 //dump::dump($perms);
 
 		$isAuthenticated = Settings::GetRuntime ('isAuthenticated');
-		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice($isAuthenticated ? 'Authenticated': 'NOT authenticated');
-		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice($this->isAboutToLogoff()? 'about to logoff' : 'not about to logoff' );
+		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6($isAuthenticated ? 'Authenticated': 'NOT authenticated');
+		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6($this->isAboutToLogoff()? 'about to logoff' : 'not about to logoff' );
 
 		// final check of if the user is properly logged in and not about to logoff
 		if ($isAuthenticated and (! $this->isAboutToLogoff()) ) {
-			Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice('at  Menu Controller doWork');
+			Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6('at  Menu Controller doWork');
 
 			$preparedMenu = $this->model->prepareMenu();
 

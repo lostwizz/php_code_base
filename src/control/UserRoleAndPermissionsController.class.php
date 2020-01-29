@@ -141,13 +141,13 @@ Class UserRoleAndPermissionsController {
 	 * @return Response
 	 */
 	public function Setup($dispatcher, $action = '', $payload = null): Response {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@Setup: action=' . $action );
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@Setup: action=' . $action );
 
 		$u = Settings::GetRunTime('Currently Logged In User');
-		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'logged on user:' . $u);
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_4( 'logged on user:' . $u);
 
 		if (!empty($u)) {
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'have a username:' . $u);
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_4( 'have a username:' . $u);
 			$response = $this->LoadAllUserInformation($u);
 
 			// use this setting to check permissions
@@ -155,7 +155,7 @@ Class UserRoleAndPermissionsController {
 		} else {
 			$response = new Response('no username', -18, false, true);
 		}
-		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice('done setup:' .  $response);
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('done setup:' .  $response);
 //Dump::dump(Settings::GetRunTime('userPermissions'));
 		return $response;
 	}
@@ -174,7 +174,7 @@ Class UserRoleAndPermissionsController {
 	 * @return Response
 	 */
 	public function LoadAllUserInformation($username): Response {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@LoadAllUserInformation :' . $username);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@LoadAllUserInformation :' . $username);
 		if (empty($username)) {
 			return new Response('Username not supplied to LoadPermissions', -6, false, true);
 		}
@@ -184,7 +184,7 @@ Class UserRoleAndPermissionsController {
 			return Response::NoError();
 		} else {
 
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( 'LoadAllUserInformation- about to loadall');
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_4( 'LoadAllUserInformation- about to loadall');
 			$r = $this->model->LoadALLUser( $username);
 			$this->setCached();
 
@@ -196,7 +196,7 @@ Class UserRoleAndPermissionsController {
 	 *
 	 */
 	protected function getCached() {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getCached');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@getCached');
 		$cacheVal = Cache::pull('UserRoleAndPermissions');
 //dump::dump($cacheVal);
 		$this->username = $cacheVal['username'];
@@ -211,7 +211,7 @@ Class UserRoleAndPermissionsController {
 	 *
 	 */
 	protected function setCached() {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@setCached');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@setCached');
 		$cacheVal = array();
 		$cacheVal['username'] = $this->username;
 		$cacheVal['userID'] = $this->userID;
@@ -229,7 +229,7 @@ Class UserRoleAndPermissionsController {
 	 * @return bool
 	 */
 	public function hasRole(string $roleWanted): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@hasRole: ' . $roleWanted);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@hasRole: ' . $roleWanted);
 
 		return $this->model->hasRolePermission($roleWanted);
 	}
@@ -249,7 +249,7 @@ Class UserRoleAndPermissionsController {
 			string $action = Permissions::NO_RIGHT,
 			string $field = Permissions::NO_RIGHT
 	): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@isAllowed');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@isAllowed');
 
 		$r =  $this->model->isAllowed($permissionWanted, $process, $task, $action, $field);
 		return $r;
@@ -317,7 +317,7 @@ Class UserRoleAndPermissionsController {
 	 *
 	 */
 	public function doLogoff(){
-		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( '@@LOGGING OFF!');
+		Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_4( '@@LOGGING OFF!');
 		unset($this->username );
 		unset($this->userID);
 		unset($this->userInfo);

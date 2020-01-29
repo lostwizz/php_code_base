@@ -53,27 +53,33 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
  */
 class Dispatcher {
 
+	/**
+	 * the 3 different queues - and none
+	 */
 	const NONE = 0;
 	const PRE = 1;
 	const DISPATCH = 2;
 	const POST = 3;
 
+	public $currentQueue;          // which queue is currently being used
+
 	/**
 	 *
-	 * @var type these are the 3 queues to execute
+	 * @var \SplQueue - these are the 3 queues to execute
 	 *    PREqueue - executed first  (usually contains header, authentication and permission management
 	 *    DISPATCHqueue - executes after pre and before post
-	 *    POSTqueue - executes after Dispatch (usualy contain footer and message box output
+	 *    POSTqueue - executes after Dispatch (usualy contain footer and message box output) - and is a stack (FILO so thing can bedone here before the footer
+	 *
 	 */
 	protected $PREqueue;
-	protected $POSTqueue;
+	protected $POSTqueue;   //  \SplStack
 	protected $DISPATCHqueue;
 
-	public $currentQueue;
 
+
+	//* use for unit testing
 	public $PHPUNIT_tempArray = array();
 
-	//protected $payloads = array();
 
 	/**
 	 * @var version number
@@ -84,19 +90,15 @@ class Dispatcher {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	public function __construct() {       //bool $isHeaderAndFooterLess = false
+	public function __construct() {
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('dispatcher constructor ');
 
 		$this->currentQueue = dispatcher::NONE;
 
 		$this->PREqueue = new \SplQueue();
 		//$this->POSTqueue = new \SplQueue();
-		$this->POSTqueue = new \SplStack();
+		$this->POSTqueue = new \SplStack();   ////////new \SplQueue();
 		$this->DISPATCHqueue = new \SplQueue();
-
-	//	Settings::SetRuntime('PREqueue', $this->PREqueue);
-	//	Settings::SetRuntime('POSTqueue', $this->POSTqueue);
-	//	Settings::SetRuntime('DISPATCHqueue', $this->DISPATCHqueue);
 
 		Settings::SetRuntime('Dispatcher', $this);
 	}
@@ -112,6 +114,7 @@ class Dispatcher {
 
 
 	/** -----------------------------------------------------------------------------------------------
+	 * give the queue/stack wanted
 	 *
 	 * @param string $whichQueue
 	 * @return \SpqQueue
@@ -146,11 +149,11 @@ class Dispatcher {
 			$this->debug('dispatcher got an error from the running pre queue' . $pre_result);
 			return $pre_result;
 		} else {
-			// the pre queue contains authentication - so if it returns false then dont do any actuall work
+			// the pre queue contains authentication - so if it returns false then dont do any anything else
 			$this->debug('dispatcher starting normal queue'   );
 
-			$this->currentQueue = dispatcher::DISPATCH;
-			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue);
+			$this->currentQueue = dispatcher::DISPATCH;						// setup to run the main queue
+			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue);  // start on the main queue
 
 			if ($dispatch_result->hadError()) {
 				$this->debug('dispatcher got an error from the running normal queue' . $dispatch_result);
@@ -159,7 +162,6 @@ class Dispatcher {
 		}
 
 		$this->debug('dispatcher starting postqueue');
-
 		// show the post queue in all cases (it has the message stack for one- so you know what happend -  and the footer)
 		$this->currentQueue = dispatcher::POST;
 		$post_result = $this->RunThruTheQueue($this->POSTqueue);
@@ -179,15 +181,12 @@ class Dispatcher {
 	 * @return Response
 	 */
 	protected function RunThruTheQueue( $theQueue): Response {
-		//if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') ){
-		//	$this->dumpQueue($theQueue, true);
-		//}
 		$this->debug( 'the current Queue'  );
 
 		try {
 			$response = Response::NoError();
 			while ( ! $theQueue->isEmpty()) {
-				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice ){
+				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice_9 ){
 					$this->dumpQueue($theQueue, true);
 				}
 
@@ -196,6 +195,7 @@ class Dispatcher {
 				$this->debug(' result of running the Queue: ' , $response);
 			}
 			return $response;
+
 		} catch (\Exception $e) {
 			$enum = $e->getCode();
 			if (!is_numeric($enum)) {
@@ -203,7 +203,7 @@ class Dispatcher {
 			}
 			$this->debug('exception in running the Queue');
 			return new Response('exception in running the Queue: ' . $e->getMessage(),
-					   (-1 * $enum),
+					   (-1 * $enum),              // errors are negative in this system
 					   false);
 		}
 	}
@@ -239,20 +239,18 @@ class Dispatcher {
 	 */
 	protected function processDetailsOfQueue($theQueue): Response {
 
-		$item= $this->getItemFromQueue($theQueue);
+		$item = $this->getItemFromQueue($theQueue);
 
-		$this->debug( 'dispatcher executing [' . $item . '] 1');
-		if (!empty($item)) {
-
+		$this->debug('dispatcher executing [' . $item . '] 1');
+		if (empty($item)) {
+			$response = Response::GenericWarning();
+			$this->debug('dispatcher - item is empty!! why!! -but ignoring', $response);
+		} else {
 			$response = $this->itemDecodeAndExecute($item);
 
 			if ($response->hadError()) {
-				$this->debug( 'dispatcher recieved an error:' , $response);
+				$this->debug('dispatcher recieved an error:', $response);
 			}
-
-		} else {
-			$response = Response::GenericWarning();
-			$this->debug('dispatcher - item is empty!! why!! -but ignoring', $response);
 		}
 		return $response;
 	}
@@ -270,12 +268,14 @@ class Dispatcher {
 		if (empty($passedProcess)) {
 			return true;
 		}
-		//Settings::GetRunTimeObject('MessageLog')->addDEBUG('PTAP: ' . $passedProcess);
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('PTAP: ' . $passedProcess);
 
 		$exploded = \explode('.', $passedProcess);
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')<= LVL_Notice ){
-			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
-		}
+
+//		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')<= LVL_Notice_2 ){
+//			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
+//		}
+
 		$response = $this->doExecute('control',
 									(empty($exploded[0]) ? null : $exploded[0]),
 									(empty($exploded[1]) ? null : $exploded[1]),
@@ -309,6 +309,9 @@ class Dispatcher {
 							$passedPayload = null
 					): Response {
 
+
+
+
 		if (substr($class, -10) == 'Controller') {
 			$process = substr($class, 0, -10);
 		} else {
@@ -321,12 +324,12 @@ class Dispatcher {
 			throw new \Exception ( 'noname class can not be instantiized');
 		}
 		$class = '\\php_base\\' . $dir . '\\' . $class;
-		//Settings::GetRunTimeObject('MessageLog')->addTODO('will have to change this from php_base:' . $class);
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addTODO('will have to change this from php_base:' . $class);
 
 		try {
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
-			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo_2('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
 
 			$instance = new $class($process, $task, $action, $payload); //instanciate the process  and pass it the payload
 
@@ -371,7 +374,7 @@ class Dispatcher {
 		$payload = (!empty($passedpayload)) ? '.' . $this->processPayloadForItem($passedpayload) : '';
 
 		$item = $process . $task . $action . $payload;
-		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice($item);
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_3($item);
 
 		return $item;
 	}
@@ -389,7 +392,7 @@ class Dispatcher {
 	 * @return the stringified version of the parameter
 	 */
 	protected function processPayloadForItem($payload): string {
-		$newPayload = str_replace( '.', '~!~', $payload);
+		$newPayload = str_replace( '.', '~!~', $payload);    // unless this is done if there are any other periods in the value it screws up my decoding
 		$r = serialize($newPayload);
 		return $r;
 	}
@@ -408,7 +411,7 @@ class Dispatcher {
 	 */
 	protected function processPayloadFROMItem($payload) {
 		$r = unserialize($payload);
-		$newR = str_replace('~!~', '.', $r);
+		$newR = str_replace('~!~', '.', $r);   // unless this is done if there are any other periods in the value it screws up my decoding
 		return $newR;
 	}
 
@@ -425,9 +428,8 @@ class Dispatcher {
 	 * @param $item the item to add to the queue
 	 */
 	protected function addItemToQueue($q, $item): void {
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice ){
-			dump::dump($item,null, array('Beautify_BackgroundColor' =>'#D5C659'));
-		}
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('item ' . print_r($item, true));
+
 		$which = $this->identifyWhichQueue( $q);
 		switch ($which){
 			case 'POST':
@@ -465,9 +467,9 @@ class Dispatcher {
 						   $task,
 						   $action,
 						   $payload);
-		if ( $item != '..') {
+		if ( $item != '..') {        // if the item is basically empty then dont add it
 			$this->addItemToQueue($this->PREqueue,  $item);
-			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice( 'Added ' . $item . ' to the PRE Queue');
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_3( 'Added ' . $item . ' to the PRE Queue');
 		}
 	}
 
@@ -493,9 +495,9 @@ class Dispatcher {
 						   $task,
 						   $action,
 						   $payload);
-		if ( $item != '..') {
+		if ( $item != '..') {                  // if the item is basically empty then dont add it
 			$this->addItemToQueue($this->POSTqueue,  $item);
-			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice( 'Added ' . $item . ' to the POST Queue');
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_3( 'Added ' . $item . ' to the POST Queue');
 		}
 	}
 
@@ -523,9 +525,9 @@ class Dispatcher {
 						   $action,
 						   $payload);
 
-		if ( $item != '..') {
+		if ( $item != '..') {                      // if the item is basically empty then dont add it
 			$this->addItemToQueue($this->DISPATCHqueue,  $item);
-			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice( 'Added ' . $item . ' to the Queue');
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_3( 'Added ' . $item . ' to the Queue');
 		}
 	}
 
@@ -583,9 +585,11 @@ class Dispatcher {
 		$s .= '<BR>';
 
 		$s .= '@@@@ - ' . $which . ' - queue dump -@@@@@@@@@ count=' . $theQueue->count() . '%%' . ($theQueue->isEmpty() ? 'empty' : 'Notempty') . ' %%%%%%%%%<BR>';
+		$counter = 1;
 		$theQueue->rewind();
 		while ($theQueue->valid()) {
 			$s .= '&nbsp;&nbsp;&nbsp;';
+			$s .= $counter++ . ') ';
 			$s .= $theQueue->current();  //;."-\n"; // Show the first one
 			$s .= '<br>';
 			$theQueue->next(); // move the cursor to the next element
@@ -622,7 +626,7 @@ class Dispatcher {
 			$v = empty($var) ? '' : $var->toString() ;
 
 			if ( $var->hadError() ){
-				$level = DebugHandler::EMERGENCY;
+				$level = DebugHandler::ALERT;
 			} else {
 				$level = DebugHandler::INFO;
 			}
@@ -630,10 +634,9 @@ class Dispatcher {
 		//	$level = AMessage::ALERT;
 			$v = empty($var) ? '' : print_r($var, true);
 		}
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice ){
+		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice_2 ){
 			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
 			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
-
 
 			$msg = Settings::GetRunTimeObject('MessageLog')->add( $msg . $v . $s, null, $level);
 

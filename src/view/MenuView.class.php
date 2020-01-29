@@ -48,46 +48,16 @@ class MenuView extends View{
 //	}
 
 	public function showMenu ($theMenu) {
-		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice( 'at show Menu');
-
+		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6( 'at show Menu');
 
 		echo $theMenu;
 
-
-echo HTML::BR(10);
+		echo HTML::BR(10);
 
 		//$this->controller->model->processedMenu;
 
 	}
 
-	/*
-		dump::dumpLong($theMenu);
-
-		//$this->fred();
-
-
-
-		$s ='<ul id="menu">';
-		$s .= PHP_EOL;
-
-		foreach($theMenu as $item){
-			$s .= $this->process($item);
-		}
-		while ( $this->currentLevel >1){
-			$this->process( array('ITEM_NUMBER'=> 1, 'ptap'=> '', 'NAME'=> '' ));
-		}
-		$s .='</li></ul>';
-		$s .= '</ul id=end>';
-
-		echo PHP_EOL;
-		echo PHP_EOL;
-		echo $s;
-		echo PHP_EOL;
-		echo PHP_EOL;
-
-
-	}
-*/
 
 
 
@@ -167,6 +137,23 @@ echo HTML::BR(10);
 		</ul>
 
 <?php
+			/*
+			 * 	<li class="parent"><a href="#">Toys Category</a>
+				<ul class="child">
+					<li><a href="#">Battery Toys</a></li>
+					<li class="parent"><a href="#">Remote Toys <span class="expand">&raquo;</span></a>
+						<ul class="child">
+						<li><a href="#">Cars</a></li>
+						<li><a href="#">Aeroplane</a></li>
+						<li><a href="#">Helicopter</a></li>
+						</ul>
+					</li>
+					<li><a href="#">Soft Toys</a>
+					</li>
+					<li><a href="#">Magnet Toys</a></li>
+				</ul>
+				</li>
+			 */
 	}
 
 
@@ -176,20 +163,3 @@ echo HTML::BR(10);
 
 
 
-/*
- * 	<li class="parent"><a href="#">Toys Category</a>
-	<ul class="child">
-		<li><a href="#">Battery Toys</a></li>
-		<li class="parent"><a href="#">Remote Toys <span class="expand">&raquo;</span></a>
-			<ul class="child">
-			<li><a href="#">Cars</a></li>
-			<li><a href="#">Aeroplane</a></li>
-			<li><a href="#">Helicopter</a></li>
-			</ul>
-		</li>
-		<li><a href="#">Soft Toys</a>
-		</li>
-		<li><a href="#">Magnet Toys</a></li>
-	</ul>
-	</li>
- */

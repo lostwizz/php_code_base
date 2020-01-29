@@ -171,7 +171,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return Response
 	 */
 	public function LoadALLUser( $username) : Response {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@LoadALLUser: '.  $username);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@LoadALLUser: '.  $username);
 
 		try {
 
@@ -179,13 +179,13 @@ Class UserRoleAndPermissionsModel extends Model {
 			$this->controller->username = $username;
 
 			$this->GetUSERinfo($username);
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userInfo);
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_5( $this->controller->userInfo);
 
 			$this->GetUSERAttributes();
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userAttributes);
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_5( $this->controller->userAttributes);
 
 			$this->GetUSERpermissions();
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice( $this->controller->userPermissions);
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_5( $this->controller->userPermissions);
 
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
@@ -206,7 +206,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return bool
 	 */
 	protected function GetUSERinfo($username): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@GetUSERinfo: ' . $username);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetUSERinfo: ' . $username);
 
 		$DataUserInfo = new UserInfoData($this->controller, $username);
 
@@ -223,7 +223,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return bool
 	 */
 	protected function GetUSERAttributes(): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@GetUSERAttributes');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetUSERAttributes');
 
 		$DataUserAttribute = new UserAttributeData($this->controller, $this->controller->userID);
 
@@ -247,7 +247,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return bool
 	 */
 	protected function GetUSERpermissions(): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@GetUSERpermissions');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetUSERpermissions');
 
 
 		// take the list of roles (words i.e. Clerk) and get the role IDs
@@ -277,7 +277,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	public function hasRolePermission(string $roleWanted): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@hasRolePermission: ' .     $roleWanted);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@hasRolePermission: ' .     $roleWanted);
 
 		$roleWanted = trim($roleWanted);
 		if (\in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
@@ -309,7 +309,7 @@ Class UserRoleAndPermissionsModel extends Model {
 			$action = Permissions::NO_RIGHT,
 			$field = Permissions::WILDCARD_RIGHT
 			) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@isAllowed');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@isAllowed');
 		if (empty($wantedPermission) or $wantedPermission == Permissions::NO_RIGHT) {
 			return false;
 		}
@@ -363,7 +363,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return boolean
 	 */
 	protected function checkRight($singleOfPermissions, $wantedPermission, $process, $task, $action, $field) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkRight');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@checkRight');
 
 //Dump::dumpLong( array( $singleOfPermissions, $wantedPermission, $process, $task, $action, $field));
 
@@ -389,7 +389,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkProcess($singleOfPermissions, $process) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkProcess');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@checkProcess');
 		$r = (($process == Permissions::WILDCARD_RIGHT)
 				or ( $process == $singleOfPermissions['PROCESS'])
 				or ( $singleOfPermissions['PROCESS'] == Permissions::WILDCARD_RIGHT));
@@ -403,7 +403,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkTask($singleOfPermissions, $task) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkTask');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@checkTask');
 		$r = (($task == Permissions::WILDCARD_RIGHT)
 				or ( $task == $singleOfPermissions['TASK'])
 				or ( $singleOfPermissions['TASK'] == Permissions::WILDCARD_RIGHT));
@@ -417,13 +417,13 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkAction($singleOfPermissions, $action) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkAction');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@checkAction');
 		$r = (($action == Permissions::WILDCARD_RIGHT)
 				or ( $action == $singleOfPermissions['ACTION'])
 				or ( $singleOfPermissions['ACTION'] == Permissions::WILDCARD_RIGHT));
 
 //		$s =$r ? '+true+':'+false+';
-//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkAction:' .  $s);
+//		Settings::GetRunTimeObject('MessageLog')->addNotice_4('checkAction:' .  $s);
 		return $r;
 	}
 
@@ -435,13 +435,13 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return type
 	 */
 	protected function checkField($singleOfPermissions, $field) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkField');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@checkField');
 		$r = (($field == Permissions::WILDCARD_RIGHT)
 				or ( $field == $singleOfPermissions['FIELD'])
 				or ( $singleOfPermissions['FIELD'] == Permissions::WILDCARD_RIGHT));
 
 //		$s =$r ? '+true+':'+false+';
-//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkField:' .  $s);
+//		Settings::GetRunTimeObject('MessageLog')->addNotice_4('checkField:' .  $s);
 		return $r;
 	}
 
@@ -457,7 +457,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @return boolean
 	 */
 	protected function checkPermission($singleOfPermissions, $wantedPermission) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@checkPermission');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@checkPermission');
 		switch ($wantedPermission) {
 			case Permissions::GOD_RIGHT:
 				$r = (( $singleOfPermissions['PERMISSION'] == Permissions::GOD_RIGHT )
@@ -491,12 +491,12 @@ Class UserRoleAndPermissionsModel extends Model {
 //		$s .= ' --> ' . $singleOfPermissions['PERMISSION'];
 //		$s .= '_';
 //		$s .= $r ? '^true^' : '^false^';
-//		Settings::GetRunTimeObject('MessageLog')->addNotice('checkPerm:' .  $s);
+//		Settings::GetRunTimeObject('MessageLog')->addNotice_4('checkPerm:' .  $s);
 		return $r;
 	}
 
 	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doInsertIfNotExists');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@doInsertIfNotExists');
 		$userInfoData = new UserInfoData();
 		if( empty($username)){
 			return false;
@@ -504,12 +504,12 @@ Class UserRoleAndPermissionsModel extends Model {
 		$exists  = $userInfoData->doReadFromDatabaseByUserNameAndApp($username);
 
 		if (! $exists) {
-			Settings::GetRunTimeObject('MessageLog')->addNotice('adding user');
+			Settings::GetRunTimeObject('MessageLog')->addNotice_4('adding user');
 			$pwd = password_hash($password, PASSWORD_DEFAULT);
 			UserInfoData::doInsertNewAccount( $username, $pwd, $email, $primaryRole);
 			return true;
 		}
-		Settings::GetRunTimeObject('MessageLog')->addNotice('NOT adding user');
+		Settings::GetRunTimeObject('MessageLog')->addNotice_4('NOT adding user');
 		return false;
 	}
 

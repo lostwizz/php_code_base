@@ -214,74 +214,6 @@ abstract class Settings {
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 * @param bool $show_protected
-	 * @param bool $show_runtime
-	 * @return string
-	 */
-	public static function dumpCR(bool $show_protected = false, bool $show_runtime = false): string {
-		$s = self::dump($show_protected, $show_runtime);
-		$r = str_replace('<BR>', "\r\n", $s);
-		return $r;
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param bool $show_protected
-	 * @param bool $show_runtime
-	 * @return string
-	 */
-	public static function dumpBR(bool $show_protected = false, bool $show_runtime = false): string {
-		$s = self::dump($show_protected, $show_runtime);
-		$r = str_replace("\n", '<BR>', $s);
-		return $r;
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 * just echo the results from this dump - it will make black on green text
-	 *
-	 * @param bool $showPublic
-	 * @param bool $showProtected
-	 * @param bool $showRuntime
-	 * @return string
-	 */
-	public static function dump(bool $showPublic = false, bool $showProtected = false, bool $showRuntime = false): string {
-		$s = '<div class="SettingsDump">';
-		$s .= 'Settings::dump:<BR>';
-		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
-		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
-		$s .= '<BR>';
-
-		if ($showRuntime) {
-			$s .= '************ Runtime Settings *********************';
-			$s .= '<Br>';
-			foreach (self::$runTime as $key => $val) {
-				$s .= 'RunTime: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
-				$s .= '<Br>';
-			}
-		}
-		if ($showProtected) {
-			$s .= '************ Protected Settings *********************';
-			$s .= '<Br>';
-			foreach (self::$protected as $key => $val) {
-				$s .= 'Protected: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
-				$s .= '<Br>';
-			}
-		}
-		if ($showPublic) {
-			$s .= '************ Protected Settings *********************';
-			$s .= '<Br>';
-			foreach (self::$public as $key => $val) {
-				$s .= 'Public: ' . var_export($key, true) . ' ==> ' . print_r($val, true);
-				$s .= '<Br>';
-			}
-		}
-		//$s .= '<Br>';
-		$s .= '</div>';
-		return $s;
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
 	 * @param type $value
 	 * @return string
 	 */
@@ -602,6 +534,100 @@ abstract class Settings {
 		}
 		return array('string', $v);
 	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $show_protected
+	 * @param bool $show_runtime
+	 * @return string
+	 */
+	public static function dumpCR(bool $show_protected = false, bool $show_runtime = false): string {
+		$s = self::dump($show_protected, $show_runtime);
+		$r = str_replace('<BR>', "\r\n", $s);
+		return $r;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $show_protected
+	 * @param bool $show_runtime
+	 * @return string
+	 */
+	public static function dumpBR(bool $show_protected = false, bool $show_runtime = false): string {
+		$s = self::dump($show_protected, $show_runtime);
+		$r = str_replace("\n", '<BR>', $s);
+		return $r;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 * just echo the results from this dump - it will make black on green text
+	 *
+	 * @param bool $showPublic
+	 * @param bool $showProtected
+	 * @param bool $showRuntime
+	 * @return string
+	 */
+	public static function dump(bool $showPublic = false, bool $showProtected = false, bool $showRuntime = false): string {
+		$s = '<div class="SettingsDump">';
+		$s .= 'Settings::dump:<BR>';
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
+		$s .= '--'  . __METHOD__ .  '-- called from ' . $bt['file'] . '(line: '. $bt['line'] . ')' ;
+		$s .= '<BR>';
+
+		if ($showRuntime) {
+			$s .= '<Br>';
+			$s .= '************ Runtime Settings *********************';
+			$s .= '<Br>';
+			foreach (self::$runTime as $key => $val) {
+				$s .= '<span class="SettingsRunTime">'
+						. 'RunTime: '
+						. '</span>'
+						. '<span class="SettingsVar">'
+						. var_export($key, true)
+						. '</span>'
+						. ' ==> '
+						. print_r($val, true);
+				$s .= '<Br>';
+			}
+		}
+		if ($showProtected) {
+			$s .= '<Br>';
+			$s .= '************ Protected Settings *********************';
+			$s .= '<Br>';
+			foreach (self::$protected as $key => $val) {
+				$s .= '<span class="SettingsProtected">'
+						. 'Protected: '
+						. '</span>'
+						. '<span class="SettingsVar">'
+						. var_export($key, true)
+						. '</span>'
+						. ' ==> '
+						. print_r($val, true);
+				$s .= '<Br>';
+			}
+		}
+		if ($showPublic) {
+			$s .= '<Br>';
+			$s .= '************ Public Settings *********************';
+			$s .= '<Br>';
+			foreach (self::$public as $key => $val) {
+				$s .= '<span class="SettingsPublic">'
+						. 'Public: '
+						. '</span>'
+						. '<span class="SettingsVar">'
+						. var_export($key, true)
+						. '</span>'
+						. ' ==> '
+						. print_r($val, true);
+				$s .= '<Br>';
+			}
+		}
+		//$s .= '<Br>';
+		$s .= '</div>';
+		return $s;
+	}
+
 
 }
 

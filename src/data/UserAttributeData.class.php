@@ -67,7 +67,7 @@ class UserAttributeData extends data {
 	 */
 	public function __construct($controller, $userID = null) {
 
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . $userID);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@constructor: ' . $userID);
 
 		$this->controller = $controller;
 
@@ -96,7 +96,7 @@ class UserAttributeData extends data {
 	 * @return void
 	 */
 	public function defineTable(): void {
-		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice_6('@@defineTable');
 		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->Suspend();
 
 		$this->Table = new Table(
@@ -148,7 +148,7 @@ class UserAttributeData extends data {
 	 * @return array
 	 */
 	public function readAllData(): array {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@readAllData');
 
 		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserAttributes') .'_ReadAll' )){
 			$data = CACHE::pull( Settings::GetProtected('DB_Table_UserAttributes') .'_ReadAll' );
@@ -172,7 +172,7 @@ class UserAttributeData extends data {
 	 * @return type
 	 */
 	public function getArrayOfRoleNames() {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getArrayOfRoleNames');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@getArrayOfRoleNames');
 
 		return $this->roleNames;
 	}
@@ -183,7 +183,7 @@ class UserAttributeData extends data {
 	 * @param type $roleName
 	 */
 	public function AddPrimaryRole($roleName) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@AddPrimaryRole');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@AddPrimaryRole');
 		if (!in_array($roleName, $this->roleNames) and ! empty($roleName)) {
 			$this->roleNames[] = $roleName;
 		}
@@ -196,7 +196,7 @@ class UserAttributeData extends data {
 	 * @param type $data
 	 */
 	public function ProcessAttributes($data) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@ProcessAttributes');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@ProcessAttributes');
 		foreach ($data as $record) {
 			if (($record['ATTRIBUTENAME'] == 'PrimaryRole' )
 					or ( $record['ATTRIBUTENAME'] == 'SecondaryRole' )
@@ -241,7 +241,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	protected function doReadFromDatabaseByUserID($userID): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabaseByUserID: ' . $userID);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doReadFromDatabaseByUserID: ' . $userID);
 
 		if (CACHE::exists( Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' . $userID)) {
 			$data = CACHE::pull( Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' . $userID)	;
@@ -259,7 +259,7 @@ class UserAttributeData extends data {
 			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached') ) {
 				CACHE::add( Settings::GetProtected('DB_Table_UserAttributes') . '_for_userid_' . $userID, $data);
 			}
-			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice($data);
+			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6($data);
 		}
 		$this->ProcessAttributes($data);
 
@@ -275,7 +275,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	public function doAddAttribute(int $userID, string $attribName, string $attribValue): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doAddAttribute:' . $userID . '/'. $attribName . '/'. $attribValue);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doAddAttribute:' . $userID . '/'. $attribName . '/'. $attribValue);
 
 		$sql = 'INSERT into ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' ( userid, AttributeName, AttributeValue )'
@@ -299,7 +299,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	public function doRemoveAttribute(int $userid, string $attribName): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doRemoveAttribute: ' . $userid. $attribName);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doRemoveAttribute: ' . $userid. $attribName);
 
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' WHERE userid = :userid AND attributename = :attrib_name'
@@ -319,7 +319,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	public function doRemoveAllAttributesForUserID(int $userid): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doRemoveAllAttributesForUserID: ' . $userid);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doRemoveAllAttributesForUserID: ' . $userid);
 
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' WHERE userid = :userid'
@@ -339,7 +339,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	public function doInserOrUpdateAttributeForUserID(int $userid, string $attribName, string $attribValue): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doInsertOrUpdateAttributeForUserID:'. $userid);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doInsertOrUpdateAttributeForUserID:'. $userid);
 
 		$val = $this->getByUseridAndAttributeName($userid, $attribName, $attribValue);
 		if (empty($val['ATTRIBUTEVALUE']) and empty($val['ATTRIBUTENAME'])) {  // the value might be '' so make it do an update if it is
@@ -359,7 +359,7 @@ class UserAttributeData extends data {
 	 * @return type
 	 */
 	public function getByUseridAndAttributeName(int $userid, string $attribName) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getByUseridAndAttributeName:'  . $userid);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@getByUseridAndAttributeName:'  . $userid);
 
 		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserAttributes')   . '_userAndAttrib_'  . $userid .'_' . $attribName )) {
 			$data = CACHE::exists(Settings::GetProtected('DB_Table_UserAttributes')   . '_userAndAttrib_'  . $userid .'_' . $attribName);
@@ -392,7 +392,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	public function updateByUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@updateByUseridAndAttributeName:' . $userid);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@updateByUseridAndAttributeName:' . $userid);
 
 		$sql = 'UPDATE ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' SET AttributeValue = :attribValue'
@@ -417,7 +417,7 @@ class UserAttributeData extends data {
 	 * @return bool
 	 */
 	public function insertUseridAndAttributeName(int $userid, string $attribName, string $attribValue): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@insertUseridAndAttriubuteName: '. $userid);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@insertUseridAndAttriubuteName: '. $userid);
 
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_UserAttributes')
 				. ' (Userid, AttributeName, AttributeValue)'

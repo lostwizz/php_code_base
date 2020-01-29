@@ -71,7 +71,7 @@ Class UserRoleData extends Data {
 	 * @param type $ArrayOfNames
 	 */
 	public function __construct($controller, ?array $ArrayOfNames = null) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@constructor: ' . print_r($ArrayOfNames, true));
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@constructor: ' . print_r($ArrayOfNames, true));
 
 		$this->controller = $controller;
 
@@ -96,7 +96,7 @@ Class UserRoleData extends Data {
 	 * @return void
 	 */
 	public function defineTable(): void {
-		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice('@@defineTable');
+		Settings::GetRuntimeObject('PERMISSION_DEBUGGING')->addNotice_6('@@defineTable');
 
 		$this->Table = new Table(
 				Settings::GetProtected('DB_Table_RoleManager'),
@@ -131,9 +131,10 @@ Class UserRoleData extends Data {
 
 	/** -----------------------------------------------------------------------------------------------*/
 	public function getRolesForSelect( $id, $data,  $idValue = null) {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@readAllData');
 
 		if ( CACHE::exists( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' )){
+			Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('Tyring from cache');
 			$data = CACHE::pull( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' );
 		} else  {
 
@@ -173,7 +174,7 @@ dump::dump($data);
 	 * @return array
 	 */
 	public function readAllData(): array {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@readAllData');
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@readAllData');
 
 		if ( CACHE::exists( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' )){
 			$data = CACHE::pull( Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll' );
@@ -211,7 +212,7 @@ dump::dump($data);
 	 * @return bool
 	 */
 	protected function doReadFromDatabase($ArrayOfNames): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doReadFromDatabase' . print_r($ArrayOfNames, true));
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doReadFromDatabase' . print_r($ArrayOfNames, true));
 
 		$names = "'" . implode("', '", $ArrayOfNames) . "'";
 
@@ -243,7 +244,7 @@ dump::dump($data);
 	 * @return int
 	 */
 	public function doAddNewRole(string $roleName): int {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doAddNewRole: '. $roleName);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doAddNewRole: '. $roleName);
 
 		$sql = 'INSERT INTO ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' { name)'
@@ -263,7 +264,7 @@ dump::dump($data);
 	 * @return bool
 	 */
 	public function doRemoveRoleByName(string $roleName): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doRemveRoleByName:' . $roleName);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doRemveRoleByName:' . $roleName);
 
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE name = :name'
@@ -281,7 +282,7 @@ dump::dump($data);
 	 * @return bool
 	 */
 	public function doRemoveRoleByID(int $roleID): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@doRemoveRoleByID: '. $roleID);
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@doRemoveRoleByID: '. $roleID);
 		$sql = 'DELETE FROM ' . Settings::GetProtected('DB_Table_RoleManager')
 				. ' WHERE roleid = :roleid'
 		;
@@ -298,7 +299,7 @@ dump::dump($data);
 	 * @return int
 	 */
 	public function getRoleIDByName(string $roleName): int {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice('@@getRoleIDbyName: ' . $roleName );
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@getRoleIDbyName: ' . $roleName );
 
 		if ( CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName)) {
 			$data = CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName);

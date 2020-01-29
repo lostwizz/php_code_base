@@ -83,7 +83,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController construct' .$this->process. '.' .$this->task .  '.' .$this->action);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController construct' .$this->process. '.' .$this->task .  '.' .$this->action);
 
 //
 	}
@@ -124,10 +124,10 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 */
 	public function checkAuthentication($dispatcher): Response {
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@auth controllercheckAuthentication');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@auth controllercheckAuthentication');
 
 		$isAlreadyLoggedOn = $this->model->isGoodAuthentication();
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('after isGoodAuth: '. ($isAlreadyLoggedOn ? 'yes':'no'));
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('after isGoodAuth: '. ($isAlreadyLoggedOn ? 'yes':'no'));
 		if ($isAlreadyLoggedOn) {
 			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('User is already logged on  so continue');
 			return Response::NoError();
@@ -136,7 +136,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 		$password = (!empty($this->payload['entered_password'])) ? $this->payload['entered_password'] : null;
 		$username = (!empty($this->payload['entered_username'])) ? $this->payload['entered_username'] : null;
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check: ' . $username . '/' . $password );
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-check: ' . $username . '/' . $password );
 
 		//if (empty($this->payload[Resolver::REQUEST_ACTION])) {
 		//	$this->payload[Resolver::REQUEST_ACTION] = 'Need_Login';
@@ -148,7 +148,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 //dump::dump($this->payload)		;
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-check2'
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-check2'
 							. (empty( $this->payload[Resolver::REQUEST_ACTION])  ? '' : $this->payload[Resolver::REQUEST_ACTION] ));
 		// not yet logged on
 		//    yes we could just change the spaces to underscores - but this i think is easier to read (and it shows all the possibilities)
@@ -197,7 +197,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	protected function Need_login($dispatcher, $username = null, $password = null): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateController-Need_login:');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateController-Need_login:');
 		 $this->view->showLoginPage();
 		 return Response::NoError();
 	}
@@ -213,19 +213,19 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	protected function Submit_Logon($dispatcher, $username = null, $password = null): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateController-submitLogon:'. $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateController-submitLogon:'. $username);
 
 		//$this->UserInfoData = new UserInfoData($this, $username);
 		$this->data = new UserInfoData($this, $username);
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice( $this->UserInfoData);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7( $this->UserInfoData);
 
 		if (!empty($this->data->UserInfo) and ! empty($this->data->UserInfo['USERID'])) {
-			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon1:'. $username);
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-submitLogon1:'. $username);
 			$r = $this->model->tryToLogin($username, $password);
 		} else {
 			$r = new Response('Username does not exist', -10);
 		}
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon2:'. $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-submitLogon2:'. $username);
 
 
 		if ($r->hadError()) {
@@ -234,7 +234,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 		} else {
 			Settings::SetRuntime ('isAuthenticated', true );
 		}
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateController-submitLogon3:'. $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-submitLogon3:'. $username);
 
 		return $r;
 	}

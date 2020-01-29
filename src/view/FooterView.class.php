@@ -60,6 +60,7 @@ class FooterView extends View {
 	 */
 	public function doWork($parent = null): Response {
 		echo '<footer>' . PHP_EOL;
+
 		echo HTML::BR(5);
 
 		echo '<div class="footer_hr ">' . PHP_EOL;

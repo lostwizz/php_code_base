@@ -106,7 +106,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @return Response
 	 */
 	public function tryToLogin(?string $username, ?string $password ): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-tryToLogin');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-tryToLogin');
 
 		if (empty( $username)) {
 			return Response::GenericError();
@@ -145,7 +145,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 	 * @return boolean
 	 */
 	public  function isGoodAuthentication() {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-isGoodAuthentication');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-isGoodAuthentication');
 
 		if (empty( $_SESSION['Authenticated_username'])) {
 			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addDebug_9( 'no username so returning false');
@@ -297,10 +297,10 @@ dump::dump(ini_get('smtp_port'));
 	 * @return Response
 	 */
 	public function LogonMethod_DB_Table(string $username, string $password ): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-LogonMethod_DB_Table');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-LogonMethod_DB_Table');
 
 		if (\password_verify($password, $this->controller->data->UserInfo['PASSWORD'])) {
-			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('AuthenticateModel-LogonMethod_DB_Table- good password for:'.$username);
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateModel-LogonMethod_DB_Table- good password for:'.$username);
 
 			$this->DoFinishLoginUpdatebyName( $username);
 
@@ -319,7 +319,7 @@ dump::dump(ini_get('smtp_port'));
 	 * @return Response
 	 */
 	public function LogonMethod_HardCoded(string $username, string $password): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-LogonMethod_HardCoded');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-LogonMethod_HardCoded');
 		//$pwd = \password_hash($password, PASSWORD_DEFAULT);
 //dump::dump($pwd);
 
@@ -346,7 +346,7 @@ dump::dump(ini_get('smtp_port'));
 	 * @return Response
 	 */
 	public function LogonMethod_LDAP(string $username, string $password): Response {
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-LogonMethod_LDAP');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-LogonMethod_LDAP');
 		if (!extension_loaded('LDAP')) {
 			return new Response('LDAP not loaded in PHP - cant login ', -22);
 		}
@@ -430,7 +430,7 @@ dump::dump(ini_get('smtp_port'));
 	 * @param UserInfoData|null $userInfoData
 	 */
 	public function DoFinishLoginUpdatebyName( string $username ){
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-doFinishLoginUpdatebyName');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-doFinishLoginUpdatebyName');
 
 		if (!empty( $this->controller->data) ){
 			$userid = $this->controller->data->getUserID();
@@ -446,11 +446,11 @@ dump::dump(ini_get('smtp_port'));
 	 * @return void
 	 */
 	public  function DoFinishLoginUpdate( int $userid) : void{
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('@@AuthenticateModel-DoFinishLoginUpdate - call data to update last logon');
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-DoFinishLoginUpdate - call data to update last logon');
 		$prettyNow = (new \DateTime('now'))->format( 'Y-m-d G:i:s');
 
 		$ip = \filter_input(INPUT_SERVER, 'REMOTE_ADDR');
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice('Auth Model-doFinshLoginUpdate:'. $userid);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('Auth Model-doFinshLoginUpdate:'. $userid);
 
 		$this->controller->data->doUpdateLastLoginAndIP( $userid, $prettyNow, $ip, \session_id() );
 

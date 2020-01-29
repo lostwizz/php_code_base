@@ -45,6 +45,7 @@ define('AR_LEVEL', 2);
 //***********************************************************************************************
 /**
  * the message base class for AMessage
+ *    - mainly to allow getting the name for the value thru the array $levels
  */
 abstract class MessageBase {
 
@@ -144,61 +145,16 @@ abstract class MessageBase {
 	 * @static
 	 * @return type
 	 */
-	public static function Version() {
+	public static function Version() : string{
 		return self::VERSION;
 	}
 
 
-	abstract function Show();
+	abstract function Show() :void;
 
-	abstract function Set($value = null);
+	abstract function Set($value = null) : void;
 
 	abstract function Get();
-}
-
-
-//***********************************************************************************************
-//***********************************************************************************************
-class SubSystemMessage {
-	PUBLIC $subSystem;
-
-	public static $isSuspended = false;
-	public static $suspended_SubSystem ='';
-
-
-	/** -----------------------------------------------------------------------------------------------**/
-	function __construct(string $passedSubSystem, $lvl){
-		$this->subSystem = $passedSubSystem;
-		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
-	}
-
-	/** -----------------------------------------------------------------------------------------------**/
-	public function isNullableClass() : bool {
-		return false;
-	}
-
-	/** -----------------------------------------------------------------------------------------------**/
-	public function __call($name, $args){
-		if ( substr( $name,-2,1 ) == '_'  and substr($name, 0,3) == 'add') {
-			$new_lvl_name = strtoupper(substr($name, 3));
-			$lvl_num = array_search($new_lvl_name, MessageBase::$levels);
-
-			if ( ! self::$isSuspended) {
-				Settings::GetRunTimeObject('MessageLog') -> add( $args[0], null, $lvl_num, $this->subSystem);
-			}
-		} else if ( $name == 'Suspend'){
-			self::$isSuspended = true;
-			Settings::GetRunTimeObject('MessageLog') -> add( 'Suspended MSG Log', null, LVL_DEBUG, $this->subSystem);
-		} else if ( $name == 'Resume'){
-			Settings::GetRunTimeObject('MessageLog') -> add( 'Resumed MSG Log', null, LVL_DEBUG, $this->subSystem);
-			self::$isSuspended = false;
-		} else {
-			if ( ! self::$isSuspended) {
-				Settings::GetRunTimeObject('MessageLog') -> $name(  $args[0], null, $this->subSystem );
-			}
-		}
-	}
-
 }
 
 
@@ -236,24 +192,23 @@ class AMessage extends MessageBase {
 	 * @static
 	 * @return type
 	 */
-	public static function Version() {
+	public static function Version() :string {
 		return self::VERSION;
 	}
-
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 * converts the message into a string which is formatted [time] level - text
 	 * @return type
 	 */
-	public function __toString() {
+	public function __toString() : string {
 		return $this->timeStamp . ' (Level: ' . parent::$levels[$this->level] . ') ' . $this->text;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * dump the contents of this message
+	 * @return void
 	 */
-	public function dump() {
+	public function dump() : void {
 		echo 'msg=', $this->text, ' time=', $this->timeStamp, ' level=', parent::$levels[$this->level], '<Br>';
 	}
 
@@ -263,8 +218,9 @@ class AMessage extends MessageBase {
 	 * @param type $textOrArray
 	 * @param type $timeStamp
 	 * @param type $level
+	 * @return void
 	 */
-	public function set($textOrArray = null, $timeStamp = null, $level = null) {
+	public function set($textOrArray = null, $timeStamp = null, $level = null) :void {
 		if (!empty($textOrArray) and is_array($textOrArray)) {
 			$this->setFromArray($textOrArray);
 		} else {
@@ -307,7 +263,7 @@ class AMessage extends MessageBase {
 	 *      - if timestamp it must be formatted properly before getting here
 	 * @param string $timeStamp
 	 */
-	protected function setTimeStamp(string $timeStamp = null) {
+	protected function setTimeStamp(string $timeStamp = null) : void {
 		if (defined("IS_PHPUNIT_TESTING")) {
 			$this->timeStamp = '23:55:30';
 			if (empty($timeStamp)) {
@@ -328,7 +284,7 @@ class AMessage extends MessageBase {
 	 * set the level of the message
 	 * @param type $level
 	 */
-	protected function setLevel($level = null) {
+	protected function setLevel($level = null) : void{
 		if (empty($level) or $level < 100) {
 			$this->level = AMessage::NOTICE;   //Default
 		} else if (array_key_exists($level, parent::$levels)) {
@@ -343,7 +299,7 @@ class AMessage extends MessageBase {
 	 *
 	 * @return type
 	 */
-	public function get() {
+	public function get() : array{
 		$a = array($this->text,
 			$this->timeStamp,
 			$this->level
@@ -356,7 +312,7 @@ class AMessage extends MessageBase {
 	 * @param type $level
 	 * @return string
 	 */
-	protected function getShowStyle($level) {
+	protected function getShowStyle($level): string {
 		if (array_key_exists($level, parent::$levels)) {
 			return 'msg_style_' . parent::$levels[$level];
 		} else {
@@ -369,7 +325,7 @@ class AMessage extends MessageBase {
 	 * @param type $level
 	 * @return string
 	 */
-	protected function getShowTextLeader($level) {
+	protected function getShowTextLeader($level) : string{
 		if (array_key_exists($level, parent::$levels)) {
 			return parent::$levels[$level] . ' ';
 		} else {
@@ -382,7 +338,7 @@ class AMessage extends MessageBase {
 	 * @param type $style
 	 * @return string
 	 */
-	protected function getPrettyLine($style = null) {
+	protected function getPrettyLine($style = null) : string {
 		$s = '';
 		$textLeader = $this->getShowTextLeader($this->level);
 
@@ -438,7 +394,7 @@ class AMessage extends MessageBase {
 	 *
 	 * @param type $style
 	 */
-	public function show($style = null) {
+	public function show($style = null) :void {
 		$r= $this->getPrettyLine($style);
 		echo $r;
 	}
@@ -447,6 +403,57 @@ class AMessage extends MessageBase {
 
 //***********************************************************************************************
 //***********************************************************************************************
+//
+//***********************************************************************************************
+//***********************************************************************************************
+class SubSystemMessage {
+	PUBLIC $subSystem;
+
+	public static $isSuspended = false;
+	public static $suspended_SubSystem ='';
+
+
+	/** -----------------------------------------------------------------------------------------------**/
+	function __construct(string $passedSubSystem = 'general', int $lvl = AMessage::NOTICE){
+		$this->subSystem = $passedSubSystem;
+		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
+	}
+
+	/** -----------------------------------------------------------------------------------------------**/
+	public function isNotANullableClass() : bool {
+		return true;
+	}
+
+	/** -----------------------------------------------------------------------------------------------**/
+	public function isGoodLevelsAndSystem( $level = AMessage::NOTICE){
+		return MessageLog::isGoodLevelsAndSystem( $level, $this->subSystem);
+	}
+
+	/** -----------------------------------------------------------------------------------------------**/
+	public function __call($name, $args) : void{
+		if ( substr( $name,-2,1 ) == '_'  and substr($name, 0,3) == 'add') {
+			$new_lvl_name = strtoupper(substr($name, 3));
+			$lvl_num = array_search($new_lvl_name, MessageBase::$levels);
+
+			if ( ! self::$isSuspended) {
+				Settings::GetRunTimeObject('MessageLog') -> add( $args[0], null, $lvl_num, $this->subSystem);
+			}
+		} else if ( $name == 'Suspend'){
+			self::$isSuspended = true;
+			Settings::GetRunTimeObject('MessageLog') -> add( 'Suspended MSG Log', null, LVL_DEBUG, $this->subSystem);
+		} else if ( $name == 'Resume'){
+			Settings::GetRunTimeObject('MessageLog') -> add( 'Resumed MSG Log', null, LVL_DEBUG, $this->subSystem);
+			self::$isSuspended = false;
+		} else {
+			if ( ! self::$isSuspended) {
+				Settings::GetRunTimeObject('MessageLog') -> $name(  $args[0], null, $this->subSystem );
+			}
+		}
+	}
+
+}
+
+
 //***********************************************************************************************
 //***********************************************************************************************
 //***********************************************************************************************
@@ -486,7 +493,7 @@ class MessageLog {
 	 * @static
 	 * @return type
 	 */
-	public static function Version() {
+	public static function Version() :string {
 		return self::VERSION;
 	}
 
@@ -494,8 +501,8 @@ class MessageLog {
 	 *
 	 * @return bool
 	 */
-	public function isNullableClass() : bool {
-		return false;
+	public function isNotANullableClass() : bool {
+		return true;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -503,7 +510,6 @@ class MessageLog {
 	 * @return string
 	 */
 	public function __toString() : string{
-
 		$s = '';
 		self::$messageQueue->rewind();
 
@@ -530,7 +536,7 @@ class MessageLog {
 	 * @param type $val2
 	 * @param type $val3
 	 */
-	public function addAndShow($obj_or_array = null, $val2 = null, $val3 = null) {
+	public function addAndShow($obj_or_array = null, $val2 = null, $val3 = null) : void{
 		$this->add($obj_or_array, $val2, $val3);
 		$this->showAllMessages();
 	}
@@ -541,14 +547,14 @@ class MessageLog {
 	 * @param string $subSystem
 	 * @return bool
 	 */
-	public function isGoodLevelsAndSystem( $level, string $subSystem) : bool {
+	public static function isGoodLevelsAndSystem( $level, string $subSystem) : bool {
 		if (key_exists($subSystem, self::$LoggingLevels)) {
 			$lvl = self::$LoggingLevels[$subSystem];
 		} else {
 			self::$LoggingLevels[ $subSystem ] = self::$DEFAULTLoggingLevel;
 			$lvl = self::$DEFAULTLoggingLevel;
 		}
-//dump::dumpA( $level, $lvl);
+		//$x = ( ($level >= $lvl) ? '--True--':'--false--');
 		return ( $level >= $lvl) ;
 	}
 
@@ -558,44 +564,47 @@ class MessageLog {
 	 * @param string $subSystem
 	 * @param type $level
 	 */
-	public function setSubSystemLoggingLevel( string $subSystem, $level = null) {
+	public function setSubSystemLoggingLevel( string $subSystem, $level = null) : void{
 		if (is_null( $level) ){
 			$level = self::$DEFAULTLoggingLevel;
 		}
-
 		self::$LoggingLevels[$subSystem] = $level;
 	}
 
 
 	/** -----------------------------------------------------------------------------------------------
+	 * figure out where to start showing the back trace
+	 *   - if you called the MessageLog system directly then it is one back
+	 *   - if you called it thru subSystemMesage than it may be further back - so look for the magic word and return it
 	 *
 	 * @param type $bt
 	 * @param type $magicWord
 	 * @return int
 	 */
-	protected function figureOutWhichBTisRelevant($bt, $magicWord = 'MessageLog.class.php') {
+	protected function figureOutWhichBTisRelevant($bt, $magicWord = 'MessageLog.class.php') :int {
 		$r = 0;
 
 		for ($i = 0; $i <= count($bt); $i++) {
-			if (basename($bt[$i]['file']) != $magicWord) {
+			if (basename($bt[$i]['file']) != $magicWord) { // look for the magic word in the file name
 				$r = $i;
 				break;
 			}
 		}
 		if ($r >= count($bt)) {
-			return $r - 1;
+			return $r - 1;  // not found so return one item before the last item (becuase of the btLvl+1 in generateGoodBT
 		} else {
 			return $r;
 		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
-	 *
+	 * make a back trace look pretty
+	 *		optionally include the <span> ... </span> around it -- which colorizes the output
 	 * @param type $bt
 	 * @param bool $includeSpan
 	 * @return string
 	 */
-	protected function generateGoodBT($bt, bool $includeSpan = true) {
+	protected function generateGoodBT($bt, bool $includeSpan = true) :string{
 		$btLvl = $this->figureOutWhichBTisRelevant($bt);
 		$mid = '- '
 				. basename($bt[$btLvl]['file'])
@@ -625,7 +634,7 @@ class MessageLog {
 	 * @param type $timestamp
 	 * @param type $level
 	 */
-	public function add($obj_or_array = null, $timestamp = null, $level = null, string $subSystem='general') {
+	public function add($obj_or_array = null, $timestamp = null, $level = null, string $subSystem='general')  :void{
 
 		if ( ! self::isGoodLevelsAndSystem( $level, $subSystem)) {
 			return;  // if msg level is lower than setting then do nothing
@@ -644,11 +653,10 @@ class MessageLog {
 					$obj_or_array['msglogTraceInfo'] = $this->generateGoodBT($bt, false);
 				}
 			}
-			$temp = new AMessage($obj_or_array, $timestamp, $level);
-			self::$messageQueue->enqueue($temp);
-			if (Settings::GetPublic('Show MessageLog Adds')) {
+			$temp = new AMessage($obj_or_array, $timestamp, $level);               //create the AMessage
+			self::$messageQueue->enqueue($temp);									// add the item to the queue
+			if (Settings::GetPublic('Show MessageLog Adds')) {  // if you want the output to happen as it is added
 				$temp->show();
-//				echo '<Br>' . PHP_EOL;
 			}
 		}
 	}
@@ -658,7 +666,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addToDo($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addToDo($obj_or_array = null, $timestamp = null, string $subSystem='general'): void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::TODO;
 		}
@@ -670,7 +678,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addDebug($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addDebug($obj_or_array = null, $timestamp = null, string $subSystem='general') : void{
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::DEBUG;
 		}
@@ -682,7 +690,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addInfo($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addInfo($obj_or_array = null, $timestamp = null, string $subSystem='general') :void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::INFO;
 		}
@@ -694,7 +702,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addNotice($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addNotice($obj_or_array = null, $timestamp = null, string $subSystem='general') :void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::NOTICE;
 		}
@@ -706,7 +714,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addWarning($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addWarning($obj_or_array = null, $timestamp = null, string $subSystem='general'):void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::WARNING;
 		}
@@ -718,7 +726,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addError($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addError($obj_or_array = null, $timestamp = null, string $subSystem='general') :void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ERROR;
 		}
@@ -742,7 +750,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addAlert($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addAlert($obj_or_array = null, $timestamp = null, string $subSystem='general') : void{
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ALERT;
 		}
@@ -754,7 +762,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addEmergency($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addEmergency($obj_or_array = null, $timestamp = null, string $subSystem='general') : void{
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::EMERGENCY;
 		}
@@ -765,7 +773,7 @@ class MessageLog {
 	 * are there any messages in the queue
 	 * @return type
 	 */
-	public function hasMessages() {
+	public function hasMessages() : bool {
 		return (self::$messageQueue->count() > 0);
 	}
 
@@ -773,7 +781,7 @@ class MessageLog {
 	 * how many messages are still in the queue
 	 * @return type
 	 */
-	public function stackSize() {
+	public function stackSize() : int {
 		return self::$messageQueue->count();
 	}
 
@@ -809,7 +817,7 @@ class MessageLog {
 	 * show all the messages on the stack (effectivey emptying the stack
 	 * @param type $messageText_after_each_line
 	 */
-	public function showAllMessages($messageText_after_each_line = '<br>') {
+	public function showAllMessages($messageText_after_each_line = '<br>') : void {
 		while ($temp = $this->showNextMessage()) {
 			if (!empty($messageText_after_each_line)) {
 				echo $messageText_after_each_line;
@@ -822,7 +830,7 @@ class MessageLog {
 	 *  and do it in a pretty box :-)
 	 * @param type $includeFieldSet
 	 */
-	public function showAllMessagesInBox($includeFieldSet = true) {
+	public function showAllMessagesInBox($includeFieldSet = true) : void{
 		if ($includeFieldSet) {
 			?><fieldset class="msg_fieldset"><Legend id="message_box_show_all_in_box" class="msg_legend">Messages</legend><?php
 				}
@@ -836,14 +844,18 @@ class MessageLog {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return void
+	 */
 	public  function TestAllLevels() : void {
 		$this->setSubSystemLoggingLevel('TESTER_messages',-1);
 		foreach(  MessageBase::$levels as $key => $value){
 
-			echo 'Key= ' , $key, ' value=' , $value;
-			echo '<BR>';
+			//echo 'Key= ' , $key, ' value=' , $value;
+			//echo '<BR>';
 
-			$this->add( 'This is a test of: ' . $value, null, $key, 'TESTER_messages');
+			$this->add( 'This is a test of: ' . $value . ' (' . $key . ')', null, $key, 'TESTER_messages');
 			echo '<BR>';
 		}
 		$this->showAllMessagesInBox();

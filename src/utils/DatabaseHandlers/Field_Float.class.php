@@ -118,7 +118,7 @@ Class Field_Float extends Field {
 	 *
 	 * @return type
 	 */
-	public function givePDOType() {
+	public function givePDOType() : int {
 		if (empty(self::TYPE)) {
 			return \PDO::PARAM_STR;
 		} else {
