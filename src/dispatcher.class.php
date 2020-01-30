@@ -276,7 +276,7 @@ class Dispatcher {
 //			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
 //		}
 
-		$response = $this->doExecute('control',
+		$response = $this->doExecute(//'control',
 									(empty($exploded[0]) ? null : $exploded[0]),
 									(empty($exploded[1]) ? null : $exploded[1]),
 									(empty($exploded[2]) ? '' : $exploded[2]),
@@ -302,7 +302,7 @@ class Dispatcher {
 	 * @param mixed $passedPayload
 	 * @return Response class
 	 */
-	private function doExecute(string $dir,
+	private function doExecute(//string $dir,
 							?string $class,
 							?string $task,
 							?string $action = '',
@@ -312,24 +312,29 @@ class Dispatcher {
 
 
 
-		if (substr($class, -10) == 'Controller') {
-			$process = substr($class, 0, -10);
-		} else {
+//		if (substr($class, -10) == 'Controller') {
+//			$process = substr($class, 0, -10);
+//		} else {
 			$process = $class;
-		}
+//		}
 		if ( empty($task)) {
 			$task = 'doWork';            /* the default task */
 		}
 		if ( empty($class)){
 			throw new \Exception ( 'noname class can not be instantiized');
 		}
-		$class = '\\php_base\\' . $dir . '\\' . $class;
+		//$class = '\\php_base\\' . $dir . '\\' . $class;
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addTODO('will have to change this from php_base:' . $class);
 
 		try {
+
+			$class = utils::checkClass($class);
+
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
 			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo_2('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
+
+			$this->addToHistory($process, $task, $action, $payload );
 
 			$instance = new $class($process, $task, $action, $payload); //instanciate the process  and pass it the payload
 
@@ -342,6 +347,20 @@ class Dispatcher {
 		}
 		return $r;
 	}
+
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	protected function addToHistory( $process, $task = '', $action='', $payload=''){
+
+		if ( \session_status() == PHP_SESSION_ACTIVE){
+			$_SESSION['History'][] = Utils::makePTAPpretty( $process, $task, $action, $payload);
+		}
+	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * buildItem creates a PTAP item from the parameters
@@ -367,7 +386,8 @@ class Dispatcher {
 							  $passedpayload = null
 							): string {
 
-		$process = (!empty($passedprocess)) ? $passedprocess . 'Controller' : '';
+		//$process = (!empty($passedprocess)) ? $passedprocess . 'Controller' : '';
+		$process = (!empty($passedprocess)) ? $passedprocess  : '';
 		$task =    (!empty($passedtask))    ? '.' . $passedtask : '.';
 		$action =  (!empty($passedaction))  ? '.' . $passedaction : '.';
 
@@ -428,7 +448,7 @@ class Dispatcher {
 	 * @param $item the item to add to the queue
 	 */
 	protected function addItemToQueue($q, $item): void {
-		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('item ' . print_r($item, true));
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_9('item ' . print_r($item, true));
 
 		$which = $this->identifyWhichQueue( $q);
 		switch ($which){
@@ -443,6 +463,7 @@ class Dispatcher {
 				$q->enqueue($item);
 				break;
 		}
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------

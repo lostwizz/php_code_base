@@ -74,6 +74,60 @@ abstract Class Utils {
 	}
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $class
+	 * @return type
+	 */
+	public static function checkClass($class) : ?string{
+
+		$prefixes= ['php_base\Control', 'php_base\Data', 'php_base\View', 'php_base\Model', 'php_base\Utils' ,'php_base\Utils\DatabaseHandlers'  ];
+		foreach( $prefixes as $prefix){
+			if ( self::tryNameSpaceClass($prefix, $class)) {
+				return $prefix . '\\' . $class;
+			}
+		}
+
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addAlert( 'class doesnt exist: ' . $class);
+		dump::dump($class, 'class doesnt exist');
+		dump::dumpclasses();
+		return null;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $prefix
+	 * @param type $class
+	 * @return type
+	 */
+	protected static function tryNameSpaceClass($prefix, $class){
+		//echo '--Trying: ', $prefix . '\\' .  $class, '<BR>';
+		return (class_exists($prefix . '\\' .  $class, true)) ;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public static function makePTAPpretty($process, $task = '', $action = '', $payload = '') {
+
+		$r = $process
+				. ' . '
+				. $task
+				. ' . '
+				. $action
+				. '  . '
+		;
+		if (!empty($payload)) {
+			$data = @unserialize($payload);
+			if ($data === false) {
+				$r .= @serialize($payload);
+			} else {
+				$r .= $payload;
+			}
+		}
+		$r .= "<==";
+		return $r;
+	}
 
 
 

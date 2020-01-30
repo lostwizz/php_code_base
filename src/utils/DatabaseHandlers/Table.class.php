@@ -320,7 +320,9 @@ class Table {
 				$s = HTML::TD()
 						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_edit.png', null, ['width' =>18])
 						. HTML::TDend();
-			}
+//Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_2( serialize($s));
+dump::dump($s);
+				}
 		}
 		return $s;
 	}

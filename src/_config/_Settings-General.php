@@ -115,7 +115,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 		// Note:  look in /utils/Setup_Logging for the initialization of the loggers at that level
 	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING', LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_ALL ); // LVL_NORMAL);
 
 	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);

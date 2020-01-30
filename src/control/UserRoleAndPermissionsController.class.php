@@ -134,6 +134,16 @@ Class UserRoleAndPermissionsController {
 		echo 'should never get here';
 	}
 
+
+
+	public function readAllData($dispatcher) : Response {
+		echo '!!!!!!!!!!!!!!!!!!!!!!!!!!! do something here';
+	dump::dump($this->action);
+		dump::dump($this);
+		return Response::NoError();
+	}
+
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $action

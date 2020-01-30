@@ -56,7 +56,7 @@ class dbaController extends Controller {
 		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
-//dump::dumpLong($this);
+dump::dumpLong($this);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -138,8 +138,9 @@ class dbaController extends Controller {
 			return Response::PermissionsError('Required DBA - Edit UserInfoData');
 		}
 
-//		$this->payload['Table'] = 'UserInfoData';
-		$editorSession = new SimpleTableEditor('\php_base\data\UserInfoData', $this->process, $this->task, $this->action, $this->payload);
+		$this->payload['Table'] = '\php_base\data\UserInfoData';
+		//$editorSession = new SimpleTableEditor('\php_base\data\UserInfoData', $this->process, $this->task, $this->action, $this->payload);
+		$dispatcher->addProcess( 'SimpleTableEditorController', 'runTableDisplayAndEdit', $this->action, $this->payload );
 		return Response::NoError();
 	}
 
@@ -151,8 +152,16 @@ class dbaController extends Controller {
 			return Response::PermissionsError('Required DBA - Edit Roles');
 		}
 
-		//$this->payload['Table'] = 'UserRoleData';
-		$editorSession = new SimpleTableEditor('\php_base\data\UserRoleData', $this->process, $this->task, $this->action, $this->payload);
+		$this->payload['Table'] = 'UserRoleData';
+
+		//$editorSession = new SimpleTableEditor('\php_base\data\UserRoleData', $this->process, $this->task, $this->action, $this->payload);
+
+//dump::dump($this);
+
+	//	$dispatcher->addProcess( 'UserRoleAndPermissionsController', 'readAllData', 'UserRoleData', $this->payload );
+		$dispatcher->addProcess( 'SimpleTableEditorController', 'runTableDisplayAndEdit', $this->action, $this->payload );
+
+//dump::dump($dispatcher->dumpQueue());
 		return Response::NoError();
 	}
 
@@ -164,8 +173,10 @@ class dbaController extends Controller {
 			return Response::PermissionsError('Required DBA - Edit Attributes');
 		}
 
-		//$this->payload['Table'] = 'UserAttributeData';
-		$editorSession = new SimpleTableEditor('\php_base\data\UserAttributeData', $this->process, $this->task, $this->action, $this->payload);
+		$this->payload['Table'] = '\php_base\data\UserAttributeData';
+		//$editorSession = new SimpleTableEditor('\php_base\data\UserAttributeData', $this->process, $this->task, $this->action, $this->payload);
+		$dispatcher->addProcess( 'SimpleTableEditor', 'runTableDisplayAndEdit', $this->action, $this->payload );
+
 		return Response::NoError();
 	}
 
@@ -199,50 +210,6 @@ dump::dump('at two');
 
 	//Settings::GetRuntimeObject('POSTqueue')->push('dbaController.four');
 		//Settings::GetRuntimeObject('Dispatcher')->addPOSTProcess('dba', 'four');
-
-
-///////		$loggy = new \php_base\Utils\SubSystemMessage('SimpleTableEditor', \php_base\Utils\MessageBase::DEBUG);
-
-//dump::dump($loggy);
-		//Settings::SetRuntime ('DBA_DEBUGGING', $loggy);
-
-
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug_1('this is debug1 example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug_2('this is debug2 example');
-
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo_2('this is info2 example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo_3('this is info3 example');
-
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addNotice_2('this is notice2 example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addNotice_3('this is notice3 example');
-
-
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addEmergency('this is emergency example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addAlert('this is alert example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addCritical('this is critical example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addError('this is error example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addWarning('this is warning example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addNotice('this is notice example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo('this is info example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addTodo('this is todo example');
-	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug('this is debug example');
-
-
-//
-//		$loggy2 = new \php_base\Utils\SubSystemMessage('SimpleTableEditor', \php_base\Utils\MessageBase::NOTICE);
-//
-////dump::dump($loggy2);
-//		Settings::SetRuntime ('DBA_DEBUGGING', $loggy2);
-//
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addEmergency('this is emergency example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addAlert('this is alert example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addCritical('this is critical example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addError('this is error example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addWarning('this is warning example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addNotice('this is notice example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addInfo('this is info example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addTodo('this is todo example');
-//	Settings::GetRunTimeObject('DBA_DEBUGGING')->addDebug('this is debug example');
 
 
 		return Response::NoError();

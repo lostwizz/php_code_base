@@ -187,6 +187,8 @@ dump::dump($data);
 				CACHE::add(Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll', $data);
 			}
 		}
+
+dump::dumpShort($data);
 		return $data;
 	}
 

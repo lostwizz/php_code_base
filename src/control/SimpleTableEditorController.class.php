@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace php_base\Utils\DatabaseHandlers;
+namespace php_base\Control;
 
 use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
 use \php_base\Resolver;
@@ -23,7 +23,7 @@ use \php_base\Utils\Utils;
  *
  * @author merrem
  */
-class SimpleTableEditor {
+class SimpleTableEditorController {
 
 	protected $tableDataObj;
 	public $key = '';
@@ -41,11 +41,23 @@ class SimpleTableEditor {
 	 * @param string $action
 	 * @param array $payload
 	 */
-	public function __construct( $dataTable, string $process='', string $task='', string $action ='', ?array $payload = null) {
-		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@construct: ' . $dataTable . ' proc=' . $process . ' task=' . $task . ' act=' . $action);
+	public function __construct( string $process='', string $task='', string $action ='', ?array $payload = null) {
 
-		$this->tableDataObj = new $dataTable( $this);
-//dump::dump($this->tableDataObj);
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@construct:  proc=' . $process . ' task=' . $task . ' act=' . $action);
+
+		if ( ! empty($payload['Table']) ){
+			$dataTable = $payload['Table'];
+		} else if ( !empty($action)) {
+			$dataTable = $action;
+		} else {
+			dump::dump($this);
+		}
+
+
+		$newDataTable = Utils::checkClass( $dataTable);
+
+		$this->tableDataObj = new $newDataTable( $this);
+dump::dump($this->tableDataObj);
 
 		$this->process = $process;
 		$this->task = $task;
@@ -61,7 +73,12 @@ class SimpleTableEditor {
 	 * @return Response
 	 */
 	public function runTableDisplayAndEdit($isEditAllowed = false): Response { ///$tableName = 'php_base\data\UserInfoData') {
-		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . $isEditAllowed ? ' Editable' : 'not Editable');
+//dump::dump($this,'rund and e',  array('Show BackTrace Num Lines' => 10,'Beautify_BackgroundColor' => '#FFAA55') );
+
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit:');
+
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . ($isEditAllowed ? ' Editable' : 'not Editable'));
+
 		$this->handleVarsPassedToSimpleTableEditor();
 
 		Settings::GetRunTimeObject('SIMPLE_DEBUGGING')->addDebug_5('pta =' . $this->process . '.' . $this->task . '.' . $this->action . '<');
@@ -78,11 +95,16 @@ class SimpleTableEditor {
 		$method = str_replace(' ', '_', $this->action);
 		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addDebug_5('method =' . $method);
 
-		if (method_exists($this, $method)) {
-			$r = $this->$method();
-			return $r;
+		if ( empty( $method)){
+			return Response::GenericWarning();
 		} else {
-			return Response::GenericError();
+			if (method_exists($this, $method)) {
+
+				$r = $this->$method();
+				return $r;
+			} else {
+				return Response::GenericError();
+			}
 		}
 	}
 
@@ -100,16 +122,21 @@ class SimpleTableEditor {
 		$route= '';
 		if (!empty($this->payload)) {
 			foreach ($this->payload as $key => $value) {
-				Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('handleVars: key=' . $key . ' Value=' . Utils::array_display_compactor($value));
+				Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('handleVars: key=' . $key . ' Value=' . \print_r($value, true) ); //Utils::array_display_compactor($value));
 
-				if (\strpos($key, 'Key') !== false) {
+				if ( strpos($key, 'RowKey')!== false and !empty( $value)){
+					$this->payload['RowKey'] = $value;
+					$route = $this->router( $key);
+					$this->action = $route;
+					unset($this->payload[$key]);  // get rid of the encoded thing -- dont need it cluttering things up
+					break;
+				}
+				if (\strpos($key, 'Key') !== false ) {
 					$exploded = \explode('=>', $key);
-					Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('key(id)=' . $exploded[1] . '  action=' . $exploded[0]);
+					Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice($exploded); //'key(id)=' . $exploded[1] . '  action=' . $exploded[0]);
 
 					$the_key = $exploded[1];
 					$this->payload['RowKey'] = $the_key;
-
-
 					$route = $this->router( $exploded[0]);
 					$this->action = $route;
 					unset($this->payload[$key]);  // get rid of the encoded thing -- dont need it cluttering things up
@@ -130,6 +157,8 @@ class SimpleTableEditor {
 
 	/** ----------------------------------------------------------------------------------------------- */
 	protected function router( ?string $which) : string{
+
+
 		$which = str_replace(' ', '_', $which);
 		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@router which:' . $which);
 		switch ($which) {
@@ -143,6 +172,8 @@ class SimpleTableEditor {
 				return 'doAddRow';
 			case 'Save_Edit':
 				return 'doSave_Edit';
+			case 'doDisplayTableForEditing':
+				return '';
 			default:
 				return 'doDisplayTableForEditing';
 		}
@@ -154,6 +185,7 @@ class SimpleTableEditor {
 		echo HTML::FormOpen('tableFun');
 		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
 		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+		echo HTML::Hidden(Resolver::REQUEST_ACTION, 'UserRoleData');
 
 		$className = $this->tableDataObj;
 		$d = $className->readAllData();
@@ -351,5 +383,9 @@ class SimpleTableEditor {
 
 		return;
 	}
+
+
+
+
 
 }

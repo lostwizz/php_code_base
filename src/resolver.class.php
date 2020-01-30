@@ -284,7 +284,7 @@ class Resolver {
 	 * @see Dispatcher and UserRoleAndPermission classes
 	 */
 	protected function addSetupUserRoleAndPermissions($payload): void {
-		$process = 'UserRoleAndPermissions';
+		$process = 'UserRoleAndPermissionsController';
 		$task = 'Setup';
 		$action = null;
 		//$payload = $payload;
@@ -310,7 +310,7 @@ class Resolver {
 	protected function addSetupAuthenticateCheck(): void {
 		$postVars = filter_input_array(\INPUT_POST, \FILTER_SANITIZE_STRING);
 
-		$process = 'Authenticate';
+		$process = 'AuthenticateController';
 		$task = 'checkAuthentication';
 		$action =null;
 
@@ -334,7 +334,7 @@ class Resolver {
 	 * @return void
 	 */
 	public function addMenu($payload = null ): void {
-		$process = 'Menu';
+		$process = 'MenuController';
 		$task = 'doWork';
 		$action = null;
 
@@ -351,7 +351,7 @@ class Resolver {
 	 * @see Dispatcher HeaderController
 	 */
 	protected function addHeader(): void {
-		$process = 'Header';
+		$process = 'HeaderController';
 		$task = 'doWork';
 		$action = null;
 		$payload = null;
@@ -370,7 +370,7 @@ class Resolver {
 
 	 */
 	protected function addFooter(): void {
-		$process = 'Footer';
+		$process = 'FooterController';
 		$task = 'doWork';
 		$action = null;
 		$payload = null;
