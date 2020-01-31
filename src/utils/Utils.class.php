@@ -115,7 +115,7 @@ abstract Class Utils {
 				. $task
 				. ' . '
 				. $action
-				. '  . '
+				. ' . '
 		;
 		if (!empty($payload)) {
 			$data = @unserialize($payload);

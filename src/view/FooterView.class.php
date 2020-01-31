@@ -62,7 +62,7 @@ class FooterView extends View {
 		echo '<footer>' . PHP_EOL;
 
 		echo HTML::BR(5);
-
+		dump::dump($_SESSION['History']);
 		echo '<div class="footer_hr ">' . PHP_EOL;
 		echo HTML::HR();
 		echo '</div>' . PHP_EOL;

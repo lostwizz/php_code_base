@@ -56,7 +56,7 @@ class dbaController extends Controller {
 		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
-dump::dumpLong($this);
+dump::dumpLong($this, 'constructor');
 	}
 
 	/** -----------------------------------------------------------------------------------------------

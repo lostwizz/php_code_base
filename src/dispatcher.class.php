@@ -47,7 +47,7 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
  *  Dispatcher executes items in the queue.
  *
  * Description.
- *     3 queues - pre dispatcher post - executes and checks responses
+ *     3 queues - pre, dispatcher, post - executes and checks responses
  *
  * @since 0.0.2
  */
@@ -332,7 +332,7 @@ class Dispatcher {
 
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 
-			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo_2('dispatcher do execute - new ' . $class . '->' . $task . ' action=' . $action . ' payload=' . $passedPayload);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo_2('dispatcher do execute - new ' .  Utils::makePTAPpretty( $class, $task, $action, $passedPayload));
 
 			$this->addToHistory($process, $task, $action, $payload );
 
@@ -393,9 +393,9 @@ class Dispatcher {
 
 		$payload = (!empty($passedpayload)) ? '.' . $this->processPayloadForItem($passedpayload) : '';
 
-		$item = $process . $task . $action . $payload;
-		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_3($item);
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_3( Utils::makePTAPpretty( $process, $task, $action, $payload));
 
+		$item = $process . $task . $action . $payload;
 		return $item;
 	}
 
