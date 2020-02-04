@@ -34,6 +34,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\HTML\HTML as HTML;
 
+use \php_base\Utils\History as History;
 
 /** * **********************************************************************************************
  *  show all the stuff at the bottom of the page
@@ -62,7 +63,7 @@ class FooterView extends View {
 		echo '<footer>' . PHP_EOL;
 
 		echo HTML::BR(5);
-		dump::dump($_SESSION['History']);
+
 		echo '<div class="footer_hr ">' . PHP_EOL;
 		echo HTML::HR();
 		echo '</div>' . PHP_EOL;
@@ -79,6 +80,7 @@ class FooterView extends View {
 		if ( ! Settings::GetPublic('Show MessageLog Adds')) {
 			Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!
 		}
+		History::show();
 		echo '</footer>' . PHP_EOL;
 		echo '</body>' . PHP_EOL;
 

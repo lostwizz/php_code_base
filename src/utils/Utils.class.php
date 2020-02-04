@@ -75,6 +75,10 @@ abstract Class Utils {
 
 
 	/** -----------------------------------------------------------------------------------------------
+	 * makes sure we can find the class file for the a lookup
+	 *     - should be in one of Control, Data, View, Model, Utils or DatabaseHandlers
+	 *  - usually need when using a table - may cal controller model or direct to the data class
+	 *     this function tries to figure out where it actually is for the instaniation     (i.e. "new $x($y)" -- tries to fully qualify $x
 	 *
 	 * @param type $class
 	 * @return type
@@ -264,6 +268,27 @@ abstract Class Utils {
 	}
 
 
+		/** -----------------------------------------------------------------------------------------------
+	 * set the timestamp - it does not have to be a time it can be any string
+	 *      - if timestamp it must be formatted properly before getting here
+	 * @param string $timeStamp
+	 */
+	public static function setTimeStamp(string $timeStamp = null) : string {
+		if (defined("IS_PHPUNIT_TESTING")) {
+			$this->timeStamp = '23:55:30';
+			if (empty($timeStamp)) {
+				return '23:55:30';
+			} else {
+				return $timeStamp;
+			}
+		} else {
+			if (empty($timeStamp)) {
+				return  date('g:i:s'); // current timestamp
+			} else {
+				return $timeStamp;
+			}
+		}
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

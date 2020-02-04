@@ -8,19 +8,19 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 .msg_fieldset {
 	color: DarkCyan;   /* Olive */
 	background:  LightGray;    /*Gray;  /* LightGray; */
-	  padding:10px;
-	    border: 1px dashed  green;  /* solid  */
+	padding:10px;
+	border: 1px dashed  green;  /* solid  */
     -moz-border-radius:8px;
     -webkit-border-radius:8px;
     border-radius:8px;
-	}
+}
 
 .msg_legend {
 	color: Olive;
-	 margin-bottom:0px;
-  margin-left:16px;
-  background: White;
-	}
+	margin-bottom:0px;
+	margin-left:16px;
+	background: White;
+}
 
 
 .msg_showLines{
@@ -35,55 +35,55 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	color: black;
 	background: coral;
 	font-size: small;
-	}
+}
 
 .msg_style_DEBUG_1 {
 	color: cyan;
 	background: black;
 	font-size: small;
-	}
+}
 
 .msg_style_DEBUG_2 {
 	color: green;
 	background: black;
 	font-size: small;
-	}
+}
 
 .msg_style_DEBUG_3 {
 	color: lightsalmon;
 	background: black;
 	font-size: small;
-	}
+}
 .msg_style_DEBUG_4 {
 	color: mediumorchid;
 	background: black;
 	/*font-size: small;*/
-	}
+}
 .msg_style_DEBUG_5 {
 	color: lightgreen;
 	background: black;
 	/*font-size: small;*/
-	}
+}
 .msg_style_DEBUG_6 {
 	color: yellow;
 	background: black;
 	font-size: small;
-	}
+}
 .msg_style_DEBUG_7 {
 	color: green;
 	background: black;
 	font-size: small;
-	}
+}
 .msg_style_DEBUG_8 {
 	color: green;
 	background: black;
 	font-size: small;
-	}
+}
 .msg_style_DEBUG_9 {
 	color: green;
 	background: black;
 	font-size: small;
-	}
+}
 
 
 
@@ -92,53 +92,53 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	color: coral;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 
 .msg_style_INFO_1 {
 	color: papayawhip;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_2 {
 	color: #F1F227;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_3 {
 	color: lightsalmon;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_4 {
 	color: purple;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_5 {
 	color: lightgreen;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_6 {
 	color: yellow;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_7 {
 	color: green;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_8 {
 	color: cyan;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 .msg_style_INFO_9 {
 	color: #F1F227;  /*#D3D3D3;*/
 	background: grey;
 	border-radius: 4px;
-	}
+}
 
 .msg_style_NOTICE {
 	color: #84308F;
@@ -222,13 +222,13 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 }
 
 .msg_style_WARNING {
-	 color: #914f15;  /*orange; */
+	color: #914f15;  /*orange; */
 	background-color: #A6EAF9;
 	border-radius: 4px;
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	 }
+}
 
 .msg_style_ERROR {
 	color: red;
@@ -237,7 +237,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-width: 1px;
 	border-color: black;
 	font-weight: bolder;
-	}
+}
 
 .msg_style_CRITICAL {
 	color: #FFD700;
@@ -246,7 +246,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	}
+}
 
 .msg_style_ALERT {
 	color: DarkRed;
@@ -255,7 +255,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	}
+}
 
 .msg_style_EMERGENCY {
 	color: #F1F227;   /* YellowGreen;*/
@@ -264,7 +264,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	}
+}
 
 .msg_style_TODO {
 	color: #AA5535; /* Orange */
@@ -274,7 +274,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-width: 1px;
 	border-color: black;
 	font-weight: bolder;
-	}
+}
 
 
 
@@ -285,7 +285,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	}
+}
 
 .msg_style_default {
 	color: black;
@@ -293,7 +293,7 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	}
+}
 
 
 .msg_style_fn {

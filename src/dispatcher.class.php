@@ -36,6 +36,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Utils as Utils;
+use \php_base\Utils\History as History;
 use \php_base\Utils\Cache as CACHE;
 use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
@@ -356,7 +357,8 @@ class Dispatcher {
 	protected function addToHistory( $process, $task = '', $action='', $payload=''){
 
 		if ( \session_status() == PHP_SESSION_ACTIVE){
-			$_SESSION['History'][] = Utils::makePTAPpretty( $process, $task, $action, $payload);
+			//$_SESSION['History'][] = Utils::makePTAPpretty( $process, $task, $action, $payload);
+			History::add(Utils::makePTAPpretty( $process, $task, $action, $payload));
 		}
 	}
 

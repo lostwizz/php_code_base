@@ -23,7 +23,7 @@ body {
 	border: 1px solid navy;
 	width: 100%;
 	height: 210px;
-	}
+}
 
 .header_td_app_name {
 	width: 50%;
@@ -33,7 +33,7 @@ body {
 	background-color: #A6EAF9;
 	background-size: cover;
 	text-align: center;
-	}
+}
 
 .header_td_middle_box {
 	width: 30%;
@@ -46,7 +46,7 @@ body {
 	background-position: right top;
 	width: 280px;
 
-	}
+}
 
 .pre_version {
 	text-align: right;
@@ -57,7 +57,7 @@ body {
 .header_hr {
 	color: #00FF00;
 	height: 1px;
-	}
+}
 .footer_hr {
 	color: #00FF00;
 	border: 0;
@@ -65,13 +65,13 @@ body {
 	height: 7px;
 	width: 100%;
 	text-align: left;
-	}
+}
 
 .footer_username {
-		text-align: right;
-		color: magenta;
-		font-weight: bolder;
-	}
+	text-align: right;
+	color: magenta;
+	font-weight: bolder;
+}
 
 .responseError{
 	background-color: red;
@@ -89,260 +89,260 @@ body {
 .span_error {
 	background-color: red;
 	color: white;
-	}
+}
 
 
 .misc_small_text {
 	font-size: 8pt;
-	}
+}
 
 .logon_bar_table {
 	border: 1px solid navy;
 	width: 100%;
-	}
+}
 .logon_bar_tr {
-	}
+}
 
 .logon_bar_td_username {
 	width: 20%;
-	}
+}
 .logon_bar_username_detail {
 	color: DarkGreen;
 	font-weight: bold;
-	}
+}
 .logon_bar_td_roll {
 	width: 20%;
-	}
+}
 .logon_bar_role_detail {
 	color: DarkGreen;
 	font-weight: bold;
-	}
+}
 .logon_bar_td {
 	width: 20%;
-	}
+}
 
 
 .logon_screen {
 	text-align: center;
-	}
+}
 
 .logon_table {
 	border: 1px solid navy;
-	}
+}
 .logon_tr {
 	border: 1px solid navy;
-	}
+}
 .logon_td_prompt {
 	text-align: left;
 	border: 1px solid navy;
-	}
+}
 .logon_td_input {
 	text-align: left;
 	border: 1px solid navy;
-	}
+}
 .logon_username_input {
 	width: 200pt;
-	}
+}
 .logon_password_input {
 	width: 200pt;	}
 .logon_encryption_input {
 	width: 200pt;
-	}
+}
 .logon_submit_button {
-	}
+}
 .logon_reset_button {
-	}
+}
 
 
 .table_page_count {
 	width: 100%;
-	}
+}
 .tr_page_count {
 	background-color: #DFFFE0;
-	}
+}
 .td_page_count {
-	}
+}
 
 .table_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_voters_list_even {
 	background-color: #C0C0C0;
-	}
+}
 .tr_voters_list_odd {
 	background-color: #E5E5E5;
-	}
+}
 
 .table_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .tr_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_bulk_entry_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_bulk_entry_common_title {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common_value {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 
 
 .table_bulk_entry {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_bulk_entry {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_error {
 	border: 1px solid navy;
-	}
+}
 
 .bulk_entry_error {
 	color: red;
 	font-weight: bold;
 	background-color: yellow;
-	}
+}
 
 
 .table_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .tr_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_add_voter_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_add_voter_common_title {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common_value {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 
 
 .table_add_voter_entry {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_add_voter_entry {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_entry {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_error {
 	border: 1px solid navy;
-	}
+}
 
 .add_voter_error {
 	color: red;
 	font-weight: bold;
 	background-color: yellow;
-	}
+}
 
 
 .table_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .tr_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .th_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .td_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 
 
 .table_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .tr_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .th_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .td_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 
 
 .menu_fieldset {
-	}
+}
 
 .menu_legend {
-	}
+}
 
 .menu_table {
 	border: 1px solid navy;
 	width: "100%";
 	background-color:#8080C0
 
-	/*background-color:#FF0000
-	*/
-	}
+		/*background-color:#FF0000
+		*/
+}
 
 .menu_tr {
 
-	}
+}
 
 .menu_td {
 	border: 1px solid navy;
 	text-align: center;
-	}
+}
 
 .menu_payload3_text {
 	color: white;
-	}
+}
 
 .menu_buttons {
-	}
+}
 .header_h1 {
 	color: black;
 	font-family: Times, TimesNR,"New Century Schoolbook", serif, Helvetica, Geneva, Arial,SunSans-Regular, sans-serif;
 	/*background-color: #A6EAF9;*/
 	text-align: center;
 	height: 20px;
-	}
+}
 
 .header_td_app_name {
-	}
+}
 
 .header_td_version {
 	text-align: right;
 	text: cyan;
 	font-size: 8pt;
-	}
+}
 .header_hr {
 	color: #00FF00;
 	height: 1px;
-	}
+}
 
 .footer_hr {
 	color: #00FF00;
@@ -351,268 +351,268 @@ body {
 	height: 7px;
 	width: 100%;
 	text-align: left;
-	}
+}
 
 .span_error {
 	background-color: red;
 	color: white;
-	}
+}
 
 
 .misc_small_text {
 	font-size: 8pt;
-	}
+}
 
 .logon_bar_table {
 	border: 1px solid navy;
 	width: 100%;
-	}
+}
 .logon_bar_tr {
-	}
+}
 
 .logon_bar_td_username {
 	width: 20%;
-	}
+}
 .logon_bar_username_detail {
 	color: DarkGreen;
 	font-weight: bold;
-	}
+}
 .logon_bar_td_roll {
 	width: 20%;
-	}
+}
 .logon_bar_role_detail {
 	color: DarkGreen;
 	font-weight: bold;
-	}
+}
 .logon_bar_td {
 	width: 20%;
-	}
+}
 
 
 .logon_screen {
 	text-align: center;
-	}
+}
 
 .logon_table {
 	border: 1px solid navy;
-	}
+}
 .logon_tr {
 	border: 1px solid navy;
-	}
+}
 .logon_td_prompt {
 	text-align: left;
 	border: 1px solid navy;
-	}
+}
 .logon_td_input {
 	text-align: left;
 	border: 1px solid navy;
-	}
+}
 .logon_username_input {
 	width: 200pt;
-	}
+}
 .logon_password_input {
 	width: 200pt;	}
 .logon_encryption_input {
 	width: 200pt;
-	}
+}
 .logon_submit_button {
-	}
+}
 .logon_reset_button {
-	}
+}
 
 
 .table_page_count {
 	width: 100%;
-	}
+}
 .tr_page_count {
 	background-color: #DFFFE0;
-	}
+}
 .td_page_count {
-	}
+}
 
 .table_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_voters_list_even {
 	background-color: #C0C0C0;
-	}
+}
 .tr_voters_list_odd {
 	background-color: #E5E5E5;
-	}
+}
 
 .table_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .tr_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_bulk_entry_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_bulk_entry_common_title {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common_value {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 
 
 .table_bulk_entry {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_bulk_entry {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_error {
 	border: 1px solid navy;
-	}
+}
 
 .bulk_entry_error {
 	color: red;
 	font-weight: bold;
 	background-color: yellow;
-	}
+}
 
 
 .table_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .tr_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_add_voter_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_add_voter_common_title {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common_value {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 
 
 .table_add_voter_entry {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_add_voter_entry {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_entry {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_error {
 	border: 1px solid navy;
-	}
+}
 
 .add_voter_error {
 	color: red;
 	font-weight: bold;
 	background-color: yellow;
-	}
+}
 
 
 .table_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .tr_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .th_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .td_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 
 
 .table_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .tr_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .th_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .td_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 
 
 
 .menu_fieldset {
-	}
+}
 
 .menu_legend {
-	}
+}
 
 .menu_table {
 	border: 1px solid navy;
 	width: 100%;
 	background-color:#8080C0
 
-	/*background-color:#FF0000
-	*/
-	}
+		/*background-color:#FF0000
+		*/
+}
 
 .menu_tr {
 
-	}
+}
 
 .menu_td {
 	border: 1px solid navy;
 	text-align: center;
-	}
+}
 
 .menu_payload3_text {
 	color: white;
-	}
+}
 
 .menu_buttons {
-	}
+}
 .header_h1 {
 	color: black;
 	font-family: Times, TimesNR,"New Century Schoolbook", serif, Helvetica, Geneva, Arial,SunSans-Regular, sans-serif;
 	/*background-color: #A6EAF9;*/
 	text-align: center;
 	height: 20px;
-	}
+}
 
 
 
 header_td_app_name {
-	}
+}
 
 .header_td_version {
 	text-align: right;
 	text: cyan;
 	font-size: 8pt;
-	}
+}
 .header_hr {
 	color: #00FF00;
 	height: 1px;
-	}
+}
 /*
 .footer_hr {
 	color: #00FF00;
@@ -626,262 +626,286 @@ header_td_app_name {
 .span_error {
 	background-color: red;
 	color: white;
-	}
+}
 
 
 .misc_small_text {
 	font-size: 8pt;
-	}
+}
 
 .logon_bar_table {
 	border: 1px solid navy;
 	width: 100%;
-	}
+}
 .logon_bar_tr {
-	}
+}
 
 .logon_bar_td_username {
 	width: 20%;
-	}
+}
 .logon_bar_username_detail {
 	color: DarkGreen;
 	font-weight: bold;
-	}
+}
 .logon_bar_td_roll {
 	width: 20%;
-	}
+}
 .logon_bar_role_detail {
 	color: DarkGreen;
 	font-weight: bold;
-	}
+}
 .logon_bar_td {
 	width: 20%;
-	}
+}
 
 
 .logon_screen {
 	text-align: center;
-	}
+}
 
 .logon_table {
 	border: 1px solid navy;
-	}
+}
 .logon_tr {
 	border: 1px solid navy;
-	}
+}
 .logon_td_prompt {
 	text-align: left;
 	border: 1px solid navy;
-	}
+}
 .logon_td_input {
 	text-align: left;
 	border: 1px solid navy;
-	}
+}
 .logon_username_input {
 	width: 200pt;
-	}
+}
 .logon_password_input {
 	width: 200pt;	}
 .logon_encryption_input {
 	width: 200pt;
-	}
+}
 .logon_submit_button {
-	}
+}
 .logon_reset_button {
-	}
+}
 
 
 .table_page_count {
 	width: 100%;
-	}
+}
 .tr_page_count {
 	background-color: #DFFFE0;
-	}
+}
 .td_page_count {
-	}
+}
 
 .table_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_voters_list {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_voters_list_even {
 	background-color: #C0C0C0;
-	}
+}
 .tr_voters_list_odd {
 	background-color: #E5E5E5;
-	}
+}
 
 .table_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .tr_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_bulk_entry_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_bulk_entry_common_title {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_common_value {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 
 
 .table_bulk_entry {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_bulk_entry {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry {
 	border: 1px solid navy;
-	}
+}
 .td_bulk_entry_error {
 	border: 1px solid navy;
-	}
+}
 
 .bulk_entry_error {
 	color: red;
 	font-weight: bold;
 	background-color: yellow;
-	}
+}
 
 
 .table_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .tr_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_add_voter_common_error {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .td_add_voter_common_title {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_common_value {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 
 
 .table_add_voter_entry {
-/*	border: 1px solid navy;
-*/	}
+	/*	border: 1px solid navy;
+	*/	}
 .tr_add_voter_entry {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_entry {
 	border: 1px solid navy;
-	}
+}
 .td_add_voter_error {
 	border: 1px solid navy;
-	}
+}
 
 .add_voter_error {
 	color: red;
 	font-weight: bold;
 	background-color: yellow;
-	}
+}
 
 
 .table_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .tr_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .th_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 .td_role_maintenance_role {
 	border: 1px solid navy;
-	}
+}
 
 
 .table_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .tr_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .th_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 .td_role_maintenance_ptf {
 	border: 1px solid navy;
-	}
+}
 
 
 
 .menu_fieldset {
-	}
+}
 
 .menu_legend {
-	}
+}
 
 .menu_table {
 	border: 1px solid navy;
 	width: 100%;
 	background-color:#8080C0
 
-	/*background-color:#FF0000
-	*/
-	}
+		/*background-color:#FF0000
+		*/
+}
 
 .menu_tr {
 
-	}
+}
 
 .menu_td {
 	border: 1px solid navy;
 	text-align: center;
-	}
+}
 
 .menu_payload3_text {
 	color: white;
-	}
+}
 
 .menu_buttons {
-	}
+}
 
 
 
-	.UserStateDump{
-		color: blueviolet;
-		background-color: wheat;
-	}
+.UserStateDump{
+	color: blueviolet;
+	background-color: wheat;
+}
 
-	.SettingsDump {
-		background-color: mediumturquoise;
-		color: black;
-	}
-	.SettingsVar {
-		color: blueviolet;
-	}
-	.SettingsPublic {
-		color: brown;
-	}
-	.SettingsRunTime {
-		color: blue;
-	}
-	.SettingsProtected{
-		color: forestgreen;
-	}
+.SettingsDump {
+	background-color: mediumturquoise;
+	color: black;
+}
+.SettingsVar {
+	color: blueviolet;
+}
+.SettingsPublic {
+	color: brown;
+}
+.SettingsRunTime {
+	color: blue;
+}
+.SettingsProtected{
+	color: forestgreen;
+}
+
+.HistoryLine {
+	color: forestgreen;
+	font-size: 9px;
+	font-weight: normal;
+	background-color: wheat;
+}
+
+.HistoryFieldset {
+	color: DarkCyan;   /* Olive */
+	background:  LightGray;    /*Gray;  /* LightGray; */
+	padding:10px;
+	border: 1px dashed  green;  /* solid  */
+	-moz-border-radius:8px;
+	-webkit-border-radius:8px;
+	border-radius:8px;
+
+}
+.HistoryLegend {
+	color: Cyan;
+	margin-bottom:0px;
+	margin-left:16px;
+	background: White;
+}

@@ -131,9 +131,6 @@ abstract class MessageBase {
 		self::ALERT => 'ALERT',
 		self::EMERGENCY => 'EMERGENCY',
 	);
-	protected $text; // the messageText message
-	protected $timeStamp;  // time stamp for the message (for displaying the time)
-	protected $level; // level of the message (see defines at top)
 
 	/**
 	 * @var version number
@@ -167,8 +164,11 @@ abstract class MessageBase {
  *     - the base has the text and level
  */
 class AMessage extends MessageBase {
+	protected $text; // the messageText message
+	protected $timeStamp;  // time stamp for the message (for displaying the time)
+	protected $level; // level of the message (see defines at top)
 
-	public $timestamp;
+	//public $timestamp;
 
 	/**
 	 * @var version number
@@ -476,7 +476,7 @@ class MessageLog {
 	/**
 	 * @var version number
 	 */
-	private const VERSION = '0.3.0';
+	private const VERSION = '0.4.0';
 
 
 	/** -----------------------------------------------------------------------------------------------

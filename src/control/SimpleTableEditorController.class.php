@@ -45,6 +45,7 @@ class SimpleTableEditorController {
 
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@construct:  proc=' .  Utils::makePTAPpretty( $process, $task, $action, $payload));
 
+		//figure out which table we are working on
 		if ( ! empty($payload['Table']) ){
 			$dataTable = $payload['Table'];
 		} else if ( !empty($action)) {
@@ -110,7 +111,7 @@ class SimpleTableEditorController {
 	 * this attempts to figure out which row key is passed in the post/get ACTION when using the simple table editor class
 	 */
 	protected function handleVarsPassedToSimpleTableEditor(): void {
-		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@handleVarsPassedToSimplTableEditor - workout PTA');
+		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@handleVarsPassedToSimplTableEditor - workout the PTA');
 
 		$this->process = (!empty($this->process) ? $this->process : 'SimpleTableEditor');
 		$this->task = (!empty($this->task) ? $this->task : '');
@@ -140,9 +141,9 @@ class SimpleTableEditorController {
 				}
 			}
 			if (empty($route)){
-				Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice(' no key is set so routing with out it :' .  $this->action);
-				$this->action = $route;
-
+				Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice(' no row-key is set so routing with out it :' .  $this->action);
+				//$this->action = $route;
+				$this->action = null;
 			}
 		} else {
 				$this->payload = null;
@@ -152,7 +153,7 @@ class SimpleTableEditorController {
 
 	/** ----------------------------------------------------------------------------------------------- */
 	protected function router( ?string $which) : string{
-		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addDebug_5('@@router: '  . $which);
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addDebug_5('@@router: '  . $which . ' isnull' . (isnull($which) ? 'isnull': 'isnotnull'));
 
 		$which = str_replace(' ', '_', $which);
 		switch ($which) {

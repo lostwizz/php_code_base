@@ -88,6 +88,7 @@ class Table {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 * make the array of attribs into available from get/set
 	 *
 	 * @param array $attribs
 	 * @return void

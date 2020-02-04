@@ -73,7 +73,8 @@ if (!defined('DIR')) {
 function myAutoLoader($class) {
 	$r = doRunTheSearch($class);
 	if (!empty(AUTOLOAD_OUTPUT_LEVEL) and ( AUTOLOAD_OUTPUT_LEVEL == AUTOLOAD_LEVEL_DEBUG )) {
-		Dump::dumpClasses();
+		//Dump::dumpClasses();
+		echo '<pre>' , print_r(get_declared_classes()), '</pre>';
 	}
 	return $r;
 }
@@ -101,6 +102,8 @@ function doRunTheSearch($class) {
 	$base = strtolower($ex[count($ex) - 1]) . '.php';
 	if (runTheChecks($base))
 		return true;
+
+
 
 
 //fail silently
