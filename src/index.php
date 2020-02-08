@@ -107,6 +107,10 @@ include_once( \DIR . 'SetupSystemDetail.php');
 History::clear();
 //History::addMarker();
 
+
+
+//	dump::dump(Settings::GetRunTimeObject('MessageLog'));
+
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running
 $resolver = new Resolver();

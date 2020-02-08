@@ -317,10 +317,12 @@ class Table {
 			if ( $isHeaderRow ) {
 				$s = HTML::TD() . '[Edit]' . HTML::TDend() ;
 			} else {
-				$r =  '[EditKey=>' . $rowKey . ']';
-				$s = HTML::TD()
-						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_edit.png', null, ['width' =>18])
-						. HTML::TDend();
+				//$r =  '[EditKey=>' . $rowKey . ']';
+				$r = $rowKey ;
+				$s .= HTML::TD();
+				//$s .=  HTML::Image( Resolver::REQUEST_PAYLOAD.'[key=>'.  $r .']' ,  'static\images\b_edit.png', $r, ['width' =>18]);
+				$s .= '<button name="' . Resolver::REQUEST_PAYLOAD .'[edit][key]"  value="' . $r. '"><img src="static\images\b_edit.png" alt="edit"></button>';
+				$s .= HTML::TDend();
 //Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_2( serialize($s));
 dump::dump($s);
 				}

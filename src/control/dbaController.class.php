@@ -119,10 +119,9 @@ dump::dumpLong($this, 'constructor');
 	 */
 	public function ShowAllSettings($dispatcher): Response {
 
+			//dump::dump(Settings::GetRunTimeObject('MessageLog'));
+
 		echo Settings::dump(true,true,true);
-
-
-
 		return Response::NoError();
 	}
 
@@ -133,6 +132,9 @@ dump::dumpLong($this, 'constructor');
 	 */
 	public function Edit_UserInfoData( $dispatcher=null) : Response  {
 		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
+
+	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(\php_base\Utils\MessageLog::DEFAULT_SUBSYSTEM , LVL_Notice_5);
+
 
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit UserInfoData');

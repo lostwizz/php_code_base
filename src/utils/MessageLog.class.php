@@ -206,10 +206,16 @@ class AMessage extends MessageBase {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * dump the contents of this message
-	 * @return void
+	 * @return void or string
 	 */
-	public function dump() : void {
-		echo 'msg=', $this->text, ' time=', $this->timeStamp, ' level=', parent::$levels[$this->level], '<Br>';
+	public function dump( $returnString = false)  {
+		$s =  'msg='. $this->text. ' time='. $this->timeStamp. ' level='. parent::$levels[$this->level] .  '<Br>';
+
+		if ( $returnString){
+			return $s;
+		} else {
+			echo $s ;
+		}
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -414,7 +420,7 @@ class SubSystemMessage {
 
 
 	/** -----------------------------------------------------------------------------------------------**/
-	function __construct(string $passedSubSystem = 'general', int $lvl = AMessage::NOTICE){
+	function __construct(string $passedSubSystem = MessageLog::DEFAULT_SUBSYSTEM , int $lvl = AMessage::NOTICE){
 		$this->subSystem = $passedSubSystem;
 		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
 	}
@@ -468,8 +474,9 @@ class MessageLog {
 	/** the queue static so there is only one */
 	public static $messageQueue;
 
+	const DEFAULT_SUBSYSTEM = 'general';
 	public static $DEFAULTLoggingLevel = MessageBase::WARNING;
-	public static $LoggingLevels = array('general' =>  MessageBase::WARNING);
+	public static $LoggingLevels = array( self::DEFAULT_SUBSYSTEM =>  MessageBase::WARNING);
 
 
 
@@ -527,6 +534,22 @@ class MessageLog {
 		}
 		$s .=  print_r(self::$LoggingLevels,true);
 		return $s;
+	}
+
+
+
+
+
+	public function __debugInfo() {
+		//return [MessageLog::messageQueue, MessageLog::DEFAULTLoggingLevel, MessageLog::LoggingLevels];
+
+		return [
+			'Default_level' => MessageBase::$levels[MessageLog::$DEFAULTLoggingLevel],
+			'Default_level_raw' =>MessageLog::$DEFAULTLoggingLevel,
+			'default_subsystem' => self::DEFAULT_SUBSYSTEM,
+			'Logging_levels' => print_r(self::$LoggingLevels, true),
+			//'queue' => $this->giveUglyMessageQueue(),
+			];
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -634,7 +657,7 @@ class MessageLog {
 	 * @param type $timestamp
 	 * @param type $level
 	 */
-	public function add($obj_or_array = null, $timestamp = null, $level = null, string $subSystem='general')  :void{
+	public function add($obj_or_array = null, $timestamp = null, $level = null, string $subSystem = self::DEFAULT_SUBSYSTEM )  :void{
 
 		if ( ! self::isGoodLevelsAndSystem( $level, $subSystem)) {
 			return;  // if msg level is lower than setting then do nothing
@@ -666,7 +689,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addToDo($obj_or_array = null, $timestamp = null, string $subSystem='general'): void {
+	public function addToDo($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ): void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::TODO;
 		}
@@ -678,7 +701,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addDebug($obj_or_array = null, $timestamp = null, string $subSystem='general') : void{
+	public function addDebug($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) : void{
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::DEBUG;
 		}
@@ -690,7 +713,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addInfo($obj_or_array = null, $timestamp = null, string $subSystem='general') :void {
+	public function addInfo($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) :void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::INFO;
 		}
@@ -702,7 +725,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addNotice($obj_or_array = null, $timestamp = null, string $subSystem='general') :void {
+	public function addNotice($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) :void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::NOTICE;
 		}
@@ -714,7 +737,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addWarning($obj_or_array = null, $timestamp = null, string $subSystem='general'):void {
+	public function addWarning($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ):void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::WARNING;
 		}
@@ -726,7 +749,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addError($obj_or_array = null, $timestamp = null, string $subSystem='general') :void {
+	public function addError($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) :void {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ERROR;
 		}
@@ -738,7 +761,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addCritical($obj_or_array = null, $timestamp = null, string $subSystem='general') {
+	public function addCritical($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) {
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::CRITICAL;
 		}
@@ -750,7 +773,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addAlert($obj_or_array = null, $timestamp = null, string $subSystem='general') : void{
+	public function addAlert($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) : void{
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::ALERT;
 		}
@@ -762,7 +785,7 @@ class MessageLog {
 	 * @param type $obj_or_array
 	 * @param type $timestamp
 	 */
-	public function addEmergency($obj_or_array = null, $timestamp = null, string $subSystem='general') : void{
+	public function addEmergency($obj_or_array = null, $timestamp = null, string $subSystem=self::DEFAULT_SUBSYSTEM ) : void{
 		if (is_array($obj_or_array) and ! empty($obj_or_array[2])) {
 			$obj_or_array[2] = AMessage::EMERGENCY;
 		}
@@ -783,6 +806,23 @@ class MessageLog {
 	 */
 	public function stackSize() : int {
 		return self::$messageQueue->count();
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *  give a string with as little formatting as possible
+	 *	   if 'Show MessageLog Adds_FileAndLine' is set then there will be the file and line formatted
+	 * @return string
+	 */
+	public function giveUglyMessageQueue() : string {
+		$s ='';
+		$i =1;
+		self::$messageQueue->rewind();
+		while(self::$messageQueue->valid()){
+			$s .= ' (' . $i++ . ') '. self::$messageQueue->current()->dump(true);
+			self::$messageQueue->next();
+		}
+		self::$messageQueue->rewind();
+		return $s;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -824,6 +864,7 @@ class MessageLog {
 			}
 		}
 	}
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 * show all the messages on the stack (effctivey emptying the stack)

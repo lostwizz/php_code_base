@@ -330,6 +330,7 @@ class Dispatcher {
 		try {
 
 			$class = utils::checkClass($class);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo('class: ' . $class . '++');
 
 			$payload = (!empty($passedPayload)) ? $this->processPayloadFROMItem($passedPayload) : null;
 

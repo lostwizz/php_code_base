@@ -109,7 +109,7 @@ Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
-
+	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM , LVL_Notice_5);
 
 		//==============
 		// Note:  look in /utils/Setup_Logging for the initialization of the loggers at that level

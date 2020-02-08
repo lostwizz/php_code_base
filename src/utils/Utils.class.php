@@ -84,17 +84,23 @@ abstract Class Utils {
 	 * @return type
 	 */
 	public static function checkClass($class) : ?string{
+		Settings::GetRunTimeObject('MessageLog')->addNotice('@@checkClass: ' . $class);
 
-		$prefixes= ['php_base\Control', 'php_base\Data', 'php_base\View', 'php_base\Model', 'php_base\Utils' ,'php_base\Utils\DatabaseHandlers'  ];
+		$prefixes= ['',
+			'php_base\Control\\',
+			'php_base\Data\\',
+			'php_base\View\\',
+			'php_base\Model\\',
+			'php_base\Utils\\',
+			'php_base\Utils\DatabaseHandlers\\'
+			];
 		foreach( $prefixes as $prefix){
 			if ( self::tryNameSpaceClass($prefix, $class)) {
-				return $prefix . '\\' . $class;
+				return $prefix  . $class;
 			}
 		}
 
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addAlert( 'class doesnt exist: ' . $class);
-		dump::dump($class, 'class doesnt exist');
-		dump::dumpclasses();
 		return null;
 	}
 
@@ -105,8 +111,13 @@ abstract Class Utils {
 	 * @return type
 	 */
 	protected static function tryNameSpaceClass($prefix, $class){
+Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING:' . $prefix . ' - ' . $class);
 		//echo '--Trying: ', $prefix . '\\' .  $class, '<BR>';
-		return (class_exists($prefix . '\\' .  $class, true)) ;
+
+
+		$r = ( class_exists($prefix .  $class, true) ) ;
+Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
+		return $r;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
