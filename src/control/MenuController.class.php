@@ -73,12 +73,18 @@ class MenuController extends Controller {
 		$this->data = new \php_base\data\MenuData($this);
 		$this->view = new \php_base\view\MenuView($this);
 
+		if ( !empty( $_SESSION['MenuStatusChanges'])) {
+			$this->data->doHandleStatusChanges( $_SESSION['MenuStatusChanges'] );
+		}
+
 		$this->process = $passedProcess;
 		$this->task = $passedTask;
 
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
 //dump::dumpLong($this);
+
+		Settings::setPublic('MenuController', $this);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -113,7 +119,7 @@ class MenuController extends Controller {
 		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6($this->isAboutToLogoff()? 'about to logoff' : 'not about to logoff' );
 
 		// final check of if the user is properly logged in and not about to logoff
-		if ($isAuthenticated and (! $this->isAboutToLogoff()) ) {
+		if ($isAuthenticated and ( ! $this->isAboutToLogoff()) ) {
 			Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6('at  Menu Controller doWork');
 
 			$preparedMenu = $this->model->prepareMenu();
@@ -127,15 +133,32 @@ class MenuController extends Controller {
 	}
 
 
+
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @return boolean
 	 */
-	public  function isAboutToLogoff(){
+	public function isAboutToLogoff(){
 		if ( !empty($this->payload[Resolver::MENU_ITEM_LOGOFF]) and  $this->payload[Resolver::MENU_ITEM_LOGOFF] == 'YES' ) {
 			return true;
 		}
 		return false;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param int $itemID
+	 * @param bool $newStatus
+	 * @return bool
+	 */
+	public function changeMenuItemStatus( int $itemID, bool $newStatus): bool{
+		if ( array_key_exists( $itemID, $this->data->Menu)){
+			$_SESSION['MenuStatusChanges'][$itemID] = $newStatus;
+			$this->data->Menu[$itemID]['STATUS'] = $newStatus;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 

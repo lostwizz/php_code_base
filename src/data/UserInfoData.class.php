@@ -26,7 +26,7 @@
  * @see UserRoleAndPermissionsView.class.php
  * @see UserAttributeData.class.php
  * @see UserPermissionData.class.php
- * @see UserRoleData.class.php
+ * @see UserRolesData.class.php
  *
  * @todo Description
  *
@@ -156,7 +156,7 @@ class UserInfoData extends data {
 		$this->Table->addFieldText('PrimaryRoleName',
 				['prettyName' => 'Primary Role',
 //					'selectFrom' => ['method' => 'getRolesForSelect',
-//									'class' => 'UserRoleData',
+//									'class' => 'UserRolesData',
 //									'id' => 'roleid',
 //									'data' => 'name']
 					]);

@@ -56,8 +56,9 @@ class MenuData extends data {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	public function __construct() {
+	public function __construct($controller) {
 		Settings::getRunTimeObject('MENU_DEBUGGING')->addInfo('constructor for MenuData');
+		$this->controller = $controller;
 
 		$this->defineTable();
 
@@ -131,18 +132,33 @@ class MenuData extends data {
 			;
 			$app = Settings::GetPublic('App Name');
 			$params = array(':app' => ['val' => $app, 'type' => \PDO::PARAM_STR]);
-			$data = DBUtils::doDBSelectMulti($sql, $params);
-			if ($data != false) {
-				$this->Menu = $data;
+			$sqlData = DBUtils::doDBSelectMulti($sql, $params);
+			if ($sqlData != false) {
+				//$this->Menu = $data;
+				$this->Menu = [];
+				foreach($sqlData as $value){
+					$this->Menu[$value['ITEM_NUMBER']] = $value;
+					$this->Menu[$value['ITEM_NUMBER']]['STATUS'] = ( $value['STATUS']==1 );
+				}
 				if (Settings::GetPublic('CACHE Allow_Menu to be Cached')) {
 					CACHE::add('MenuData', $this->Menu);
 				}
-
-//dump::dump( $this->Menu);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param array $ar
+	 */
+	public function doHandleStatusChanges( array $ar =null){
+		if ( !empty( $ar)) {
+			foreach ($ar as $key => $value) {
+				$this->Menu[$key]['STATUS'] = $value;
+			}
+		}
 	}
 
 }

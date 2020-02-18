@@ -26,7 +26,7 @@
  * @see UserInfoData.class.php
  * @see UserAttributedata.class.php
  * @see UserPermissionData.class.php
- * @see UserRoleData.class.php
+ * @see UserRolesData.class.php
  *
  * @todo Description
  *
@@ -46,7 +46,7 @@ use \php_base\Utils\Response as Response;
 
 use \php_base\data\UserInfoData as UserInfoData;
 use \php_base\data\UserAttributeData as UserAttributeData;
-use \php_base\data\UserRoleData as UserRoleData;
+use \php_base\data\UserRolesData as UserRolesData;
 use \php_base\data\UserPermissionData as UserPermissionData;
 
 use \php_base\Utils\SubSystemMessage as SubSystemMessage;
@@ -251,7 +251,7 @@ Class UserRoleAndPermissionsModel extends Model {
 
 
 		// take the list of roles (words i.e. Clerk) and get the role IDs
-		$DataUserRoles = new UserRoleData($this->controller, $this->controller->ArrayOfRoleNames);
+		$DataUserRoles = new UserRolesData($this->controller, $this->controller->ArrayOfRoleNames);
 
 		// now we have an array of Role ids
 		$this->controller->arOfRoleIDs = $DataUserRoles->RoleIDData;

@@ -83,6 +83,7 @@ if (Settings::GetPublic('Use_MessageLog')) {
 }
 
 include_once( DIR . 'utils' . DSZ . 'Setup_Logging.php');
+\php_base\utils\setup_loggy();
 
 
 
@@ -116,8 +117,6 @@ if (Settings::GetPublic('TEST that All is well') != 'YES') {
 if (Settings::GetRuntimeObject('FileLog') == null) {
 	throw new exception('it seems that setup (or settings.class.php did not run properly');
 }
-
-
 
 
 
@@ -168,4 +167,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::GetRuntimeObject('SecurityLog')->addInfo('Starting...');
 }
 
+
+
+\php_base\utils\setup_loggy();
 

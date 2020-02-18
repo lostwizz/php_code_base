@@ -56,7 +56,7 @@ class dbaController extends Controller {
 		$this->task = $passedTask;
 		$this->action = $passedAction;
 		$this->payload = $passedPayload;
-dump::dumpLong($this, 'constructor');
+//dump::dumpLong($this, 'constructor');
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -109,6 +109,8 @@ dump::dumpLong($this, 'constructor');
 
 		Settings::GetRunTimeObject('MessageLog')->TestAllLevels();
 
+		dump::dump(Settings::GetRunTimeObject('MessageLog'));
+
 		return Response::NoError();
 	}
 
@@ -118,12 +120,15 @@ dump::dumpLong($this, 'constructor');
 	 * @return Response
 	 */
 	public function ShowAllSettings($dispatcher): Response {
-
-			//dump::dump(Settings::GetRunTimeObject('MessageLog'));
-
 		echo Settings::dump(true,true,true);
+
+		$menu = Settings::GetPublic('MenuController');
+		$menu->changeMenuItemStatus( 20, false);
+
 		return Response::NoError();
 	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -131,7 +136,7 @@ dump::dumpLong($this, 'constructor');
 	 * @return type
 	 */
 	public function Edit_UserInfoData( $dispatcher=null) : Response  {
-		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
+//		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
 
 	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(\php_base\Utils\MessageLog::DEFAULT_SUBSYSTEM , LVL_Notice_5);
 
@@ -146,6 +151,9 @@ dump::dumpLong($this, 'constructor');
 		return Response::NoError();
 	}
 
+
+
+
 	/** -----------------------------------------------------------------------------------------------	*/
 	public function Edit_Roles( $dispatcher=null) : Response {
 		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_Roles');
@@ -154,18 +162,17 @@ dump::dumpLong($this, 'constructor');
 			return Response::PermissionsError('Required DBA - Edit Roles');
 		}
 
-		$this->payload['Table'] = 'UserRoleData';
+		$this->payload['Table'] = 'UserRolesData';
 
-		//$editorSession = new SimpleTableEditor('\php_base\data\UserRoleData', $this->process, $this->task, $this->action, $this->payload);
-
-//dump::dump($this);
-
-	//	$dispatcher->addProcess( 'UserRoleAndPermissionsController', 'readAllData', 'UserRoleData', $this->payload );
 		$dispatcher->addProcess( 'SimpleTableEditorController', 'runTableDisplayAndEdit', $this->action, $this->payload );
 
-//dump::dump($dispatcher->dumpQueue());
 		return Response::NoError();
 	}
+
+
+
+
+
 
 	/** -----------------------------------------------------------------------------------------------	*/
 	public function Edit_Attributes( $dispatcher=null) : Response {

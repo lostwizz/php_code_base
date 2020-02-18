@@ -31,7 +31,7 @@
  * @see UserInfoData.class.php
  * @see UserAttributedata.class.php
  * @see UserPermissionData.class.php
- * @see UserRoleData.class.php
+ * @see UserRolesData.class.php
  *
  * @todo Description
  *
@@ -291,9 +291,9 @@ Class UserRoleAndPermissionsController {
 	 * @param string $roleName
 	 */
 	public function doRemoveRoleByName(string $roleName){
-		//$DataUserRoles = new \php_base\data\UserRoleData();
+		//$DataUserRoles = new \php_base\data\UserRolesData();
 
-		$roleID = \php_base\data\UserRoleData::getRoleIDByName($roleName);
+		$roleID = \php_base\data\UserRolesData::getRoleIDByName($roleName);
 
 		//$DataPermissions = new \php_base\data\UserPermissionData();
 		\php_base\data\UserPermissionData::doDeletePermissionByRoleID( $roleID);

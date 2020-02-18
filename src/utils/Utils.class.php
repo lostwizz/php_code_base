@@ -94,9 +94,20 @@ abstract Class Utils {
 			'php_base\Utils\\',
 			'php_base\Utils\DatabaseHandlers\\'
 			];
+		$suffixes= ['',
+			'Data',
+			'Controller',
+			'Model',
+			'View'
+			];
 		foreach( $prefixes as $prefix){
 			if ( self::tryNameSpaceClass($prefix, $class)) {
 				return $prefix  . $class;
+			}
+			foreach( $suffixes as $suffix){
+				if ( self::tryNameSpaceClass($prefix, $class, $suffix)) {
+					return $prefix  . $class . $suffix;
+				}
 			}
 		}
 
@@ -110,13 +121,14 @@ abstract Class Utils {
 	 * @param type $class
 	 * @return type
 	 */
-	protected static function tryNameSpaceClass($prefix, $class){
-Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING:' . $prefix . ' - ' . $class);
+	protected static function tryNameSpaceClass($prefix, $class, $suffix='') : string {
+		Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING:' . $prefix . ' - ' . $class);
 		//echo '--Trying: ', $prefix . '\\' .  $class, '<BR>';
 
 
-		$r = ( class_exists($prefix .  $class, true) ) ;
-Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
+		/////////////$r = ( class_exists($prefix .  $class, true) ) ;
+		$r =  ( class_exists($prefix .  $class .  $suffix, true) ) ;
+		Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
 		return $r;
 	}
 

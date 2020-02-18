@@ -283,69 +283,69 @@ class Table {
 		return $s;
 	}
 
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param bool $isHeaderRow
-	 * @return string
-	 */
-	protected function showAddButton( bool $isHeaderRow =false) : string{
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showAddButton');
+	protected function showFormAndHidden( $rowKey,  string $which, string $fnImage) :string {
 		$s = '';
-		if($this->isAdding){
-			if ( $isHeaderRow ){
-				$s = HTML::TD() . '[Add]' . HTML::TDend() ;
-			} else {
-				$r =  '[AddKey=>NoRow]';
-				$s = HTML::TD()
-						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_insrow.png', null, ['width' =>18])
-						. HTML::TDend();
-			}
-		}
+		$s .= HTML::FormOpen('MoreTableFun', $which);
+		$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[Which]', $which);
+		$s .= HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+		$s .= HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+		$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
+		$s .= HTML::Open('Button', ['name'=> Resolver::REQUEST_PAYLOAD . '[Key]', 'value'=> $rowKey, 'type'=> 'Submit']);
+
+		$s .= HTML::Img($fnImage, ['alt' => $which]);
+		$s .= HTML::Close('Button');
+		$s .= HTML::FormClose();
+
 		return $s;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
-	 *
 	 * @param bool $isHeaderRow
 	 * @return string
 	 */
-	protected function showEditColumn( bool $isHeaderRow =false, $rowKey = -1) : string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showEditColumn');
+	protected function showAddButton(bool $isHeaderRow = false, $rowKey = -1): string {
+		Settings::GetRuntimeObject('DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showAddButton');
 		$s = '';
-		if( $this->isEditing){
-			if ( $isHeaderRow ) {
-				$s = HTML::TD() . '[Edit]' . HTML::TDend() ;
+		if ($this->isAdding) {
+			if ($isHeaderRow) {
+				$s = HTML::TD() . '[Add]' . HTML::TDend();
 			} else {
-				//$r =  '[EditKey=>' . $rowKey . ']';
-				$r = $rowKey ;
-				$s .= HTML::TD();
-				//$s .=  HTML::Image( Resolver::REQUEST_PAYLOAD.'[key=>'.  $r .']' ,  'static\images\b_edit.png', $r, ['width' =>18]);
-				$s .= '<button name="' . Resolver::REQUEST_PAYLOAD .'[edit][key]"  value="' . $r. '"><img src="static\images\b_edit.png" alt="edit"></button>';
+				$s = HTML::TD();
+				$s .= $this->showFormAndHidden( $rowKey, 'Add', 'static\images\b_insrow.png');
 				$s .= HTML::TDend();
-//Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_2( serialize($s));
-dump::dump($s);
-				}
+			}
 		}
 		return $s;
 	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
+	 *
 	 * @param bool $isHeaderRow
 	 * @return string
 	 */
-	protected function showDeleteColumn( bool $isHeaderRow =false, $rowKey = -1) : string {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showDeleteColumn');
+	protected function showEditColumn(bool $isHeaderRow = false, $rowKey = -1): string {
+		Settings::GetRuntimeObject('DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showEditColumn');
 		$s = '';
-		if( $this->isDeleting){
-			if ($isHeaderRow ){
-				$s = HTML::TD() . '[Del]' . HTML::TDend() ;
+		if ($this->isEditing) {
+			if ($isHeaderRow) {
+				$s = HTML::TD() . '[Edit]' . HTML::TDend();
 			} else {
-				$r =  '[DelKey=>' . $rowKey . ']';
-				$s = HTML::TD()
-						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\b_drop.png', null, ['width' =>18])
-						. HTML::TDend();
+				$s .= HTML::TD();
+//				$s .= HTML::FormOpen('MoreTableFun', 'EDITEE');
+//				$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[Which]', 'Editor');
+//				$s .= HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+//				$s .= HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+//				$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
+//
+//				$s .= HTML::Open('Button', ['name'=> Resolver::REQUEST_PAYLOAD . '[Key]', 'value'=> $rowKey, 'type'=> 'Submit']);
+//				$s .= HTML::Img('static\images\b_edit.png', ['alt' => 'Edit']);
+//				$s .= HTML::Close('Button');
+//				$s .= HTML::FormClose();
+				$s .= $this->showFormAndHidden( $rowKey, 'Edit', 'static\images\b_edit.png');
+
+				$s .= HTML::TDend();
 			}
 		}
 		return $s;
@@ -356,22 +356,63 @@ dump::dump($s);
 	 * @param bool $isHeaderRow
 	 * @return string
 	 */
-	protected function showSpecialColumn( bool $isHeaderRow =false, $rowKey = -1) {
-		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showSpecialColumn');
+	protected function showDeleteColumn(bool $isHeaderRow = false, $rowKey = -1): string {
+		Settings::GetRuntimeObject('DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showDeleteColumn');
 		$s = '';
-		if( $this->isSpecial){
-			if ($isHeaderRow ){
-				$s = HTML::TD() . '[Spl]' . HTML::TDend() ;
+		if ($this->isDeleting) {
+			if ($isHeaderRow) {
+				$s = HTML::TD() . '[Del]' . HTML::TDend();
 			} else {
-				$r =  '[SpecialKey=>' . $rowKey . ']';
-				$s = HTML::TD()
-						. HTML::Image( Resolver::REQUEST_PAYLOAD .  $r  ,  'static\images\arrow_right.png', null, ['width' =>18])
-						. HTML::TDend();
+				$s = HTML::TD();
+//				$s .= HTML::FormOpen('MoreTableFun', 'DELEE');
+//				$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[Which]', 'Delete');
+//				$s .= HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+//				$s .= HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+//				$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
+//
+//				$s .= HTML::Open('Button', ['name'=> Resolver::REQUEST_PAYLOAD . '[Key]', 'value'=> $rowKey, 'type'=> 'Submit']);
+//				$s .= HTML::Img('static\images\b_drop.png', ['alt' => 'Delete']);
+//				$s .= HTML::Close('Button');
+//				$s .= HTML::FormClose();
+				$s .= $this->showFormAndHidden( $rowKey, 'Delete', 'static\images\b_drop.png');
+
+				$s .= HTML::TDend();
+
 			}
 		}
 		return $s;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $isHeaderRow
+	 * @return string
+	 */
+	protected function showSpecialColumn(bool $isHeaderRow = false, $rowKey = -1) {
+		Settings::GetRuntimeObject('DBHANDLERS_DEBUGGING')->addDEBUG_4('@@showSpecialColumn');
+		$s = '';
+		if ($this->isSpecial) {
+			if ($isHeaderRow) {
+				$s = HTML::TD() . '[Spl]' . HTML::TDend();
+			} else {
+				$s = HTML::TD();
+//				$s .= HTML::FormOpen('MoreTableFun', 'SPLEE');
+//				$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD . '[Which]', 'Special');
+//				$s .= HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+//				$s .= HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+//				$s .= HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
+//
+//				$s .= HTML::Open('Button', ['name'=> Resolver::REQUEST_PAYLOAD . '[Key]', 'value'=> $rowKey, 'type'=> 'Submit']);
+//				$s .= HTML::Img('static\images\arrow_right.png', ['alt' => 'Special']);
+//				$s .= HTML::Close('Button');
+//				$s .= HTML::FormClose();
+				$s .= $this->showFormAndHidden( $rowKey, 'Special', 'static\images\arrow_right.png');
+
+				$s .= HTML::TDend();
+			}
+		}
+		return $s;
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -561,8 +602,12 @@ dump::dump($s);
 	 * @param array $filters
 	 * @return string
 	 */
-	public function showTable(array $data, ?array $sortKeys = null, ?array $filters = null): string {
+	public function showTable(array $data, ?array $sortKeys = null, ?array $filters = null, string $process= '', string $task='', string $action=''): string {
 		Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addNotice('@@showTable');
+
+		$this->process = $process;
+		$this->task = $task;
+		$this->action = $action;
 
 		$s = HTML::Open('Table', ['border' => 1, 'width' => '90%']);
 

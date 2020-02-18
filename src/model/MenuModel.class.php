@@ -82,11 +82,13 @@ class MenuModel extends Model{
 		$menu = "";
 
 		foreach($this->controller->data->Menu as $row ) {
-			if( $row['PARENT_ITEM_NUMBER'] == $parent_id){
-				if ( $this->hasRightsToMenuItem($row)){
-					$menu .= '<li>' . $this->buildLink($row) . PHP_EOL;
-					$menu .= "<ul>" . $this->get_menu_tree($row['ITEM_NUMBER'])  . "</ul>"  . PHP_EOL; //call  recursively
-					$menu .= "</li>"  . PHP_EOL;
+			if ($row['STATUS']) {
+				if( $row['PARENT_ITEM_NUMBER'] == $parent_id){
+					if ( $this->hasRightsToMenuItem($row)){
+						$menu .= '<li>' . $this->buildLink($row) . PHP_EOL;
+						$menu .= "<ul>" . $this->get_menu_tree($row['ITEM_NUMBER'])  . "</ul>"  . PHP_EOL; //call  recursively
+						$menu .= "</li>"  . PHP_EOL;
+					}
 				}
 			}
 		}

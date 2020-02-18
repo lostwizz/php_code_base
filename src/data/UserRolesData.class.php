@@ -1,9 +1,9 @@
 <?php
 
 //**********************************************************************************************
-//* UserRoleData.class.php
+//* UserRolesData.class.php
 /** * ********************************************************************************************
- * UserRoleData.class.php
+ * UserRolesData.class.php
  *
  * Summary: reads the user's attributes from the database
  *
@@ -17,7 +17,7 @@
  *
  * @link URL
  *
- * @package ModelViewController - UserRoleAndPermissions\UserRoleData
+ * @package ModelViewController - UserRoleAndPermissions\UserRolesData
  * @subpackage UserRoleAndPermissions
  * @since 0.3.0
  *
@@ -51,7 +51,7 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 /** * **********************************************************************************************
  * read and write the roles (by id) for the user
  */
-Class UserRoleData extends Data {
+Class UserRolesData extends Data {
 
 //	public $action;
 //	public $payload;
@@ -101,7 +101,7 @@ Class UserRoleData extends Data {
 		$this->Table = new Table(
 				Settings::GetProtected('DB_Table_RoleManager'),
 				[
-			'className' => __NAMESPACE__ . '\UserRoleData',
+			'className' => __NAMESPACE__ . '\UserRolesData',
 			'isAdding' => true,
 			'isEditing' => true,
 			'isDeleting' => true,
@@ -188,7 +188,7 @@ dump::dump($data);
 			}
 		}
 
-dump::dumpShort($data);
+//dump::dumpShort($data);
 		return $data;
 	}
 

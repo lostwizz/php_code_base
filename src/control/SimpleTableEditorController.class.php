@@ -63,11 +63,11 @@ class SimpleTableEditorController {
 
 		$this->loadTableObject();
 
-		if ( $this->status != self::BAD){
-
-			$this->beginTaskAndAction();
-
-		}
+//		if ( $this->status != self::BAD){
+//
+//			$this->beginTaskAndAction();
+//
+//		}
 
 
 	}
@@ -77,6 +77,7 @@ class SimpleTableEditorController {
 	 */
 	protected function determineTableName() : void{
 		if ( !empty( $this->payload) and  !empty($this->payload['Table'])) {
+dump::dump($this->payload['Table'] );
 			$this->tableName = $this->payload['Table'];
 		} else {
 			Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addAlert ('unable to determine the Table Name');
@@ -90,6 +91,7 @@ class SimpleTableEditorController {
 	 */
 	protected function loadTableObject() :void {
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@loadTableObject: ' . $this->tableName);
+
 		try {
 			$newDataTable = Utils::checkClass( $this->tableName);
 			$this->tableDataObj = new $newDataTable( $this);
@@ -123,14 +125,15 @@ class SimpleTableEditorController {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 */
-	public function runTableDisplayAndEdit(){
+	public function runTableDisplayAndEdit(): Response{
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@runTableDisplayAndEdit: ' );
-		$method = $this->determineMethod();
 
+		$method = $this->determineMethod();
 		$this->determineActiveRowID();
 
-dump::dump($this);
-		$this->$method();
+		$r = $this->$method();
+		return $r;
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -158,22 +161,23 @@ dump::dump($this);
 		$tempAction='none';
 		if ( !empty( $this->payload['Key'])) {
 			$this->key = $this->payload['Key'];
-		} elseif ( !empty( $this->payload['EditKey'])) {
-			$exploded = \explode('=>', $this->payload['EditKey']);
-			$this->key = $exploded[1];
-			$tempAction='edit';
-		} elseif ( !empty( $this->payload['DelKey'])) {
-			$exploded = \explode('=>', $this->payload['DelKey']);
-			$this->key = $exploded[1];
-			$tempAction='del';
-		} elseif ( !empty( $this->payload['AddtKey'])) {
-			$exploded = \explode('=>', $this->payload['AddtKey']);
-			$this->key = $exploded[1];
-			$tempAction='add';
-		} elseif ( !empty( $this->payload['SpecialKey'])) {
-			$exploded = \explode('=>', $this->payload['SpecialKey']);
-			$this->key = $exploded[1];
-			$tempAction='special';
+			$tempAction = $this->payload['Which'];
+																	//		} elseif ( !empty( $this->payload['EditKey'])) {
+																	//			$exploded = \explode('=>', $this->payload['EditKey']);
+																	//			$this->key = $exploded[1];
+																	//			$tempAction='edit';
+																	//		} elseif ( !empty( $this->payload['DelKey'])) {
+																	//			$exploded = \explode('=>', $this->payload['DelKey']);
+																	//			$this->key = $exploded[1];
+																	//			$tempAction='del';
+																	//		} elseif ( !empty( $this->payload['AddtKey'])) {
+																	//			$exploded = \explode('=>', $this->payload['AddtKey']);
+																	//			$this->key = $exploded[1];
+																	//			$tempAction='add';
+																	//		} elseif ( !empty( $this->payload['SpecialKey'])) {
+																	//			$exploded = \explode('=>', $this->payload['SpecialKey']);
+																	//			$this->key = $exploded[1];
+																	//			$tempAction='special';
 		} else {
 			$this->key = -1;
 		}
@@ -189,9 +193,9 @@ dump::dump($this);
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addDebug_5('@@DisplayTable');
 
 		echo HTML::FormOpen('tableFun');
-		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
-		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
-		echo HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
+//		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
+//		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
+//		echo HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
 
 
 		$className = $this->tableDataObj;
@@ -203,10 +207,10 @@ dump::dump($this);
 		$sortAr = $this->processPassedSort();
 		$filter = $this->processPassedFilter();
 
-		echo $this->tableDataObj->Table->showTable($d, $sortAr, $filter, $this->process, $this->task);
+		echo $this->tableDataObj->Table->showTable($d, $sortAr, $filter, $this->process, $this->task, $this->action);
 		echo HTML::FormClose();
-		return Response::NoError();
 
+		return Response::NoError();
 	}
 
 
@@ -479,7 +483,7 @@ dump::dump($this);
 //		echo HTML::FormOpen('tableFun');
 //		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
 //		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
-//		echo HTML::Hidden(Resolver::REQUEST_ACTION, 'UserRoleData');  // table name so it will  know which tabel to use
+//		echo HTML::Hidden(Resolver::REQUEST_ACTION, 'UserRolesData');  // table name so it will  know which tabel to use
 //
 //		$className = $this->tableDataObj;
 //		$d = $className->readAllData();

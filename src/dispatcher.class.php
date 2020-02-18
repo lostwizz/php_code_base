@@ -583,6 +583,16 @@ class Dispatcher {
 		return $which;
 	}
 
+	public function dumpQueuePRE( bool $doEcho = true):string {
+		return $this->dumpQueue( $this->PREqueue, $doEcho, 1);
+	}
+	public function dumpQueueDispatch( bool $doEcho = true): string{
+		return $this->dumpQueue( $this->DISPATCHqueue, $doEcho, 1);
+	}
+	public function dumpQueuePOST( bool $doEcho = true): string{
+		return $this->dumpQueue( $this->POSTqueue, $doEcho, 1);
+	}
+
 	/** -----------------------------------------------------------------------------------------------
 	 * dumpQueue - outputs the items in the queue (does not remove them from the queue
 	 *                - may cause issues if running thro the queue because it does rewind
@@ -595,7 +605,7 @@ class Dispatcher {
 	 * @param \SPLQueue $theQueue - the queue to be shown
 	 * @return void
 	 */
-	public function dumpQueue( $theQueue= null, bool $doEcho = true): string {
+	public function dumpQueue( $theQueue= null, bool $doEcho = true, int $btSkipper = 0): string {
 		if ( empty( $theQueue )){
 			$theQueue = $this->DISPATCHqueue;
 		}
@@ -604,7 +614,14 @@ class Dispatcher {
 		$s = '';
 		$s .= '<BR>';
 		$s .= '<pre class="pre_debug_queue">';
-		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS)[0];
+
+		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
+		for ($i =1; $i <= $btSkipper; $i ++) {
+			array_shift($bt);
+		}
+		$bt = $bt[0];
+
+
 		$s .= '--'  . __METHOD__ .  '-- called from ' . basename($bt['file']) . '(line: '. $bt['line'] . ')' ;
 		$s .= '<BR>';
 

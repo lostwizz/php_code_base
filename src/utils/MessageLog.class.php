@@ -48,6 +48,7 @@ define('AR_LEVEL', 2);
  *    - mainly to allow getting the name for the value thru the array $levels
  */
 abstract class MessageBase {
+	const ROCK_BOTTOM_ALL = -1;
 
 	const DEBUG_1 = 101;
 	const DEBUG_2 = 102;
@@ -130,6 +131,7 @@ abstract class MessageBase {
 		self::CRITICAL => 'CRITICAL',
 		self::ALERT => 'ALERT',
 		self::EMERGENCY => 'EMERGENCY',
+		self::ROCK_BOTTOM_ALL => 'ROCK_BOTTOM_ALL',
 	);
 
 	/**
@@ -145,7 +147,6 @@ abstract class MessageBase {
 	public static function Version() : string{
 		return self::VERSION;
 	}
-
 
 	abstract function Show() :void;
 
@@ -291,7 +292,7 @@ class AMessage extends MessageBase {
 	 * @param type $level
 	 */
 	protected function setLevel($level = null) : void{
-		if (empty($level) or $level < 100) {
+		if (empty($level) ) {
 			$this->level = AMessage::NOTICE;   //Default
 		} else if (array_key_exists($level, parent::$levels)) {
 			$this->level = $level;
@@ -377,7 +378,7 @@ class AMessage extends MessageBase {
 			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 			$s .= $z;
 			$s .= $debugText;
-		} else if ( !empty($this->text ) and is_string($this->text) and substr_count(strtolower($this->text), '/table' ) > 0){
+		} else if ( !empty($this->text) and is_string($this->text) and substr_count(strtolower($this->text), '/table' ) > 0){
 			$s .= '<pre>';
 			$s .= $this->text;
 			$s .= '</pre>';
@@ -543,6 +544,8 @@ class MessageLog {
 	public function __debugInfo() {
 		//return [MessageLog::messageQueue, MessageLog::DEFAULTLoggingLevel, MessageLog::LoggingLevels];
 
+		//		//Settings::SetPublic('Show MessageLog Adds', false);
+		//Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
 		return [
 			'Default_level' => MessageBase::$levels[MessageLog::$DEFAULTLoggingLevel],
 			'Default_level_raw' =>MessageLog::$DEFAULTLoggingLevel,
@@ -658,7 +661,6 @@ class MessageLog {
 	 * @param type $level
 	 */
 	public function add($obj_or_array = null, $timestamp = null, $level = null, string $subSystem = self::DEFAULT_SUBSYSTEM )  :void{
-
 		if ( ! self::isGoodLevelsAndSystem( $level, $subSystem)) {
 			return;  // if msg level is lower than setting then do nothing
 		}
@@ -677,7 +679,11 @@ class MessageLog {
 				}
 			}
 			$temp = new AMessage($obj_or_array, $timestamp, $level);               //create the AMessage
-			self::$messageQueue->enqueue($temp);									// add the item to the queue
+
+//dump::dump($temp);
+			self::$messageQueue->enqueue($temp);
+
+			// add the item to the queue
 			if (Settings::GetPublic('Show MessageLog Adds')) {  // if you want the output to happen as it is added
 				$temp->show();
 			}
@@ -890,17 +896,25 @@ class MessageLog {
 	 * @return void
 	 */
 	public  function TestAllLevels() : void {
-		$this->setSubSystemLoggingLevel('TESTER_messages',-1);
+
+		//Settings::SetPublic('Show MessageLog Adds', false);
+		//Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+
+		$this->setSubSystemLoggingLevel('TESTER_messages', MessageBase::ROCK_BOTTOM_ALL );
+
+		self::$DEFAULTLoggingLevel = MessageBase::ROCK_BOTTOM_ALL;
+
 		foreach(  MessageBase::$levels as $key => $value){
 
 			//echo 'Key= ' , $key, ' value=' , $value;
 			//echo '<BR>';
 
 			$this->add( 'This is a test of: ' . $value . ' (' . $key . ')', null, $key, 'TESTER_messages');
-			echo '<BR>';
+			//echo '<BR>';
 		}
-		$this->showAllMessagesInBox();
-
+		if ( ! Settings::GetPublic('Show MessageLog in Footer')) {
+			$this->showAllMessagesInBox();
+		}
 	}
 
 

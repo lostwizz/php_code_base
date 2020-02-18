@@ -8,7 +8,7 @@
  *
  *
  * @author mike.merrett@whitehorse.ca
- * @version 0.4.0
+ * @version 0.4.1
  * $Id$
  *
  * Description.
@@ -105,7 +105,7 @@ abstract class Dump {
 	const CLASSES_LOADED = 5;
 	const MULTI_ARRAY =6;
 	const SHORT = 7;
-
+	const FUNCTION_LIST=8;
 
 	/**
 	 * this holds the current configuration on what the output looks like and behaves
@@ -116,7 +116,7 @@ abstract class Dump {
 	/**
 	 * @var version number
 	 */
-	private const VERSION = '0.4.0';
+	private const VERSION = '0.4.1';
 
 	/** ----------------------------------------------------------------------------------------------
 	 *  initializes the config (basically on each run of a dump
@@ -170,6 +170,16 @@ abstract class Dump {
 					'Show BackTrace Num Lines' => 0,
 					);
 				break;
+			case self::FUNCTION_LIST:
+				$auxArray = array(
+					'Beautify_BackgroundColor'=> '#E3C8EA',
+					'FLAT_WINDOWS_LINES' => -1,
+					'PRE_CodeLines' => 0,
+					'POST_CodeLines' => 0,
+					'Show BackTrace Num Lines' => 0,
+					);
+				break;
+
 			case self::SHORT:
 				$auxArray = array(
 					'FLAT_WINDOWS_LINES' => 12);
@@ -263,6 +273,7 @@ abstract class Dump {
 		$s .= self::DumpClassBeautifierPOST($data);
 		$s .= self::BeautifyAreaEnd();
 		echo $s;
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -320,6 +331,30 @@ abstract class Dump {
 					break;
 				}
 			}
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $allFunctions
+	 * @param array $options
+	 */
+	public static function DumpFunctions($allFunctions = false, ?array $options=null) {
+		self::initConfig($options, Dump::FUNCTION_LIST);
+
+		$conf =	array('Show BackTrace Num Lines' => self::$config->get( 'Show BackTrace Num Lines'),
+					'Beautify_BackgroundColor' => self::$config->get( 'Beautify_BackgroundColor'),
+					'FLAT_WINDOWS_LINES' => self::$config->get( 'FLAT_WINDOWS_LINES'),
+					'PRE_CodeLines' => self::$config->get( 'PRE_CodeLines'),
+					'POST_CodeLines' => self::$config->get( 'POST_CodeLines')
+					);
+
+
+		$ar = get_defined_functions();
+		if ($allFunctions) {
+			self::dump($ar, 'Function List', $conf);
+		} else {
+			self::dump( $ar['user'], 'Function List (user only)', $conf);
 		}
 	}
 

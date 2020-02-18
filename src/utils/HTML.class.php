@@ -259,6 +259,14 @@ abstract Class HTML {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $name
+	 * @param string|null $value
+	 * @param type $arOptions
+	 * @param type $arStyle
+	 * @return string|null
+	 */
 	public static function Diver(
 			string $name,
 			?string $value,
