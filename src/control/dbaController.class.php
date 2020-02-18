@@ -119,7 +119,7 @@ class dbaController extends Controller {
 	 * @param type $dispatcher
 	 * @return Response
 	 */
-	public function ShowAllSettings($dispatcher): Response {
+	public function ShowAllSettings( $dispatcher): Response {
 		echo Settings::dump(true,true,true);
 
 		$menu = Settings::GetPublic('MenuController');
@@ -128,6 +128,17 @@ class dbaController extends Controller {
 		return Response::NoError();
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $dispatcher
+	 * @return Response
+	 */
+	public function setDebugCookie( $dispatcher) : Response {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert('setting cookie');
+		$dispatcher->addPREProcess( 'SetDebugCookie', 'setCookie', '', null );
+		return Response::NoError();
+
+	}
 
 
 	/** -----------------------------------------------------------------------------------------------

@@ -104,7 +104,7 @@ if (Utils::isVersionGood( '0.3.0', Dump::Version()) ) {
 //echo serialize(array('fred'=>'johnny', 'bob'=> 'house'));
 
 
-Settings::GetRunTimeObject('MessageLog')->addNotice('Starting read from db settings');
+Settings::GetRunTimeObject('MessageLog')->addInfo('Starting read from db settings');
 Settings::dbReadAndApplySettings();
 
 Settings::SetPublic('TEST that All is well', 'YES');

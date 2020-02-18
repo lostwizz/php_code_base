@@ -136,7 +136,7 @@ session_write_close();
 //Dump::dump( $_SESSION); //dumpLong
 
 //Dump::dump( $_SESSION); //dumpLong
-Settings::GetRunTimeObject('MessageLog')->addNotice('... Closing Session..');
+Settings::GetRunTimeObject('MessageLog')->addInfo('... Closing Session..');
 
 
 if (Settings::GetPublic('IS_DEBUGGING')) {

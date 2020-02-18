@@ -355,14 +355,14 @@ class AMessage extends MessageBase {
 			$lineStyle = $this->getShowStyle($this->level);
 		}
 
-		$s .= '<div class="' . $lineStyle . '">';
+		$s .= '<span class="' . $lineStyle . '">';
 		if (!empty($this->timeStamp)) {
 			$s .= '[' . $this->timeStamp . '] ';
 		}
 		$s .= $textLeader;
 
 		if ( SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
-			$s .= '</div>';
+			$s .= '</span>';
 		}
 
 		$s .= ': ';
@@ -390,8 +390,9 @@ class AMessage extends MessageBase {
 		}
 
 		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
-			$s .= '</div>';
+			$s .= '</span>';
 		}
+		$s .= '<BR>';
 		$s .= PHP_EOL;
 		return $s;
 	}
@@ -421,7 +422,11 @@ class SubSystemMessage {
 
 
 	/** -----------------------------------------------------------------------------------------------**/
-	function __construct(string $passedSubSystem = MessageLog::DEFAULT_SUBSYSTEM , int $lvl = AMessage::NOTICE){
+	function __construct(string $passedSubSystem = MessageLog::DEFAULT_SUBSYSTEM , int $lvl = -9999 ) {  // AMessage::NOTICE){
+
+		if ( $lvl == -9999  or $lvl ==0) {
+			$lvl = MessageLog::$DEFAULTLoggingLevel;
+		}
 		$this->subSystem = $passedSubSystem;
 		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
 	}

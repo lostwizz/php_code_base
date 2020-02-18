@@ -141,34 +141,37 @@ class Dispatcher {
 	 * @return Response
 	 */
 	public function doWork($parentResolver = null): Response {
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2('@@doWork - dispatcher');
 
-		$this->debug('dispatcher starting prequeue' );
 		$this->currentQueue = dispatcher::PRE;
 		$pre_result = $this->RunThruTheQueue($this->PREqueue);
 
 		if ($pre_result->hadError()) {
-			$this->debug('dispatcher got an error from the running pre queue' . $pre_result);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2('dispatcher go an error form the running PRE queue '. print_r($pre_result, true));
 			return $pre_result;
 		} else {
 			// the pre queue contains authentication - so if it returns false then dont do any anything else
-			$this->debug('dispatcher starting normal queue'   );
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2('dispatcher is starting the normal queue');
 
 			$this->currentQueue = dispatcher::DISPATCH;						// setup to run the main queue
 			$dispatch_result = $this->RunThruTheQueue($this->DISPATCHqueue);  // start on the main queue
 
 			if ($dispatch_result->hadError()) {
-				$this->debug('dispatcher got an error from the running normal queue' . $dispatch_result);
+				Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2( 'dispatcher got an error from the running normal queue:'. print_r($dispatch_result, true));
+
 				return $dispatch_result;
 			}
 		}
 
-		$this->debug('dispatcher starting postqueue');
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2( 'dispatcher strting postqueue:');
+
 		// show the post queue in all cases (it has the message stack for one- so you know what happend -  and the footer)
 		$this->currentQueue = dispatcher::POST;
 		$post_result = $this->RunThruTheQueue($this->POSTqueue);
 
 		if ($post_result->hadError()) {
-			$this->debug('dispatcher got an error from the running post queue' . $post_result);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addError( 'had error running post queue:'. print_r($post_result, true));
+
 			return $post_result;
 		}
 
@@ -182,18 +185,14 @@ class Dispatcher {
 	 * @return Response
 	 */
 	protected function RunThruTheQueue( $theQueue): Response {
-		$this->debug( 'the current Queue'  );
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2('@@RunThruTheQueue');
 
 		try {
 			$response = Response::NoError();
 			while ( ! $theQueue->isEmpty()) {
-				if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice_9 ){
-					$this->dumpQueue($theQueue, true);
-				}
+				Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo($this->dumpQueue($theQueue, false));
 
 				$response = $this->processDetailsOfQueue($theQueue);
-
-				$this->debug(' result of running the Queue: ' , $response);
 			}
 			return $response;
 
@@ -202,7 +201,7 @@ class Dispatcher {
 			if (!is_numeric($enum)) {
 				$enum = -1;
 			}
-			$this->debug('exception in running the Queue');
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addError( 'Exception running the Queue:'. print_r($e, true));
 			return new Response('exception in running the Queue: ' . $e->getMessage(),
 					   (-1 * $enum),              // errors are negative in this system
 					   false);
@@ -242,16 +241,14 @@ class Dispatcher {
 
 		$item = $this->getItemFromQueue($theQueue);
 
-		$this->debug('dispatcher executing [' . $item . '] 1');
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2('dispatcher executing:'. $item);
 		if (empty($item)) {
 			$response = Response::GenericWarning();
-			$this->debug('dispatcher - item is empty!! why!! -but ignoring', $response);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_2('dispatcher -> item is empty ! - ignoring ' . print_r($response, true));
 		} else {
 			$response = $this->itemDecodeAndExecute($item);
 
-			if ($response->hadError()) {
-				$this->debug('dispatcher recieved an error:', $response);
-			}
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo( 'Dispatcher processing response:'. print_r($response, true));
 		}
 		return $response;
 	}
@@ -273,9 +270,7 @@ class Dispatcher {
 
 		$exploded = \explode('.', $passedProcess);
 
-//		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING')<= LVL_Notice_2 ){
-//			dump::dumpLong($exploded, 'exploded', array('Beautify_BackgroundColor' =>'#EED6FE','FLAT_WINDOWS_LINES' => 50));
-//		}
+		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo( $exploded);
 
 		$response = $this->doExecute(//'control',
 									(empty($exploded[0]) ? null : $exploded[0]),
@@ -283,7 +278,6 @@ class Dispatcher {
 									(empty($exploded[2]) ? '' : $exploded[2]),
 									(empty($exploded[3]) ? null : $exploded[3])
 									);
-
 		return $response;
 
 	}
@@ -343,7 +337,8 @@ class Dispatcher {
 			// now calls basically the task with this so it can look up the class and task
 			$r = $instance->$task($this);  //run the process's method
 
-			$this->debug( 'after running process got result', $r);
+			Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addNotice_9('Response From Execute:'. print_r($r, true));
+	//		$this->debug( 'after running process got result', $r);
 		} catch (\Exception $ex) {
 			$r = new Response('something went wrong while trying a doExecute'. $ex->getMessage());
 		}
@@ -583,12 +578,29 @@ class Dispatcher {
 		return $which;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $doEcho
+	 * @return string
+	 */
 	public function dumpQueuePRE( bool $doEcho = true):string {
 		return $this->dumpQueue( $this->PREqueue, $doEcho, 1);
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $doEcho
+	 * @return string
+	 */
 	public function dumpQueueDispatch( bool $doEcho = true): string{
 		return $this->dumpQueue( $this->DISPATCHqueue, $doEcho, 1);
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $doEcho
+	 * @return string
+	 */
 	public function dumpQueuePOST( bool $doEcho = true): string{
 		return $this->dumpQueue( $this->POSTqueue, $doEcho, 1);
 	}
@@ -651,44 +663,45 @@ class Dispatcher {
 	 * @param type $msg
 	 * @param type $var
 	 */
-	public function debug($msg, $var = null, $level = 'Notice') {
-		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
-		$s = Utils::backTraceHelper($bt, 0);
-
-		//$s .= Utils::backTraceHelper($bt, 1);
-		//	$s = '<BR>' . PHP_EOL . $s; // . '<BR>' . PHP_EOL;
-		$s = '     - ' . $s;
-
-		//$s .= ($var instanceof \php_base\Utils\Repsonse) ? '-=YES=-' : '-=NO=-' ;
-		//if ( $var instanceof \php_base\Utils\Repsonse){
-		//$s .= (is_a($var, 'php_base\Utils\Response')) ? '-=YES=-' : '-=NO=-' ;
-		//$s .= get_class($var);
-		if ( is_a($var, 'php_base\Utils\Response')) {
-			$v = empty($var) ? '' : $var->toString() ;
-
-			if ( $var->hadError() ){
-				$level = DebugHandler::ALERT;
-			} else {
-				$level = DebugHandler::INFO;
-			}
-		} else {
-		//	$level = AMessage::ALERT;
-			$v = empty($var) ? '' : print_r($var, true);
-		}
-		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice_2 ){
-			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
-			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
-
-			$msg = Settings::GetRunTimeObject('MessageLog')->add( $msg . $v . $s, null, $level);
-
-			Settings::SetPublic('Show MessageLog Adds_FileAndLine', $old);
-		}
-			//$this->dumpQueue($theQueue);
-		if ( defined("IS_PHPUNIT_TESTING")) {
-
-		}
-
-	}
+//	public function debug($msg, $var = null, $level = 'Notice') {
+//		$bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS , 2);
+//		$s = Utils::backTraceHelper($bt, 0);
+//
+//		//$s .= Utils::backTraceHelper($bt, 1);
+//		//	$s = '<BR>' . PHP_EOL . $s; // . '<BR>' . PHP_EOL;
+//		$s = '     - ' . $s;
+//
+//		//$s .= ($var instanceof \php_base\Utils\Repsonse) ? '-=YES=-' : '-=NO=-' ;
+//		//if ( $var instanceof \php_base\Utils\Repsonse){
+//		//$s .= (is_a($var, 'php_base\Utils\Response')) ? '-=YES=-' : '-=NO=-' ;
+//		//$s .= get_class($var);
+//		if ( is_a($var, 'php_base\Utils\Response')) {
+//			$v = empty($var) ? '' : $var->toString() ;
+//
+//			if ( $var->hadError() ){
+//				$level = DebugHandler::ALERT;
+//			} else {
+//				$level = DebugHandler::INFO;
+//			}
+//		} else {
+//		//	$level = AMessage::ALERT;
+//			$v = empty($var) ? '' : print_r($var, true);
+//		}
+//		if (Settings::GetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') <= LVL_Notice_2 ){
+//			$old =Settings::GetPublic('Show MessageLog Adds_FileAndLine');
+//			Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+//
+////dump::dump('['.$msg . $v . $s.']' );
+//			$msg = Settings::GetRunTimeObject('MessageLog')->add( $msg . $v . $s, null, $level);
+//
+//			Settings::SetPublic('Show MessageLog Adds_FileAndLine', $old);
+//		}
+//			//$this->dumpQueue($theQueue);
+//		if ( defined("IS_PHPUNIT_TESTING")) {
+//
+//		}
+//
+//	}
 
 
 }

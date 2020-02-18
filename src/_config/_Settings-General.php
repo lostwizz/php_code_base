@@ -87,11 +87,14 @@ define('LVL_Notice_9', 259);
 define('LVL_Notice', 260);
 /////////////define('LVL_Notice', AMessage::NOTICE);
 
-define('LVL_NORMAL', LVL_Notice);    // this the noraml level for not debugging i.e. production
 								// -it will show Notices but not the lower levels i.e. Notice_9..1
 
-define('LVL_TODO', 275);
+define('LVL_TODO', 1275);
+
 define('LVL_WARNING', 300);
+
+define('LVL_NORMAL', LVL_WARNING);    // this the noraml level for not debugging i.e. production
+
 define('LVL_ERROR', 400);
 define('LVL_CRITICAL', 500);
 define('LVL_ALERT', 550);
@@ -102,10 +105,11 @@ define('LVL_EMERGENCY', 600);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // you can use a flag file in the c:\city directory to turn on debugging for only this PC
 
-Settings::SetPublic('IS_DEBUGGING', checkLocalEnvIfDebugging());
+
+Settings::SetPublic('IS_DEBUGGING', \php_base\SetDebugCookie::checkLocalEnvIfDebugging() );
 
 //Settings::SetPublic('IS_DEBUGGING', false);
-Settings::SetPublic('IS_DEBUGGING', true);
+//Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
@@ -121,7 +125,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
 	//////////Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 
@@ -135,7 +139,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
-
+	Settings::SetPublic('IS_DETAILED_UTILS_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
@@ -143,8 +147,17 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::SetPublic('Show History in Footer', true);
 } else {
 	DebugHandler::setCurrentLevel(DebugHandler::NOTICE);
+	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM ,LVL_NORMAL);
+	MessageLog::$DEFAULTLoggingLevel = LVL_NORMAL ;
+	MessageLog::$LoggingLevels = array( MessageLog::$DEFAULTLoggingLevel => LVL_NORMAL);     //SubSystem= 'general'
 
-	Settings::SetPublic('Show MessageLog Display Mode Short Color', true);
+	Settings::SetPublic('Show MessageLog Adds', false );   // true);
+	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
+
+		//Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
+
+
+	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog in Footer', true);
 	Settings::SetPublic('Show History in Footer', false);
 }
@@ -180,7 +193,7 @@ Settings::SetRuntime('SecurityLog', null);
 Settings::SetRuntime('EmailLog', null);
 
 /**--------------------------------------------------------
- * the file names for the Lot Files
+ * the file names for the Log Files
  */
 Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
 Settings::SetPublic('Security_Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_security.log');
@@ -189,11 +202,11 @@ Settings::SetPublic('Security_Log_file', DIR . 'logs' . DSZ . Settings::GetPubli
  * this indicates which of the logging is active (true) and which are basically left turned off
  */
 Settings::SetPublic('Use_MessageLog', true);  //true
-Settings::SetPublic('Use_DBLog', false);
-Settings::SetPublic('Use_DBdataLog', false);
-Settings::SetPublic('Use_FileLog', false);  // true
-Settings::SetPublic('Use_SecurityLog', false);
-Settings::SetPublic('Use_EmailLog', false);	  // true
+Settings::SetPublic('Use_DBLog', true);
+Settings::SetPublic('Use_DBdataLog', true);
+Settings::SetPublic('Use_FileLog', true);  // true
+Settings::SetPublic('Use_SecurityLog', true);
+Settings::SetPublic('Use_EmailLog', true);	  // true
 
 
 /**--------------------------------------------------------
@@ -204,28 +217,32 @@ Settings::SetPublic('Use_EmailLog', false);	  // true
 Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_CONTEXT', false);  // could be string or array
 Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_EXTRA', false);  // could be string or array
 
-
-function checkLocalEnvIfDebugging(){
-
-	$get = filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
-	if ( !empty( $get) and in_array('DEBUG', $get) and $get['DEBUG']== 78 ){
-		//echo '-debug true-'	;
-		return true;
-	}
-	$cookie = filter_input_array(\INPUT_COOKIE,\FILTER_SANITIZE_STRING);
-
-//	echo '<pre>';
-//	print_r ($cookie);
-//	echo '</pre>';
-
-	if ( !empty( $cookie['DEBUG']) and ($cookie['DEBUG'] == '78') ){
-		echo '-debug true by cookie-'	;
-		return true;
-	}
-
-	//echo '-debug false (by cookie or get)-'	;
-	return false;
-}
+//
+//function checkLocalEnvIfDebugging(){
+//
+//	$get = filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
+//	if ( !empty( $get) and in_array('DEBUG', $get) and $get['DEBUG']== 78 ){
+//		//echo '-debug true-'	;
+//		return true;
+//	}
+//	$cookie = filter_input_array(\INPUT_COOKIE,\FILTER_SANITIZE_STRING);
+//echo '<pre>';
+//echo ' - cookie - ';
+//print_r( $cookie);
+//echo '</pre>';
+//
+////	echo '<pre>';
+////	print_r ($cookie);
+////	echo '</pre>';
+//
+//	if ( !empty( $cookie['DEBUG']) and ($cookie['DEBUG'] == '78') ){
+//		echo '-debug true by cookie-'	;
+//		return true;
+//	}
+//
+//	//echo '-debug false (by cookie or get)-'	;
+//	return false;
+//}
 
 
 
@@ -242,79 +259,63 @@ function checkLocalEnvIfDebugging(){
 function setup_Loggy() {
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_CACHE_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('CACHE_DEBUGGING', Settings::getPublic('IS_DETAILED_CACHE_DEBUGGING'));
 		Settings::SetRuntime('CACHE_DEBUGGING', $loggy);
-	}
 	//Settings::getRunTimeObject('CACHE_DEBUGGING')->addAlert('CACHE detail logging is turned on');
 
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_SQL_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('SQL_DEBUGGING', Settings::getPublic('IS_DETAILED_SQL_DEBUGGING'));
 		Settings::SetRuntime('SQL_DEBUGGING', $loggy);
-	}
 
 
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('DBHANDLERS_DEBUGGING', Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING'));
 		Settings::SetRuntime('DBHANDLERS_DEBUGGING', $loggy);
-	}
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_MENU_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('MENU_DEBUGGING', Settings::getPublic('IS_DETAILED_MENU_DEBUGGING'));
 		Settings::SetRuntime('MENU_DEBUGGING', $loggy);
-	}
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('DBHANDLERS_FLD_DEBUGGING', Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING'));
 		Settings::SetRuntime('DBHANDLERS_FLD_DEBUGGING', $loggy);
-	}
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('SimpleTableEditor', Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING'));
 		Settings::SetRuntime('SIMPLE_DEBUGGING', $loggy);
-	}
 
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('DISPATCHER_DEBUGGING', Settings::getPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING'));
 		Settings::SetRuntime('DISPATCHER_DEBUGGING', $loggy);
-	}
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::GetPublic('IS_DETAILED_RESOLVER_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('RESOLVER_DEBUGGING', Settings::getPublic('IS_DETAILED_RESOLVER_DEBUGGING'));
 		Settings::setRunTime('RESOLVER_DEBUGGING', $loggy);
-	}
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('PERMISSION_DEBUGGING', Settings::getPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING'));
 		Settings::SetRuntime('PERMISSION_DEBUGGING', $loggy);
-	}
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('AUTHENTICATION_DEBUGGING', Settings::getPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING'));
 		Settings::SetRuntime('AUTHENTICATION_DEBUGGING', $loggy);
-	}
 
 
 
 
 
 	/** ----------------------------------------------------------------------------------------------- */
-	if (Settings::getPublic('IS_DETAILED_DBA_DEBUGGING') > 0) {
 		$loggy = new SubSystemMessage('IS_DETAILED_DBA_DEBUGGING', Settings::getPublic('IS_DETAILED_DBA_DEBUGGING'));
 		Settings::SetRuntime('DBA_DEBUGGING', $loggy);
-	}
+
+	/** ----------------------------------------------------------------------------------------------- */
+		$loggy = new SubSystemMessage('IS_DETAILED_UTILS_DEBUGGING', Settings::getPublic('IS_DETAILED_UTILS_DEBUGGING'));
+		Settings::SetRuntime('UTILS_DEBUGGING', $loggy);
+
+
 	//Settings::getRunTimeObject('DBA_DEBUGGING')->addAlert('dbadebugging detail logging is turned on');
 
 

@@ -289,4 +289,8 @@ Class Response {
 		}
 	}
 
+	public function __debugInfo() {
+		return [ 'Response' => $this->toString()];
+	}
+
 }

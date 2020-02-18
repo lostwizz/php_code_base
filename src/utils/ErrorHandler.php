@@ -128,8 +128,8 @@ function UserErrorHandler($errno, $errstr, $errfile, $errline, $alternate_bt) {
 	} else {
 		$error_text = '<hr color=red size=9><font color=red style="font-size:160%;"><Br>';
 		$error_text .= 'An Error has occured.' . PHP_EOL;
-		$error_text .= Settings::GetProtected('Critical_email_TO_ADDR') . ' has been notified by email ';
-
+		//////////$error_text .= Settings::GetProtected('Critical_email_TO_ADDR') . ' has been notified by email ';
+		$error_text .= 'The support for this applicaion has been notified by email';
 		echo nl2br($error_text);
 		die;
 	}

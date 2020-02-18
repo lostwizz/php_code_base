@@ -217,12 +217,13 @@ class AuthenticateController extends \php_base\Control\Controller {
 
 		//$this->UserInfoData = new UserInfoData($this, $username);
 		$this->data = new UserInfoData($this, $username);
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7( $this->UserInfoData);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_8( $this->UserInfoData);
 
 		if (!empty($this->data->UserInfo) and ! empty($this->data->UserInfo['USERID'])) {
 			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-submitLogon1:'. $username);
 			$r = $this->model->tryToLogin($username, $password);
 		} else {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addWarning('User Name does not exist');
 			$r = new Response('Username does not exist', -10);
 		}
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-submitLogon2:'. $username);

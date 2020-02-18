@@ -109,9 +109,11 @@ class AuthenticateModel extends \php_base\Model\Model {
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-tryToLogin');
 
 		if (empty( $username)) {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('Username Missing!');
 			return Response::GenericError();
 		}
 		if( empty( $password)) {
+			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('Password Missing!');
 			return Response::GenericError();
 		}
 
@@ -165,7 +167,7 @@ class AuthenticateModel extends \php_base\Model\Model {
 		Settings::SetRunTime('Currently Logged In User', $_SESSION['Authenticated_username']);
 		Settings::SetRuntime ('isAuthenticated', true );
 
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( Settings::dump(false, false, true));
+		//Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo( Settings::dump(false, false, true));
 
 		//update the timeout -  so that it reflects inactivity
 		$exp = (new \DateTime('now'))->getTimestamp();
@@ -306,7 +308,7 @@ dump::dump(ini_get('smtp_port'));
 
 			return Response::NoError();
 		}
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addInfo('UNSuccessful logon DB_TABLE password for: ' . $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addAlert('UNSuccessful logon DB_TABLE password for: ' . $username);
 
 		return new Response('db_table password failed', -11);
 	}

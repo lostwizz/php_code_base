@@ -84,7 +84,7 @@ abstract Class Utils {
 	 * @return type
 	 */
 	public static function checkClass($class) : ?string{
-		Settings::GetRunTimeObject('MessageLog')->addNotice('@@checkClass: ' . $class);
+		Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_2('@@checkClass: ' . $class);
 
 		$prefixes= ['',
 			'php_base\Control\\',
@@ -111,7 +111,7 @@ abstract Class Utils {
 			}
 		}
 
-		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addAlert( 'class doesnt exist: ' . $class);
+		Settings::GetRunTimeObject('UTILS_DEBUGGING')->addAlert( 'class doesnt exist: ' . $class);
 		return null;
 	}
 
@@ -122,13 +122,13 @@ abstract Class Utils {
 	 * @return type
 	 */
 	protected static function tryNameSpaceClass($prefix, $class, $suffix='') : string {
-		Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING:' . $prefix . ' - ' . $class);
+		Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING:' . $prefix . ' - ' . $class);
 		//echo '--Trying: ', $prefix . '\\' .  $class, '<BR>';
 
 
 		/////////////$r = ( class_exists($prefix .  $class, true) ) ;
 		$r =  ( class_exists($prefix .  $class .  $suffix, true) ) ;
-		Settings::GetRunTimeObject('MessageLog')->addNotice('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
+		Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
 		return $r;
 	}
 
@@ -144,16 +144,28 @@ abstract Class Utils {
 				. $action
 				. ' . '
 		;
-		if (!empty($payload)) {
-			$data = @unserialize($payload);
-			if ($data === false) {
-				$r .= @serialize($payload);
-			} else {
-				$r .= $payload;
+		try {
+			if (is_string($payload) and substr($payload,0,1) == '.') {   //somehow got a leading period so strip it
+				$payload = substr($payload,1);
 			}
+			if (!empty($payload) and is_string($payload)) {
+
+				//Settings::GetRunTimeObject('MessageLog')->addEmergency('unserialize(makePTAPpretty):' . $payload );
+				//Settings::GetRuntime('DBLog')->addRecord( \Monolog\Logger::ALERT, 'unserialize(makePTAPpretty):' . $payload );
+				$data = @unserialize($payload);
+				if ($data === false) {
+					$r .= @serialize($payload);
+				} else {
+					$r .= $payload;
+				}
+			} else {
+				$r .= print_r($payload, true);
+			}
+			$r .= "<==";
+			return $r;
+		} catch (\Exception $ex){
+			$r .= print_r($payload);
 		}
-		$r .= "<==";
-		return $r;
 	}
 
 
