@@ -133,12 +133,32 @@ class dbaController extends Controller {
 	 * @param type $dispatcher
 	 * @return Response
 	 */
-	public function setDebugCookie( $dispatcher) : Response {
-		Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert('setting cookie');
-		$dispatcher->addPREProcess( 'SetDebugCookie', 'setCookie', '', null );
-		return Response::NoError();
+	public function setLocalDebugModeToggle( $dispatcher) : Response {
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@setLocalDebugModeToggle' );
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( Settings::GetPublic('IS_DEBUGGING') );
+		//Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( $_SESSION );
 
+		Settings::SetPublic('IS_DEBUGGING',  ( ! Settings::GetPublic('IS_DEBUGGING')));
+		if ( Settings::GetPublic('IS_DEBUGGING')) {
+			$_SESSION['LOCAL_DEBUG_SETTING'] = 99;
+		} else {
+			unset( $_SESSION['LOCAL_DEBUG_SETTING'] );
+		}
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( Settings::GetPublic('IS_DEBUGGING') );
+		//Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( $_SESSION );
+		return Response::NoError();
 	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $dispatcher
+	 * @return Response
+	 */
+	public function EditAllDebugLevels($dispatcher) :Response {
+		//show all the debug levels and allow a drop down for them
+	}
+
+
 
 
 	/** -----------------------------------------------------------------------------------------------

@@ -103,10 +103,10 @@ define('LVL_EMERGENCY', 600);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// you can use a flag file in the c:\city directory to turn on debugging for only this PC
+if ( !empty($_SESSION['LOCAL_DEBUG_SETTING']) AND $_SESSION['LOCAL_DEBUG_SETTING'] == 99 ) {
+	Settings::SetPublic('IS_DEBUGGING', true );
+}
 
-
-Settings::SetPublic('IS_DEBUGGING', \php_base\SetDebugCookie::checkLocalEnvIfDebugging() );
 
 //Settings::SetPublic('IS_DEBUGGING', false);
 //Settings::SetPublic('IS_DEBUGGING', true);
@@ -125,7 +125,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 
 	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
 	//////////Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
 
@@ -137,6 +137,7 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_NORMAL);
 
 	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
+
 	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_UTILS_DEBUGGING', LVL_NORMAL);

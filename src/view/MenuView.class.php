@@ -47,6 +47,10 @@ class MenuView extends View{
 //		return Response::NoError();
 //	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $theMenu
+	 */
 	public function showMenu ($theMenu) {
 		Settings::GetRunTimeObject('MENU_DEBUGGING')->addNotice_6( 'at show Menu');
 
@@ -60,37 +64,62 @@ class MenuView extends View{
 
 
 
+//
+//
+//	/** -----------------------------------------------------------------------------------------------
+//	 *
+//	 * @param array $item
+//	 * @return string
+//	 */
+//	protected function process(array $item) /* : string */ {
+//		dump::dump($item);
+//
+//		$s = '';
+//		$x = explode('.', $item['ITEM_NUMBER']);
+//		if (count($x) > $this->currentMenuLevel) {
+//			$s .= '<li class="parent">';
+//			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $this->menuTitle($item) . '</a>';
+//			$s .= PHP_EOL;
+//			$s .= '<ul class="child">';
+//			$s .= PHP_EOL;
+//			$this->currentMenuLevel ++;
+//		} elseif (count($x) == $this->currentMenuLevel) {
+//			$s .= '<li>'; //  class="parent"
+//			//$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
+//			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $this->menuTitle($item). '</a>';
+//			$s .= '</li>';
+//			$s .= PHP_EOL;
+//		} else if (count($x) < $this->currentMenuLevel) {
+//			$s .= '</ul>';
+//			$s .= PHP_EOL;
+//			$s .= '</li>';
+//			$s .= PHP_EOL;
+//			$s .= '<li class="parent">';
+//			//$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
+//			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER'] . '==' . $this->menuTitle($item) . '</a>';
+//			$s .= '</li>';
+//			$this->currentMenuLevel --;
+//		}
+//		return $s;
+//	}
+//
+//
+//	protected function menuTitle($item) : string {
+//		$s = $item['NAME'] ;
+//	$s .= '###';
+//		if ( !empty( $item['SETTINGS_FLAG'])) {
+//			$s .= HTML::Space(2);
+//			$s .= Settings::GetPublic($item['SETTINGS_FLAG']) ? '<on>' : '<off>';
+//		}
+//		return $s;
+//	}
 
 
-	protected function process(array $item) /* : string */ {
-		//dump::dumpLong($item);
 
-		$s = '';
-		$x = explode('.', $item['ITEM_NUMBER']);
-		if (count($x) > $this->currentMenuLevel) {
-			$s .= '<li class="parent">';
-			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
-			$s .= PHP_EOL;
-			$s .= '<ul class="child">';
-			$s .= PHP_EOL;
-			$this->currentMenuLevel ++;
-		} elseif (count($x) == $this->currentMenuLevel) {
-			$s .= '<li>'; //  class="parent"
-			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER']  . '==' . $item['NAME'] . '</a>';
-			$s .= '</li>';
-			$s .= PHP_EOL;
-		} else if (count($x) < $this->currentMenuLevel) {
-			$s .= '</ul>';
-			$s .= PHP_EOL;
-			$s .= '</li>';
-			$s .= PHP_EOL;
-			$s .= '<li class="parent">';
-			$s .= '<a href="./index.php?' . Resolver::MENU_TERM . '=' . $item['ptap'] . '">' . $this->currentMenuLevel . $item['ITEM_NUMBER'] . '==' . $item['NAME'] . '</a>';
-			$s .= '</li>';
-			$this->currentMenuLevel --;
-		}
-		return $s;
-	}
+
+
+
+
 
 	public 	function fred() {
 

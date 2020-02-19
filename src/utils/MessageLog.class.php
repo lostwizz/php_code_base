@@ -346,6 +346,7 @@ class AMessage extends MessageBase {
 	 * @return string
 	 */
 	protected function getPrettyLine($style = null) : string {
+//dump::dump($this);
 		$s = '';
 		$textLeader = $this->getShowTextLeader($this->level);
 
@@ -368,8 +369,11 @@ class AMessage extends MessageBase {
 		$s .= ': ';
 
 		if (is_array($this->text)) {
-			$debugText = $this->text['msglogTraceInfo'];
-			if ( !empty($debugText)){
+			$debugText ='';
+			//$debugText = $this->text['msglogTraceInfo'];
+			//if ( !empty($debugText)){
+			if ( !empty($this->text['msglogTraceInfo'])){
+				$debugText = $this->text['msglogTraceInfo'];
 				unset ($this->text['msglogTraceInfo']);
 			}
 			$this->text = \print_r($this->text, true);

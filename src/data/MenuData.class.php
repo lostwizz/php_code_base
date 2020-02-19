@@ -103,6 +103,7 @@ class MenuData extends data {
 		$this->Table->addFieldText('task', ['prettyName' => 'Task']);
 		$this->Table->addFieldText('action', ['prettyName' => 'Action']);
 		$this->Table->addFieldText('payload', ['prettyName' => 'Payload']);
+		$this->Table->addFieldText('Settings_Flag', ['prettyName' => 'Settings Flag']);
 		$this->Table->addFieldText('Role_Name_Required', ['prettyName' => 'Role Name Required']);
 
 		$this->Table->addFieldText('Process_Permission_Required', ['prettyName' => 'Process Permission Required']);

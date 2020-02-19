@@ -77,7 +77,7 @@ class SimpleTableEditorController {
 	 */
 	protected function determineTableName() : void{
 		if ( !empty( $this->payload) and  !empty($this->payload['Table'])) {
-dump::dump($this->payload['Table'] );
+//dump::dump($this->payload['Table'] );
 			$this->tableName = $this->payload['Table'];
 		} else {
 			Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addAlert ('unable to determine the Table Name');
