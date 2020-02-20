@@ -49,6 +49,7 @@ define('AR_LEVEL', 2);
  */
 abstract class MessageBase {
 	const ROCK_BOTTOM_ALL = -1;
+	const ALL = 1;
 
 	const DEBUG_1 = 101;
 	const DEBUG_2 = 102;
@@ -95,6 +96,8 @@ abstract class MessageBase {
 	 * @var array $levels - gives a text description of the error type
 	 */
 	public static $levels = array(
+		self::ROCK_BOTTOM_ALL => 'ROCK_BOTTOM_ALL',
+		self::ALL => 'All',
 		self::DEBUG => 'DEBUG',
 		self::DEBUG_1 => 'DEBUG_1',
 		self::DEBUG_2 => 'DEBUG_2',
@@ -429,7 +432,7 @@ class SubSystemMessage {
 	function __construct(string $passedSubSystem = MessageLog::DEFAULT_SUBSYSTEM , int $lvl = -9999 ) {  // AMessage::NOTICE){
 
 		if ( $lvl == -9999  or $lvl ==0) {
-			$lvl = MessageLog::$DEFAULTLoggingLevel;
+			$lvl = Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL');       ///MessageLog::$DEFAULTLoggingLevel;
 		}
 		$this->subSystem = $passedSubSystem;
 		Settings::GetRunTimeObject('MessageLog') -> setSubSystemLoggingLevel( $passedSubSystem, $lvl );
@@ -486,7 +489,7 @@ class MessageLog {
 
 	const DEFAULT_SUBSYSTEM = 'general';
 	public static $DEFAULTLoggingLevel = MessageBase::WARNING;
-	public static $LoggingLevels = array( self::DEFAULT_SUBSYSTEM =>  MessageBase::WARNING);
+	public static $LoggingLevels = null; //array( self::DEFAULT_SUBSYSTEM =>  MessageBase::WARNING);
 
 
 
@@ -503,6 +506,9 @@ class MessageLog {
 		if (empty(self::$messageQueue)) {
 			self::$messageQueue = new \SplQueue();
 		}
+		self::$DEFAULTLoggingLevel = Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL');
+		self::$LoggingLevels = array(self::DEFAULT_SUBSYSTEM => Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));
+
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -550,16 +556,26 @@ class MessageLog {
 
 
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return type
+	 */
 	public function __debugInfo() {
 		//return [MessageLog::messageQueue, MessageLog::DEFAULTLoggingLevel, MessageLog::LoggingLevels];
 
 		//		//Settings::SetPublic('Show MessageLog Adds', false);
 		//Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+
+		$loglevelsAR = array();
+		foreach(self::$LoggingLevels as $key =>$value) {
+			$loglevelsAR[$key] = $value . ' (' . MessageBase::$levels[ $value] . ')';
+		}
+
 		return [
-			'Default_level' => MessageBase::$levels[MessageLog::$DEFAULTLoggingLevel],
-			'Default_level_raw' =>MessageLog::$DEFAULTLoggingLevel,
+			'Default_level' => MessageLog::$DEFAULTLoggingLevel . ' (' .MessageBase::$levels[MessageLog::$DEFAULTLoggingLevel] . ')',
+			//'Default_level_raw' =>MessageLog::$DEFAULTLoggingLevel,
 			'default_subsystem' => self::DEFAULT_SUBSYSTEM,
-			'Logging_levels' => print_r(self::$LoggingLevels, true),
+			'Logging_levels' => $loglevelsAR, //print_r(self::$LoggingLevels, true),
 			//'queue' => $this->giveUglyMessageQueue(),
 			];
 	}

@@ -51,6 +51,10 @@ class dbaController extends Controller {
 	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null){
 		Settings::getRunTimeObject('DBA_DEBUGGING')->addInfo('constructor for dbaController');
 
+		//$this->model = new \php_base\model\MenuModel($this);
+		//$this->data = new \php_base\data\MenuData($this);
+		$this->view = new \php_base\view\dbaView($this);
+
 
 		$this->process = $passedProcess;
 		$this->task = $passedTask;
@@ -120,10 +124,11 @@ class dbaController extends Controller {
 	 * @return Response
 	 */
 	public function ShowAllSettings( $dispatcher): Response {
+
 		echo Settings::dump(true,true,true);
 
 		$menu = Settings::GetPublic('MenuController');
-		$menu->changeMenuItemStatus( 20, false);
+	//	$menu->changeMenuItemStatus( 20, false);
 
 		return Response::NoError();
 	}
@@ -140,9 +145,12 @@ class dbaController extends Controller {
 
 		Settings::SetPublic('IS_DEBUGGING',  ( ! Settings::GetPublic('IS_DEBUGGING')));
 		if ( Settings::GetPublic('IS_DEBUGGING')) {
-			$_SESSION['LOCAL_DEBUG_SETTING'] = 99;
+			$_SESSION['LOCAL_DEBUG_SETTING']= ['IS_Debugging' => 99];
+			Settings::SetPublic('Show MessageLog Adds', true);
+			Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
+
 		} else {
-			unset( $_SESSION['LOCAL_DEBUG_SETTING'] );
+			unset( $_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'] );
 		}
 		Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( Settings::GetPublic('IS_DEBUGGING') );
 		//Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( $_SESSION );
@@ -155,9 +163,30 @@ class dbaController extends Controller {
 	 * @return Response
 	 */
 	public function EditAllDebugLevels($dispatcher) :Response {
-		//show all the debug levels and allow a drop down for them
+		Settings::GetRunTimeObject('MessageLog')->addWarning( 'at EditAllDebugLevels' );
+
+		$ar = Settings::giveAllSettingsThatStartWith('IS_DETAILED_');
+
+		$this->view->showEditableIsDetailed( $ar);
+
+		Settings::GetRunTimeObject('MessageLog')->addWarning( 'leaving EditAllDebugLevels' );
+
+		return Response::NoError();
 	}
 
+	/** -----------------------------------------------------------------------------------------------*/
+	public function setAllDebugLevels( ){
+
+		//dump::dump($this->payload);
+		echo 'Applying: <BR>';
+		foreach ($this->payload as $key => $value) {
+			$_SESSION['LOCAL_DEBUG_SETTING'][ $key ] = $value;
+			echo $key, ' with value=', $value, '<br>';
+		}
+
+dump::dump(Settings::GetRunTimeObject('MessageLog'));
+		return Response::NoError();
+	}
 
 
 
@@ -169,7 +198,7 @@ class dbaController extends Controller {
 	public function Edit_UserInfoData( $dispatcher=null) : Response  {
 //		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
 
-	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(\php_base\Utils\MessageLog::DEFAULT_SUBSYSTEM , LVL_Notice_5);
+		Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(\php_base\Utils\MessageLog::DEFAULT_SUBSYSTEM , LVL_Notice_5);
 
 
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
@@ -251,6 +280,7 @@ dump::dump('at two');
 	//Settings::GetRuntimeObject('POSTqueue')->push('dbaController.four');
 		//Settings::GetRuntimeObject('Dispatcher')->addPOSTProcess('dba', 'four');
 
+Settings::GetRunTimeObject('MessageLog')->addWarning('at  dba two');
 
 		return Response::NoError();
 	}

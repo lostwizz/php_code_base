@@ -317,6 +317,7 @@ abstract Class HTML {
 			$arStyle = null,
 			?string $lable = null
 	): ?string {
+		//echo 'name=>',$name,   '<BR>';
 		return self::ShowInput($name, $value, 'TEXT', $arOptions, $arStyle, $lable);
 	}
 
@@ -405,7 +406,11 @@ abstract Class HTML {
 	 * @param type $addDefaultSelection
 	 * @return string
 	 */
-	protected static function Options($values, $defaultItemValue = null, $addDefaultSelection = true) {
+	protected static function Options(
+			$values,
+			$defaultItemValue = null,
+			$addDefaultSelection = true
+			) {
 		$options = '';
 		if ($addDefaultSelection) {
 			$options .= '<option value="-1"';
@@ -461,7 +466,11 @@ abstract Class HTML {
 	 * @param 	mixed $attributes Custom attributes (must be a valid attribute for the <img /> tag)
 	 * @return 	string The formated <img /> tag
 	 */
-	public static function Img($url, $arOptions = null, $arStyle = null) {
+	public static function Img(
+			$url,
+			$arOptions = null,
+			$arStyle = null
+			) {
 		if (empty($arOptions['border'])) {
 			if (is_null($arOptions)) {
 				$arOptions = array();
@@ -485,7 +494,12 @@ abstract Class HTML {
 	 * @param 	mixed $attributes Custom attributes (must be a valid attribute for the <a></a> tag)
 	 * @return 	string The formated <a></a> tag
 	 */
-	public static function Anchor($url, $lable = null, $arOptions = null, $arStyle = null) {
+	public static function Anchor(
+			$url,
+			$lable = null,
+			$arOptions = null,
+			$arStyle = null
+			) {
 		$lable = (!empty($lable)) ? $lable : $url;
 		$attr = self::parseOptions($arOptions);
 		$style = self::parseStyle($arStyle);
@@ -547,7 +561,8 @@ abstract Class HTML {
 	 * @param 	string $method The form method (post or get)
 	 * @param 	string $enctype The form enctype
 	 */
-	public static function FormOpen(string $action,
+	public static function FormOpen(
+			string $action,
 			string $name = null,
 			string $method = 'POST',
 			$enctype = 'multipart/form-data',
@@ -586,7 +601,11 @@ abstract Class HTML {
 	 * @param type $arStyle
 	 * @return type
 	 */
-	public static function Open(string $tag, $arOptions = null, $arStyle = null) {
+	public static function Open(
+			string $tag,
+			$arOptions = null,
+			$arStyle = null
+			) {
 		$attr = self::parseOptions($arOptions);
 		$style = self::parseStyle($arStyle);
 

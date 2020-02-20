@@ -103,66 +103,46 @@ define('LVL_EMERGENCY', 600);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-if ( !empty($_SESSION['LOCAL_DEBUG_SETTING']) AND $_SESSION['LOCAL_DEBUG_SETTING'] == 99 ) {
-	Settings::SetPublic('IS_DEBUGGING', true );
-}
-
+handleLocalIsDebugging();
+handleSetupAllDefaultDetailedSettings();
 
 //Settings::SetPublic('IS_DEBUGGING', false);
 //Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
-	DebugHandler::setCurrentLevel(DebugHandler::DEBUG);
+	Settings::SetPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL', LVL_INFO);
+	DebugHandler::setCurrentLevel( Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));
+	MessageLog::$DEFAULTLoggingLevel = Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL') ;
+	MessageLog::$LoggingLevels = array( MessageLog::$DEFAULTLoggingLevel => Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));     //SubSystem= 'general'
 
-	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM ,LVL_ALL); // LVL_Notice_5);
-
-	MessageLog::$DEFAULTLoggingLevel = LVL_WARNING ;
-	MessageLog::$LoggingLevels = array( MessageLog::$DEFAULTLoggingLevel => LVL_NORMAL);     //SubSystem= 'general'
-
-		//==============
-		// Note:  look in /utils/Setup_Logging for the initialization of the loggers at that level
-	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING',  LVL_NORMAL);
-
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
-
-	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
-	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
-	//////////Settings::SetPublic('IS_DETAILED_PERMISSIONS_DEBUGGING', false);
-
+	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM ,Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL')); // LVL_Notice_5);
 
 	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_ALL);
 
 	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_NORMAL);
-	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_NORMAL);
-
-	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
-
-	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
-	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
-	Settings::SetPublic('IS_DETAILED_UTILS_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
 	Settings::SetPublic('Show MessageLog in Footer', false);
-	Settings::SetPublic('Show History in Footer', true);
+	Settings::SetPublic('Show History in Footer', false);
+
 } else {
-	DebugHandler::setCurrentLevel(DebugHandler::NOTICE);
-	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM ,LVL_NORMAL);
-	MessageLog::$DEFAULTLoggingLevel = LVL_NORMAL ;
-	MessageLog::$LoggingLevels = array( MessageLog::$DEFAULTLoggingLevel => LVL_NORMAL);     //SubSystem= 'general'
+	Settings::SetPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL', LVL_WARNING);
+	DebugHandler::setCurrentLevel( Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));
+	MessageLog::$DEFAULTLoggingLevel = Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL') ;
+	MessageLog::$LoggingLevels = array( MessageLog::$DEFAULTLoggingLevel => Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));     //SubSystem= 'general'
+
+	Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM ,Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL')); // LVL_Notice_5);
 
 	Settings::SetPublic('Show MessageLog Adds', false );   // true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
-
-		//Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
-
 
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog in Footer', true);
 	Settings::SetPublic('Show History in Footer', false);
 }
 
+handleLocalDetailedDebugSettingsOverrides();
 
 
 Settings::SetPublic('CACHE_IS_ON', false);
@@ -218,37 +198,61 @@ Settings::SetPublic('Use_EmailLog', true);	  // true
 Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_CONTEXT', false);  // could be string or array
 Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_EXTRA', false);  // could be string or array
 
-//
-//function checkLocalEnvIfDebugging(){
-//
-//	$get = filter_input_array(\INPUT_GET, \FILTER_SANITIZE_STRING);
-//	if ( !empty( $get) and in_array('DEBUG', $get) and $get['DEBUG']== 78 ){
-//		//echo '-debug true-'	;
-//		return true;
-//	}
-//	$cookie = filter_input_array(\INPUT_COOKIE,\FILTER_SANITIZE_STRING);
-//echo '<pre>';
-//echo ' - cookie - ';
-//print_r( $cookie);
-//echo '</pre>';
-//
-////	echo '<pre>';
-////	print_r ($cookie);
-////	echo '</pre>';
-//
-//	if ( !empty( $cookie['DEBUG']) and ($cookie['DEBUG'] == '78') ){
-//		echo '-debug true by cookie-'	;
-//		return true;
-//	}
-//
-//	//echo '-debug false (by cookie or get)-'	;
-//	return false;
-//}
 
 
+function handleLocalIsDebugging() {
+	if ( !empty($_SESSION['LOCAL_DEBUG_SETTING'])
+		and !empty($_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'])
+		and $_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'] == 99 ) {
+
+			Settings::SetPublic('IS_DEBUGGING', true );
+
+	} else {
+		Settings::SetPublic('IS_DEBUGGING', false );
+	}
+}
+
+function handleLocalDetailedDebugSettingsOverrides(){
+	if ( !empty($_SESSION['LOCAL_DEBUG_SETTING'])) {
+						//echo '<pre>';
+						//print_r($_SESSION['LOCAL_DEBUG_SETTING']);
+						//echo '</pre>';
+		foreach ($_SESSION['LOCAL_DEBUG_SETTING'] as $key => $value) {
+			if ($key != 'IS_DEBUGGING') {           // Ignore is_debugging - it is set above
+						//echo 'IS_DETAILED_',$key, '++++>', $value, '<BR>';
+				Settings::SetPublic( 'IS_DETAILED_' .  $key, $value);
+			}
+		}
+	}
+}
+
+function handleSetupAllDefaultDetailedSettings(){
+	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING',  LVL_NORMAL);
+
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
+
+	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
 
 
+	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_NORMAL);
 
+	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_NORMAL);
+
+	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
+
+	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_UTILS_DEBUGGING', LVL_NORMAL);
+
+	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
+	Settings::SetPublic('Show MessageLog Adds', false);
+	Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+	Settings::SetPublic('Show MessageLog in Footer', false);
+	Settings::SetPublic('Show History in Footer', false);
+}
 
 
 

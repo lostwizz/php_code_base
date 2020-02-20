@@ -190,7 +190,7 @@ class Dispatcher {
 		try {
 			$response = Response::NoError();
 			while ( ! $theQueue->isEmpty()) {
-				Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo($this->dumpQueue($theQueue, false));
+				Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo_2($this->dumpQueue($theQueue, false));
 
 				$response = $this->processDetailsOfQueue($theQueue);
 			}
@@ -304,19 +304,13 @@ class Dispatcher {
 							$passedPayload = null
 					): Response {
 
+		$process = $class;
 
-
-
-//		if (substr($class, -10) == 'Controller') {
-//			$process = substr($class, 0, -10);
-//		} else {
-			$process = $class;
-//		}
 		if ( empty($task)) {
 			$task = 'doWork';            /* the default task */
 		}
 		if ( empty($class)){
-			throw new \Exception ( 'noname class can not be instantiized');
+			throw new \Exception ( 'class is empty and can not be instantiized');
 		}
 		//$class = '\\php_base\\' . $dir . '\\' . $class;
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addTODO('will have to change this from php_base:' . $class);

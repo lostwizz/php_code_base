@@ -535,6 +535,39 @@ abstract class Settings {
 		return array('string', $v);
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $prefix  - the prefix of the settings to return
+	 * @param string $class - which set of settings (public, runtime, protected)
+	 * @return array
+	 */
+	public static function giveAllSettingsThatStartWith(string $prefix, string $class = 'PUBLIC')  :array {
+		switch (strtolower($class)) {
+			case 'public':
+				$set = self::$public;
+				break;
+			case 'runtime':
+				$set = self::$runTime;
+				break;
+			case 'protected':
+				$set = self::$protected;
+				break;
+			default:
+				break;
+		}
+		$result =array();
+
+		$len = strlen($prefix);
+		foreach ($set as $key => $val) {
+
+			if (substr(strtolower($key), 0, $len) == strtolower($prefix)) {
+				$result[] =  $key;
+			}
+		}
+		return $result;
+	}
+
+
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
