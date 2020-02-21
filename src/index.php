@@ -58,7 +58,10 @@ use \php_base\Utils\History as History;
 //************************************************************************************
 //
 
-include_once( \DIR . 'SetupSystemDetail.php');
+//include_once( \DIR . 'SetupSystemDetail.php');
+include_once( DIR . 'InitializeAndSetup.class.php');
+
+$init = new InitializeAndSetup();
 
 
 ////DebugHandler::setCurrentLevel(DebugHandler::NOTICE);

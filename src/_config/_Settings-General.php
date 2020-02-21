@@ -200,6 +200,7 @@ Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_EXTRA', false);  // could be string 
 
 
 
+/**--------------------------------------------------------*/
 function handleLocalIsDebugging() {
 	if ( !empty($_SESSION['LOCAL_DEBUG_SETTING'])
 		and !empty($_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'])
@@ -212,6 +213,7 @@ function handleLocalIsDebugging() {
 	}
 }
 
+/**--------------------------------------------------------*/
 function handleLocalDetailedDebugSettingsOverrides(){
 	if ( !empty($_SESSION['LOCAL_DEBUG_SETTING'])) {
 						//echo '<pre>';
@@ -226,6 +228,7 @@ function handleLocalDetailedDebugSettingsOverrides(){
 	}
 }
 
+/**--------------------------------------------------------*/
 function handleSetupAllDefaultDetailedSettings(){
 	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING',  LVL_NORMAL);
 
@@ -266,14 +269,10 @@ function setup_Loggy() {
 	/** ----------------------------------------------------------------------------------------------- */
 		$loggy = new SubSystemMessage('CACHE_DEBUGGING', Settings::getPublic('IS_DETAILED_CACHE_DEBUGGING'));
 		Settings::SetRuntime('CACHE_DEBUGGING', $loggy);
-	//Settings::getRunTimeObject('CACHE_DEBUGGING')->addAlert('CACHE detail logging is turned on');
-
 
 	/** ----------------------------------------------------------------------------------------------- */
 		$loggy = new SubSystemMessage('SQL_DEBUGGING', Settings::getPublic('IS_DETAILED_SQL_DEBUGGING'));
 		Settings::SetRuntime('SQL_DEBUGGING', $loggy);
-
-
 
 	/** ----------------------------------------------------------------------------------------------- */
 		$loggy = new SubSystemMessage('DBHANDLERS_DEBUGGING', Settings::getPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING'));
@@ -291,7 +290,6 @@ function setup_Loggy() {
 		$loggy = new SubSystemMessage('SimpleTableEditor', Settings::getPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING'));
 		Settings::SetRuntime('SIMPLE_DEBUGGING', $loggy);
 
-
 	/** ----------------------------------------------------------------------------------------------- */
 		$loggy = new SubSystemMessage('DISPATCHER_DEBUGGING', Settings::getPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING'));
 		Settings::SetRuntime('DISPATCHER_DEBUGGING', $loggy);
@@ -308,10 +306,6 @@ function setup_Loggy() {
 		$loggy = new SubSystemMessage('AUTHENTICATION_DEBUGGING', Settings::getPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING'));
 		Settings::SetRuntime('AUTHENTICATION_DEBUGGING', $loggy);
 
-
-
-
-
 	/** ----------------------------------------------------------------------------------------------- */
 		$loggy = new SubSystemMessage('IS_DETAILED_DBA_DEBUGGING', Settings::getPublic('IS_DETAILED_DBA_DEBUGGING'));
 		Settings::SetRuntime('DBA_DEBUGGING', $loggy);
@@ -327,6 +321,4 @@ function setup_Loggy() {
 	//$x =Settings::GetRunTimeObject('MessageLog')->__toString();
 
 	//dump::dump(Settings::GetRunTimeObject('MessageLog')->__toString());
-
-
 }
