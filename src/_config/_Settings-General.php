@@ -107,7 +107,7 @@ handleLocalIsDebugging();
 handleSetupAllDefaultDetailedSettings();
 
 //Settings::SetPublic('IS_DEBUGGING', false);
-//Settings::SetPublic('IS_DEBUGGING', true);
+Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	Settings::SetPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL', LVL_INFO);

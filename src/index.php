@@ -42,12 +42,12 @@ include_once( \DIR . 'autoload.php');
 
 
 use \php_base\Resolver as Resolver;
-use \php_base\Utils\Cache;
-use \php_base\Utils\Dump\Dump as Dump;
-use \php_base\Utils\MessageLog as MessageLog;
-use \php_base\Utils\Settings as Settings;
-use \php_base\Utils\DebugHandler as DebugHandler;
-use \php_base\Utils\History as History;
+//use \php_base\Utils\Cache;
+//use \php_base\Utils\Dump\Dump as Dump;
+//use \php_base\Utils\MessageLog as MessageLog;
+//use \php_base\Utils\Settings as Settings;
+//use \php_base\Utils\DebugHandler as DebugHandler;
+//use \php_base\Utils\History as History;
 
 
 ////
@@ -61,7 +61,7 @@ use \php_base\Utils\History as History;
 //include_once( \DIR . 'SetupSystemDetail.php');
 include_once( DIR . 'InitializeAndSetup.class.php');
 
-$init = new InitializeAndSetup();
+$init = new \php_base\InitializeAndSetup();
 
 
 ////DebugHandler::setCurrentLevel(DebugHandler::NOTICE);
@@ -107,7 +107,7 @@ $init = new InitializeAndSetup();
 //
 //dump::dumpA($a1,$a2,$a3, $a4);
 
-History::clear();
+//History::clear();
 //History::addMarker();
 
 
@@ -133,15 +133,18 @@ if ($response->hadError() and $response->failNoisily()) {
 }
 
 
-Cache::CleanupBeforSessionWrite();
+unset($init);
 
-session_write_close();
-//Dump::dump( $_SESSION); //dumpLong
-
-//Dump::dump( $_SESSION); //dumpLong
-Settings::GetRunTimeObject('MessageLog')->addInfo('... Closing Session..');
-
-
-if (Settings::GetPublic('IS_DEBUGGING')) {
-	echo '<br>--...The End.--<Br>';
-}
+//
+//Cache::CleanupBeforSessionWrite();
+//
+//session_write_close();
+////Dump::dump( $_SESSION); //dumpLong
+//
+////Dump::dump( $_SESSION); //dumpLong
+//Settings::GetRunTimeObject('MessageLog')->addInfo('... Closing Session..');
+//
+//
+//if (Settings::GetPublic('IS_DEBUGGING')) {
+//	echo '<br>--...The End.--<Br>';
+//}
