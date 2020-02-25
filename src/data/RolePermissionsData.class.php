@@ -170,7 +170,7 @@ class UserPermissionData {
 	 *
 	 * @param type $listOfRolesIDs
 	 */
-	protected function doReadFromDatabaseForRoles(array $listOfRolesIDs) {
+	protected function doReadFromDatabaseForRoles( ?array $listOfRolesIDs) {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_5('@@doReadFromDatabaseForRoles: '. print_r($listOfRolesIDs, true));
 
 		if (empty($listOfRolesIDs)) {

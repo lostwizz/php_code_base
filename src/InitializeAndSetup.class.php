@@ -15,34 +15,39 @@ class InitializeAndSetup {
 
 	public $hadFailure = false;
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function __construct() {
 
 		$this->setupPHPEnvironment();
 		$this->setupAutoLoad();
 		$this->startSession();
+
+		$this->loadSettingsClassBeforeTryingToUsIt();
+
+		$this->setDefaultConfigurationBeforeLoad();
 		$this->loadConfigurations();
 		$this->loadAndRunErrorHandler();
 		$this->loadAndSetupLogging();
 		$this->runTheLoggySetup();
 		$this->doSomeVersionTests();
-
-
 		$this->doSomeSetupChecks_1();
 		$this->doDatabaseRequirementTests();
 
 		//////////$this->tryToUseMemcache();
+
 		$this->testEmailLogging(false);
-
 		$this->sendSartingMsgToLogsIfDebugging();
-
 		$this->clearHistory();
 
 		//dump::dumpClasses();
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function __destruct() {
-
-
 		Cache::CleanupBeforSessionWrite();
 
 		session_write_close();
@@ -53,14 +58,23 @@ class InitializeAndSetup {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function setupPHPEnvironment() {
 		date_default_timezone_set('Canada/Yukon');
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function setupAutoLoad() {
 		include_once( DIR . 'autoload.php');
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function startSession() {
 		if (session_status() == \PHP_SESSION_NONE AND ! headers_sent()) {
 			session_name('SESSID_' . str_replace(' ', '_', Settings::GetPublic('App Name')));
@@ -73,8 +87,62 @@ class InitializeAndSetup {
 		// https://www.php.net/manual/en/function.session-destroy.php
 	}
 
-	public function loadConfigurations() {
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public function loadSettingsClassBeforeTryingToUsIt() {
 		include_once( DIR . 'utils' . DSZ . 'settings.class.php');
+
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public function setDefaultConfigurationBeforeLoad(){
+//		Settings::SetPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL', LVL_INFO);
+//		DebugHandler::setCurrentLevel( Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));
+//
+//		MessageLog::$DEFAULTLoggingLevel = Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL') ;
+//		MessageLog::$LoggingLevels = array( MessageLog::$DEFAULTLoggingLevel => Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));     //SubSystem= 'general'
+//
+//		Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(MessageLog::DEFAULT_SUBSYSTEM ,Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL')); // LVL_Notice_5);
+//
+//		Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING',  LVL_NORMAL);
+//		Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
+//		Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_NORMAL);
+//		Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_NORMAL);
+//		Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_FLD_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
+//		Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
+//		Settings::SetPublic('IS_DETAILED_UTILS_DEBUGGING', LVL_NORMAL);
+//
+//		Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
+//		Settings::SetPublic('Show MessageLog Adds', false);
+//		Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
+//		Settings::SetPublic('Show MessageLog in Footer', false);
+//		Settings::SetPublic('Show History in Footer', false);
+
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
+	public function loadConfigurations() {
 
 		require_once( DIR . '_config' . DSZ . '_Settings-General.php');
 		require_once( DIR . '_config' . DSZ . '_Settings-Database.php');
@@ -83,10 +151,16 @@ class InitializeAndSetup {
 		require_once( 'P:\Projects\_Private_Settings.php');
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function loadAndRunErrorHandler() {
 		include_once( DIR . 'utils' . DSZ . 'ErrorHandler.php');  // has to be after the settings are initialized
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function loadAndSetupLogging() {
 		Settings::SetPublic('Log_file', DIR . 'logs' . DSZ . Settings::GetPublic('App Name') . '_app.log');
 
@@ -98,11 +172,17 @@ class InitializeAndSetup {
 		include_once( DIR . 'utils' . DSZ . 'Setup_Logging.php');
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function runTheLoggySetup() {
 		//TODO: move the loggy code somewhere???
 		\php_base\utils\setup_loggy();
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function doSomeVersionTests() {
 		///////////////////////////////////////////////////////////////////////////////
 		// verify versions of a few key items
@@ -116,6 +196,10 @@ class InitializeAndSetup {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @throws exception
+	 */
 	public function doSomeSetupChecks_1() {
 		Settings::GetRunTimeObject('MessageLog')->addInfo('Starting read from db settings');
 		Settings::dbReadAndApplySettings();
@@ -132,6 +216,10 @@ class InitializeAndSetup {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @throws exception
+	 */
 	public function doDatabaseRequirementTests() {
 
 		if (extension_loaded(Settings::GetProtected('database_extension_needed'))) {
@@ -143,6 +231,9 @@ class InitializeAndSetup {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function tryToUsememcache() {
 
 		//https://libmemcached.org/libMemcached.html
@@ -156,6 +247,10 @@ class InitializeAndSetup {
 		$mc->set("bar", "Memcached...");
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param bool $runTheTest
+	 */
 	public function testEmailLogging(bool $runTheTest = false) {
 		if ($runTheTest) {
 			Settings::GetRuntimeObject('EmailLog')->addCritical(' it blew up!', \filter_input_array(\INPUT_SERVER, \FILTER_SANITIZE_STRING));
@@ -163,6 +258,9 @@ class InitializeAndSetup {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function sendSartingMsgToLogsIfDebugging() {
 		if (Settings::GetPublic('IS_DEBUGGING')) {
 			Settings::GetRunTimeObject('MessageLog')->addNotice('Starting ....');
@@ -171,6 +269,9 @@ class InitializeAndSetup {
 		}
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 */
 	public function clearHistory() {
 		History::clear();
 		//History::addMarker();

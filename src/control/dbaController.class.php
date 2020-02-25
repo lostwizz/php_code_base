@@ -260,7 +260,7 @@ dump::dump(Settings::GetRunTimeObject('MessageLog'));
 
 		$this->payload['Table'] = '\php_base\data\UserPermissionData';
 		//$editorSession = new SimpleTableEditor('\php_base\data\UserPermissionData', $this->process, $this->task, $this->action, $this->payload);
-		$dispatcher->addProcess( '\php_base\data\UserPermissionData', 'runTableDisplayAndEdit',  $this->action, $this->payload);
+		$dispatcher->addProcess( 'SimpleTableEditor', 'runTableDisplayAndEdit',  $this->action, $this->payload);
 		return Response::NoError();
 	}
 
