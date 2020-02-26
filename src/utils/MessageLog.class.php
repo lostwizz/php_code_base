@@ -172,6 +172,8 @@ class AMessage extends MessageBase {
 	protected $timeStamp;  // time stamp for the message (for displaying the time)
 	protected $level; // level of the message (see defines at top)
 
+	protected $codeDetails;
+
 	//public $timestamp;
 
 	/**
@@ -185,10 +187,11 @@ class AMessage extends MessageBase {
 	 * @param type $timestamp
 	 * @param type $level
 	 */
-	public function __construct($text = null, $timestamp = null, $level = null) {
+	public function __construct($text = null, $timestamp = null, $level = null, ?string $codeDetails = null) {
 		$this->setText($text);
 		$this->setTimeStamp($timestamp);
 		$this->setLevel($level);
+		$this->setCodeDetails($codeDetails);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -305,6 +308,20 @@ class AMessage extends MessageBase {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string|null $codeDetails
+	 * @return void
+	 */
+	public function setCodeDetails( ?string $codeDetails = null) : void {
+		if (empty( $codeDetails)) {
+			$this->codeDetails ==null;
+		} else {
+			$this->codeDetails = $codeDetails;
+		}
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
 	 * return the contents of this message in the form of an array
 	 *
 	 * @return type
@@ -349,7 +366,7 @@ class AMessage extends MessageBase {
 	 * @return string
 	 */
 	protected function getPrettyLine($style = null) : string {
-//dump::dump($this);
+//dump::dumpA($this,substr_count($this->text, '<BR>'), substr_count($this->text, PHP_EOL), strlen($this->text )  );
 		$s = '';
 		$textLeader = $this->getShowTextLeader($this->level);
 
@@ -359,32 +376,38 @@ class AMessage extends MessageBase {
 			$lineStyle = $this->getShowStyle($this->level);
 		}
 
-		$s .= '<span class="' . $lineStyle . '">';
+		/* look for multi line output */
+		if ( ( ! is_string($this->text))
+				or (substr_count($this->text, '<BR>') > 0)
+				or (substr_count($this->text, PHP_EOL) > 0)
+				or (strlen($this->text) > 90)
+				or ( substr_count($this->text, ' Object ')> 0 )
+			) {
+			$s .= '<div class="' . $lineStyle . '">';
+		} else {
+			$s .= '<div class="' . $lineStyle . '" style="display: inline;">';
+		}
+
 		if (!empty($this->timeStamp)) {
 			$s .= '[' . $this->timeStamp . '] ';
 		}
 		$s .= $textLeader;
 
 		if ( SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
-			$s .= '</span>';
+			$s .= '</div>';
 		}
 
 		$s .= ': ';
 
 		if (is_array($this->text)) {
 			$debugText ='';
-			//$debugText = $this->text['msglogTraceInfo'];
-			//if ( !empty($debugText)){
-			if ( !empty($this->text['msglogTraceInfo'])){
-				$debugText = $this->text['msglogTraceInfo'];
-				unset ($this->text['msglogTraceInfo']);
-			}
+
 			$this->text = \print_r($this->text, true);
 			$x = str_replace("\n", '<BR>', $this->text);
 			$y = str_replace(' ', '&nbsp;', $x);
 			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 			$s .= $z;
-			$s .= $debugText;
+//			$s .= $debugText;
 		} else if ( !empty($this->text) and is_string($this->text) and substr_count(strtolower($this->text), '/table' ) > 0){
 			$s .= '<pre>';
 			$s .= $this->text;
@@ -396,9 +419,17 @@ class AMessage extends MessageBase {
 			$s .= $z;
 		}
 
-		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
-			$s .= '</span>';
+		if ( !empty( $this->codeDetails)){
+			$s .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - &nbsp;  ';
+			//$s .= '<span style="text-align: right;">';
+			$s .= (!empty( $this->codeDetails) ? $this->codeDetails : '' );
+			//$s .= '</span>';
 		}
+
+		if ( ! SETTINGS::getPublic('Show MessageLog Display Mode Short Color')){
+			$s .= '</div>';
+		}
+
 		$s .= '<BR>';
 		$s .= PHP_EOL;
 		return $s;
@@ -655,10 +686,9 @@ class MessageLog {
 	 * @param bool $includeSpan
 	 * @return string
 	 */
-	protected function generateGoodBT($bt, bool $includeSpan = true) :string{
+	protected function generateGoodBT($bt) :string{
 		$btLvl = $this->figureOutWhichBTisRelevant($bt);
-		$mid = '- '
-				. basename($bt[$btLvl]['file'])
+		$mid =  basename($bt[$btLvl]['file'])
 				. ':'
 				. $bt[$btLvl]['line']
 				. ' ('
@@ -667,16 +697,13 @@ class MessageLog {
 				. (empty($bt[$btLvl + 1]['function']) ? '' : $bt[$btLvl + 1]['function'] )
 				. ')';
 
-		if ($includeSpan) {
-			$out = '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;      <span class="msg_style_fn">';
-			$out .= $mid;
-			$out .= '</span>';
-		} else {
-			$out = $mid;
-		}
 
-		return $out;
+		return $mid;
 	}
+//
+//	protected function getCodeDebugInfo( $bt) : string{
+//
+//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * add a new message to the stack ( may include some values passed down to the message class)
@@ -690,28 +717,25 @@ class MessageLog {
 			return;  // if msg level is lower than setting then do nothing
 		}
 
+		$codeDetails ='';
+		$bt = debug_backtrace(false, 5);
+		$codeDetails =  $this->generateGoodBT($bt, false);
+
 		if (is_object($obj_or_array) and ( $obj_or_array instanceof AMessage )) {
+			$obj_or_array->setCodeDetails =  $codeDetails;
 			self::$messageQueue->enqueue($obj_or_array);
+			$temp = $obj_or_array;  // needed later for the show adds
 		} else {
-			if (Settings::GetPublic('Show MessageLog Adds')) {
-				$bt = debug_backtrace(false, 5);
-				if (is_string($obj_or_array) and ! empty($bt[1])) {
-					if (Settings::GetPublic('Show MessageLog Adds_FileAndLine')) {
-						$obj_or_array .= $this->generateGoodBT($bt, true);
-					}
-				} else if ( is_array( $obj_or_array)){
-					$obj_or_array['msglogTraceInfo'] = $this->generateGoodBT($bt, false);
-				}
+			if (Settings::GetPublic('Show MessageLog Adds_FileAndLine')) {
+				$temp = new AMessage($obj_or_array, $timestamp, $level, $codeDetails);               //create the AMessage
+			} else {
+				$temp = new AMessage($obj_or_array, $timestamp, $level);
 			}
-			$temp = new AMessage($obj_or_array, $timestamp, $level);               //create the AMessage
-
-//dump::dump($temp);
-			self::$messageQueue->enqueue($temp);
-
 			// add the item to the queue
-			if (Settings::GetPublic('Show MessageLog Adds')) {  // if you want the output to happen as it is added
-				$temp->show();
-			}
+			self::$messageQueue->enqueue($temp);
+		}
+		if (Settings::GetPublic('Show MessageLog Adds')) {
+			$temp->show();
 		}
 	}
 

@@ -15,7 +15,7 @@
  *
  * @link URL
  *
- * @package ModelViewController - UserRoleAndPermissions\UserPermissions
+ * @package ModelViewController - UserRoleAndPermissions\RolePermissions
  * @subpackage UserRoleAndPermissions
  * @since 0.3.0
  *
@@ -65,7 +65,7 @@ use \php_base\Utils\Cache as CACHE;
 /** * **********************************************************************************************
  * read and write the role's permissions from the database
  */
-class UserPermissionData {
+class RolePermissionsData {
 
 	public $permissionList;
 	public $Table;
@@ -111,7 +111,7 @@ class UserPermissionData {
 		$this->Table = new Table(
 				Settings::GetProtected('DB_Table_PermissionsManager'),
 				[
-			'className' => __NAMESPACE__ . '\UserPermissionData',
+			'className' => __NAMESPACE__ . '\RolePermissionsData',
 			'isAdding' => true,
 			'isEditing' => true,
 			'isDeleting' => true,
@@ -140,7 +140,6 @@ class UserPermissionData {
 	public function clearAllCaches() :void {
 		CACHE::deleteForPrefix(Settings::GetProtected('DB_Table_PermissionsManager') . '_listOfRoleIds_' );
 		CACHE::delete(Settings::GetProtected('DB_Table_PermissionsManager') .'_ReadAll');
-
 	}
 
 

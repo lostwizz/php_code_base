@@ -68,7 +68,7 @@ Class UserRoleAndPermissionsController {
 	public $userID;
 	public $userInfo = null;
 	public $userAttributes = null;
-	public $userPermissions = null;
+	public $rolePermissions = null;
 	public $ArrayOfRoleNames = null;
 // temp things
 	public $arOfRoleIDs = null;
@@ -213,7 +213,7 @@ Class UserRoleAndPermissionsController {
 		$this->userID = $cacheVal['userID'];
 		$this->userInfo = $cacheVal['userInfo'];
 		$this->userAttributes = $cacheVal['userAttributes'];
-		$this->userPermissions = $cacheVal['userPermissions'];
+		$this->rolePermissions = $cacheVal['userPermissions'];
 		$this->ArrayOfRoleNames = $cacheVal['ArrayOfRoleNames'];
 	}
 
@@ -227,7 +227,7 @@ Class UserRoleAndPermissionsController {
 		$cacheVal['userID'] = $this->userID;
 		$cacheVal['userInfo'] = $this->userInfo;
 		$cacheVal['userAttributes'] = $this->userAttributes;
-		$cacheVal['userPermissions'] = $this->userPermissions;
+		$cacheVal['userPermissions'] = $this->rolePermissions;
 		$cacheVal['ArrayOfRoleNames'] = $this->ArrayOfRoleNames;
 
 		Cache::addOrUpdate('UserRoleAndPermissions', $cacheVal, 900);
@@ -241,7 +241,7 @@ Class UserRoleAndPermissionsController {
 	public function hasRole(string $roleWanted): bool {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@hasRole: ' . $roleWanted);
 
-		return $this->model->hasRolePermission($roleWanted);
+		return $this->model->hasRolePermissions($roleWanted);
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -332,7 +332,7 @@ Class UserRoleAndPermissionsController {
 		unset($this->userID);
 		unset($this->userInfo);
 		unset($this->userAttributes);
-		unset($this->userPermissions);
+		unset($this->rolePermissions);
 		unset($this->ArrayOfRoleNames);
 		unset($this->arOfRoleIDs);
 	}

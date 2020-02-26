@@ -147,6 +147,8 @@ $Date: 2018-10-05 10:21:26 -0700 (Fri, 05 Oct 2018) $
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
+	/*display: inline;
+	margin: 0 auto;*/
 }
 .msg_style_NOTICE_1 {
 	color: darkorchid;

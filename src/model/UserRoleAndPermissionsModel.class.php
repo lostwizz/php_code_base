@@ -47,7 +47,7 @@ use \php_base\Utils\Response as Response;
 use \php_base\data\UserInfoData as UserInfoData;
 use \php_base\data\UserAttributeData as UserAttributeData;
 use \php_base\data\UserRolesData as UserRolesData;
-use \php_base\data\UserPermissionData as UserPermissionData;
+use \php_base\data\RolePermissionsData as RolePermissionsData;
 
 use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
@@ -184,8 +184,8 @@ Class UserRoleAndPermissionsModel extends Model {
 			$this->GetUSERAttributes();
 			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_5( $this->controller->userAttributes);
 
-			$this->GetUSERpermissions();
-			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_5( $this->controller->userPermissions);
+			$this->GetRolePermissionsData();
+			Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addNotice_5( $this->controller->rolePermissions);
 
 			// clean up things not needed
 			unset($this->arOfRoleIDs);
@@ -246,8 +246,8 @@ Class UserRoleAndPermissionsModel extends Model {
 	 *
 	 * @return bool
 	 */
-	protected function GetUSERpermissions(): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetUSERpermissions');
+	protected function GetRolePermissionsData(): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetRolepermissions');
 
 
 		// take the list of roles (words i.e. Clerk) and get the role IDs
@@ -257,16 +257,15 @@ Class UserRoleAndPermissionsModel extends Model {
 		$this->controller->arOfRoleIDs = $DataUserRoles->RoleIDData;
 
 		// now with roleid go and get the permissions related to those role ids
-		$DataUserPermissions = new UserPermissionData($this->controller, $this->controller->arOfRoleIDs);
+		$DataRolePermissions = new RolePermissionsData($this->controller, $this->controller->arOfRoleIDs);
 
 		$this->controller->ArrayOfRoleNames = $DataUserRoles->RoleIDnames;
 
-		$this->controller->userPermissions = $DataUserPermissions->permissionList;
+		$this->controller->rolePermissions = $DataRolePermissions->permissionList;
 
 		//Settings::GetRunTimeObject( 'PERMISSION_DEBUGGING')->addInfo(	$this->controller->view->dumpPermissions());
 
-
-		return (!empty($this->controller->userPermissions));
+		return (!empty($this->controller->rolePermissions));
 	}
 
 
@@ -276,8 +275,8 @@ Class UserRoleAndPermissionsModel extends Model {
 	 * @param string $roleWanted - string with the role wanted
 	 * @return type
 	 */
-	public function hasRolePermission(string $roleWanted): bool {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@hasRolePermission: ' .     $roleWanted);
+	public function hasRolePermissions(string $roleWanted): bool {
+		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@hasRolePermissions: ' .     $roleWanted);
 
 		$roleWanted = trim($roleWanted);
 		if (\in_array($roleWanted, $this->controller->ArrayOfRoleNames)) {
@@ -331,8 +330,8 @@ Class UserRoleAndPermissionsModel extends Model {
 		$action = strtoupper($action);
 		$field = strtoupper($field);
 
-		if (!empty($this->controller->userPermissions)) {
-			foreach ($this->controller->userPermissions as $value) {
+		if (!empty($this->controller->rolePermissions)) {
+			foreach ($this->controller->rolePermissions as $value) {
 				if ($this->checkRight($value, $wantedPermission, $process, $task, $action, $field)) {
 					Settings::GetRunTimeObject('PERMISSION_DEBUGGING')->addInfo('has permission wanted: ' . $s);
 
@@ -495,6 +494,14 @@ Class UserRoleAndPermissionsModel extends Model {
 		return $r;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param string $username
+	 * @param string $password
+	 * @param string $email
+	 * @param string|null $primaryRole
+	 * @return bool
+	 */
 	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@doInsertIfNotExists');
 		$userInfoData = new UserInfoData();

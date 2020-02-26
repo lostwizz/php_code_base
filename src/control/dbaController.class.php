@@ -258,7 +258,7 @@ dump::dump(Settings::GetRunTimeObject('MessageLog'));
 			return Response::PermissionsError('Required DBA - Edit_Permissions');
 		}
 
-		$this->payload['Table'] = '\php_base\data\UserPermissionData';
+		$this->payload['Table'] = '\php_base\data\RolePermissionsData';
 		//$editorSession = new SimpleTableEditor('\php_base\data\UserPermissionData', $this->process, $this->task, $this->action, $this->payload);
 		$dispatcher->addProcess( 'SimpleTableEditor', 'runTableDisplayAndEdit',  $this->action, $this->payload);
 		return Response::NoError();

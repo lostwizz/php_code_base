@@ -123,8 +123,8 @@ class UserRoleAndPermissionsView extends View {
 	 * sort the permissions array
 	 */
 	protected function sortPermissionsArray( ){
-		if (!empty($this->controller->userPermissions)){
-			usort($this->controller->userPermissions,
+		if (!empty($this->controller->rolePermissions)){
+			usort($this->controller->rolePermissions,
 				function ($a, $b) {
 				$sA = $this->controller->ArrayOfRoleNames[$a['ROLEID']] . $a['PROCESS'] . $a['TASK'] . $a['ACTION'] . $a['FIELD'] . $a['PERMISSION'];
 				$sB = $this->controller->ArrayOfRoleNames[$b['ROLEID']] . $b['PROCESS'] . $b['TASK'] . $b['ACTION'] . $b['FIELD'] . $b['PERMISSION'];
@@ -155,8 +155,8 @@ class UserRoleAndPermissionsView extends View {
 		$s .= '<th>FIELD</Th>';
 		$s .= '<th>PERMISSION</Th>';
 		$s .= '</tr>';
-		if (!empty($this->controller->userPermissions )){
-			foreach ($this->controller->userPermissions as $perm) { /**/
+		if (!empty($this->controller->rolePermissions )){
+			foreach ($this->controller->rolePermissions as $perm) { /**/
 				$s .= '<tr>';
 				$s .= '<td>'. $perm['ROLEID'] . ': ' . $this->controller->ArrayOfRoleNames[$perm['ROLEID']] . '</TD>';
 				$s .= '<td>'. $perm['PROCESS'] . '</TD>';

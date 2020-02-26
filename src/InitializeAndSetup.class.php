@@ -21,8 +21,9 @@ class InitializeAndSetup {
 	public function __construct() {
 
 		$this->setupPHPEnvironment();
-		$this->setupAutoLoad();
 		$this->startSession();
+
+		$this->setupAutoLoad();
 
 		$this->loadSettingsClassBeforeTryingToUsIt();
 
