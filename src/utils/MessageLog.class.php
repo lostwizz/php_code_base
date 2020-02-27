@@ -366,7 +366,16 @@ class AMessage extends MessageBase {
 	 * @return string
 	 */
 	protected function getPrettyLine($style = null) : string {
-//dump::dumpA($this,substr_count($this->text, '<BR>'), substr_count($this->text, PHP_EOL), strlen($this->text )  );
+//dump::dumpA($this,substr_count($this->text, '<BR>'), substr_count($this->text, chr(10)), strlen($this->text )  );
+
+//    $string = $this->text;
+//    $resultArr = [];
+//    $strLength = strlen($string);
+//    for ($i = 0; $i < $strLength; $i++) {
+//        $resultArr[$i] = ord($string[$i]);
+//    }
+//    print_r($resultArr);
+
 		$s = '';
 		$textLeader = $this->getShowTextLeader($this->level);
 
@@ -379,9 +388,10 @@ class AMessage extends MessageBase {
 		/* look for multi line output */
 		if ( ( ! is_string($this->text))
 				or (substr_count($this->text, '<BR>') > 0)
-				or (substr_count($this->text, PHP_EOL) > 0)
+				or (substr_count($this->text, chr(10)) > 0)
 				or (strlen($this->text) > 90)
-				or ( substr_count($this->text, ' Object ')> 0 )
+				or ( substr_count($this->text, ' Object ') > 0 )
+				or ( substr_count( $this->text,' Array') > 0)
 			) {
 			$s .= '<div class="' . $lineStyle . '">';
 		} else {
