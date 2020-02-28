@@ -92,10 +92,15 @@ class SimpleTableEditorController {
 	protected function loadTableObject() :void {
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@loadTableObject: ' . $this->tableName);
 
+dump::dump($this);
 		try {
+dump::dump($newDataTable);
 			$newDataTable = Utils::checkClass( $this->tableName);
+dump::dump($newDataTable);
 			$this->tableDataObj = new $newDataTable( $this);
-		} catch (\Exception $x) {
+dump::dump($newDataTable);
+
+} catch (\Exception $x) {
 			Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addAlert ('unable to load the Table object');
 			$this->tableDataObj = null;
 			$this->status = self::BAD;

@@ -103,17 +103,24 @@ define('LVL_TODO', 1275);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+handleSetupForNormalOperations();
+//handleLocalDetailedDebugSettingsOverrides();
+
 testForLocalIsDebugging();
 ////////handleSetupForNormalOperations();
 
 //Settings::SetPublic('IS_DEBUGGING', false);
-Settings::SetPublic('IS_DEBUGGING', true);
+//Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	handleSetupForDebugging();
 } else {
 	handleSetupForNormalOperations();
 }
+
+handleLocalDetailedDebugSettingsOverrides();
+
 
 Settings::SetPublic('CACHE_IS_ON', false);
 Settings::SetPublic('CACHE Allow_Menu to be Cached', true);
@@ -173,8 +180,8 @@ Settings::SetPublic('CRITICAL_EMAIL_PAYLOAD_EXTRA', false);  // could be string 
 /**--------------------------------------------------------*/
 function testForLocalIsDebugging() {
 	if ( !empty($_SESSION['LOCAL_DEBUG_SETTING'])
-		and !empty($_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'])
-		and $_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'] == 99 ) {
+		and !empty($_SESSION['LOCAL_DEBUG_SETTING']['IS_DEBUGGING'])
+		and $_SESSION['LOCAL_DEBUG_SETTING']['IS_DEBUGGING'] != 0 ) {
 
 			Settings::SetPublic('IS_DEBUGGING', true );
 
@@ -190,10 +197,11 @@ function handleLocalDetailedDebugSettingsOverrides(){
 						//print_r($_SESSION['LOCAL_DEBUG_SETTING']);
 						//echo '</pre>';
 		foreach ($_SESSION['LOCAL_DEBUG_SETTING'] as $key => $value) {
-			if ($key != 'IS_DEBUGGING') {           // Ignore is_debugging - it is set above
+			//if ($key != 'IS_DEBUGGING') {           // Ignore is_debugging - it is set above
 						//echo 'IS_DETAILED_',$key, '++++>', $value, '<BR>';
-				Settings::SetPublic( 'IS_DETAILED_' .  $key, $value);
-			}
+				//Settings::SetPublic( 'IS_DETAILED_' .  $key, $value);
+			Settings::SetPublic( $key, $value);
+			//}
 		}
 	}
 }
@@ -230,7 +238,7 @@ function handleSetupForNormalOperations(){
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', false);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', false);
-	Settings::SetPublic('Show MessageLog in Footer', false);
+	Settings::SetPublic('Show MessageLog in Footer', true);
 	Settings::SetPublic('Show History in Footer', false);
 }
 
@@ -268,7 +276,7 @@ function handleSetupForDebugging() {
 	Settings::SetPublic('Show MessageLog Adds', true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
 	Settings::SetPublic('Show MessageLog in Footer', false);
-	Settings::SetPublic('Show History in Footer', false);
+	Settings::SetPublic('Show History in Footer', true);
 }
 
 

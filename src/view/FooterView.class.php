@@ -76,7 +76,7 @@ class FooterView extends View {
 		//echo '<Br>--footer--<Br>' . PHP_EOL;
 
 		$exec_time = microtime(true) - Settings::GetRunTime('Benchmarks.start.executionTime');
-		Settings::GetRunTimeObject('MessageLog')->addINFO('Execution Time was: ' . $exec_time);
+		Settings::GetRunTimeObject('MessageLog')->addWarning('Execution Time was: ' . $exec_time);
 
 		if ( Settings::GetPublic('Show MessageLog in Footer')) {
 			Settings::GetRunTimeObject('MessageLog')->showAllMessagesInBox();  // !! a!lways do this last so you get all the outstanding messages!!!!

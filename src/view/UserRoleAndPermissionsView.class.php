@@ -22,7 +22,7 @@
  *
  * @see UserRoleAndPermissionsModel.class.php
  * @see UserInfoData.class.php
- * @see UserAttributedata.class.php
+ * @see UserAttributesdata.class.php
  * @see UserPermissionData.class.php
  * @see UserRolesData.class.php
  * @see UserRoleAndPermissionsController.class.php

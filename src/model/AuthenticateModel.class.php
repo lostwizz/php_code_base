@@ -39,7 +39,7 @@
 
 namespace php_base\Model;
 
-use \php_base\data\UserAttributeData;
+use \php_base\data\UserAttributesData;
 use \php_base\data\UserInfoData;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;

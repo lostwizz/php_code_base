@@ -1,7 +1,7 @@
 <?php
 
 /** * ********************************************************************************************
- * UserAttributeData.class.php
+ * UserAttributesData.class.php
  *
  * Summary: reads the user's attributes from the database
  *
@@ -50,7 +50,7 @@ use \php_base\Utils\Cache as CACHE;
 /** * **********************************************************************************************
  * This any of the reads or writes to the UserAttributes table
  */
-class UserAttributeData extends data {
+class UserAttributesData extends data {
 
 	public $UserAttributes = [];
 	public $roleNames = [];
@@ -102,7 +102,7 @@ class UserAttributeData extends data {
 		$this->Table = new Table(
 				Settings::GetProtected('DB_Table_UserAttributes'),
 				[
-			'className' => __NAMESPACE__ . '\UserAttributeData',
+			'className' => __NAMESPACE__ . '\UserAttributesData',
 			'isAdding' => true,
 			'isEditing' => true,
 			'isDeleting' => true,

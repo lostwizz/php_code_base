@@ -145,12 +145,12 @@ class dbaController extends Controller {
 
 		Settings::SetPublic('IS_DEBUGGING',  ( ! Settings::GetPublic('IS_DEBUGGING')));
 		if ( Settings::GetPublic('IS_DEBUGGING')) {
-			$_SESSION['LOCAL_DEBUG_SETTING']= ['IS_Debugging' => 99];
+			$_SESSION['LOCAL_DEBUG_SETTING']= ['IS_DEBUGGING' => 99];
 			Settings::SetPublic('Show MessageLog Adds', true);
 			Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);
 
 		} else {
-			unset( $_SESSION['LOCAL_DEBUG_SETTING']['IS_Debugging'] );
+			unset( $_SESSION['LOCAL_DEBUG_SETTING']['IS_DEBUGGING'] );
 		}
 		Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( Settings::GetPublic('IS_DEBUGGING') );
 		//Settings::GetRuntimeObject('DBA_DEBUGGING')->addAlert( $_SESSION );
@@ -174,21 +174,24 @@ class dbaController extends Controller {
 		return Response::NoError();
 	}
 
-	/** -----------------------------------------------------------------------------------------------*/
-	public function setAllDebugLevels( ){
+	/** ----------------------------------------------------------------------------------------------- */
+	public function setAllDebugLevels() {
 
 		//dump::dump($this->payload);
 		echo 'Applying: <BR>';
 		foreach ($this->payload as $key => $value) {
-			$_SESSION['LOCAL_DEBUG_SETTING'][ $key ] = $value;
-			echo $key, ' with value=', $value, '<br>';
+			if ( $key =='IS_DEBUGGING'){
+				Settings::SetPublic('IS_DEBUGGING', ($value !=0 ));
+				$_SESSION['LOCAL_DEBUG_SETTING'][$key] = $value;
+				echo 'Setting is_debugging' , (Settings::getPublic('IS_DEBUGGING')  ? '-ON-' : '_OFF_');
+			} else {
+				$_SESSION['LOCAL_DEBUG_SETTING'][$key] = $value;
+				echo $key, ' with value=', $value, '<br>';
+				Settings::setPublic($key, $value);
+			}
 		}
-
-dump::dump(Settings::GetRunTimeObject('MessageLog'));
 		return Response::NoError();
 	}
-
-
 
 	/** -----------------------------------------------------------------------------------------------
 	 *
@@ -196,17 +199,12 @@ dump::dump(Settings::GetRunTimeObject('MessageLog'));
 	 * @return type
 	 */
 	public function Edit_UserInfoData( $dispatcher=null) : Response  {
-//		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
-
-		Settings::GetRunTimeObject('MessageLog')->setSubSystemLoggingLevel(\php_base\Utils\MessageLog::DEFAULT_SUBSYSTEM , LVL_Notice_5);
-
+		Settings::GetRuntimeObject('DBA_DEBUGGING')->addNotice('@@Edit_UserInfoData');
 
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit UserInfoData');
 		}
-
 		$this->payload['Table'] = '\php_base\data\UserInfoData';
-		//$editorSession = new SimpleTableEditor('\php_base\data\UserInfoData', $this->process, $this->task, $this->action, $this->payload);
 		$dispatcher->addProcess( 'SimpleTableEditorController', 'runTableDisplayAndEdit', $this->action, $this->payload );
 		return Response::NoError();
 	}
@@ -221,11 +219,8 @@ dump::dump(Settings::GetRunTimeObject('MessageLog'));
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit Roles');
 		}
-
 		$this->payload['Table'] = 'UserRolesData';
-
 		$dispatcher->addProcess( 'SimpleTableEditorController', 'runTableDisplayAndEdit', $this->action, $this->payload );
-
 		return Response::NoError();
 	}
 
@@ -241,11 +236,8 @@ dump::dump(Settings::GetRunTimeObject('MessageLog'));
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit Attributes');
 		}
-
-		$this->payload['Table'] = '\php_base\data\UserAttributeData';
-		//$editorSession = new SimpleTableEditor('\php_base\data\UserAttributeData', $this->process, $this->task, $this->action, $this->payload);
+		$this->payload['Table'] = '\php_base\data\UserAttributesData';
 		$dispatcher->addProcess( 'SimpleTableEditor', 'runTableDisplayAndEdit', $this->action, $this->payload );
-
 		return Response::NoError();
 	}
 
@@ -257,9 +249,7 @@ dump::dump(Settings::GetRunTimeObject('MessageLog'));
 		if( ! Settings::GetRunTime('userPermissionsController')->hasRole('DBA')) {
 			return Response::PermissionsError('Required DBA - Edit_Permissions');
 		}
-
 		$this->payload['Table'] = '\php_base\data\RolePermissionsData';
-		//$editorSession = new SimpleTableEditor('\php_base\data\UserPermissionData', $this->process, $this->task, $this->action, $this->payload);
 		$dispatcher->addProcess( 'SimpleTableEditor', 'runTableDisplayAndEdit',  $this->action, $this->payload);
 		return Response::NoError();
 	}

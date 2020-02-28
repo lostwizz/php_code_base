@@ -24,7 +24,7 @@
  *
  * @see UserRoleAndPermissionsController.class.php
  * @see UserInfoData.class.php
- * @see UserAttributedata.class.php
+ * @see UserAttributesdata.class.php
  * @see UserPermissionData.class.php
  * @see UserRolesData.class.php
  *
@@ -45,7 +45,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
 use \php_base\data\UserInfoData as UserInfoData;
-use \php_base\data\UserAttributeData as UserAttributeData;
+use \php_base\data\UserAttributesData as UserAttributesData;
 use \php_base\data\UserRolesData as UserRolesData;
 use \php_base\data\RolePermissionsData as RolePermissionsData;
 
@@ -225,17 +225,17 @@ Class UserRoleAndPermissionsModel extends Model {
 	protected function GetUSERAttributes(): bool {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetUSERAttributes');
 
-		$DataUserAttribute = new UserAttributeData($this->controller, $this->controller->userID);
+		$DataUserAttributes = new UserAttributesData($this->controller, $this->controller->userID);
 
 		// take the primary role from the user info and addit to the array of roles in the user attributes
 		$primaryRole = $this->controller->userInfo['PRIMARYROLENAME'];
 
-		$DataUserAttribute->AddPrimaryRole($primaryRole);  // add the userInfo PrimaryRole
+		$DataUserAttributes->AddPrimaryRole($primaryRole);  // add the userInfo PrimaryRole
 
-		$this->controller->userAttributes = $DataUserAttribute->UserAttributes;
+		$this->controller->userAttributes = $DataUserAttributes->UserAttributes;
 
 		// get the array of all the roles this user has   (words i.e. Clerk)
-		$this->controller->ArrayOfRoleNames = $DataUserAttribute->getArrayOfRoleNames();
+		$this->controller->ArrayOfRoleNames = $DataUserAttributes->getArrayOfRoleNames();
 
 		return (!empty($this->controller->userAttributes));
 	}

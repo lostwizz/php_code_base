@@ -83,8 +83,7 @@ abstract Class DBUtils {
 	 * @return boolean
 	 */
 	public static function setupPDO() {
-
-		Settings::GetRunTimeObject('SQL_DEBUGGING')->addInfo('SQL - at setupPDO');
+		Settings::GetRunTimeObject('SQL_DEBUGGING')->addInfo('@@setupPDO');
 
 		if (!self::checkPDOSettings()) {
 			return false;
@@ -161,6 +160,7 @@ abstract Class DBUtils {
 	 * @throws \Exception
 	 */
 	public static function doExec( string $sql, array $params = null) :bool {
+		Settings::GetRunTimeObject('SQL_DEBUGGING')->addInfo_3('@@doExec: ' . $sql);
 		try {
 			$stmt =  $conn->prepare($sql);
 			self::doBinding($params, $stmt);
@@ -195,6 +195,7 @@ abstract Class DBUtils {
 	 * @throws \Exception
 	 */
 	public static function doDBSelectSingle(string $sql, array $params = null) {
+		Settings::GetRunTimeObject('SQL_DEBUGGING')->addInfo_3('@@doDBSelectSingle: ' . $sql);
 
 		try {
 			$conn = DBUtils::setupPDO();
@@ -236,17 +237,17 @@ abstract Class DBUtils {
 	 * @throws \Exception
 	 */
 	public static function doDBSelectMulti(string $sql, array $params = null) {
-		Settings::GetRunTimeObject('SQL_DEBUGGING')->addDEBUG_6($sql);
+		Settings::GetRunTimeObject('SQL_DEBUGGING')->addInfo_3('@@doDBSelectMulti: ' . $sql);
 		try {
 			$conn = DBUtils::setupPDO();
 			$stmt = $conn->prepare($sql);
 
-			Settings::getRunTimeObject('SQL_DEBUGGING')->addInfo_3( $sql);
-			Settings::getRunTimeObject('SQL_DEBUGGING')->addInfo_3( print_r($params, true));
+			Settings::getRunTimeObject('SQL_DEBUGGING')->addInfo_3( 'params: ' . print_r($params, true));
 
 			self::doBinding($params, $stmt);
 
 			if (Settings::GetRunTimeObject('SQL_DEBUGGING')->isGoodLevelsAndSystem( AMessage::INFO_2)) {
+				// output to console is not redirectable but looks like SQL: [xxx] SELECT
 				$stmt->debugDumpParams();
 			}
 			$stmt->execute();
@@ -269,8 +270,7 @@ abstract Class DBUtils {
 	 * @param \PDOStatement|null $stmt
 	 */
 	public static function doBinding(?array $params, ?\PDOStatement $stmt) {
-		Settings::GetRuntimeObject( 'SQL_DEBUGGING')->addDEBUG_2('@@doBinding');
-		Settings::GetRuntimeObject( 'SQL_DEBUGGING')->addDEBUG_2('doBindingAA: ' . print_r($params, true));
+		Settings::GetRuntimeObject( 'SQL_DEBUGGING')->addInfo_3('@@doBinding' . print_r($params, true));
 
 		if (is_array($params) and ! empty($params) and ! empty($stmt)) {
 			foreach ($params as $key => $value) {
@@ -290,6 +290,7 @@ abstract Class DBUtils {
 	 * @param type $stmt
 	 */
 	public static function doBindingSimple(array $params, \PDOStatement $stmt) {
+		Settings::GetRuntimeObject( 'SQL_DEBUGGING')->addInfo_3('@@doBindingSimple' . print_r($params, true));
 		if (is_array($paramas)) {
 			$i = 1;
 			foreach ($params as $value) {

@@ -39,6 +39,7 @@ include_once( \DIR . 'autoload.php');
 
 
 use \php_base\Resolver as Resolver;
+use \php_base\Utils\Settings as Settings;
 
 ////
 //
@@ -53,7 +54,12 @@ include_once( DIR . 'InitializeAndSetup.class.php');
 
 $init = new \php_base\InitializeAndSetup();
 
+Settings::SetRunTime('Benchmarks.start.executionTime',  microtime(true));
 
+echo '<pre>';
+print_r($_SESSION);
+print_r($_REQUEST);
+echo '</pre>';
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running
 $resolver = new Resolver();

@@ -35,6 +35,7 @@ namespace php_base\Utils;
 
 
 use \php_base\Utils\Settings as Settings;
+use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Dump\Dump as Dump;
 
 define('AR_TEXT', 0);
@@ -360,6 +361,7 @@ class AMessage extends MessageBase {
 		}
 	}
 
+
 	/** -----------------------------------------------------------------------------------------------
 	 * return the message all pretty like spans with style
 	 * @param type $style
@@ -430,7 +432,7 @@ class AMessage extends MessageBase {
 		}
 
 		if ( !empty( $this->codeDetails)){
-			$s .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - &nbsp;  ';
+			$s .= '&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; - &nbsp;  ';
 			//$s .= '<span style="text-align: right;">';
 			$s .= (!empty( $this->codeDetails) ? $this->codeDetails : '' );
 			//$s .= '</span>';

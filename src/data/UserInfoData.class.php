@@ -24,7 +24,7 @@
  * @see UserRoleAndPermissionsController.class.php
  * @see UserRoleAndPermissionsModel.class.php
  * @see UserRoleAndPermissionsView.class.php
- * @see UserAttributeData.class.php
+ * @see UserAttributesData.class.php
  * @see UserPermissionData.class.php
  * @see UserRolesData.class.php
  *

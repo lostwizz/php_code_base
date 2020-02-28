@@ -122,13 +122,18 @@ abstract Class Utils {
 	 * @return type
 	 */
 	protected static function tryNameSpaceClass($prefix, $class, $suffix='') : string {
-		Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING:' . $prefix . ' - ' . $class);
+		//Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING:' . $prefix . '#' . $class . '#'. $suffix);
 		//echo '--Trying: ', $prefix . '\\' .  $class, '<BR>';
 
 
 		/////////////$r = ( class_exists($prefix .  $class, true) ) ;
 		$r =  ( class_exists($prefix .  $class .  $suffix, true) ) ;
-		Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
+		if ($r){
+			Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_4('@@TRYING:' . $prefix . '#' . $class . '#'. $suffix . ' ->' . ( $r ? 'exists' : 'doesnt exist'));
+		}else {
+			Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING:' . $prefix . '#' . $class . '#'. $suffix . ' ->' . ( $r ? 'exists' : 'doesnt exist'));
+		}
+		//Settings::GetRunTimeObject('UTILS_DEBUGGING')->addNotice_1('@@TRYING - result:'. ( $r ? 'exists' : 'doesnt exist'));
 		return $r;
 	}
 

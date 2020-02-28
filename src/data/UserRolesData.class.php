@@ -28,7 +28,7 @@
  * @see UserRoleAndPermissionsView.class.php
  * @see UserInfoData.class.php
  * @see UserPermissionData.class.php
- * @see UserAttributeData.class.php
+ * @see UserAttributesData.class.php
  *
  * @todo Description
  *
