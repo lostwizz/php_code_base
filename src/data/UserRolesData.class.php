@@ -26,7 +26,7 @@
  * @see UserRoleAndPermissionsController.class.php
  * @see UserRoleAndPermissionsModel.class.php
  * @see UserRoleAndPermissionsView.class.php
- * @see UserInfoData.class.php
+ * @see UserData.class.php
  * @see UserPermissionData.class.php
  * @see UserAttributesData.class.php
  *
@@ -152,7 +152,6 @@ Class UserRolesData extends Data {
 			} else {
 				$param = null;
 			}
-dump::dump($sql);
 			$data = DBUtils::doDBSelectMulti($sql, $param);
 
 
@@ -160,7 +159,6 @@ dump::dump($sql);
 				CACHE::add(Settings::GetProtected('DB_Table_RoleManager') .'_ReadAll', $data);
 			}
 		}
-dump::dump($data);
 		if ( ! is_null( $idValue)){
 			return $data[0];
 		}

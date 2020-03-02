@@ -68,6 +68,8 @@ if (!defined('DIR')) {
 	}
 }
 
+
+
 //***********************************************************************************************
 //***********************************************************************************************
 function myAutoLoader($class) {
@@ -86,7 +88,6 @@ function doRunTheSearch($class) {
 	if (!empty(AUTOLOAD_OUTPUT_LEVEL) and ( AUTOLOAD_OUTPUT_LEVEL == AUTOLOAD_LEVEL_INFO )) {
 		echo "<font color=magenta>(Looking for:" . $ex[count($ex) - 1] . ')</font>' . PHP_EOL;
 	}
-
 	$base = $ex[count($ex) - 1] . '.class.php';
 	if (runTheChecks($base))
 		return true;

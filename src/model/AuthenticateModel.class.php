@@ -40,7 +40,7 @@
 namespace php_base\Model;
 
 use \php_base\data\UserAttributesData;
-use \php_base\data\UserInfoData;
+use \php_base\data\UserData;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 use \php_base\Utils\Settings as Settings;
@@ -178,12 +178,12 @@ class AuthenticateModel extends \php_base\Model\Model {
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $passedUsername
-	 * @param type $UserInfoData
+	 * @param type $UserData
 	 * @return Response
 	 */
-	public function doPasswordForgot($passedUsername, $UserInfoData): Response {
+	public function doPasswordForgot($passedUsername, $UserData): Response {
 
-		if ( !empty( $UserInfoData->UserInfo['EMAIL'] )){
+		if ( !empty( $UserData->UserData['EMAIL'] )){
 
 			// generate new password
 			$newPW = Utils::makeRandomPassword();
@@ -191,12 +191,12 @@ dump::dump($newPW);
 			$pwd = password_hash($newPW, PASSWORD_DEFAULT);
 
 			// save the new password
-			if (!empty($UserInfoData->UserInfo['USERID'])) {
-				$r = $UserInfoData->doUpdatePassword($UserInfoData->UserInfo['USERID'], $pwd);
+			if (!empty($UserData->UserData['USERID'])) {
+				$r = $UserData->doUpdatePassword($UserData->UserData['USERID'], $pwd);
 			}
 
 			// send email with new password
-			$r = $this->sendEmailForPasswordForgot($newPW, $UserInfoData->UserInfo['EMAIL']);
+			$r = $this->sendEmailForPasswordForgot($newPW, $UserData->UserData['EMAIL']);
 			if ($r === false) {
 				Settings::GetRunTimeObject('MessageLog')->addError('Unable to email the new password');
 				return new Response('Unable to email the new password to the user', -12);
@@ -266,8 +266,8 @@ dump::dump(ini_get('smtp_port'));
 		if (empty($new_password)) {
 			return new Response('Missing new password for Change password', -15);
 		}
-//dump::dump( $UserInfoData);
-		// verify old password
+//dump::dump( $UserData);
+		// verify old UserInfoDatapassword
 		//if (password_verify($old_password, Settings::GetProtected('Password_for_' . $username))) {
 		if (password_verify($old_password, $this->controller->data->UserInfo['PASSWORD'])) {
 
@@ -429,7 +429,7 @@ dump::dump(ini_get('smtp_port'));
 	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param string $username
-	 * @param UserInfoData|null $userInfoData
+	 * @param UserData|null $userInfoData
 	 */
 	public function DoFinishLoginUpdatebyName( string $username ){
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateModel-doFinishLoginUpdatebyName');

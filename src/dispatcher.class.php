@@ -310,7 +310,9 @@ class Dispatcher {
 			$task = 'doWork';            /* the default task */
 		}
 		if ( empty($class)){
-			throw new \Exception ( 'class is empty and can not be instantiized');
+			//throw new \Exception ( 'class(process) is empty and can not be instantiized');
+			Settings::GetRunTimeObject('MessageLog')->addWarning('no process - reverting to null op');
+			return Response::NoError();
 		}
 		//$class = '\\php_base\\' . $dir . '\\' . $class;
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addTODO('will have to change this from php_base:' . $class);

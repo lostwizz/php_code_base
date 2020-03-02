@@ -1,7 +1,7 @@
 <?php
 
 /** * ********************************************************************************************
- * UserInfoData.class.php
+ * UserData.class.php
  *
  * Summary: reads the user's attributes from the database
  *
@@ -15,7 +15,7 @@
  *
  * @link URL
  *
- * @package ModelViewController - UserRoleAndPermissions\UserInfoData
+ * @package ModelViewController - UserRoleAndPermissions\UserData
  * @subpackage UserRoleAndPermissions
  * @since 0.3.0
  *
@@ -53,7 +53,7 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 /** * **********************************************************************************************
  * reads the info on a user - the id, password and last time they logged in and any other basic data
  */
-class UserInfoData extends data {
+class UserData extends data {
 
 	public $controller;
 
@@ -102,7 +102,7 @@ class UserInfoData extends data {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->Suspend();
 
 		$this->Table = new Table(Settings::GetProtected('DB_Table_UserManager'),
-				['className' => __NAMESPACE__ . '\UserInfoData',
+				['className' => __NAMESPACE__ . '\UserData',
 			'isAdding' => true,
 			'isEditing' => true,
 			'isDeleting' => true,
@@ -128,8 +128,8 @@ class UserInfoData extends data {
 					'size' => 50,
 					'maxlength' => 50,
 					'subType' => Field::SUBTYPE_SELECTLIST,
-					'selectFrom' => ['method' => 'getUserInfoDataForSelect',
-									'class'=> 'UserInfoData',
+					'selectFrom' => ['method' => 'getUserDataForSelect',
+									'class'=> 'UserData',
 									'id' => '!DISTINCT!',
 									'data' => 'app'		]
 
@@ -139,8 +139,8 @@ class UserInfoData extends data {
 					'size' => 10,
 					'maxlength' => 10,
 					'subType' => Field::SUBTYPE_SELECTLIST,
-					'selectFrom' => [ 'method' => 'getUserInfoDataForSelect', //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
-									'class' => 'UserInfoData',
+					'selectFrom' => [ 'method' => 'getUserDataForSelect', //['LDAP'=>'LDAP','DB_Table'=>'DB_Table','HARDCoded' => 'HARDCoded' ]
+									'class' => 'UserData',
 									'id' => '!DISTINCT!',
 									'data' => 'method']
 		]);
@@ -254,7 +254,7 @@ class UserInfoData extends data {
 	}
 
 	/** -----------------------------------------------------------------------------------------------*/
-	public function getUserInfoDataForSelect( $id, $data,  $idValue = null) {
+	public function getUserDataForSelect( $id, $data,  $idValue = null) {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_8('@@readAllData');
 
 		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' )){
@@ -276,19 +276,21 @@ class UserInfoData extends data {
 				$param = null;
 			}
 
-			$data = DBUtils::doDBSelectMulti($sql, $param);
-
-
+			$retData = DBUtils::doDBSelectMulti($sql, $param);
+			if ( empty($retData )){
+				$retData = [strtoupper($id) => $idValue, strtoupper($data) =>''];
+dump::dump($retData);
+				return $retData;
+			}
 
 			if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
-				CACHE::add(Settings::GetProtected('DB_Table_UserManager') .'_ReadAll', $data);
+				CACHE::add(Settings::GetProtected('DB_Table_UserManager') .'_ReadAll', $retData);
 			}
 		}
 		if ( ! is_null( $idValue)){
-			return $data[0];
+			return $retData[0];
 		}
-		return $data;
-
+		return $retData;
 	}
 
 

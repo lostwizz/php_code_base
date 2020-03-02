@@ -283,6 +283,13 @@ class Table {
 		return $s;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $rowKey
+	 * @param string $which
+	 * @param string $fnImage
+	 * @return string
+	 */
 	protected function showFormAndHidden( $rowKey,  string $which, string $fnImage) :string {
 		$s = '';
 		$s .= HTML::FormOpen('MoreTableFun', $which);

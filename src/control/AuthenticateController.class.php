@@ -36,7 +36,7 @@ namespace php_base\Control;
 
 use \php_base\Model\AuthenticateModel;
 use \php_base\View\AuthenticateView;
-use \php_base\data\UserInfoData as UserInfoData;
+use \php_base\data\UserData as UserData;
 
 use \php_base\Resolver;
 use \php_base\Utils\Dump\Dump as Dump;
@@ -55,7 +55,7 @@ use \php_base\Utils\SubSystemMessage as SubSystemMessage;
  */
 class AuthenticateController extends \php_base\Control\Controller {
 
-	public $UserInfoData = null;
+	public $UserData = null;
 	public $process;
 	public $task;
 	public $action;
@@ -75,7 +75,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 	public function __construct(string $passedProcess, string $passedTask, string $passedAction = '', $passedPayload = null) {
 
 		$this->model = new \php_base\model\AuthenticateModel($this);
-		//$this->data = new \php_base\data\UserInfoData($this);
+		//$this->data = new \php_base\data\UserData($this);
 		$this->data =null;  //not created yet - wait until i have a username to load
 		$this->view = new \php_base\view\AuthenticateView($this);
 
@@ -215,9 +215,9 @@ class AuthenticateController extends \php_base\Control\Controller {
 	protected function Submit_Logon($dispatcher, $username = null, $password = null): Response {
 		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('@@AuthenticateController-submitLogon:'. $username);
 
-		//$this->UserInfoData = new UserInfoData($this, $username);
-		$this->data = new UserInfoData($this, $username);
-		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_8( $this->UserInfoData);
+		//$this->UserData = new UserData($this, $username);
+		$this->data = new UserData($this, $username);
+		Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_8( $this->UserData);
 
 		if (!empty($this->data->UserInfo) and ! empty($this->data->UserInfo['USERID'])) {
 			Settings::GetRuntimeObject ('AUTHENTICATION_DEBUGGING')->addNotice_7('AuthenticateController-submitLogon1:'. $username);
@@ -306,7 +306,7 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 * @return Response
 	 */
 	public function Submit_Username_for_Forgot_Password($parent, $username): Response {
-		$this->data = new \php_base\data\UserInfoData($username);
+		$this->data = new \php_base\data\UserData($username);
 		$r = $this->model->doPasswordForgot($username, $this->data);
 		return $r;
 	}
@@ -319,12 +319,12 @@ class AuthenticateController extends \php_base\Control\Controller {
 	 */
 	public function Submit_Username_for_Password_Change($parent, $username): Response {
 
-		$this->data = new UserInfoData($username);
+		$this->data = new UserData($username);
 		$r = $this->model->doChangePassword(
 				$username,
 				$this->payload['old_password'],
 				$this->payload['new_password']
-				//,$this->UserInfoData
+				//,$this->UserData
 		);
 		return $r;
 	}

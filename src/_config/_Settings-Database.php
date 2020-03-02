@@ -47,7 +47,7 @@ Settings::SetProtected('test', 'test_val');
  * these are the tablenames for the various tables used
  */
 
-Settings::SetProtected( 'DB_Table_UserManager', 'Users' );
+Settings::SetProtected( 'DB_Table_UserManager', 'UserData' );
 Settings::SetProtected( 'DB_Table_RoleManager', 'UserRoles' );
 Settings::SetProtected( 'DB_Table_PermissionsManager', 'RolePermissions' );
 Settings::SetProtected( 'DB_Table_UserAttributes', 'UserAttributes' );

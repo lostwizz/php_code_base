@@ -23,7 +23,7 @@
  * @example
  *
  * @see UserRoleAndPermissionsController.class.php
- * @see UserInfoData.class.php
+ * @see UserData.class.php
  * @see UserAttributesdata.class.php
  * @see UserPermissionData.class.php
  * @see UserRolesData.class.php
@@ -44,7 +44,7 @@ use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\Dump\Dump as Dump;
 use \php_base\Utils\Response as Response;
 
-use \php_base\data\UserInfoData as UserInfoData;
+use \php_base\data\UserData as UserData;
 use \php_base\data\UserAttributesData as UserAttributesData;
 use \php_base\data\UserRolesData as UserRolesData;
 use \php_base\data\RolePermissionsData as RolePermissionsData;
@@ -208,7 +208,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	protected function GetUSERinfo($username): bool {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@GetUSERinfo: ' . $username);
 
-		$DataUserInfo = new UserInfoData($this->controller, $username);
+		$DataUserInfo = new UserData($this->controller, $username);
 
 //dump::dumpLong($DataUserInfo);
 		$this->controller->userID = $DataUserInfo->getUserID();
@@ -504,7 +504,7 @@ Class UserRoleAndPermissionsModel extends Model {
 	 */
 	public function doInsertIfNotExists(string $username, string $password, string $email, ?string $primaryRole= null) :bool{
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_4('@@doInsertIfNotExists');
-		$userInfoData = new UserInfoData();
+		$userInfoData = new UserData();
 		if( empty($username)){
 			return false;
 		}
@@ -513,7 +513,7 @@ Class UserRoleAndPermissionsModel extends Model {
 		if (! $exists) {
 			Settings::GetRunTimeObject('MessageLog')->addNotice_4('adding user');
 			$pwd = password_hash($password, PASSWORD_DEFAULT);
-			UserInfoData::doInsertNewAccount( $username, $pwd, $email, $primaryRole);
+			UserData::doInsertNewAccount( $username, $pwd, $email, $primaryRole);
 			return true;
 		}
 		Settings::GetRunTimeObject('MessageLog')->addNotice_4('NOT adding user');

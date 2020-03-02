@@ -68,8 +68,6 @@ class SimpleTableEditorController {
 //			$this->beginTaskAndAction();
 //
 //		}
-
-
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -92,15 +90,19 @@ class SimpleTableEditorController {
 	protected function loadTableObject() :void {
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addInfo('@@loadTableObject: ' . $this->tableName);
 
-dump::dump($this);
-		try {
-dump::dump($newDataTable);
-			$newDataTable = Utils::checkClass( $this->tableName);
-dump::dump($newDataTable);
-			$this->tableDataObj = new $newDataTable( $this);
-dump::dump($newDataTable);
+		echo 'Editing table :<B>' , $this->tableName, '</B>';
 
-} catch (\Exception $x) {
+
+//dump::dump($this);
+		try {
+//dump::dump($this->tableName);
+			$newDataTable = Utils::checkClass( $this->tableName);
+//dump::dump($newDataTable);
+//dump::dumpClasses();
+			$this->tableDataObj = new $newDataTable( $this);
+//dump::dump($newDataTable);
+
+		} catch (\Exception $x) {
 			Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addAlert ('unable to load the Table object');
 			$this->tableDataObj = null;
 			$this->status = self::BAD;
@@ -198,11 +200,6 @@ dump::dump($newDataTable);
 		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addDebug_5('@@DisplayTable');
 
 		echo HTML::FormOpen('tableFun');
-//		echo HTML::Hidden(Resolver::REQUEST_PROCESS, $this->process);
-//		echo HTML::Hidden(Resolver::REQUEST_TASK, $this->task);
-//		echo HTML::Hidden(Resolver::REQUEST_PAYLOAD. '[Table]', $this->tableName);  // table name so it will  know which tabel to use
-
-
 		$className = $this->tableDataObj;
 		$d = $className->readAllData();
 
@@ -275,7 +272,6 @@ dump::dump($newDataTable);
 
 		$ar = array();
 
-		//$flds = $this->tableDataObj->TableStructure->giveFields();
 		$flds = $this->tableDataObj->Table->giveFields();
 		if (!empty($this->payload['sortAsc']) and is_array($this->payload['sortAsc'])) {
 			foreach ($flds as $fld) {
@@ -310,6 +306,21 @@ dump::dump($newDataTable);
 		return $filter;
 	}
 
+	/** -----------------------------------------------------------------------------------------------
+	 * actuall removes the rows that dont match the filter on the coumn
+	 *
+	 * @param type $data
+	 * @param type $fld
+	 * @param type $filterValue
+	 */
+	public function filterTheData(&$data, $fld, $filterValue) {
+		Settings::GetRuntimeObject ('SIMPLE_DEBUGGING')->addNotice_6('@@filterTheData');
+		foreach ($data as $key => $value) {  //run thru the data
+			if (!(Utils::startsWith($value[$fld], $filterValue, true) )) { // check the data against the column with the filter data
+				unset($data[$key]);  // remove the row
+			}
+		}
+	}
 
 
 
@@ -379,7 +390,7 @@ dump::dump($newDataTable);
 //	 * @param type $isEditAllowed
 //	 * @return Response
 //	 */
-//	public function runTableDisplayAndEdit($isEditAllowed = false): Response { ///$tableName = 'php_base\data\UserInfoData') {
+//	public function runTableDisplayAndEdit($isEditAllowed = false): Response { ///$tableName = 'php_base\data\UserData') {
 ////dump::dump($this,'rund and e',  array('Show BackTrace Num Lines' => 10,'Beautify_BackgroundColor' => '#FFAA55') );
 //
 //		Settings::GetRuntimeObject('SIMPLE_DEBUGGING')->addNotice('@@runTableDisplayAndEdit' . ($isEditAllowed ? ' -Editable-' : '-not Editable-'));

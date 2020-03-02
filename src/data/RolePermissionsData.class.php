@@ -24,7 +24,7 @@
  * @see UserRoleAndPermissionsController.class.php
  * @see UserRoleAndPermissionsModel.class.php
  * @see UserRoleAndPermissionsView.class.php
- * @see UserInfoData.class.php
+ * @see UserData.class.php
  * @see UserAttributesData.class.php
  * @see UserRolesData.class.php
  *
@@ -122,8 +122,17 @@ class RolePermissionsData {
 			'text-align' => 'right',
 			'isEditable' => false
 			]);
-		$this->Table->addFieldInt('roleid', ['prettyName' => 'Role Id',
-			'text-align' => 'right',]);
+		$this->Table->addFieldInt('roleid', [
+			'prettyName' => 'Role Id',
+			'text-align' => 'right',
+			'subType' => Field::SUBTYPE_SELECTLIST,
+					'selectFrom' => ['method' => 'getRolesForSelect',
+									'class' => '\php_base\data\UserRolesData',
+									'id' => 'roleid',
+									'data' => 'name']
+					]);
+
+
 		$this->Table->addFieldText('process', ['prettyName' => 'Process']);
 		$this->Table->addFieldText('task', ['prettyName' => 'Task']);
 		$this->Table->addFieldText('action', ['prettyName' => 'Action']);

@@ -21,7 +21,7 @@
  * @example
  *
  * @see UserRoleAndPermissionsModel.class.php
- * @see UserInfoData.class.php
+ * @see UserData.class.php
  * @see UserAttributesdata.class.php
  * @see UserPermissionData.class.php
  * @see UserRolesData.class.php

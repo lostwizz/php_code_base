@@ -56,10 +56,11 @@ $init = new \php_base\InitializeAndSetup();
 
 Settings::SetRunTime('Benchmarks.start.executionTime',  microtime(true));
 
-echo '<pre>';
-print_r($_SESSION);
-print_r($_REQUEST);
-echo '</pre>';
+//echo '<pre>';
+//print_r($_SESSION);
+//print_r($_REQUEST);
+//echo '</pre>';
+
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running
 $resolver = new Resolver();

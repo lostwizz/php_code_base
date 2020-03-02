@@ -23,7 +23,7 @@ namespace php_base\Control;
 
 use \php_base\Control;
 use \php_base\data;
-use \php_base\data\UserInfoData;
+use \php_base\data\UserData;
 use \php_base\model\Permissions as Permissions;
 use \php_base\model\UserRoleAndPermissionsModel as UserRoleAndPermissionsModel;
 use \php_base\Resolver;
@@ -131,9 +131,9 @@ $x =\php_base\Utils\Cache::pull('test1');
 ////dump::dump( $_SESSION);
 //
 //
-//dump::dumpLong(UserInfoData::$Table->fields['userid']);
-//UserInfoData::$Table->fields['userid']->giveBinding('x');
-//UserInfoData::$Table->fields['username']->giveBinding('c');
+//dump::dumpLong(UserData::$Table->fields['userid']);
+//UserData::$Table->fields['userid']->giveBinding('x');
+//UserData::$Table->fields['username']->giveBinding('c');
 
 
 //		$flds[0]->giveBinding();

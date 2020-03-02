@@ -68,6 +68,13 @@ abstract class Settings {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *  simple test to see if the settings has already been used (or it might exist but nothing has ever been set
+	 */
+	public static function isReady() :  bool {
+		return  (!empty(self::$protected) or !empty(self::$public) or !empty($runTime)) ;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
 	 *
 	 * @param type $key
 	 * @return type

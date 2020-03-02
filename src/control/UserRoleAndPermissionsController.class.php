@@ -28,7 +28,7 @@
  * Settings::GetRunTime('userPermissionsController')->is
  *
  * @see UserRoleAndPermissionsModel.class.php
- * @see UserInfoData.class.php
+ * @see UserData.class.php
  * @see UserAttributesdata.class.php
  * @see UserPermissionData.class.php
  * @see UserRolesData.class.php
@@ -171,9 +171,9 @@ Class UserRoleAndPermissionsController {
 	}
 
 //		/** -----------------------------------------------------------------------------------------------*/
-//	public function prepareToEditUserInfoData(){
+//	public function prepareToEditUserData(){
 //dump::dump('CCCCCCCCCCCCCCCCCCC')		;
-//		$x = \php_base\data\UserInfoData::$Table;
+//		$x = \php_base\data\UserData::$Table;
 //		return Response::NoError();
 //	}
 
@@ -308,13 +308,13 @@ Class UserRoleAndPermissionsController {
 //	 * @return Response
 //	 */
 //	public function doEdit( $whichTbl) : Response{
-//		$DataUserInfo = new \php_base\data\UserInfoData();
+//		$DataUserInfo = new \php_base\data\UserData();
 //dump::dumpLong( $DataUserInfo);
 //
-//$y = UserInfoData::$Table;
+//$y = UserData::$Table;
 //dump::dumpLong( $y);
 //
-//		$x =  UserInfoData::$Table ;
+//		$x =  UserData::$Table ;
 //
 //dump::dumpLong($x);
 //		$editorSession = new \php_base\Utils\DatabaseHandlers\SimpleTableEditor($x);

@@ -119,8 +119,8 @@ class UserAttributesData extends data {
 				['prettyName' => 'User Id',
 					'text-align' => 'right',
 					'subType' => Field::SUBTYPE_SELECTLIST,
-					'selectFrom' => ['method' => 'getUserInfoDataForSelect',
-									'class' => '\php_base\data\UserInfoData',
+					'selectFrom' => ['method' => 'getUserDataForSelect',
+									'class' => '\php_base\data\UserData',
 									'id' => 'userid',
 									'data' => 'username']
 					]);
