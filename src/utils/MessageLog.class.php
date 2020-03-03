@@ -41,6 +41,7 @@ use \php_base\Utils\Dump\Dump as Dump;
 define('AR_TEXT', 0);
 define('AR_TimeStamp', 1);
 define('AR_LEVEL', 2);
+define('AR_CODEDETAILS', 3);
 
 //***********************************************************************************************
 //***********************************************************************************************
@@ -173,9 +174,7 @@ class AMessage extends MessageBase {
 	protected $timeStamp;  // time stamp for the message (for displaying the time)
 	protected $level; // level of the message (see defines at top)
 
-	protected $codeDetails;
-
-	//public $timestamp;
+	protected $codeDetails;   //  usually something like: filename(line num)function/method name
 
 	/**
 	 * @var version number
@@ -234,11 +233,11 @@ class AMessage extends MessageBase {
 	 * @param type $level
 	 * @return void
 	 */
-	public function set($textOrArray = null, $timeStamp = null, $level = null) :void {
+	public function set($textOrArray = null, $timeStamp = null, $level = null, ?string $codeDetails = null) :void {
 		if (!empty($textOrArray) and is_array($textOrArray)) {
 			$this->setFromArray($textOrArray);
 		} else {
-			$this->setFromArray([$textOrArray, $timeStamp, $level]);
+			$this->setFromArray([$textOrArray, $timeStamp, $level, $codeDetails]);
 		}
 	}
 
@@ -256,6 +255,9 @@ class AMessage extends MessageBase {
 		}
 		if (array_key_exists(AR_LEVEL, $ar)) {
 			$this->setLevel($ar[AR_LEVEL]);
+		}
+		if (array_key_exists(AR_CODEDETAILS, $ar)) {
+			$this->setCodeDetails($ar[AR_CODEDETAILS]);
 		}
 	}
 
@@ -330,7 +332,8 @@ class AMessage extends MessageBase {
 	public function get() : array{
 		$a = array($this->text,
 			$this->timeStamp,
-			$this->level
+			$this->level,
+			$this->codeDetails
 		);
 		return $a;
 	}
@@ -412,14 +415,11 @@ class AMessage extends MessageBase {
 		$s .= ': ';
 
 		if (is_array($this->text)) {
-			$debugText ='';
-
 			$this->text = \print_r($this->text, true);
 			$x = str_replace("\n", '<BR>', $this->text);
 			$y = str_replace(' ', '&nbsp;', $x);
 			$z = str_replace("\t", '&nbsp;&nbsp;&nbsp;', $y);
 			$s .= $z;
-//			$s .= $debugText;
 		} else if ( !empty($this->text) and is_string($this->text) and substr_count(strtolower($this->text), '/table' ) > 0){
 			$s .= '<pre>';
 			$s .= $this->text;
@@ -491,9 +491,15 @@ class SubSystemMessage {
 		return MessageLog::isGoodLevelsAndSystem( $level, $this->subSystem);
 	}
 
-	/** -----------------------------------------------------------------------------------------------**/
+	/** -----------------------------------------------------------------------------------------------
+	 * if the name is something like      addNotice_2 - note the _2 (_33 would break this
+	 *          and between the two is the level
+	 * @param type $name
+	 * @param type $args
+	 * @return void
+	 */
 	public function __call($name, $args) : void{
-		if ( substr( $name,-2,1 ) == '_'  and substr($name, 0,3) == 'add') {
+		if ( substr( $name,-2,1 ) == '_'  and substr($name, 0,3) == 'add') {   //ends in _x and starts with add
 			$new_lvl_name = strtoupper(substr($name, 3));
 			$lvl_num = array_search($new_lvl_name, MessageBase::$levels);
 
@@ -534,8 +540,6 @@ class MessageLog {
 	public static $DEFAULTLoggingLevel = MessageBase::WARNING;
 	public static $LoggingLevels = null; //array( self::DEFAULT_SUBSYSTEM =>  MessageBase::WARNING);
 
-
-
 	/**
 	 * @var version number
 	 */
@@ -551,7 +555,6 @@ class MessageLog {
 		}
 		self::$DEFAULTLoggingLevel = Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL');
 		self::$LoggingLevels = array(self::DEFAULT_SUBSYSTEM => Settings::getPublic('IS_DETAILED_DEFAULT_NOTIFICATION_LEVEL'));
-
 	}
 
 	/** -----------------------------------------------------------------------------------------------
@@ -693,7 +696,6 @@ class MessageLog {
 
 	/** -----------------------------------------------------------------------------------------------
 	 * make a back trace look pretty
-	 *		optionally include the <span> ... </span> around it -- which colorizes the output
 	 * @param type $bt
 	 * @param bool $includeSpan
 	 * @return string
@@ -712,10 +714,6 @@ class MessageLog {
 
 		return $mid;
 	}
-//
-//	protected function getCodeDebugInfo( $bt) : string{
-//
-//	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 * add a new message to the stack ( may include some values passed down to the message class)

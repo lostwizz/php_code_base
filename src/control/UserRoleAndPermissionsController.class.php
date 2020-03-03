@@ -136,12 +136,17 @@ Class UserRoleAndPermissionsController {
 
 
 
-	public function readAllData($dispatcher) : Response {
-		echo '!!!!!!!!!!!!!!!!!!!!!!!!!!! do something here';
-	dump::dump($this->action);
-		dump::dump($this);
-		return Response::NoError();
-	}
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $dispatcher
+	 * @return Response
+	 */
+//	public function readAllData($dispatcher) : Response {
+//		echo '!!!!!!!!!!!!!!!!!!!!!!!!!!! do something here';
+//	dump::dump($this->action);
+//		dump::dump($this);
+//		return Response::NoError();
+//	}
 
 
 	/** -----------------------------------------------------------------------------------------------
@@ -177,6 +182,24 @@ Class UserRoleAndPermissionsController {
 //		return Response::NoError();
 //	}
 
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return Response
+	 */
+	public function OutputAllUsers($dispatcher) : Response {
+
+		dump::dump( $dispatcher);
+		$userList =null;
+
+xdebug_break() ;
+				//$UD = new \php_base\data\UserData(null, null);
+				//$userList = $UD->readAllData();
+
+dump::dump($this);
+
+		return Response::NoError();
+	}
 
 	/** -----------------------------------------------------------------------------------------------
 	 *

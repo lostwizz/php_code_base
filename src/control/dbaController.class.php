@@ -213,9 +213,17 @@ class dbaController extends Controller {
 	/** -----------------------------------------------------------------------------------------------	*/
 	public function OutputAllInfoByUser($dispatcher=null) :Response {
 
+
+		$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', 'readListOfUsers', null);
+		//$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', 'ProcessListOfUsers', null);
+
+
+
+
+		/*
+
 		$UD = new \php_base\data\UserData(null, null);
 		$userList = $UD->readAllData();
-//dump::dump( $userList);
 
 		foreach($userList as $aUser){
 			echo '---------------------------------------------', '<Br>';
@@ -228,7 +236,6 @@ class dbaController extends Controller {
 
 			$UA = new \php_base\data\UserAttributesData( null, $aUser['USERID']);
 			if ( !empty( $UA)  and !empty( $UA->UserAttributes)) {
-	//dump::dump($UA->UserAttributes);
 				foreach( $UA->UserAttributes as $attribName => $attribValue) {
 					echo "\t", $attribName, ' = ', $attribValue, '<BR>';
 				}
@@ -238,10 +245,8 @@ class dbaController extends Controller {
 			foreach($UA->roleNames as $roleId =>$aRoleName) {
 				echo $aRoleName, ': <BR>';
 				$RP = new \php_base\data\RolePermissionsData(null, [$roleId]);
-//dump::dump($RP);
 				$PL = $RP->permissionList;
 
-//dump::dump($PL);
 				if ( !empty($PL)){
 					foreach( $PL as $RolePerm){
 						echo "\t\t", ' PTAP=', $RolePerm['PROCESS'], ':', $RolePerm['TASK'], ':', $RolePerm['ACTION'],'=>', $RolePerm['FIELD'], ' -- ', $RolePerm['PERMISSION'], '<BR>';
@@ -253,10 +258,11 @@ class dbaController extends Controller {
 				echo '<BR>';
 			}
 			echo '<BR>';
-//dump::dump($UA);
-echo '</pre>';
+			echo '</pre>';
 
 		}
+
+		*/
 		return Response::NoError();
 	}
 

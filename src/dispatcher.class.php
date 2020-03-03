@@ -62,7 +62,7 @@ class Dispatcher {
 	const DISPATCH = 2;
 	const POST = 3;
 
-	public $currentQueue;          // which queue is currently being used
+	public $currentQueue;          // which queue is currently being used from the constants above
 
 	/**
 	 *
@@ -79,7 +79,7 @@ class Dispatcher {
 
 
 	//* use for unit testing
-	public $PHPUNIT_tempArray = array();
+//	public $PHPUNIT_tempArray = array();
 
 
 	/**
@@ -272,7 +272,7 @@ class Dispatcher {
 
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addInfo( $exploded);
 
-		$response = $this->doExecute(//'control',
+		$response = $this->doExecute(
 									(empty($exploded[0]) ? null : $exploded[0]),
 									(empty($exploded[1]) ? null : $exploded[1]),
 									(empty($exploded[2]) ? '' : $exploded[2]),
@@ -297,7 +297,7 @@ class Dispatcher {
 	 * @param mixed $passedPayload
 	 * @return Response class
 	 */
-	private function doExecute(//string $dir,
+	private function doExecute(
 							?string $class,
 							?string $task,
 							?string $action = '',
@@ -314,7 +314,7 @@ class Dispatcher {
 			Settings::GetRunTimeObject('MessageLog')->addWarning('no process - reverting to null op');
 			return Response::NoError();
 		}
-		//$class = '\\php_base\\' . $dir . '\\' . $class;
+
 		Settings::GetRunTimeObject('DISPATCHER_DEBUGGING')->addTODO('will have to change this from php_base:' . $class);
 
 		try {
