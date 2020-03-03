@@ -192,7 +192,6 @@ Class UserRoleAndPermissionsController {
 		dump::dump( $dispatcher);
 		$userList =null;
 
-xdebug_break() ;
 				//$UD = new \php_base\data\UserData(null, null);
 				//$userList = $UD->readAllData();
 

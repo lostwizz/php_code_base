@@ -213,9 +213,7 @@ class dbaController extends Controller {
 	/** -----------------------------------------------------------------------------------------------	*/
 	public function OutputAllInfoByUser($dispatcher=null) :Response {
 
-
-		$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', 'readListOfUsers', null);
-		//$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', 'ProcessListOfUsers', null);
+		$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', null, null);
 
 
 

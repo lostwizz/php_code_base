@@ -333,7 +333,7 @@ Class Field {
 			if ( $id != '!DISTINCT!') {
 				$o = new $class( 'dummyController');
 
-				$r = $o->$method( $id, $data, $dataValue);
+				$r = $o->$method( $id, $data, $dataValue, true);
 
 				Settings::GetRuntimeObject( 'DBHANDLERS_DEBUGGING')->addINFO_3('r: ' . print_r($r, true));
 				$result =  $r[strtoupper($data)];

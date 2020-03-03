@@ -254,11 +254,11 @@ class UserData extends data {
 	}
 
 	/** -----------------------------------------------------------------------------------------------*/
-	public function getUserDataForSelect( $id, $data,  $idValue = null) {
+	public function getUserDataForSelect( $id, $data,  $idValue = null, bool $forceNotCache = false) {
 		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_8('@@readAllData');
 
-		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' )){
-			$data = CACHE::pull( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' );
+		if ( CACHE::exists( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' ) and !$forceNotCache){
+			$retData = CACHE::pull( Settings::GetProtected('DB_Table_UserManager') .'_ReadAll' );
 		} else  {
 
 			if ($id =='!DISTINCT!'){

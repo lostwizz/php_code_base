@@ -122,9 +122,9 @@ if (Settings::GetPublic('IS_DEBUGGING')) {
 handleLocalDetailedDebugSettingsOverrides();
 
 
-Settings::SetPublic('CACHE_IS_ON', false);
+Settings::SetPublic('CACHE_IS_ON', true); // false);
 Settings::SetPublic('CACHE Allow_Menu to be Cached', true);
-Settings::SetPublic('CACHE_Allow_Tables to be Cached', false);     //true
+Settings::SetPublic('CACHE_Allow_Tables to be Cached', true); //false);     //true
 
 
 /**--------------------------------------------------------
