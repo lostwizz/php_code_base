@@ -211,58 +211,11 @@ class dbaController extends Controller {
 	}
 
 	/** -----------------------------------------------------------------------------------------------	*/
-	public function OutputAllInfoByUser($dispatcher=null) :Response {
-
-		$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', null, null);
-
-
-
-
-		/*
-
-		$UD = new \php_base\data\UserData(null, null);
-		$userList = $UD->readAllData();
-
-		foreach($userList as $aUser){
-			echo '---------------------------------------------', '<Br>';
-			echo 'UserId=', $aUser['USERID'], "\t", 'User Name=', $aUser['USERNAME'], "\t", 'Application=', $aUser['APP'], '<Br>';
-			echo "\t\t", 'Logon Method=', $aUser['METHOD'], 'Last IP=', $aUser['IP'], '<Br>';
-			echo "\t\t", 'Last Logon Time=', $aUser['LAST_LOGON_TIME'], '<Br>';
-			echo "\t\t", 'Primary Role Name=', $aUser['PRIMARYROLENAME'], '<Br>';
-
-			echo '<pre>';
-
-			$UA = new \php_base\data\UserAttributesData( null, $aUser['USERID']);
-			if ( !empty( $UA)  and !empty( $UA->UserAttributes)) {
-				foreach( $UA->UserAttributes as $attribName => $attribValue) {
-					echo "\t", $attribName, ' = ', $attribValue, '<BR>';
-				}
-			}
-
-			echo 'Roles:<BR>';
-			foreach($UA->roleNames as $roleId =>$aRoleName) {
-				echo $aRoleName, ': <BR>';
-				$RP = new \php_base\data\RolePermissionsData(null, [$roleId]);
-				$PL = $RP->permissionList;
-
-				if ( !empty($PL)){
-					foreach( $PL as $RolePerm){
-						echo "\t\t", ' PTAP=', $RolePerm['PROCESS'], ':', $RolePerm['TASK'], ':', $RolePerm['ACTION'],'=>', $RolePerm['FIELD'], ' -- ', $RolePerm['PERMISSION'], '<BR>';
-					}
-				} else  {
-					echo '(role has no extra permissions)';
-				}
-
-				echo '<BR>';
-			}
-			echo '<BR>';
-			echo '</pre>';
-
-		}
-
-		*/
-		return Response::NoError();
-	}
+//	public function OutputAllInfoByUser($dispatcher=null) :Response {
+//
+//		$dispatcher->addProcess('UserRoleAndPermissionsController', 'OutputAllUsers', null, null);
+//		return Response::NoError();
+//	}
 
 
 	/** -----------------------------------------------------------------------------------------------	*/

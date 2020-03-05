@@ -52,70 +52,7 @@ use \php_base\data\RolePermissionsData as RolePermissionsData;
 use \php_base\Utils\SubSystemMessage as SubSystemMessage;
 
 
-/** * **********************************************************************************************
- *
- */
-Class Permissions {
-	/*
-	 * theses the the constants for ALL the possible permissions i.e. none, read,  write, dba and god (in hirachial order)
-	 */
 
-	const GOD_RIGHT = 'GOD';
-	const DBA_RIGHT = 'DBA';
-	const WRITE_RIGHT = 'Write';
-	const READ_RIGHT = 'Read';
-	const WILDCARD_RIGHT = '*';
-	const NO_RIGHT = '__NO__RIGHT__';
-
-	/**
-	 * @var version number
-	 */
-	private const VERSION = '0.3.0';
-
-
-
-	protected static $permissions = array(
-		self::GOD_RIGHT,
-		self::DBA_RIGHT,
-		self::WRITE_RIGHT,
-		self::READ_RIGHT,
-		self::WILDCARD_RIGHT,
-		self::NO_RIGHT
-	);
-
-	/** -----------------------------------------------------------------------------------------------
-	 * gives a version number
-	 * @static
-	 * @return type
-	 */
-	public static function Version() {
-		return self::VERSION;
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $theRight
-	 * @return bool
-	 */
-	public static function doesRightExists($theRight): bool {
-		return \in_array($theRight, self::$permissions);
-	}
-
-	/** -----------------------------------------------------------------------------------------------
-	 *
-	 * @param type $arRights
-	 * @return bool
-	 */
-	public static function areAllValidRights( ...$arRights) :bool {
-		foreach ($arRights as $right) {
-			if (!self::doesRightExists($right)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-}
 
 /** * **********************************************************************************************
  * handles the logic for user roles and permissions
@@ -162,6 +99,49 @@ Class UserRoleAndPermissionsModel extends Model {
 	 */
 	public static function Version() {
 		return self::VERSION;
+	}
+
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
+	public function getListOfAllUsers() : ?array {
+		$UD = new \php_base\data\UserData(null, null);
+		$userList = $UD->readAllData();
+		return $userList;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
+	public function getListOfAllAttributes() : ?array {
+		$UA = new \php_base\data\UserAttributesData($this);
+		$attribs = $UA->readAllData();
+		return $attribs;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
+	public function getListOfAllRoles() : ?array {
+		$UR = new \php_base\data\UserRolesData( $this);
+		$userRoles = $UR->readAllData();
+		return $userRoles;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @return array|null
+	 */
+	public function getListOfAllRolePermissions() : ?array {
+		//$PL = $RP->permissionList;
+		$RP = new \php_base\data\RolePermissionsData($this);
+		$rolePermsList = $RP->readAllData();
+
+		return $rolePermsList;
 	}
 
 

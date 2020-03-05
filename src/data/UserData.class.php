@@ -244,14 +244,14 @@ class UserData extends data {
 	 *
 	 * @return boolean
 	 */
-	public function getPrimaryRole() {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_8('@@getPrimaryRole');
-		if (!empty($this->UserInfo) and ! empty($this->UserInfo['PRIMARYROLENAME'])) {
-			return $this->UserInfo['PRIMARYROLENAME'];
-		} else {
-			return false;
-		}
-	}
+//	public function getPrimaryRole() {
+//		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_8('@@getPrimaryRole');
+//		if (!empty($this->UserInfo) and ! empty($this->UserInfo['PRIMARYROLENAME'])) {
+//			return $this->UserInfo['PRIMARYROLENAME'];
+//		} else {
+//			return false;
+//		}
+//	}
 
 	/** -----------------------------------------------------------------------------------------------*/
 	public function getUserDataForSelect( $id, $data,  $idValue = null, bool $forceNotCache = false) {

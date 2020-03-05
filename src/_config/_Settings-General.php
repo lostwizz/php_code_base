@@ -254,13 +254,13 @@ function handleSetupForDebugging() {
 
 	Settings::SetPublic('IS_DETAILED_RESOLVER_DEBUGGING',  LVL_NORMAL);
 
-	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_DISPATCH_QUEUE_DEBUGGING', LVL_NORMAL);
 
 	Settings::SetPublic('IS_DETAILED_AUTHENTICATION_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_USERROLEANDPERMISSIONS_DEBUGGING', LVL_NORMAL);
 
 
-	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_ALL ); //NORMAL);
+	Settings::SetPublic('IS_DETAILED_DBA_DEBUGGING', LVL_NORMAL);
 
 	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL); //LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_DATABASEHANDLERS_DEBUGGING', LVL_NORMAL);
@@ -269,9 +269,10 @@ function handleSetupForDebugging() {
 	Settings::SetPublic('IS_DETAILED_MENU_DEBUGGING', LVL_NORMAL);
 
 	Settings::SetPublic('IS_DETAILED_SQL_DEBUGGING',  LVL_NORMAL);
-	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_NORMAL);
+	Settings::SetPublic('IS_DETAILED_CACHE_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_UTILS_DEBUGGING', LVL_NORMAL);
 	Settings::SetPublic('IS_DETAILED_SIMPLE_TABLE_EDITOR_DEBUGGING', LVL_ALL ); //LVL_NORMAL);
+
 	Settings::SetPublic('Show MessageLog Display Mode Short Color', false);
 	Settings::SetPublic('Show MessageLog Adds', true);
 	Settings::SetPublic('Show MessageLog Adds_FileAndLine', true);

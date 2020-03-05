@@ -188,14 +188,14 @@ Class UserRoleAndPermissionsController {
 	 * @return Response
 	 */
 	public function OutputAllUsers($dispatcher) : Response {
+		$userList = $this->model->getListOfAllUsers();
 
-		dump::dump( $dispatcher);
-		$userList =null;
+		$attributeList = $this->model->getListOfAllAttributes();
 
-				//$UD = new \php_base\data\UserData(null, null);
-				//$userList = $UD->readAllData();
+		$rolesList = $this->model->getListOfAllRoles();
+		$rolePermissionsList = $this->model->getListOfAllRolePermissions();
 
-dump::dump($this);
+		$this->view->showAllUsers( $userList, $attributeList, $rolesList, $rolePermissionsList);
 
 		return Response::NoError();
 	}

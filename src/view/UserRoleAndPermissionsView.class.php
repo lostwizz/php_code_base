@@ -90,6 +90,108 @@ class UserRoleAndPermissionsView extends View {
 	}
 
 	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $userList
+	 * @param type $attributeList
+	 * @param type $rolesList
+	 * @param type $rolePermissionsList
+	 * @return void
+	 */
+	public function showAllUsers( $userList, $attributeList, $rolesList, $rolePermissionsList ) :void {
+		echo '<pre>';
+		foreach($userList as $aUser){
+			$this->showAUser($aUser, $attributeList, $rolesList, $rolePermissionsList);
+		}
+		echo '</pre>', PHP_EOL;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $aUser
+	 * @param type $attributeList
+	 * @param type $rolesList
+	 * @param type $rolePermissionsList
+	 */
+	protected  function showAUser( $aUser, $attributeList, $rolesList, $rolePermissionsList ){
+		//echo '---------------------------------------------', '<Br>';
+		echo '<hr>';
+		echo 'User Name=<B>', $aUser['USERNAME'], "</B>\t", 'UserId=', $aUser['USERID'],  "\t", 'Application=', $aUser['APP'], '<Br>';
+		echo "\t\t", 'Logon Method=', $aUser['METHOD'], 'Last IP=', $aUser['IP'], '<Br>';
+		echo "\t\t", 'Last Logon Time=', $aUser['LAST_LOGON_TIME'], '<Br>';
+		echo "\t\t", 'Primary Role Name=', $aUser['PRIMARYROLENAME'], '<Br>';
+
+		$listOfUserRoles = $this->showAUserAttributes( $aUser['USERID'], $attributeList);
+		if ( ! in_array( $aUser['PRIMARYROLENAME'], $listOfUserRoles)) {
+			$listOfUserRoles[] = $aUser['PRIMARYROLENAME'];
+		}
+
+		$this->showAUsersRolesAndPermissions($listOfUserRoles, $rolesList, $rolePermissionsList );
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $userId
+	 * @param type $listOfAttribs
+	 * @return array|null
+	 */
+	protected function showAUserAttributes( $userId, $listOfAttribs) : ?array{
+		$ar = array();
+		foreach( $listOfAttribs as $attrib) {
+			if ( $attrib['USERID'] == $userId){
+				echo "\t\t\t";
+				echo  $attrib['ATTRIBUTENAME'];
+				echo ' = ';
+				echo $attrib['ATTRIBUTEVALUE'];
+				echo '<br>';
+				if (($attrib['ATTRIBUTENAME'] == 'SecondaryRole')  or ($attrib['ATTRIBUTENAME'] =='PrimaryRole' )) {
+					$ar[] = $attrib['ATTRIBUTEVALUE'];
+				}
+			}
+		}
+		return $ar;
+	}
+
+	/** -----------------------------------------------------------------------------------------------
+	 *
+	 * @param type $listOfUserRoles
+	 * @param type $rolesList
+	 * @param type $rolePermissionsList
+	 * @return void
+	 */
+	protected function showAUsersRolesAndPermissions($listOfUserRoles, $rolesList, $rolePermissionsList ) : void {
+		foreach( $listOfUserRoles as $userRole) {
+			echo "\t";
+			echo $userRole;
+			foreach( $rolesList as $aRole) {
+				if ( $userRole == $aRole['NAME'] ) {
+					$roleID= $aRole['ROLEID'];
+				}
+			}
+			echo '<BR>';
+			if ( !empty( $roleID)){
+				echo '<table border=1 style="margin-left:85;width: 700px">';
+				foreach($rolePermissionsList as $rolePerm ) {
+					if ( $rolePerm['ROLEID'] == $roleID) {
+
+						echo '<tr><td>';
+						echo $rolePerm['PROCESS'];
+						echo '</td><td>';
+						echo $rolePerm['TASK'];
+						echo '</td><td>';
+						echo $rolePerm['ACTION'];
+						echo '</td><td>';
+						echo $rolePerm['FIELD'];
+						echo '</td><td>';
+						echo $rolePerm['PERMISSION'];
+						echo '</td></tr>';
+					}
+				}
+			}
+			echo '<BR>';
+		}
+	}
+
+	/** -----------------------------------------------------------------------------------------------
 	 * dump the state  - which is basically the parent class and its properties
 	 *
 	 * @param type $arRoleNames

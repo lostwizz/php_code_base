@@ -298,29 +298,29 @@ Class UserRolesData extends Data {
 	 * @param string $roleName
 	 * @return int
 	 */
-	public function getRoleIDByName(string $roleName): int {
-		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@getRoleIDbyName: ' . $roleName );
-
-		if ( CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName)) {
-			$data = CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName);
-			return true;
-		}
-
-		$sql = 'SELECT roleid '
-				. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager')
-				. ' WHERE rolename = :rolename'
-		;
-		$params = array(':rolename' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
-		$data = DBUtils::doDBUpdateSingle($sql, $params);
-
-		if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
-			CACHE::add(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName, $data);
-		}
-		if ($data > 0) {
-			return $data;
-		} else {
-			return -1;
-		}
-	}
+//	public function getRoleIDByName(string $roleName): int {
+//		Settings::GetRuntimeObject( 'PERMISSION_DEBUGGING')->addNotice_6('@@getRoleIDbyName: ' . $roleName );
+//
+//		if ( CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName)) {
+//			$data = CACHE::exists(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName);
+//			return true;
+//		}
+//
+//		$sql = 'SELECT roleid '
+//				. ' FROM ' . Settings::GetProtected('DB_Table_RoleManager')
+//				. ' WHERE rolename = :rolename'
+//		;
+//		$params = array(':rolename' => ['val' => $roleName, 'type' => \PDO::PARAM_STR]);
+//		$data = DBUtils::doDBUpdateSingle($sql, $params);
+//
+//		if (Settings::GetPublic('CACHE_Allow_Tables to be Cached')) {
+//			CACHE::add(Settings::GetProtected('DB_Table_RoleManager') . '_idByName_' . $roleName, $data);
+//		}
+//		if ($data > 0) {
+//			return $data;
+//		} else {
+//			return -1;
+//		}
+//	}
 
 }
