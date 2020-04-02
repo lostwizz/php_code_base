@@ -35,6 +35,12 @@ if (strripos(realpath('.'), 'src') < 1) {
 	define('DIR', realpath('.') . \DSZ);
 }
 
+if (version_compare(PHP_VERSION, '7.4.0') >= 0) {
+    echo 'I am at least PHP version 7.0.0, my version: ' . PHP_VERSION . "\n";
+} else {
+	die('PHP Version must be 7.3.0 or higher');
+}
+
 include_once( \DIR . 'autoload.php');
 
 
@@ -60,6 +66,7 @@ Settings::SetRunTime('Benchmarks.start.executionTime',  microtime(true));
 //print_r($_SESSION);
 //print_r($_REQUEST);
 //echo '</pre>';
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------
 // now start everything running

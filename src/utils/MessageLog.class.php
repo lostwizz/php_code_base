@@ -33,7 +33,6 @@ namespace php_base\Utils;
 //	<link rel="stylesheet" href=".\static\css\message_stack_style.css"><?php
 //}
 
-
 use \php_base\Utils\Settings as Settings;
 use \php_base\Utils\HTML\HTML as HTML;
 use \php_base\Utils\Dump\Dump as Dump;
@@ -42,6 +41,21 @@ define('AR_TEXT', 0);
 define('AR_TimeStamp', 1);
 define('AR_LEVEL', 2);
 define('AR_CODEDETAILS', 3);
+
+//
+//if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])){
+////if ( empty(get_included_files()) ) {
+//	echo 'called directly';
+//} else {
+//	echo 'not called directly';
+//	echo '<pre>';
+//	//print_r( get_included_files());
+//	print_r( __FILE__);
+//	print_r($_SERVER) ;
+//	echo '</pre>';
+//}
+
+
 
 //***********************************************************************************************
 //***********************************************************************************************

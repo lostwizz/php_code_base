@@ -111,7 +111,7 @@ testForLocalIsDebugging();
 ////////handleSetupForNormalOperations();
 
 //Settings::SetPublic('IS_DEBUGGING', false);
-//Settings::SetPublic('IS_DEBUGGING', true);
+Settings::SetPublic('IS_DEBUGGING', true);
 
 if (Settings::GetPublic('IS_DEBUGGING')) {
 	handleSetupForDebugging();
