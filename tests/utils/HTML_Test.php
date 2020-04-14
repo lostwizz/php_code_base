@@ -81,7 +81,7 @@ class HTML_Test extends TestCase {
 	}
 
 	public function test_Versions() {
-		$this->assertEquals('0.3.0', HTML::Version());
+		$this->assertEquals('0.3.1', HTML::Version());
 	}
 
 //	function test_filter_XSS() {

@@ -22,7 +22,7 @@ class Dump_Test extends TestCase {
 
 
 	public function test_Versions() {
-		$this->assertEquals('0.4.0', Dump::Version());
+		$this->assertEquals('0.4.1', Dump::Version());
 	}
 
 	public function test_DumpData() {
@@ -60,13 +60,16 @@ class Dump_Test extends TestCase {
 		$expected = ltrim($expected, "'");
 		$expected = rtrim($expected, "'");
 
+		$expected = "<BR>'one', null, array('Only Return Output String' => true, 'Beautify is On' => false)<BR>one<BR>P:\Projects\NB_Projects\php_code_base\\tests\utils\dump_Test.php (Line:57) <BR>";
+
+
 		$this->assertEquals($expected, $actual);
 	}
 
 	public function test_2() {
 		$actual = dump::dump('one', 'title', array('Only Return Output String' => true, 'Beautify is On' => false));
 
-		$expected = "'title<BR>'one', 'title', array('Only Return Output String' => true, 'Beautify is On' => false)<BR>one<BR>P:\Projects\NB_projects\php_code_base\\tests\utils\dump_Test.php (Line:67) <BR>'";
+		$expected = "'title<BR>'one', 'title', array('Only Return Output String' => true, 'Beautify is On' => false)<BR>one<BR>P:\Projects\NB_projects\php_code_base\\tests\utils\dump_Test.php (Line:70) <BR>'";
 		$expected = ltrim($expected, "'");
 		$expected = rtrim($expected, "'");
 

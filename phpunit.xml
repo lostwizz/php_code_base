@@ -9,7 +9,7 @@
          verbose="true"
          bootstrap="src\autoload.php"
          stopOnIncomplete="false"
-         stopOnFailure="true"
+         stopOnFailure="false"
 	>
 
 <!--
@@ -49,12 +49,12 @@
 		-->
 
 
-		<testsuite name="config_Tests">
+<!--		<testsuite name="config_Tests">
 			<file>Tests/_config/_Settings-Database_Test.php</file>
 			<file>Tests/_config/_Settings-Genral_Test.php</file>
 			<file>Tests/_config/_Settings-protected_Test.php</file>
 		</testsuite>
-
+-->
 		<testsuite name="Tests To FIX">
 			<file>Tests/utils/dump_Test.php</file>
 		</testsuite>
@@ -64,7 +64,7 @@
 			<file>Tests/utils/Cache_Test.php</file>
 			<file>Tests/utils/Cryption_Test.php</file>
 			<!-- <file>Tests/utils/log/LoggingToDB_Test.php</file>   -->
-			<file>Tests/utils/EmailHtmlFormatter_Test.php</file>
+<!--			<file>Tests/utils/EmailHtmlFormatter_Test.php</file>
 
 			<file>Tests/utils/ErrorHandler_Test.php</file>
 			<file>Tests/utils/HTML_Test.php</file>
@@ -76,8 +76,9 @@
 			<file>Tests/utils/Setup_Logging_Test.php</file>
 			<file>Tests/utils/Utils_Test.php</file>
 			<file>Tests/utils/SettingsClass_Test.php</file>
+-->
 		</testsuite>
-
+<!--
 
 
 		<testsuite name="base_structure">
@@ -138,7 +139,7 @@
 			<file>Tests/view/UserRoleAndPermissionsView_Test.php</file>
 		</testsuite>
 
-
+-->
 		<!--
 		<testsuite name="Other_files">
 

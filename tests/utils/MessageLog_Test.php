@@ -610,9 +610,9 @@ class ExtendedMessageLogTest extends MessageLog {
 
 abstract class ExtendedMessageBase extends MessageBase {
 
-	abstract function Show();
+	abstract function Show() : void;
 
-	abstract function Set($value = null);
+	abstract function Set($value = null) :void;
 
 	abstract function Get();
 }
